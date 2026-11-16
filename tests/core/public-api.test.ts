@@ -1,12 +1,21 @@
 // Validates: Requirements 13.5
 import { describe, expect, expectTypeOf, it } from 'vitest';
+import type { Result, SerializeError } from '../../core/internal/result';
+import * as core from '../../core';
 import {
   CONSTANTS,
   CORE_ALLOWED_PACKAGES,
   type AssessedDependency,
   type Classification,
   type Dependency,
+  type AssessedDependency as AssessedDep,
   type HealthFacts,
+  type ManifestFormat,
+  type SerializableDependency,
+  classify,
+  parseManifest,
+  serializeManifest,
+  summarize,
   type ParseResult,
   type RankedPackage,
   type Reason,
@@ -15,6 +24,40 @@ import {
   type UnassessedItem,
   type UniquePackage,
 } from '../../core';
+
+const EXPECTED_RUNTIME_EXPORTS: string[] = [
+  'ABANDONED_AGE_POINTS',
+  'ABANDONMENT_DAYS',
+  'ABANDONMENT_POINTS_CAP',
+  'ARCHIVED_POINTS',
+  'CONSTANTS',
+  'CORE_ALLOWED_PACKAGES',
+  'DEFAULT_SEVERITY',
+  'DEPRECATED_POINTS',
+  'DORMANT_RELEASE_POINTS',
+  'GRADE_A_MAX',
+  'GRADE_B_MAX',
+  'GRADE_C_MAX',
+  'GRADE_D_MAX',
+  'MAINTAINER_POINTS_CAP',
+  'MAX_MANIFEST_LENGTH',
+  'MAX_SERIALIZED_DEPENDENCIES',
+  'NO_MAINTAINER_POINTS',
+  'SCOPE_ORDER',
+  'SEVERITIES',
+  'SEVERITY_POINTS',
+  'SINGLE_MAINTAINER_POINTS',
+  'STALE_AGE_POINTS',
+  'STALE_DAYS',
+  'VULNERABILITY_POINTS_CAP',
+  'VULN_COUNT_POINTS_CAP',
+  'VULN_COUNT_POINTS_EACH',
+  'WORST_LIST_SIZE',
+  'classify',
+  'parseManifest',
+  'serializeManifest',
+  'summarize',
+];
 
 describe('core public entry point', () => {
   it('exports Dependency with rawName and the required fields', () => {
@@ -81,5 +124,33 @@ describe('core public entry point', () => {
   it('exports CORE_ALLOWED_PACKAGES at runtime', () => {
     expect(CORE_ALLOWED_PACKAGES).toEqual(['smol-toml']);
     expect(CONSTANTS.CORE_ALLOWED_PACKAGES).toBe(CORE_ALLOWED_PACKAGES);
+  });
+});
+
+describe('core public functions', () => {
+  it('parseManifest(text: unknown, format: ManifestFormat): ParseResult', () => {
+    expectTypeOf(parseManifest).parameters.toEqualTypeOf<[text: unknown, format: ManifestFormat]>();
+    expectTypeOf(parseManifest).returns.toEqualTypeOf<ParseResult>();
+  });
+
+  it('serializeManifest(dependencies, format: unknown): Result<string, SerializeError>', () => {
+    expectTypeOf(serializeManifest).parameters.toEqualTypeOf<
+      [dependencies: readonly SerializableDependency[], format: unknown]
+    >();
+    expectTypeOf(serializeManifest).returns.toEqualTypeOf<Result<string, SerializeError>>();
+  });
+
+  it('classify(facts: unknown): Classification', () => {
+    expectTypeOf(classify).parameters.toEqualTypeOf<[facts: unknown]>();
+    expectTypeOf(classify).returns.toEqualTypeOf<Classification>();
+  });
+
+  it('summarize(entries: readonly AssessedDependency[]): RepoSummary', () => {
+    expectTypeOf(summarize).parameters.toEqualTypeOf<[entries: readonly AssessedDep[]]>();
+    expectTypeOf(summarize).returns.toEqualTypeOf<RepoSummary>();
+  });
+
+  it('has exactly the expected runtime exports', () => {
+    expect(Object.keys(core).sort()).toEqual([...EXPECTED_RUNTIME_EXPORTS].sort());
   });
 });

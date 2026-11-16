@@ -373,98 +373,98 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
 - [x] 8. Checkpoint - Classifier and scoring
   - Run `npx tsc --noEmit`, `npm run lint` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 9. Repo summary
-  - [~] 9.1 Implement grouping
+- [x] 9. Repo summary
+  - [x] 9.1 Implement grouping
     - Create `core/summarizer/group.ts`: one pass over the input filling a `Map` keyed by the Package_Key `JSON.stringify([ecosystem, name, sourceKind])` (12.1); each group holds a `Set` of scopes and the non-null classifications; `scopes = SCOPE_ORDER.filter(...)`.
     - _Requirements: 12.1_
 
-  - [~] 9.2 Implement classification merging
+  - [x] 9.2 Implement classification merging
     - Create `core/summarizer/merge.ts`: `classificationTieKey` (flags with false before true, then `ruleId`s joined by `,` compared by code point), `compareClassifications` (12.22: score descending, status precedence `HAUNTED`, `DEAD`, `ALIVE`, Classification_Tie_Key ascending, then Classification_Canonical_Key via `canonicalKey` ascending), and `mergeClassifications` returning null for an empty list.
     - The total order is criterion 12.22: highest score, then status precedence, then Classification_Tie_Key ascending, then Classification_Canonical_Key ascending, where the canonical key is the canonical JSON of the whole Classification (object keys sorted by code point at every depth, array order kept), so classifications that differ only in Reason text still give an input-order-independent result.
     - _Requirements: 12.1, 12.2, 12.10, 12.22_
 
-  - [~] 9.3 Write unit tests for grouping
+  - [x] 9.3 Write unit tests for grouping
     - `tests/core/summarizer/group.test.ts`: grouping key is `(ecosystem, name, sourceKind)` (12.1): one package in `runtime` and `dev` is one Unique_Package with `scopes` `['runtime', 'dev']`; the same name as `registry` and as `git` is two packages; the same name in `npm` and `cargo` is two packages; `__proto__` names are safe; `scopes` sorted in `SCOPE_ORDER` with no repeats.
     - _Requirements: 12.1_
 
-  - [~] 9.4 Write unit tests for merging
+  - [x] 9.4 Write unit tests for merging
     - `tests/core/summarizer/merge.test.ts`: highest score wins; equal score uses `HAUNTED`, `DEAD`, `ALIVE`; equal on that uses the tie key; equal on all of those but different Reason text (800 against 900 days) is decided by the Classification_Canonical_Key in either input order (12.22); the canonical key sorts object keys at every depth and keeps `reasons` order; one null among non-null is ignored; all null gives null.
     - _Requirements: 12.1, 12.10, 12.22_
 
-  - [~] 9.5 Implement partition and ordering
+  - [x] 9.5 Implement partition and ordering
     - Create `core/summarizer/partition.ts` (assessed iff `sourceKind === 'registry'` and a non-null Merged_Classification; `non-registry-source` takes precedence over `no-health-data`) and `core/summarizer/order.ts` (criterion 12.6 comparator: score descending, status precedence, `name`, `ecosystem`, `sourceKind`, tie key, all string comparisons by code point; unassessed items ordered by `ecosystem`, `name`, `sourceKind`).
     - _Requirements: 12.2, 12.6, 12.14_
 
-  - [~] 9.6 Implement grade computation
+  - [x] 9.6 Implement grade computation
     - Create `core/summarizer/grade.ts`: `grade(score)` takes the first of `A`, `B`, `C`, `D` whose threshold (`GRADE_A_MAX` 19, `GRADE_B_MAX` 39, `GRADE_C_MAX` 59, `GRADE_D_MAX` 79) is at least the score, else `F`; `worseGrade`; the repo grade is `worseGrade(grade(averageScore), grade(maxScore))`; `// Requirement 12.15` comments.
     - _Requirements: 12.15, 12.16_
 
-  - [~] 9.7 Write unit tests for grades
+  - [x] 9.7 Write unit tests for grades
     - `tests/core/summarizer/grade.test.ts`: `grade(score)` for 0, 19, 20, 39, 40, 59, 60, 79, 80 and 100 (`A`, `A`, `B`, `B`, `C`, `C`, `D`, `D`, `F`, `F`); the worse-of rule on both sides of each threshold; `maxScore` above 59 gives `D` or `F` whatever the average; the worse-of rule equals `grade(maxScore)` because `maxScore >= averageScore`.
     - _Requirements: 12.15, 12.16_
 
-  - [~] 9.8 Write unit tests for partition and ordering
+  - [x] 9.8 Write unit tests for partition and ordering
     - `tests/core/summarizer/partition-order.test.ts`: a `git` package with a classification is `non-registry-source`; a registry package with only null classifications is `no-health-data`; ordering tie-breaks by status, name, ecosystem, sourceKind; code-point comparison (astral against high BMP); unassessed item order.
     - _Requirements: 12.2, 12.6, 12.14_
 
-  - [~] 9.9 Implement `summarize`
+  - [x] 9.9 Implement `summarize`
     - Create `core/summarizer/index.ts`: `guard` wrapper falling back to the summary of an empty list; group by the Package_Key (12.1), merge with the 12.22 order (Classification_Canonical_Key last), partition; `counts` object with fixed keys; integer half-up mean `Math.floor((2 * sum + n) / (2 * n))`; sort a copy of the input list (never mutate the argument); `maxScorePackage` from the first package of the full 12.6 order before the 12.7 exclusion and before truncation; `worst` excludes `ALIVE` with score 0 and unassessed packages and is cut to `WORST_LIST_SIZE`; `unassessedItems`; grade as the worse of Average_Grade and Worst_Grade; null fields and zero counts when `assessed` is 0.
     - Export `summarize` from `core/index.ts`.
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.13, 12.14, 12.15, 12.16, 12.22, 13.3_
 
-  - [~] 9.10 Write unit tests for `summarize`
+  - [x] 9.10 Write unit tests for `summarize`
     - `tests/core/summarizer/summarize.test.ts`: empty list; all-unassessed list; counts and `unassessed` arithmetic; mean 2.5 rounds to 3; a single package of score 60 among many zeros gives `D` or `F`; `worst` truncation at 0, 1, 10, 11 assessed; `ALIVE` score 0 excluded; all entries tied; `maxScorePackage` chosen before truncation and exclusion; a package with one null and one non-null classification is assessed; two entries of one Package_Key whose classifications differ only in Reason text give the same `worst` entry in either input order (12.22); `unassessedItems` reasons and order; the input array is not mutated.
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.13, 12.14, 12.15, 12.16, 12.22, 13.3_
 
-  - [~] 9.11 Build summarizer test support
+  - [x] 9.11 Build summarizer test support
     - Create `tests/support/arbitraries/assessed.ts` (`arbAssessedDependency` with a tiny name alphabet `a`, `b`, `a-b`, `Z`, `é`, few ecosystems and scopes, 70 percent `registry`, 15 percent null classification, real `classify` output and synthetic coherent classifications with scores from `0, 1, 19, 20, 39, 40, 59, 60, 79, 80, 100`, pairs that tie on everything except Reason text; list arbitraries up to 40 entries plus targeted lists; permutation and scope-repetition helpers) and `tests/support/oracles/summary-oracle.ts` (independent grouping by `(ecosystem, name, sourceKind)` with a `Map`, merge by the 12.22 order with its own canonical-JSON key writer, half-up integer mean, code-point comparator, `grade(score)` with the four thresholds, `scopes`, `unassessedItems`).
     - _Requirements: 12.1, 12.6, 12.10_
 
-  - [~] 9.12 Write property tests: partition and averages
+  - [x] 9.12 Write property tests: partition and averages
     - `tests/core/summarizer/summarize.property.test.ts`.
     - **Property 32: Counts and unassessed partition the Unique_Packages**
     - **Property 33: Average and maximum are bounded**
     - **Validates: Requirements 12.8, 12.1, 12.2, 12.3, 12.9, 12.4**
 
-  - [~] 9.13 Write property tests: confluence and determinism
+  - [x] 9.13 Write property tests: confluence and determinism
     - Append to `tests/core/summarizer/summarize.property.test.ts`.
     - **Property 34: Confluence under input permutation**
     - **Property 35: Summarizer determinism**
     - **Validates: Requirements 12.10, 12.11, 12.17**
 
-  - [~] 9.14 Write property tests: worst list and grade domain
+  - [x] 9.14 Write property tests: worst list and grade domain
     - Append to `tests/core/summarizer/summarize.property.test.ts`.
     - **Property 36: Worst list is bounded and ordered**
     - **Property 37: Grade domain**
     - **Validates: Requirements 12.12, 12.6, 12.7, 12.17, 12.5**
 
-  - [~] 9.15 Write property tests: grade bounds and maximum
+  - [x] 9.15 Write property tests: grade bounds and maximum
     - Append to `tests/core/summarizer/summarize.property.test.ts`.
     - **Property 38: Grade is never better than its two components**
     - **Property 39: maxScore is consistent with the package it names**
     - **Validates: Requirements 12.18, 12.15, 12.16, 12.19, 12.13**
 
-  - [~] 9.16 Write property tests: unassessed items and scope repetition
+  - [x] 9.16 Write property tests: unassessed items and scope repetition
     - Append to `tests/core/summarizer/summarize.property.test.ts`.
     - **Property 40: Unassessed items match unassessed packages**
     - **Property 41: Repeating an entry in another scope only adds a scope**
     - **Validates: Requirements 12.20, 12.14, 12.21, 12.1**
 
-  - [~] 9.17 Write property test: merged classification choice
+  - [x] 9.17 Write property test: merged classification choice
     - Append to `tests/core/summarizer/summarize.property.test.ts`.
     - **Property 42: Merged classification picks the best classification of the group** (ties on score, status and Classification_Tie_Key are resolved by the Classification_Canonical_Key, independent of input order)
     - **Validates: Requirements 12.1, 12.2, 12.22**
 
-  - [~] 9.18 Write the no-mutation property test
+  - [x] 9.18 Write the no-mutation property test
     - `tests/core/no-mutation.property.test.ts`: for `parseManifest`, `serializeManifest`, `classify` and `summarize`, a deep copy taken before the call equals the input after the call, and the call also succeeds on a deeply frozen copy.
     - **Property 43: Core functions do not mutate their inputs**
     - **Validates: Requirements 13.7, 13.3**
 
-  - [~] 9.19 Extend the public API test with the functions
+  - [x] 9.19 Extend the public API test with the functions
     - Append to `tests/core/public-api.test.ts`: `expectTypeOf` assertions for `parseManifest(text: unknown, format: ManifestFormat)`, `serializeManifest(dependencies, format: unknown)`, `classify(facts: unknown)` and `summarize(items)` as exported from `core/index.ts`.
     - _Requirements: 13.5_
 
-- [~] 10. Final checkpoint - Repo summary
+- [x] 10. Final checkpoint - Repo summary
   - Run `npx tsc --noEmit`, `npm run lint` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 ## Notes

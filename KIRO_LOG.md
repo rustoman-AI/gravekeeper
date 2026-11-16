@@ -55,3 +55,5 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 - Test-construction bug (7.18): fast-check probes values given to constantFrom, which tripped a throwing Proxy trap before classify saw it; fixed by generating factories.
 - No other property failures in 7.8, 7.9, 7.18-7.20 (default runs and 2000-3000 runs).
 - User decision on Property 24: ignore both 6.3 and 11.2 when comparing Reason sequences (criterion 10.24 and Property 24 amended). Classifier behaviour unchanged.
+- Group 9 (repo summary, tasks 9.1-9.19, checkpoint 10): no property counterexample against production code (Properties 32-46, up to 5000 runs). Test-code issues only: in 9.16 an import edit did not apply (CRLF file), so the first "counterexamples" were ReferenceErrors, not product failures.
+- Final checkpoint: 34 test files, 686 tests, 77 property tests (75 fc.assert), Property IDs 1-46 all covered; passes at 100 and 1000 runs.
