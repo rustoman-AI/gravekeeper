@@ -10,6 +10,7 @@
 ## Architecture
 - /core holds the scoring engine and manifest parsers.
 - Everything in /core is a pure function with zero I/O.
+- /core may depend only on pure parsing libraries with no I/O (currently smol-toml, pinned to an exact version).
 - All network access goes through adapters in /adapters.
 - Each adapter implements an interface defined in /core.
 - Tests use recorded fixtures, never live network calls.
