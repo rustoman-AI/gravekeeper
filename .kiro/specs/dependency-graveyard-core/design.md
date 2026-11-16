@@ -32,7 +32,7 @@ export * from './model';       // types, CONSTANTS, CORE_ALLOWED_PACKAGES, SCOPE
 
 - **TOML parsing.** Several JavaScript TOML libraries have had prototype-pollution advisories triggered by `__proto__` keys (for example [js-toml](https://github.com/sunnyadn/js-toml/security/advisories/GHSA-65fc-cr5f-v7r2) and [@std/toml](https://github.com/denoland/std/security/advisories/GHSA-crjp-8r9q-2j9r)). Requirement 4.9 makes this a first-class concern. The user accepted `smol-toml` in `/core` (criterion 3.15), so the design pins an exact version, wraps every call, and keeps a `__proto__` regression test that must pass on every version bump.
 - **JSON.parse and `__proto__`.** `JSON.parse` creates `__proto__` as an ordinary own data property, so reading with `Object.entries` and `Object.hasOwn` is safe. Writing the same key back with `obj[key] = value` on a plain object is not safe, so the serializer builds JSON text by hand from `JSON.stringify(string)` fragments.
-- **Key order and duplicates.** The parser output is sorted (Dependency_Order), so source key order never reaches the output. It still matters for one decision: which duplicate is the First_Occurrence. `JSON.parse` keeps the last value of a repeated key and hides the earlier ones (criterion 1.11). `smol-toml` returns plain objects, which lose the position of table headers and enumerate integer-like keys first. The Cargo parser therefore needs a small header and key scan (see "Cargo.toml parser").
+- **Key order and duplicates.** The parser output is sorted (Dependency_Order), so source key order never reaches the output. It still matters for one decision: which duplicate is the First_Occurrence. `JSON.parse` keeps the last value of a repeated key and hides the earlier ones (criterion 1.11). `smol-toml` returns plain objects and no source positions, so v1 records no line or column for Cargo entries. The Cargo parser decides the First_Occurrence with a documented rule that needs no positions (criterion 3.18, see "Cargo.toml parser").
 - Content of the advisories was only used to motivate the regression test; no code was copied.
 
 ## Architecture
@@ -63,7 +63,6 @@ core/
     requirements-txt.ts
     cargo-toml.ts
     toml-tree.ts            the ONLY module that imports smol-toml; parseToml() returns a Result, never throws
-    toml-positions.ts       header and key line scan of valid TOML, no third-party import (First_Occurrence rank)
     finish.ts               rank, dedup by Dependency_Key (first occurrence wins, one warning per discard), sort
   serializers/
     index.ts                serializeManifest()
@@ -100,7 +99,7 @@ core/
     merge.ts                Merged_Classification, Classification_Tie_Key, canonicalKey
     partition.ts            assessed vs unassessed, Unassessed_Reason
     order.ts                comparator of criterion 12.6 (total on distinct Package_Keys)
-    grade.ts                gradeFor(), worseGrade()
+    grade.ts                grade(score), worseGrade()
 ```
 
 Tests live outside `/core` (`/tests/core/...`, per `structure.md`), so they may use Node APIs. The purity checker and its CLI live in `/scripts`, also outside `/core`.
@@ -228,7 +227,7 @@ interface Candidate { readonly dependency: Dependency; readonly rank: readonly n
 
 **`finish` algorithm (criteria 4.6, 4.8).**
 
-1. Stable-sort a copy of `candidates` by `rank`, comparing the number arrays lexicographically. The rank is the First_Occurrence order defined per format: `[]` for `package.json` (it cannot produce duplicates), `[firstLine]` for `requirements.txt`, `[headerLine, keyLine, enumIndex]` for `Cargo.toml`.
+1. Stable-sort a copy of `candidates` by `rank`, comparing the number arrays lexicographically. The rank is the First_Occurrence order defined per format: `[]` for `package.json` (it cannot produce duplicates), `[firstLine]` for `requirements.txt`, `[tableOrdinal, enumIndex]` for `Cargo.toml` (criterion 3.18; no line or column is recorded).
 2. Walk the sorted list with a `Set<string>` of Dependency_Keys, `JSON.stringify([name, scope])`, where `name` is the normalized name (the ecosystem is fixed by the format, so it is not part of the key). Two spellings of one pypi package, such as `Foo_Bar` and `foo.bar`, therefore share a key. A string key built from a JSON array is injective, so names containing separators cannot collide. The first candidate for a key is kept, with its own `rawName`. Each later one is discarded, whatever its `rawName`, `sourceKind` or `versionSpec`, and adds exactly one warning (criterion 4.6): `<where>: duplicate dependency "<name>" in scope "<scope>"; the first occurrence was kept.` (`<name>` is the normalized name.) (`where` is `requirements.txt line 7` or `Cargo.toml table [target.'cfg(unix)'.dependencies]`, truncated to 80 characters).
 3. Sort the kept dependencies with `compareDependencies` (Dependency_Order: normalized `name` by code point, then index in `SCOPE_ORDER`; ties, which cannot remain after deduplication, by `ecosystem`, `versionSpec`, `sourceKind` and `rawName`). Source order never reaches the output.
 4. `warnings` = the format parser's own warnings in the order found, then the duplicate warnings in rank order. The result is a pure function of the text, so it is deterministic (4.7).
@@ -291,33 +290,31 @@ export type TomlTable = { readonly [key: string]: unknown };            // own p
 export function parseToml(text: string): Result<TomlTable, { message: string; line?: number }>;
 ```
 
-**Library: `smol-toml`, accepted in `/core` (criteria 3.15, 13.10, 13.11).** Pure TypeScript, zero dependencies, no I/O, no Node built-ins, small enough for the Vercel free tier, TOML 1.0 compliant, and its syntax errors carry a line, which criterion 3.9 wants. Constraints that the design enforces:
+**Library: `smol-toml`, accepted in `/core` (criteria 3.15, 13.10, 13.11).** Pure TypeScript, zero dependencies, no I/O, no Node built-ins, small enough for the Vercel free tier, TOML 1.0 compliant, and its syntax error may carry a `line` property, which criterion 3.9 uses only when it is present. Constraints that the design enforces:
 
-- **Exact pin.** `package.json` lists `smol-toml` under `dependencies` with a plain `<major>.<minor>.<patch>` string. The version is chosen at implementation time after the regression test below passes. The static check of criterion 13.10 fails the build on any `^`, `~`, range or tag.
+- **Exact pin.** `package.json` lists `smol-toml` under `dependencies` with a plain `<major>.<minor>.<patch>` string. The version is the latest stable release at install time (`npm install smol-toml --save-exact`, task 1.3), pinned exactly. The regression test below must pass on it. The static check of criterion 13.10 fails the build on any `^`, `~`, range or tag.
 - **One import site.** Only `parsers/toml-tree.ts` imports `smol-toml` (criterion 13.11). It exports `parseToml` and nothing else from the library.
 - **Never throws.** `parseToml` wraps the single library call in `try`/`catch (e: unknown)`. It handles `Error` instances, non-Error throws and `RangeError` from deep nesting. It returns `err({ message, line })`, where `line` is set only when the thrown value has a finite numeric `line` property, and `message` is the error name plus a truncated message. A unit test mocks `smol-toml` to throw an `Error`, a string and `undefined`, and asserts a `Result` each time.
 - **Pollution regression test.** A unit test feeds `[dependencies]\n__proto__ = "1"\nconstructor = "2"\nprototype = "3"` and asserts the three keys are own enumerable properties of the result, that `Object.prototype` and `({}).__proto__` are unchanged, and that `Object.entries` lists them. The test must pass again on every version bump. Reads never use `table[key]` on unchecked keys; they use `Object.hasOwn` and `Object.entries`.
 
-**Source positions for First_Occurrence (`parsers/toml-positions.ts`).** `smol-toml` returns plain objects, so the position of a table header is gone and integer-like keys enumerate first. Criterion 3.8 defines First_Occurrence by the position of the table header, so the parser adds a small line scan that runs only on text that `smol-toml` already accepted. It imports nothing.
+**First_Occurrence without positions (criterion 3.18).** `smol-toml` returns plain objects and no source positions, and v1 records no line or column for Cargo entries, so there is no position scan. Every candidate gets the rank `[tableOrdinal, enumIndex]`:
 
-1. *Scan.* One pass over the text with a character loop and a small state: inside a basic string (`"`, with `\` escapes), literal string (`'`), multi-line basic (`"""`) or multi-line literal (`'''`) string, comment (from `#` to end of line), and a nesting `depth` for `[` `]` `{` `}` inside values. Line numbers are 1-based, `\r\n` counts as one line break.
-2. *Headers.* A line whose first non-blank character is `[` at `depth 0` and outside strings is a table header (`[[...]]` array-of-tables headers are recorded too and never match a dependency path). The header path is lexed as dotted keys: bare keys `[A-Za-z0-9_-]+`, basic-quoted keys with the TOML escapes, literal-quoted keys. If lexing fails, the line is ignored.
-3. *Key lines.* A line at `depth 0` outside strings that is not a header and has a lexable dotted key before `=` records the path `currentHeaderPath ++ keyPath` with `headerLine = line of the current header (0 before any header)` and `keyLine = this line`.
-4. *Index.* A `Map<string, [headerLine, keyLine]>` keyed by `JSON.stringify(path)`. Every prefix of every recorded path is registered, and the entry with the smaller `[headerLine, keyLine]` wins (headers register `[line, line]`).
-5. *Lookup.* `positionOf(path)` returns the value for the longest recorded prefix of `path`, or `[0, 0]` when none exists.
+- `tableOrdinal` is 0 for the top-level table of the entry's scope (`[dependencies]`, `[dev-dependencies]` or `[build-dependencies]`) and `1 + k` for the `<cfg>` table whose key is at index `k` in `Object.entries(target)` (the key enumeration order returned by `smol-toml`).
+- `enumIndex` is the index of the entry in `Object.entries` of its own table.
+- Ranks are compared only between candidates with the same Dependency_Key, so they are compared within one scope. The three table kinds never compete.
 
-Rank of an entry at path `tablePath ++ [key]` is `[...positionOf(tablePath ++ [key]), enumIndex]`, where `enumIndex` is the index in the `Object.entries` order of its table. The documented rule is therefore: **First_Occurrence is decided by the line of the table header that introduces the entry (`[dependencies]`, `[target.'cfg(unix)'.dependencies]` or an entry header such as `[dependencies.foo]`), then by the line of the entry's key, then by enumeration order.** The enumeration order only separates entries that the scan cannot (entries of one inline table, which sit on one line). Its integer-like-keys-first quirk can therefore matter only for two renamed entries of the same inline table that declare the same `package` name. If the scan finds nothing (it is a best-effort scan), every rank is `[0, 0, enumIndex]`, which is still deterministic. Unit tests cover multi-line strings that contain header-looking lines, multi-line arrays whose rows start with `[`, comments, CRLF, a BOM, quoted keys that contain dots, `[dependencies.foo]` entry headers, dotted keys at the root and inline tables.
+The documented rule is therefore: **within a scope, the top-level table comes before every `[target.<cfg>.*]` table; target tables are taken in the key enumeration order of the parser; entries inside a table are taken in enumeration order.** The order of the table headers in the text is deliberately not used, so `[target.'cfg(unix)'.dependencies]` written above `[dependencies]` still loses to `[dependencies]`. The enumeration order is the parser's: integer-like keys of one table come first, then the other keys in insertion order. That quirk can only change the outcome for two entries of one table that map to the same `package` name. The result is deterministic because it depends only on the parsed tree. Unit tests pin one literal example per case and derive the expected `<cfg>` order from the keys the wrapper returns, so a change of enumeration order in a `smol-toml` version bump is caught.
 
 Interpretation (all reads on own properties):
 
-1. On `parseToml` error: `{ dependencies: [], warnings: ["Cargo.toml is not valid TOML: <message> (line N)"] }` where the line is included when the wrapper has one (3.9).
-2. Collect dependency tables: for each of `dependencies` (runtime), `dev-dependencies` (dev), `build-dependencies` (build) at top level, then for each `<cfg>` under `target`, the same three names (3.1, 3.3, 3.8). The scope depends only on the table name, never on `<cfg>`. A dependency table or a `target` table that is not a table gives one warning naming it and is skipped (3.14).
+1. On `parseToml` error: `{ dependencies: [], warnings: ["Cargo.toml is not valid TOML: <message>"] }`. The text ` (line N)` is appended only when the wrapper has a `line` taken from the `smol-toml` error. The parser performs no scan of its own to find a line, and omits it otherwise (3.9).
+2. Collect dependency tables: for each of `dependencies` (runtime), `dev-dependencies` (dev), `build-dependencies` (build) at top level, then for each `<cfg>` under `target`, the same three names (3.1, 3.3, 3.8). The scope depends only on the table name, never on `<cfg>`. The `target` table is read with `Object.entries`, so `<cfg>` tables are visited in the parser's key order (3.18). A dependency table or a `target` table that is not a table gives one warning naming it and is skipped (3.14).
 3. For each `[key, value]` of a table:
    - `value` is a string: `versionSpec = value`, `sourceKind = "registry"` (3.4).
    - `value` is a table: first check `version`, `package`, `git`, `path`. If any is present and is not a string, warn naming `key` and skip the entry (3.10). Then `name = package ?? key` (3.7) and `rawName = name`, with no normalization (3.17); if `git` is a string: `git` source with `versionSpec = git` (3.11, wins over `path` and `version`); else if `path` is a string: `path` source (3.12); else `versionSpec = version ?? "*"`, registry (3.5, 3.6).
    - any other value type (number, boolean, array, date): warn naming `key` and skip (3.14).
 4. Empty resulting `name` is skipped with a warning (4.10). A `name` or `versionSpec` that contains a lone surrogate is skipped with one warning naming `key` (3.16). The same condition makes a Cargo Dependency non-Representable (5.13), so parser output stays Representable.
-5. Each remaining entry becomes a candidate with the rank above and `where = "Cargo.toml table [<table path>]"`. Candidates for the same key, such as `serde` in `[dependencies]` and in `[target.'cfg(unix)'.dependencies]`, or two `<cfg>` tables of the same kind, are resolved by `finish`: the one whose table header comes first in the text is kept and each other one gets one duplicate warning. A crate in `[dependencies]` and `[dev-dependencies]` has two keys and yields two Dependencies (3.8).
+5. Each remaining entry becomes a candidate with the rank above and `where = "Cargo.toml table [<table path>]"`. Candidates for the same key, such as `serde` in `[dependencies]` and in `[target.'cfg(unix)'.dependencies]`, or two `<cfg>` tables of the same kind, are resolved by `finish`: the one with the smallest rank under criterion 3.18 is kept (the top-level table first, then the `target` tables in enumeration order) and each other one gets one duplicate warning that names the package, the scope and the table, without a line or column (3.19). A crate in `[dependencies]` and `[dev-dependencies]` has two keys and yields two Dependencies (3.8).
 
 ### `serializeManifest`
 
@@ -522,13 +519,13 @@ export function summarize(items: readonly AssessedDependency[]): RepoSummary {
 
 ```ts
 const ORDER = ['A', 'B', 'C', 'D', 'F'] as const;
-const gradeFor = (value: number, max: Readonly<Record<'A' | 'B' | 'C' | 'D', number>>): Grade =>
-  (['A', 'B', 'C', 'D'] as const).find((g) => max[g] >= value) ?? 'F';          // Requirement 12.15
+// Requirement 12.15: one threshold set, GRADE_A_MAX 19, GRADE_B_MAX 39, GRADE_C_MAX 59, GRADE_D_MAX 79, otherwise F
+export function grade(score: number): Grade;
 const worse = (a: Grade, b: Grade): Grade => (ORDER.indexOf(a) >= ORDER.indexOf(b) ? a : b);
-grade = worse(gradeFor(averageScore, GRADE_AVERAGE_MAX), gradeFor(maxScore, GRADE_WORST_MAX));
+repoGrade = worse(grade(averageScore), grade(maxScore));
 ```
 
-Because `maxScore` of 46 or more has Worst_Grade `D` or `F`, a single dangerous package cannot be hidden by a low average (12.16). The input array is copied before sorting so the caller's array is never mutated (13.3).
+Because `maxScore` of 60 or more has Worst_Grade `D` or `F`, a single dangerous package cannot be hidden by a low average (12.16). The input array is copied before sorting so the caller's array is never mutated (13.3).
 
 ## Data Models
 
@@ -684,8 +681,10 @@ export const CONSTANTS = {
   NO_MAINTAINER_POINTS: 15,
   SINGLE_MAINTAINER_POINTS: 5,
   MAINTAINER_POINTS_CAP: 15,
-  GRADE_AVERAGE_MAX: { A: 10, B: 20, C: 30, D: 45 },
-  GRADE_WORST_MAX: { A: 15, B: 30, C: 45, D: 60 },
+  GRADE_A_MAX: 19,
+  GRADE_B_MAX: 39,
+  GRADE_C_MAX: 59,
+  GRADE_D_MAX: 79,
   MAX_MANIFEST_LENGTH: 1_000_000,
   WORST_LIST_SIZE: 10,
   MAX_SERIALIZED_DEPENDENCIES: 10_000,
@@ -700,7 +699,7 @@ export const {
 export const SEVERITIES = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] as const satisfies readonly Severity[];
 ```
 
-`ConstantsShape` is an internal interface (numbers for point fields, `Record<Severity, number>`, `Severity` for `DEFAULT_SEVERITY`, `Record<'A'|'B'|'C'|'D', number>` for the grade tables) so `satisfies` catches typos and missing keys at compile time while `as const` keeps literal types. The consistency rules of criterion 10.21 are asserted in `tests/core/constants.test.ts`.
+`ConstantsShape` is an internal interface (numbers for point fields, `Record<Severity, number>`, `Severity` for `DEFAULT_SEVERITY`, plain numbers for the four `GRADE_*_MAX` thresholds) so `satisfies` catches typos and missing keys at compile time while `as const` keeps literal types. The consistency rules of criterion 10.21 are asserted in `tests/core/constants.test.ts`.
 
 ### Internal representations
 
@@ -738,7 +737,7 @@ Reflection (redundancy removed):
 - Criterion 10.22 and the clamp of 10.1 are one property (Property 21).
 - Property 20 (range) is kept even though Property 21 implies it for the raw sum, because it checks the published `score` field type and range directly.
 - Criteria 10.12 (known severities only) and 10.24 (unknown severity equals `MEDIUM`) stay separate: one is a monotonicity relation, the other an equivalence between two inputs.
-- The dependency identity rule (same package in other scopes is a separate entry, a repeat in the same `(name, scope)` collapses) is spread over criteria 1.8, 3.8, 4.6 and 5.2. Property 7 states it once for parser and serializer, and Property 4 covers the first-occurrence and warning part, so neither repeats the other.
+- The dependency identity rule (same package in other scopes is a separate entry, a repeat in the same `(name, scope)` collapses) is spread over criteria 1.8, 3.8, 3.18, 4.6 and 5.2. Property 7 states it once for parser and serializer, and Property 4 covers the first-occurrence and warning part, so neither repeats the other.
 - Criterion 2.14 has two claims: idempotence of `normalize` over all strings, and `normalize(rawName) === name` over all parsed pypi Dependencies. Both go into one property (Property 44), which is kept separate from Property 3 because it quantifies over arbitrary strings for `normalize` and is the only property on the pypi `rawName`/`name` relation.
 - Round-trip comparisons (Properties 9 and 10) use the Dependency_Set projection, which drops `rawName`. Property 11 compares text, where `rawName` matters through the Written_Name, and is stated separately.
 - The properties are written with an independent oracle in the test code (a re-implementation from the glossary text), not by calling the module's own predicates.
@@ -763,9 +762,9 @@ Reflection (redundancy removed):
 
 ### Property 4: One Dependency per key, first occurrence wins, one warning per discard
 
-*For any* string input and *for any* Manifest_Format, no two returned Dependencies share the same Dependency_Key `(name, scope)`. *For any* manifest in `requirements.txt` or `Cargo.toml` format rendered from a model whose entries share Dependency_Keys but differ in `versionSpec` or `sourceKind` (spellings of one pypi package that differ only by case or by `-`, `_`, `.` runs, such as `Foo_Bar` and `foo.bar`, which share one Dependency_Key; `package` renames, `[dependencies]` against `[target.<cfg>.dependencies]`, two `<cfg>` tables of one kind, `[dependencies.foo]` entry headers, interleaved headers), the returned Dependency for each key equals the First_Occurrence of the model, including its `rawName` (line order for `requirements.txt`; table header position, then entry position for `Cargo.toml`), and the warnings contain exactly one duplicate warning for each discarded occurrence, each naming the package (normalized name) and its scope. *For any* `package.json` text in which a key is repeated inside one section, the result holds the last value for that key and no duplicate warning is added (the exception of criterion 1.11).
+*For any* string input and *for any* Manifest_Format, no two returned Dependencies share the same Dependency_Key `(name, scope)`. *For any* manifest in `requirements.txt` or `Cargo.toml` format rendered from a model whose entries share Dependency_Keys but differ in `versionSpec` or `sourceKind` (spellings of one pypi package that differ only by case or by `-`, `_`, `.` runs, such as `Foo_Bar` and `foo.bar`, which share one Dependency_Key; `package` renames, `[dependencies]` against `[target.<cfg>.dependencies]`, two `<cfg>` tables of one kind, `[dependencies.foo]` entry headers, interleaved headers), the returned Dependency for each key equals the First_Occurrence of the model, including its `rawName` (line order for `requirements.txt`; the position-free rule of criterion 3.18 for `Cargo.toml`: the top-level table of the scope first, then `[target.<cfg>.*]` tables in key enumeration order, then entries in enumeration order within a table), and the warnings contain exactly one duplicate warning for each discarded occurrence, each naming the package (normalized name) and its scope. *For any* `package.json` text in which a key is repeated inside one section, the result holds the last value for that key and no duplicate warning is added (the exception of criterion 1.11).
 
-**Validates: Requirements 4.6, 1.11, 3.8**
+**Validates: Requirements 4.6, 1.11, 3.8, 3.18, 3.19**
 
 ### Property 5: Parser determinism
 
@@ -783,7 +782,7 @@ Reflection (redundancy removed):
 
 *For any* package name and *for any* non-empty set `S` of scopes supported by the format, a manifest that declares the name once in each scope of `S` (with different `versionSpec` and `sourceKind` values) parses to exactly one Dependency per scope of `S` with that name, with no warning. *For any* Dependency list that contains the same `(name, scope)` several times, including repeats that differ only in `rawName`, `serializeManifest` writes exactly one entry for that key, and writes separate entries for the same name in different scopes.
 
-**Validates: Requirements 1.8, 3.8, 5.2, 4.6**
+**Validates: Requirements 1.8, 3.8, 3.18, 5.2, 4.6**
 
 ### Property 8: Prototype safety (extra)
 
@@ -967,7 +966,7 @@ Reflection (redundancy removed):
 
 ### Property 38: Grade is never better than its two components
 
-*For any* list of Assessed_Dependencies with `assessed > 0`, `grade` is never better than the Worst_Grade of `maxScore` and never better than the Average_Grade of `averageScore`, and equals the worse of the two. When `maxScore > 45`, `grade` is `D` or `F`.
+*For any* list of Assessed_Dependencies with `assessed > 0`, `grade` is never better than the Worst_Grade of `maxScore` and never better than the Average_Grade of `averageScore`, and equals the worse of `grade(averageScore)` and `grade(maxScore)`. Because one threshold set serves both and `maxScore >= averageScore`, that value also equals `grade(maxScore)`, and the test asserts both forms. `grade(score)` is monotonic (a larger score never gives a better Grade) and equals `A` for 0 to 19, `B` for 20 to 39, `C` for 40 to 59, `D` for 60 to 79 and `F` for 80 to 100. When `maxScore > GRADE_C_MAX` (59), `grade` is `D` or `F`.
 
 **Validates: Requirements 12.18, 12.15, 12.16**
 
@@ -1051,7 +1050,7 @@ Reflection (redundancy removed):
 | 12.20 | [PBT] | Property 40 |
 | 12.21 | [PBT] | Property 41 |
 | 13.7 | [PBT] | Property 43 |
-| 1.8, 1.11, 3.8 | untagged | Properties 7 and 4 plus unit tests |
+| 1.8, 1.11, 3.8, 3.18, 3.19 | untagged | Properties 7 and 4 plus unit tests |
 | 1.12, 3.17 | untagged | Property 3 plus unit tests |
 | 2.2, 2.10, 2.11 | untagged | Property 44 plus unit tests (`Django`, `PyYAML`, `SQLAlchemy`, `Foo_Bar`) |
 | 2.13, 3.16 | untagged | unit tests (one warning each, with line number or key), covered indirectly by Property 10 |
@@ -1127,7 +1126,6 @@ The fallback never includes stack traces or input text. A stack overflow or out-
 | Serializer: pypi `rawName` whose normalization differs from `name`, or an absent `rawName` | the Written_Name is `name`; the Dependency is Representable only if `name` is a normalized Name_Token | 5.11, 5.13 |
 | Same `(name, scope)` twice | first occurrence kept, one warning per discarded one naming package and scope | 4.6 |
 | Repeated key in a `package.json` section | last value (JSON.parse), no warning | 1.11 |
-| TOML position scan finds nothing | ranks fall back to `[0, 0, enumIndex]`, still deterministic | 3.8 |
 | `__proto__`, `constructor`, `prototype` names | ordinary Dependencies | 4.9 |
 | Serializer format unsupported | `err({ kind: 'unsupported-format' })`, no text | 5.7 |
 | Serializer input not an array, or over `MAX_SERIALIZED_DEPENDENCIES` entries | `err` with `invalid-input` or `too-many-dependencies`, no text | 5.19 |
@@ -1157,7 +1155,6 @@ tests/
     parsers/parse-manifest.test.ts          parsers/parse-manifest.property.test.ts      (Properties 1-8, 44)
     formats/normalize-pypi-name.test.ts     (examples: Django, PyYAML, SQLAlchemy, Foo_Bar, foo.bar, separator runs, non-ASCII untouched, Written_Name)
     parsers/toml-tree.test.ts               (mocked smol-toml throws, __proto__ regression, never throws)
-    parsers/toml-positions.test.ts          (header and key scan, 3.8 First_Occurrence)
     serializers/serialize-manifest.test.ts  serializers/serialize-manifest.property.test.ts   (Properties 9-12)
     facts/normalize.test.ts
     scoring/scoring.test.ts                 scoring/scoring.property.test.ts
@@ -1240,8 +1237,8 @@ Per-ecosystem spec generators produce only values consistent with `sourceKind`: 
 
 **Model-based manifests (duplicates and shuffles).** Used by Properties 4, 6, 7 and 12. A model is a list of entries `{ name, scope, versionSpec, sourceKind, table }` in explicit text order, and per-format `render(model)` functions write the text. The oracle reads the model, not the text.
 
-- *Duplicates.* A pool of 2 to 4 names is drawn per manifest so that collisions are likely, with colliding entries that differ in `versionSpec` and `sourceKind`. For `requirements.txt` the spellings of one name vary (`Foo_Bar`, `foo-bar`, `FOO.BAR`, `foo__bar`) and repeats are separated by comments, blank lines, option lines and continuation lines. For `Cargo.toml` the same crate appears in `[dependencies]`, in several `[target.'<cfg>'.dependencies]` tables with distinct cfg strings (including cfgs that contain `.` and quotes), in `[dev-dependencies]` (a different key), as `[dependencies.foo]` entry headers, as `package = "x"` renames under different keys, and with table headers interleaved (`[dependencies.a]`, `[target.x.dependencies]`, `[dependencies.b]`). Traps are inserted: multi-line strings and arrays that contain header-looking lines, comments with `[dependencies]`, CRLF endings and a BOM. For `package.json` a key is repeated inside one section with different values (oracle: last value, zero warnings) and the same name is placed in several sections (separate Dependencies).
-- *Oracle.* `firstOccurrence(model)` keeps, per `(name, scope)` after pypi normalization, the entry with the smallest `(table header position, entry position)` in the model, and returns the expected Dependencies (with the `rawName` of the kept first spelling) and the expected count of discard warnings.
+- *Duplicates.* A pool of 2 to 4 names is drawn per manifest so that collisions are likely, with colliding entries that differ in `versionSpec` and `sourceKind`. For `requirements.txt` the spellings of one name vary (`Foo_Bar`, `foo-bar`, `FOO.BAR`, `foo__bar`) and repeats are separated by comments, blank lines, option lines and continuation lines. For `Cargo.toml` the same crate appears in `[dependencies]`, in several `[target.'<cfg>'.dependencies]` tables with distinct cfg strings (including cfgs that contain `.` and quotes), in `[dev-dependencies]` (a different key), as `[dependencies.foo]` entry headers, as `package = "x"` renames under different keys, and with table headers interleaved (`[dependencies.a]`, `[target.x.dependencies]`, `[dependencies.b]`), which must not change the outcome because header order is not used (3.18). Traps are inserted: multi-line strings and arrays that contain header-looking lines, comments with `[dependencies]`, CRLF endings and a BOM. For `package.json` a key is repeated inside one section with different values (oracle: last value, zero warnings) and the same name is placed in several sections (separate Dependencies).
+- *Oracle.* `firstOccurrence(model)` keeps, per `(name, scope)` after pypi normalization, the entry with the smallest `(tableOrdinal, enumIndex)` of criterion 3.18 computed from the model (top-level table first, then `<cfg>` tables in the order of the target-table keys, then entries in key order, integer-like keys first and the others in insertion order, written independently of the implementation), and returns the expected Dependencies (with the `rawName` of the kept first spelling) and the expected count of discard warnings.
 - *Shuffles.* For no-duplicate models, `fc.shuffledSubarray(entries, { minLength: n, maxLength: n })` permutes the entries (within tables, and the order of tables), and the test compares the Parse_Results for the original and shuffled renderings.
 - *Sorted-output checks.* The name pool mixes integer-like names (`"1"`, `"10"`, `"2"`), upper and lower case, `_` against `-`, an astral character against a high BMP character (`"\u{1F600}"` against `"\uFF5E"`), and the proto names. The oracle sorts with an independent code point comparator (`Array.from(s)` and `codePointAt`), never with `localeCompare` or `<`. Property 6 also feeds noise and checks sortedness with that comparator.
 - *Serializer lists.* `arbDuplicatedList` repeats `(name, scope)` pairs with different specs and appends the same name in other scopes, then shuffles the list for Property 12 (permutation) and Property 7 (identity).
@@ -1310,11 +1307,11 @@ The oracle (`oracles/facts-oracle.ts`) re-implements Valid_Fact, the three flags
 Unit tests cover what properties do not pin down well:
 
 - **Constants** (10.21): the four consistency rules and the exact table values.
-- **Parsers**: one example per criterion 1.1 to 1.10, 2.1 to 2.12, 3.1 to 3.15, 4.1, 4.4, 4.6, 4.8, 4.9, 4.10, including the required boundary examples (empty string value, `null` section, `__proto__` entry, `a/b#c` shorthand versus `@scope/pkg`, CRLF, trailing backslash on the last line, `foo @ https://x` rejected, bare `./pkg` without `#egg` rejected, `foo 1.0` rejected, `foo ===1` accepted). Name examples (2.2, 2.10, 2.11, 1.12, 3.17): `Django` gives `name` `django` and `rawName` `Django`; `PyYAML`, `SQLAlchemy`, `Foo_Bar` (`foo-bar`), `foo.bar`; a git reference `Foo_Bar @ git+https://h/r` and a bare `git+https://h/r#egg=Foo_Bar` keep the written `rawName`; a name with a non-ASCII letter is rejected with one warning; an npm `Foo` and a cargo `Foo_Bar` keep `name` equal to `rawName`, un-normalized; backslash spec (2.13) and lone surrogate (3.16) each give one warning. Duplicate examples: `Foo_Bar` on line 3 and `foo.bar` on line 9 give the line-3 entry (`rawName` `Foo_Bar`) and one warning; a `package.json` key repeated in one section (last value, no warning, 1.11), the same package in `dependencies` and `devDependencies` (two entries, 1.8), `Foo_Bar` and `foo-bar` in `requirements.txt` (first line kept, one warning), `serde` in `[dependencies]`, `[target.'cfg(unix)'.dependencies]` and `[target.'cfg(windows)'.dependencies]` with the target tables written first (the earliest header wins, two warnings), `[dependencies]` against `[dev-dependencies]` (two entries). Output order: integer-like names sorted by code point, `"\uFF5E"` after `"\u{1F600}"`.
-- **TOML wrapper and positions**: mocked `smol-toml` throwing an `Error`, a string and `undefined` returns a `Result` (3.15); `__proto__` regression; the position scan on multi-line strings and arrays that contain header-looking lines, comments, CRLF, BOM, quoted dotted keys, `[dependencies.foo]` headers, dotted keys at the root and inline tables.
+- **Parsers**: one example per criterion 1.1 to 1.10, 2.1 to 2.12, 3.1 to 3.19, 4.1, 4.4, 4.6, 4.8, 4.9, 4.10, including the required boundary examples (empty string value, `null` section, `__proto__` entry, `a/b#c` shorthand versus `@scope/pkg`, CRLF, trailing backslash on the last line, `foo @ https://x` rejected, bare `./pkg` without `#egg` rejected, `foo 1.0` rejected, `foo ===1` accepted). Name examples (2.2, 2.10, 2.11, 1.12, 3.17): `Django` gives `name` `django` and `rawName` `Django`; `PyYAML`, `SQLAlchemy`, `Foo_Bar` (`foo-bar`), `foo.bar`; a git reference `Foo_Bar @ git+https://h/r` and a bare `git+https://h/r#egg=Foo_Bar` keep the written `rawName`; a name with a non-ASCII letter is rejected with one warning; an npm `Foo` and a cargo `Foo_Bar` keep `name` equal to `rawName`, un-normalized; backslash spec (2.13) and lone surrogate (3.16) each give one warning. Duplicate examples: `Foo_Bar` on line 3 and `foo.bar` on line 9 give the line-3 entry (`rawName` `Foo_Bar`) and one warning; a `package.json` key repeated in one section (last value, no warning, 1.11), the same package in `dependencies` and `devDependencies` (two entries, 1.8), `Foo_Bar` and `foo-bar` in `requirements.txt` (first line kept, one warning), `serde` in `[dependencies]`, `[target.'cfg(unix)'.dependencies]` and `[target.'cfg(windows)'.dependencies]` with the target tables written first (the top-level `[dependencies]` entry wins whatever the header order, then the `target` tables in enumeration order; two warnings that name the table and no line), `[dependencies]` against `[dev-dependencies]` (two entries). Output order: integer-like names sorted by code point, `"\uFF5E"` after `"\u{1F600}"`.
+- **TOML wrapper**: mocked `smol-toml` throwing an `Error`, a string and `undefined` returns a `Result` (3.15); `__proto__` regression.
 - **Serializer**: exact expected output text per format for a small list (5.4 to 5.6, 5.14 to 5.18), Written_Name cases (5.11, 5.13, 5.17: `rawName` `Django` with `name` `django` is written as `Django`; `rawName` `Flask2` with `name` `django` and an absent `rawName` are written as `django`; a non-normalized `name` without matching `rawName` is omitted; `package.json` and `Cargo.toml` ignore `rawName`), filter-then-sort-then-dedupe order (5.2: a non-Representable earlier duplicate does not hide a Representable later one; `Foo_Bar` and `foo.bar` with equal other fields give one entry, the one whose `rawName` sorts first by code point, here `Foo_Bar`, and an absent `rawName` sorts before both), unsupported format error (5.7), empty list output parses to empty (5.3), omission cases (5.2, including a repeated `(name, scope)` and the same name in two scopes), over-`MAX_SERIALIZED_DEPENDENCIES` error (5.19), escaping examples for quotes, backslashes, control characters and unicode (5.11).
 - **Classifier**: one example per rule 6.3, 7.2 to 7.5, 8.1 to 8.9, 9.1 to 9.4, 10.2 to 10.8, 10.16, 11.2, including every boundary in the table below, and a message-length test for the longest messages.
-- **Summarizer**: examples for 12.1 to 12.7, 12.13 to 12.16 (a single package of score 46 among many zeros gives grade `D` or `F`), empty list, all-unassessed list, tie-break examples, half-up rounding (mean 2.5 rounds to 3). Grouping examples: one package in `runtime` and `dev` with different scores is one Unique_Package with `scopes` `['runtime', 'dev']` and the higher score; the same name as `registry` and as `git` is two packages; a package with one null and one non-null classification is assessed; a `git` package with a classification is `non-registry-source`. Merge examples: equal score, status and flags with different `ruleId` lists; equal on all of those with different Reason text (canonical key decides).
+- **Summarizer**: examples for 12.1 to 12.7, 12.13 to 12.16 (a single package of score 60 among many zeros gives grade `D` or `F`), empty list, all-unassessed list, tie-break examples, half-up rounding (mean 2.5 rounds to 3). Grouping examples: one package in `runtime` and `dev` with different scores is one Unique_Package with `scopes` `['runtime', 'dev']` and the higher score; the same name as `registry` and as `git` is two packages; a package with one null and one non-null classification is assessed; a `git` package with a classification is `non-registry-source`. Merge examples: equal score, status and flags with different `ruleId` lists; equal on all of those with different Reason text (canonical key decides).
 - **Purity** (13.1, 13.2, 13.8, 13.10, 13.11): checker runs on real `/core` and the real `package.json` (zero violations) and on inline violating snippets, one per banned construct, asserting rule name and line and column. Allow-list examples: `import 'fs'`, `'node:fs'`, `'path'`, a bare `lodash`, `'smol-toml/x'`, the `@/core/...` alias and a relative path that leaves `/core` are violations; `import { parse } from 'smol-toml'` is a violation anywhere except `core/parsers/toml-tree.ts`; a relative import inside `/core` is clean. Pin examples: `1.2.3` and `1.2.3-beta.1` pass; `^1.2.3`, `~1.2.3`, `1.2`, `1.x`, `*`, `>=1.0.0`, `latest`, `npm:smol-toml@1.2.3` and a missing entry fail. CLI exit-code test spawns `tsx` on a temporary directory.
 - **Public API** (13.5): `expectTypeOf` assertions that `core/index.ts` exports the required types (`Dependency`, `SourceKind`, `HealthFacts`, `Classification`, `Reason`, `ParseResult`, `AssessedDependency`, `UniquePackage`, `RankedPackage`, `UnassessedItem`, `RepoSummary`).
 - **Compile** (13.4): `tsc --noEmit` in CI (strict).
@@ -1329,11 +1326,11 @@ Unit tests cover what properties do not pin down well:
 | `maxSeverity` | each Severity, null with count at least 1 (assumed `MEDIUM`, Reason says "assumed"), invalid string, ignored when count is 0 |
 | `maintainerCount` | 0, 1, 2, null, `-1`, `1.5` |
 | Component caps | archived plus deprecated plus release 8.3 (subtotal 75 capped to 30); CRITICAL with 7 vulnerabilities (55); worst case total 100 |
-| Grades | `averageScore` 10, 11, 20, 21, 30, 31, 45, 46 and `maxScore` 15, 16, 30, 31, 45, 46, 60, 61, and the combination rule |
+| Grades | scores 0, 19, 20, 39, 40, 59, 60, 79, 80, 100 through `grade(score)`, `averageScore` and `maxScore` on both sides of each threshold, and the combination rule |
 | Summary | 0, 1, 10, 11 assessed (worst list truncation), ALIVE with score 0 excluded, all entries tied |
 | Manifest size | length `MAX_MANIFEST_LENGTH` (parsed) and `MAX_MANIFEST_LENGTH + 1` (rejected) |
 | Serializer size | `MAX_SERIALIZED_DEPENDENCIES` entries (written) and `MAX_SERIALIZED_DEPENDENCIES + 1` (error, no text) |
-| Duplicates | 1 occurrence, 2, many; same `(name, scope)` with different `sourceKind`; same name in 1, 2 and all supported scopes; header-order inversions in `Cargo.toml` |
+| Duplicates | 1 occurrence, 2, many; same `(name, scope)` with different `sourceKind`; same name in 1, 2 and all supported scopes; table-order inversions in `Cargo.toml` (target tables before `[dependencies]`) |
 | Sorted output | integer-like names, upper against lower case, `_` against `-`, astral against high BMP code points, empty-adjacent names such as `a` and `a-` |
 | Severity | unknown severity with count 0, 1 and 7 against the same facts with `MEDIUM` |
 | Static check | allow-listed import in the wrapper file (clean), in any other file (violation), exact pin against each range form |
@@ -1348,7 +1345,7 @@ Unit tests cover what properties do not pin down well:
 
 These were open in earlier drafts and are now settled by the approved `requirements.md`. Rules that earlier drafts left to the design now name the criterion that states them.
 
-1. **Duplicates.** Identity is `(name, scope)` (Dependency_Key) with `name` the normalized name. The same package in different scopes is a separate entry. A repeat within one `(name, scope)` keeps the First_Occurrence in text order and adds one warning naming the package and scope (4.6). Two spellings of one pypi package (`Foo_Bar`, `foo.bar`) are such a repeat, and the kept Dependency keeps its own `rawName` (4.6). The Summarizer groups by `(ecosystem, name, sourceKind)` into Unique_Packages that carry the set of scopes (12.1). For `Cargo.toml`, First_Occurrence by table header position uses the header and key scan in `parsers/toml-positions.ts` (3.8). For `package.json`, `JSON.parse` keeps the last value of a repeated key and no warning is added (1.11).
+1. **Duplicates.** Identity is `(name, scope)` (Dependency_Key) with `name` the normalized name. The same package in different scopes is a separate entry. A repeat within one `(name, scope)` keeps the First_Occurrence in text order and adds one warning naming the package and scope (4.6). Two spellings of one pypi package (`Foo_Bar`, `foo.bar`) are such a repeat, and the kept Dependency keeps its own `rawName` (4.6). The Summarizer groups by `(ecosystem, name, sourceKind)` into Unique_Packages that carry the set of scopes (12.1). For `Cargo.toml`, First_Occurrence uses the position-free rule of criterion 3.18 (decision 17). For `package.json`, `JSON.parse` keeps the last value of a repeated key and no warning is added (1.11).
 2. **Ordering.** The parser does not preserve source order. Output is always in Dependency_Order (normalized name by code point, then `SCOPE_ORDER`; the serializer breaks remaining ties on `rawName`, absent first), and round trips compare sets (4.8, 5.8, 5.9, 5.12).
 3. **Names and `rawName`.** `name` is the identity and `rawName` is the spelling as written. pypi `name` is the PEP503_Normalization of `rawName`, and non-normalized names are accepted (2.2). npm and cargo keep `rawName` equal to `name` (1.12, 3.17). The round trip compares the projection without `rawName` (5.8, 5.9). The idempotence and consistency of normalization is Property 44 (2.14).
 4. **Written_Name.** `requirements.txt` output uses `rawName` when its normalization equals `name`, otherwise `name` (5.11, 5.13, 5.17). `package.json` and `Cargo.toml` ignore `rawName` (5.11). This replaces the former rule that non-normalized names are not Representable.
@@ -1357,20 +1354,21 @@ These were open in earlier drafts and are now settled by the approved `requireme
 7. **Parser skips that keep output Representable.** A `requirements.txt` spec of any `sourceKind` (registry, git or path) with a backslash after continuation joining is skipped with one warning including the line (2.13). A Cargo entry with a lone surrogate in `name` or `versionSpec` is skipped with one warning naming the key (3.16).
 8. **Merged_Classification.** The total order is score descending, Status precedence, Classification_Tie_Key, then Classification_Canonical_Key (12.22), so the summary is independent of input order (12.10).
 9. **Severity.** Monotonicity (10.12) applies only to known severities. An unknown severity scores exactly like `MEDIUM` (10.24, Property 24).
-10. **TOML library.** `smol-toml` is accepted in `/core` with an exact pinned version. Every call goes through one wrapper that returns a `Result` and never throws (3.15). The static check enforces the allow-list, the exact pin and the single import site (13.10, 13.11).
+10. **TOML library.** `smol-toml` is accepted in `/core` with an exact pinned version. Every call goes through one wrapper that returns a `Result` and never throws (3.15). The static check enforces the allow-list, the exact pin and the single import site (13.10, 13.11). The version itself is decision 15.
 11. **`requirements.txt` grammar.** Criterion 2.8 lists the accepted comparison operators, so `foo 1.0` is rejected by requirement.
 12. **Where `unassessedReason` lives.** On `Unassessed_Item` only. `Assessed_Dependency` stays `{ dependency, classification }`.
 13. **Serializer size limit.** More than `MAX_SERIALIZED_DEPENDENCIES` returns an error and no text (5.19).
 14. **Backslash in git and path specs.** Criterion 5.13 makes any `requirements.txt` `versionSpec` with a backslash non-Representable. Criterion 2.13 now skips every requirement (registry, git or path) whose `versionSpec` still contains a backslash after joining, with one warning that includes the line number. `foo @ git+https://h/a\b` is therefore skipped, and `parse(serialize(parse(x)))` keeps 5.9 (Property 10).
+15. **`smol-toml` version.** The version is the latest stable release at install time, pinned exactly with `--save-exact` (no `^` or `~`) (3.15, 13.10, task 1.3). The `__proto__` regression test must pass on it, and the static check keeps the pin exact.
+16. **Grade thresholds.** One named set on the risk score replaces the two former tables: `GRADE_A_MAX` 19, `GRADE_B_MAX` 39, `GRADE_C_MAX` 59, `GRADE_D_MAX` 79, and `F` for 80 to 100, applied by `grade(score)` (12.15). The repo grade stays the worse of `grade(averageScore)` and `grade(maxScore)`. A lone package with score 60 or more gives `D` or `F` (12.16).
+17. **No source positions for Cargo.** v1 records no line or column for `Cargo.toml` entries, so `parsers/toml-positions.ts` is removed. First_Occurrence for Cargo duplicates is position-free: the top-level table of a scope first, then `[target.<cfg>.*]` tables in the key enumeration order of `smol-toml`, then entries in enumeration order within a table (3.18). Cargo warnings name the package and the table (3.19). For invalid TOML (3.9) the line number is kept only when the `smol-toml` error provides it; the parser does no scan of its own.
 
 ## Open questions / risks
 
 These are decisions the design made where the requirements are silent.
 
-1. **Cargo First_Occurrence is best effort for inline tables.** The scan separates entries by header line and key line. Entries inside one inline table share a line and fall back to enumeration order, whose integer-like-keys-first quirk matters only for two renamed entries of one inline table with the same `package` name. The scan cannot fail the parse: when it finds nothing, ranks fall back to `[0, 0, enumIndex]`.
-2. **Pinned `smol-toml` version.** The version number is chosen at implementation time after the `__proto__` regression test passes, and the build check keeps it exact. Bundle size is measured then.
-3. **Grade thresholds.** `GRADE_AVERAGE_MAX` (10, 20, 30, 45) and `GRADE_WORST_MAX` (15, 30, 45, 60) come from the requirements and were not re-derived. A repo of all-ALIVE scores 0 gets `A`; a lone `HIGH` vulnerability (35 points) on one package gives `C` even in a 100-package repo; a lone archived package (30) gives `B`. Confirm these feel right before UI work builds on them.
-5. **Other behaviors the design chose.** A `package.json` or Cargo entry with an empty name is skipped with a warning (4.10). A Cargo dependency value that is neither string nor table, and a dependency section or `target` that is not a table, produce one warning each (3.14). The warning list is not capped, so a hostile 1,000,000-character file of bad lines yields hundreds of thousands of warnings; a cap would conflict with "exactly one warning" per bad line (2.8). Duplicate warnings are appended after the parser's own warnings, in First_Occurrence order.
-6. **Property tests and `MAX_MANIFEST_LENGTH`.** Criterion 4.2 quantifies over strings up to 1,000,000 characters. Random generation up to that size is too slow for 100 or more runs, so properties use sizes up to about 20,000 characters and the maximum-size boundary is covered by examples and a timing test.
-7. **Purity checker dependency.** The checker uses the TypeScript compiler API (already present through Next.js), including `ts.parseJsonText` for the `package.json` pin check, and lives in `/scripts`, outside `/core`.
-8. **Duplicate warning wording for spellings.** The duplicate warning names the normalized `name`, not the discarded spelling, so `Foo_Bar` against `foo.bar` reads `"foo-bar"`. Criterion 4.6 only requires that the package and scope be named. Say so if the discarded spelling should be quoted too.
+1. **Other behaviors the design chose.** A `package.json` or Cargo entry with an empty name is skipped with a warning (4.10). A Cargo dependency value that is neither string nor table, and a dependency section or `target` that is not a table, produce one warning each (3.14). The warning list is not capped, so a hostile 1,000,000-character file of bad lines yields hundreds of thousands of warnings; a cap would conflict with "exactly one warning" per bad line (2.8). Duplicate warnings are appended after the parser's own warnings, in First_Occurrence order.
+2. **Property tests and `MAX_MANIFEST_LENGTH`.** Criterion 4.2 quantifies over strings up to 1,000,000 characters. Random generation up to that size is too slow for 100 or more runs, so properties use sizes up to about 20,000 characters and the maximum-size boundary is covered by examples and a timing test.
+3. **Purity checker dependency.** The checker uses the TypeScript compiler API (already present through Next.js), including `ts.parseJsonText` for the `package.json` pin check, and lives in `/scripts`, outside `/core`.
+4. **Duplicate warning wording for spellings.** The duplicate warning names the normalized `name`, not the discarded spelling, so `Foo_Bar` against `foo.bar` reads `"foo-bar"`. Criterion 4.6 only requires that the package and scope be named. Say so if the discarded spelling should be quoted too.
+5. **Separate thresholds for the average score.** With one threshold set, the worse-of rule of criterion 12.15 always equals `grade(maxScore)`, because `maxScore >= averageScore` and `grade` never improves as the score grows. The `averageScore` therefore never changes the repo grade. Should the average have its own thresholds so that it can lower the grade? The rule itself is unchanged until you decide.
