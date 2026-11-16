@@ -1,0 +1,9 @@
+# Sample requirements for a small web service
+Django>=4.2,<5
+PyYAML==6.0.1
+SQLAlchemy~=2.0
+requests
+Flask_Cors>=4
+-r other-requirements.txt
+my-tool @ git+https://github.com/example/my-tool.git@v1.2
+local-pkg @ ./vendor/local-pkg

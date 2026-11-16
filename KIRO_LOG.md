@@ -26,3 +26,16 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 - Asked: stop rejecting non-normalized Python names (PEP 503 normalize + rawName), add idempotence property, move all design defaults into numbered criteria; update all three docs, no execution.
 - Did well: (fill in after review). Design update caught a new round-trip conflict (backslash in git/path specs vs 5.13) before any code existed.
 - Erred: (fill in after review). Note: Kiro's earlier D1 rule rejected Django/PyYAML, a real-world miss the user had to catch. Also: task execution could not start in session 4 because task status must be set via the task UI.
+
+## Session 6
+- Asked: record open-question resolutions (smol-toml latest pinned, grade thresholds A-F, position-free Cargo first occurrence), then execute tasks 1-6 with commits per group.
+- Did well: 402 tests, 38 property tests; all property tests passed at 100 and 1000 runs. Task status now driven through the task tool.
+- Erred: (fill in after review). I edited tasks.md text directly once and the task tool refused to save until I reverted it.
+
+### Counterexamples and bugs found
+- Property tests: no counterexample against production code in tasks 5.9-5.33 (runs: 100 default, 1000-5000 on request).
+- Generator bugs caught by the parser (not production bugs): 5.20 generator emitted duplicate inline-table key `features` and a multi-line array inside an inline table (both invalid TOML; parser warning was correct). 5.15 test appended `__proto__` lines with a different EOL than the generated text, so a trailing `\`+CR joined lines.
+- Unit-test bug (5.29): package.json writer emitted `"dependencies"` twice for input [a runtime, b dev, c runtime] (name-sorted walk opened a new section on every scope change). Broke 5.12 section order and produced a duplicate JSON key. Fixed: write sections by SCOPE_ORDER, each once.
+- Spec ambiguities found and resolved: criterion 1.9 `a/b#` (empty ref) — core said git, oracle said registry; 1.9 clarified to allow an empty ref (git). Cargo writer table order contradicted SCOPE_ORDER; switched to [dependencies], [dev-dependencies], [build-dependencies].
+- Open: `__proto__` cannot be a requirements.txt name (2.8 requires a leading alphanumeric), so Property 8 for that format only checks clean rejection.
+- Disclosed narrowing: 5.21 Cargo duplicate generator always tags table entries with a unique version so the kept occurrence is identifiable; version-less tables stay covered by Property 3 tests.

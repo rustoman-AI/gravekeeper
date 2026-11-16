@@ -1,0 +1,19 @@
+[package]
+name = "sample-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+clap = "4.5"
+tokio = { version = "1", features = ["full"] }
+regex = "1.10"
+fork-crate = { git = "https://github.com/example/fork-crate" }
+shared = { path = "../shared" }
+
+[dev-dependencies]
+tempfile = "3"
+pretty_assertions = "1.4"
+
+[build-dependencies]
+cc = "1.0"
