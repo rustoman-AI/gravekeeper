@@ -47,3 +47,11 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 ## Session 7
 - Asked: accept checkpoint 6 decisions, simplify the grade rule, fresh-clone check, add CI, then run the classifier and summary groups to the end.
 - Fresh clone of 97a825c: npm ci, typecheck, lint, check:core and vitest (20 files, 402 tests) all passed. Nothing missing from package.json (tsx is in devDependencies).
+- CI: first run of .github/workflows/ci.yml on push passed (Node 22; typecheck, lint, check:core, vitest).
+
+### Counterexamples and bugs (session 7, tasks 7.1-7.21)
+- Property 24 (unknown severity scores like MEDIUM) FAILS, spec conflict, execution stopped at task 7.21. FC_NUM_RUNS=5000, seed 1772739691, path 420:1:3:3:5. Shrunk input: {daysSinceLastRelease:0, daysSinceLastCommit:0, archived:false, deprecated:false, maintainerCount:100, openVulnerabilityCount:0, maxSeverity:null} vs the same with maxSeverity:"MEDIUM". Same status, score, flags. Reasons: unknown -> ["6.3"], known -> ["11.2"]. After removing 6.3 from both, [] != ["11.2"]. Cause: 11.2 ("no risk signals") appears only when no other Reason exists, so a lone 6.3 suppresses it. Awaiting user decision.
+- Generator bugs (test code, caught by oracle assertions): arbWrongType can yield valid severity strings like "LOW" (Property 24 "unknown" side was sometimes known); arbBadNumber includes 0.5, a valid day count (Property 28 "unknown commit" route was sometimes known). Both generators were replaced with values that are unknown by construction.
+- Test-construction bug (7.18): fast-check probes values given to constantFrom, which tripped a throwing Proxy trap before classify saw it; fixed by generating factories.
+- No other property failures in 7.8, 7.9, 7.18-7.20 (default runs and 2000-3000 runs).
+- User decision on Property 24: ignore both 6.3 and 11.2 when comparing Reason sequences (criterion 10.24 and Property 24 amended). Classifier behaviour unchanged.

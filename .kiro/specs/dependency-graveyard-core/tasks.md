@@ -260,96 +260,96 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
 - [x] 6. Checkpoint - Parsers and serializer
   - Run `npx tsc --noEmit`, `npm run lint` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 7. Classifier and scoring
-  - [~] 7.1 Implement fact normalization
+- [x] 7. Classifier and scoring
+  - [x] 7.1 Implement fact normalization
     - Create `core/facts/normalize.ts`: `HEALTH_FACT_FIELDS`, `NormalizedFacts`, `normalizeFacts(unknown)`. Read only with `typeof input === 'object' && input !== null && Object.hasOwn(input, field)`; numbers pass `Number.isFinite` (day counts also `>= 0`); count fields also `Number.isInteger`; booleans and `Severity` checked by type; `-0` is valid; `unknownFields` in `HEALTH_FACT_FIELDS` order, each once.
     - _Requirements: 6.2, 6.4, 6.5, 6.6, 6.7_
 
-  - [~] 7.2 Write unit tests for fact normalization
+  - [x] 7.2 Write unit tests for fact normalization
     - `tests/core/facts/normalize.test.ts`: null, missing, `NaN`, `Infinity`, `-1`, `0.5` for counts, wrong types, unrecognized severity strings (`'critical'`), non-object input (null, number, string, array), inherited properties ignored, throwing getters do not escape `normalizeFacts` callers via `classify` later, `-0` valid.
     - _Requirements: 6.2, 6.5, 6.6_
 
-  - [~] 7.3 Build fact test support
+  - [x] 7.3 Build fact test support
     - Create `tests/support/arbitraries/facts.ts` (`arbValidDays` with boundary weights, `arbBadNumber`, `arbWrongType`, per-field fact arbitraries, `arbRawFacts` with optional keys, `arbAnyFactsInput`, `arbThrowingGetters`, `arbValidFacts`) and `tests/support/oracles/facts-oracle.ts` (independent Valid_Fact, unknown-field set, `vulnerable`, `abandoned`, `dormant` from the glossary text, not calling production predicates).
     - _Requirements: 6.2, 6.6, 8.10, 8.11_
 
-  - [~] 7.4 Implement the predicates
+  - [x] 7.4 Implement the predicates
     - Create `core/facts/predicates.ts`: `isVulnerable`, `isReleaseAbandoned`, `isDormant`, `isAbandoned`, `isStaleRelease`, each with a `// Requirement <n>` comment on the line above. `maintainerCount` is not read by any predicate.
     - _Requirements: 7.1, 7.4, 7.5, 8.1, 8.2, 8.3, 8.4, 8.9, 10.6_
 
-  - [~] 7.5 Write unit tests for the predicates
+  - [x] 7.5 Write unit tests for the predicates
     - `tests/core/facts/predicates.test.ts`: boundaries `ABANDONMENT_DAYS - 1`, `ABANDONMENT_DAYS`, `STALE_DAYS - 1`, `STALE_DAYS`; commit unknown counts as stale for 8.3; `isReleaseAbandoned` and `isDormant` never both true; `maintainerCount` has no influence.
     - _Requirements: 8.3, 8.4, 8.7, 8.8, 8.9_
 
-  - [~] 7.6 Implement the scoring components
+  - [x] 7.6 Implement the scoring components
     - Create `core/scoring/vulnerability.ts`, `abandonment.ts`, `maintainers.ts` and `index.ts` (`scoreComponents`, `computeScore` as the sum) as in the design, each function with a requirement comment. `f.maxSeverity ?? DEFAULT_SEVERITY` is read in exactly one place.
     - _Requirements: 7.3, 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 10.16, 10.17, 10.23_
 
-  - [~] 7.7 Write unit tests for scoring
+  - [x] 7.7 Write unit tests for scoring
     - `tests/core/scoring/scoring.test.ts`: vulnerability points for each severity and counts 0, 1, 2, 6, 7, 100; unknown severity equals `MEDIUM`; archived 30, deprecated 25, 8.3 gives 20, dormant gives exactly 10 and never adds 20 or stale points, stale gives 10; cap case (archived plus deprecated plus 8.3 is 30); maintainer 0, 1, 2, null; `CRITICAL` with 7 vulnerabilities is 55; worst case total 100; `CRITICAL` vulnerable scores at least 50.
     - _Requirements: 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.16, 10.17, 10.23_
 
-  - [~] 7.8 Write property tests for vulnerability, severity and component bounds
+  - [x] 7.8 Write property tests for vulnerability, severity and component bounds
     - `tests/core/scoring/scoring.property.test.ts` with `tests/support/arbitraries/facts-metamorphic.ts` (`arbVulnIncrement`, `arbSeverityRaise` choosing index pairs `i < j` with no `fc.pre`). Scores come from `computeScore(normalizeFacts(raw))`.
     - **Property 21: Score equals the sum of the components, clamp is a no-op** (component caps and `0 <= sum <= 100`; the check that `classify().score` equals the sum is added in task 7.20)
     - **Property 22: Adding a vulnerability never lowers the score**
     - **Property 23: Raising a known severity never lowers the score**
     - **Validates: Requirements 10.22, 10.1, 10.17, 10.11, 10.12**
 
-  - [~] 7.9 Write property tests for age, archive and abandonment monotonicity
+  - [x] 7.9 Write property tests for age, archive and abandonment monotonicity
     - Append to `tests/core/scoring/scoring.property.test.ts` and extend `facts-metamorphic.ts` (`arbReleasePair` with 40 percent weight on pairs straddling `STALE_DAYS` or `ABANDONMENT_DAYS` and commit biased to `STALE_DAYS - 1`, `STALE_DAYS`, null; `arbFlagRaise`; `arbAbandonmentRaise` filtered by the oracle).
     - **Property 25: Larger release age never lowers the score**
     - **Property 26: Archived or deprecated never lowers the score**
     - **Property 27: Becoming abandoned never lowers the score**
     - **Validates: Requirements 10.13, 10.20, 10.14, 10.19**
 
-  - [~] 7.10 Implement rules 6.3 and 7.2
+  - [x] 7.10 Implement rules 6.3 and 7.2
     - Create `core/classifier/rules/types.ts` (rule shape `{ ruleId, evaluate }`, message helpers that keep each message one sentence, at most 200 characters), `rules/unknown-facts.ts` (6.3, lists each unknown field once) and `rules/vulnerability.ts` (7.2 and 7.3: states count and severity; says "assumed" when severity is unknown). Requirement comment directly above each exported rule.
     - _Requirements: 6.3, 7.2, 7.3, 7.4, 7.5, 11.3, 11.4_
 
-  - [~] 7.11 Write unit tests for rules 6.3 and 7.2
+  - [x] 7.11 Write unit tests for rules 6.3 and 7.2
     - Append to `tests/core/classifier/rules.test.ts`: all seven fields unknown lists all seven; one unknown lists exactly that one; 7.2 with known severity, with unknown severity (assumed, `DEFAULT_SEVERITY`), count 0 ignores severity, negative or fractional count gives no 7.2.
     - _Requirements: 6.3, 7.2, 7.3, 7.4, 7.5_
 
-  - [~] 7.12 Implement rules 8.1 to 8.4
+  - [x] 7.12 Implement rules 8.1 to 8.4
     - Create `core/classifier/rules/archived.ts` (8.1), `deprecated.ts` (8.2), `release-abandoned.ts` (8.3; states release days, `ABANDONMENT_DAYS`, commit days or "unknown and assumed stale") and `release-dormant.ts` (8.4). Requirement comment directly above each exported rule.
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 11.3, 11.4_
 
-  - [~] 7.13 Write unit tests for rules 8.1 to 8.4
+  - [x] 7.13 Write unit tests for rules 8.1 to 8.4
     - Append to `tests/core/classifier/rules.test.ts`: each rule alone; several rules together give one Reason each; none met gives no 8.1 to 8.3; boundaries `ABANDONMENT_DAYS - 1` (no 8.3, no 8.4), commit `STALE_DAYS - 1` gives 8.4 only, commit `STALE_DAYS` gives 8.3 only, unknown commit gives 8.3 with the "assumed stale" wording.
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8_
 
-  - [~] 7.14 Implement rules 10.6 to 10.8
+  - [x] 7.14 Implement rules 10.6 to 10.8
     - Create `core/classifier/rules/release-stale.ts` (10.6, whole number of days), `no-maintainers.ts` (10.7) and `single-maintainer.ts` (10.8). Requirement comment directly above each exported rule.
     - _Requirements: 10.6, 10.7, 10.8, 11.3, 11.4_
 
-  - [~] 7.15 Write unit tests for rules 10.6 to 10.8
+  - [x] 7.15 Write unit tests for rules 10.6 to 10.8
     - Append to `tests/core/classifier/rules.test.ts`: 10.6 at `STALE_DAYS` and `ABANDONMENT_DAYS - 1` only; 10.7 for 0 maintainers and no change to `abandoned` or status; 10.8 for 1; none for 2 or null; the longest possible messages (the 6.3 Reason listing all seven fields, and 8.3 with 22-character numbers) are at most 200 characters.
     - _Requirements: 10.6, 10.7, 10.8, 11.4_
 
-  - [~] 7.16 Implement the pipeline, status and `classify`
+  - [x] 7.16 Implement the pipeline, status and `classify`
     - Create `core/classifier/pipeline.ts` (rules declared once in ascending `ruleId` order, defensive sort by requirement then criterion as integers, `11.2` fallback "No risk signals were found." with empty `facts` only when no other Reason exists), `status.ts` (`statusOf`, vulnerable wins over abandoned), and `core/classifier/index.ts` (`classify(facts: unknown)` wrapped in `guard`, falling back to the all-unknown Classification; score is the clamped sum of the components).
     - Export `classify` from `core/index.ts`.
     - _Requirements: 6.1, 6.4, 6.5, 9.1, 9.2, 9.3, 9.4, 10.1, 11.1, 11.2, 11.3, 11.5, 13.6, 13.9_
 
-  - [~] 7.17 Write unit tests for `classify`
+  - [x] 7.17 Write unit tests for `classify`
     - `tests/core/classifier/classify.test.ts`: status precedence examples (9.1 to 9.4, including dormant stays `ALIVE`, and both Reason sets kept when haunted and abandoned); all-unknown input gives `ALIVE`, score 0, one 6.3 Reason; no signals gives exactly one 11.2 Reason; Reason count between 1 and 20; ascending `ruleId` order; a throwing getter and a non-object input still return a Classification; `CRITICAL` vulnerable scores at least 50; each boundary from the design's boundary table.
     - _Requirements: 6.5, 9.1, 9.2, 9.3, 9.4, 10.16, 11.1, 11.2, 11.5_
 
-  - [~] 7.18 Write property tests: never throws and unknown facts
+  - [x] 7.18 Write property tests: never throws and unknown facts
     - `tests/core/classifier/classify.property.test.ts` using `arbAnyFactsInput` and the facts oracle.
     - **Property 13: Classifier never throws**
     - **Property 14: Unknown facts are reported exactly once**
     - **Validates: Requirements 6.4, 6.3, 6.5, 6.6**
 
-  - [~] 7.19 Write property tests: flags and maintainer independence
+  - [x] 7.19 Write property tests: flags and maintainer independence
     - Append to `tests/core/classifier/classify.property.test.ts` (`arbMaintainerChange`).
     - **Property 15: Abandoned flag matches its definition**
     - **Property 16: Dormant flag matches its definition**
     - **Property 17: Maintainer count never changes abandonment or status**
     - **Validates: Requirements 8.10, 8.11, 8.12**
 
-  - [~] 7.20 Write property tests: status, determinism and score range
+  - [x] 7.20 Write property tests: status, determinism and score range
     - Append to `tests/core/classifier/classify.property.test.ts`.
     - **Property 18: Exactly one status, consistent with the flags**
     - **Property 19: Classifier determinism**
@@ -357,20 +357,20 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 21: Score equals the sum of the components, clamp is a no-op** (classify level: `classify(facts).score` equals the sum of `scoreComponents`)
     - **Validates: Requirements 9.5, 9.6, 10.10, 10.22, 10.1**
 
-  - [~] 7.21 Write property tests: severity equivalence, combined risk, no-risk
+  - [x] 7.21 Write property tests: severity equivalence, combined risk, no-risk
     - Append to `tests/core/classifier/classify.property.test.ts` (`arbUnknownSeverityPair`, `arbHauntedAndAbandoned` with `removeVulnerability` and `removeAbandonment` helpers, `arbNoRisk`). For Property 24 remove the `6.3` entry from both `ruleId` sequences before comparing.
     - **Property 24: Unknown severity scores like MEDIUM**
     - **Property 28: Combined haunted and abandoned strictly exceeds either alone**
     - **Property 29: No risk signals means ALIVE**
     - **Validates: Requirements 10.24, 7.3, 10.18, 10.15**
 
-  - [~] 7.22 Write property tests: Reasons
+  - [x] 7.22 Write property tests: Reasons
     - Append to `tests/core/classifier/classify.property.test.ts`.
     - **Property 30: Reasons are well formed and ordered** (1 to 20 Reasons, allowed `ruleId` set, `facts` name Health_Facts fields, message length 1 to 200, ascending order, `11.2` only alone with empty `facts`)
     - **Property 31: Status is explained by Reasons**
     - **Validates: Requirements 11.6, 11.1, 11.2, 11.3, 11.4, 11.5, 11.7**
 
-- [~] 8. Checkpoint - Classifier and scoring
+- [x] 8. Checkpoint - Classifier and scoring
   - Run `npx tsc --noEmit`, `npm run lint` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 9. Repo summary

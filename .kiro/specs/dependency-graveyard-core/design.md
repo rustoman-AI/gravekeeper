@@ -880,7 +880,7 @@ Reflection (redundancy removed):
 
 ### Property 24: Unknown severity scores like MEDIUM
 
-*For any* facts value in which `maxSeverity` is an Unknown_Fact (null, missing, wrong type or an unrecognized string such as `"critical"`), including the cases `openVulnerabilityCount` equal to 0, unknown, or at least 1, `classify` returns the same `status`, the same `score`, the same flags and the same sequence of Reason `ruleId` values, after removing the `6.3` entry from both sequences, as for the same facts with `maxSeverity` set to `DEFAULT_SEVERITY` (`MEDIUM`). Only the text and `facts` of the `7.2` Reason and the presence of the `6.3` Reason may differ.
+*For any* facts value in which `maxSeverity` is an Unknown_Fact (null, missing, wrong type or an unrecognized string such as `"critical"`), including the cases `openVulnerabilityCount` equal to 0, unknown, or at least 1, `classify` returns the same `status`, the same `score`, the same flags and the same sequence of Reason `ruleId` values, after removing the `6.3` and `11.2` entries from both sequences, as for the same facts with `maxSeverity` set to `DEFAULT_SEVERITY` (`MEDIUM`). Only the text and `facts` of the `7.2` Reason and the presence of the `6.3` and `11.2` Reasons may differ. (Counterexample that led to this: all facts known and healthy except `maxSeverity: null` gives only `6.3`, while `MEDIUM` gives only `11.2`; user decision in session 7.)
 
 **Validates: Requirements 10.24, 7.3**
 
