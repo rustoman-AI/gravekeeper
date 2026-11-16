@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "check:core": "tsx scripts/check-core-purity.ts",
+    "prebuild": "npm run check:core",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

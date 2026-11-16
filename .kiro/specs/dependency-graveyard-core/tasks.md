@@ -38,56 +38,56 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
 - [x] 2. Checkpoint - Scaffold
   - Run `npx tsc --noEmit`, `npm run lint` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 3. Types, constants, internal helpers and the purity checker
-  - [~] 3.1 Define the model types
+- [x] 3. Types, constants, internal helpers and the purity checker
+  - [x] 3.1 Define the model types
     - Create `core/model/types.ts` and `core/model/index.ts` with every type from the design's Data Models section (`Dependency` with `rawName`, `SerializableDependency` (a `Dependency` with an optional `rawName`), `SourceKind`, `Scope`, `Severity`, `Status`, `Grade`, `HealthFacts`, `RawHealthFacts`, `RuleId`, `Reason`, `Classification`, `ParseResult`, `AssessedDependency`, `UniquePackage`, `RankedPackage`, `UnassessedItem`, `RepoSummary`, and the rest).
     - _Requirements: 1.12, 2.2, 3.17, 5.11, 13.4, 13.5_
 
-  - [~] 3.2 Define the constants
+  - [x] 3.2 Define the constants
     - Create `core/model/constants.ts` with the `CONSTANTS` object (`as const satisfies ConstantsShape`), named re-exports of every key, `SCOPE_ORDER`, `CORE_ALLOWED_PACKAGES` (`smol-toml` only), `SEVERITIES`, and the values from the requirements Constants table.
     - _Requirements: 10.21, 13.10_
 
-  - [~] 3.3 Write unit tests for the constants
+  - [x] 3.3 Write unit tests for the constants
     - `tests/core/model/constants.test.ts`: exact table values; the five consistency rules (caps sum to 100, `STALE_AGE_POINTS` <= `DORMANT_RELEASE_POINTS` < `ABANDONED_AGE_POINTS`, dormant points below the smaller of archived, deprecated and the abandonment cap, `0 <= GRADE_A_MAX < GRADE_B_MAX < GRADE_C_MAX < GRADE_D_MAX < 100`, lowest severity points above 0); exact grade thresholds 19, 39, 59 and 79.
     - _Requirements: 10.21_
 
-  - [~] 3.4 Implement the internal helpers
+  - [x] 3.4 Implement the internal helpers
     - Create `core/internal/result.ts` (`Result`, `ok`, `err`, `SerializeError`), `safe.ts` (`guard`), `compare.ts` (`compareCodePoints` using a `codePointAt` loop, not `localeCompare`) and `deep-equal-key.ts` (`canonicalKey`).
     - _Requirements: 4.8, 5.12, 12.6, 13.3_
 
-  - [~] 3.5 Write unit tests for the internal helpers
+  - [x] 3.5 Write unit tests for the internal helpers
     - `tests/core/internal/internal.test.ts`: `compareCodePoints` orders `"\u{1F600}"` before `"\uFF5E"` (astral against high BMP) and puts `"10"` before `"2"`; `guard` returns the fallback on a thrown `Error`, string and `undefined`; `canonicalKey` is stable for equal values and differs for different Reason text.
     - _Requirements: 4.8, 12.6_
 
-  - [~] 3.6 Wire the public entry point types and test the exports
+  - [x] 3.6 Wire the public entry point types and test the exports
     - Update `core/index.ts` to `export * from './model'`, exporting the types listed in criterion 13.5 and the constants.
     - Write `tests/core/public-api.test.ts` with `expectTypeOf` assertions for `Dependency`, `SourceKind`, `HealthFacts`, `Classification`, `Reason`, `ParseResult`, `AssessedDependency`, `UniquePackage`, `RankedPackage`, `UnassessedItem`, `RepoSummary`, and runtime checks for `CONSTANTS` and `CORE_ALLOWED_PACKAGES`.
     - _Requirements: 13.5_
 
-  - [~] 3.7 Implement the purity checker (source rules)
+  - [x] 3.7 Implement the purity checker (source rules)
     - Create `scripts/core-purity/check.ts` exporting `checkSource(filePath, sourceText): Violation[]`, built on the TypeScript compiler API (`ts.createSourceFile`).
     - Rules: imports resolving into `/adapters`, `/app`, `/components`; `import-not-allowed` for every specifier that is not a relative path staying inside `/core` or exactly a name in `CORE_ALLOWED_PACKAGES` (Node built-ins, other bare packages, `smol-toml/x`, the `@/` alias, relative paths leaving `/core`); `toml-import-outside-wrapper` for `smol-toml` outside `core/parsers/toml-tree.ts` (`TOML_WRAPPER_PATH`); identifiers `fetch` and `XMLHttpRequest` (not property names such as `x.fetch`, but including `globalThis.fetch`); `Date.now`, `Date["now"]`, `new Date()` with no arguments, `Date()` as a call, `Math.random`, `Math["random"]`.
     - Cover `import`, `export ... from`, `import()`, `require()` and `import x = require()`.
     - _Requirements: 13.1, 13.2, 13.10, 13.11_
 
-  - [~] 3.8 Implement the package pin check
+  - [x] 3.8 Implement the package pin check
     - Add `checkPackageJson(text): Violation[]` to `scripts/core-purity/check.ts` using `ts.parseJsonText`. For each name in `CORE_ALLOWED_PACKAGES`, require a `dependencies` entry matching `^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$`; rule `package-not-pinned`, reported at the entry's line.
     - _Requirements: 13.10_
 
-  - [~] 3.9 Write unit tests for the checker
+  - [x] 3.9 Write unit tests for the checker
     - `tests/core/purity.test.ts` (inline snippets): one snippet per banned construct asserting rule, line and column; allow-list cases (`fs`, `node:fs`, `path`, `lodash`, `smol-toml/x`, `@/core/...`, a relative path leaving `/core` are violations; a relative import inside `/core` is clean; `smol-toml` is clean only in `core/parsers/toml-tree.ts`); words in comments and strings cause no violation; pin cases (`1.2.3`, `1.2.3-beta.1` pass; `^1.2.3`, `~1.2.3`, `1.2`, `1.x`, `*`, `>=1.0.0`, `latest`, `npm:smol-toml@1.2.3` and a missing entry fail).
     - _Requirements: 13.1, 13.2, 13.10, 13.11_
 
-  - [~] 3.10 Implement the purity CLI and build hook
+  - [x] 3.10 Implement the purity CLI and build hook
     - Create `scripts/check-core-purity.ts`: walk `core/**/*.ts`, run `checkSource` on each file, run `checkPackageJson` on the root `package.json`, print `path:line:column rule message` per violation, and exit 1 when there is at least one.
     - Add `"check:core": "tsx scripts/check-core-purity.ts"` and `"prebuild": "npm run check:core"` to `package.json`.
     - _Requirements: 13.8_
 
-  - [~] 3.11 Write tests for the CLI and the real tree
+  - [x] 3.11 Write tests for the CLI and the real tree
     - Append to `tests/core/purity.test.ts`: the checker over the real `/core` tree and the real `package.json` reports zero violations; a CLI test spawns `tsx` on a temporary directory with a violating file and asserts exit code 1 and the printed `path:line`, and exit code 0 for a clean directory.
     - _Requirements: 13.1, 13.2, 13.8, 13.10, 13.11_
 
-- [~] 4. Checkpoint - Types, constants and purity checker
+- [x] 4. Checkpoint - Types, constants and purity checker
   - Run `npx tsc --noEmit`, `npm run lint` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 5. Parsers and serializer
