@@ -18,7 +18,7 @@ This document designs the pure logic layer in `/core` for Gravekeeper: manifest 
 // core/index.ts (public entry point, Requirement 13.5)
 export function parseManifest(text: unknown, format: ManifestFormat): ParseResult;
 export function serializeManifest(
-  dependencies: readonly Dependency[],
+  dependencies: readonly SerializableDependency[],   // Dependency with an optional rawName (glossary: Dependency)
   format: unknown,
 ): Result<string, SerializeError>;
 export function classify(facts: unknown): Classification;
@@ -54,9 +54,9 @@ core/
   formats/                  shared lexical knowledge used by BOTH parsers and serializers
     manifest-format.ts      MANIFEST_FORMATS, ecosystemOf(), supportedScopes()
     npm-source-kind.ts      sourceKindOfNpmSpec()           (criterion 1.9)
-    requirements-lexical.ts name normalization, line grammar, canonical-spec predicate
-    key.ts                  dependencyKey(): JSON.stringify([name, scope]) (ecosystem is fixed per call)
-    order.ts                compareDependencies() = Dependency_Order, scopeIndex()
+    requirements-lexical.ts normalizePypiName() (PEP503_Normalization), isNameToken(), writtenName(), line grammar, canonical-spec predicate
+    key.ts                  dependencyKey(): JSON.stringify([name, scope]), name = normalized name (ecosystem is fixed per call)
+    order.ts                compareDependencies() = Dependency_Order (rawName is the last tie-break), scopeIndex()
   parsers/
     index.ts                parseManifest(): validation, size check, dispatch, finish, safety net
     package-json.ts
@@ -229,8 +229,8 @@ interface Candidate { readonly dependency: Dependency; readonly rank: readonly n
 **`finish` algorithm (criteria 4.6, 4.8).**
 
 1. Stable-sort a copy of `candidates` by `rank`, comparing the number arrays lexicographically. The rank is the First_Occurrence order defined per format: `[]` for `package.json` (it cannot produce duplicates), `[firstLine]` for `requirements.txt`, `[headerLine, keyLine, enumIndex]` for `Cargo.toml`.
-2. Walk the sorted list with a `Set<string>` of Dependency_Keys, `JSON.stringify([name, scope])` (the ecosystem is fixed by the format, so it is not part of the key). A string key built from a JSON array is injective, so names containing separators cannot collide. The first candidate for a key is kept. Each later one is discarded, whatever its `sourceKind` or `versionSpec`, and adds exactly one warning: `<where>: duplicate dependency "<name>" in scope "<scope>"; the first occurrence was kept.` (`where` is `requirements.txt line 7` or `Cargo.toml table [target.'cfg(unix)'.dependencies]`, truncated to 80 characters).
-3. Sort the kept dependencies with `compareDependencies` (Dependency_Order: `name` by code point, then index in `SCOPE_ORDER`; ties by `ecosystem`, `versionSpec`, `sourceKind` for completeness). Source order never reaches the output.
+2. Walk the sorted list with a `Set<string>` of Dependency_Keys, `JSON.stringify([name, scope])`, where `name` is the normalized name (the ecosystem is fixed by the format, so it is not part of the key). Two spellings of one pypi package, such as `Foo_Bar` and `foo.bar`, therefore share a key. A string key built from a JSON array is injective, so names containing separators cannot collide. The first candidate for a key is kept, with its own `rawName`. Each later one is discarded, whatever its `rawName`, `sourceKind` or `versionSpec`, and adds exactly one warning (criterion 4.6): `<where>: duplicate dependency "<name>" in scope "<scope>"; the first occurrence was kept.` (`<name>` is the normalized name.) (`where` is `requirements.txt line 7` or `Cargo.toml table [target.'cfg(unix)'.dependencies]`, truncated to 80 characters).
+3. Sort the kept dependencies with `compareDependencies` (Dependency_Order: normalized `name` by code point, then index in `SCOPE_ORDER`; ties, which cannot remain after deduplication, by `ecosystem`, `versionSpec`, `sourceKind` and `rawName`). Source order never reaches the output.
 4. `warnings` = the format parser's own warnings in the order found, then the duplicate warnings in rank order. The result is a pure function of the text, so it is deterministic (4.7).
 
 **JSON exception (criterion 1.11).** `JSON.parse` returns one value per key (the last one), so `package.json` never reaches `finish` with two candidates for one key and no duplicate warning is possible. This is documented in the module header, pinned by a unit test, and the generator for Property 4 treats it as a separate case with the oracle "last value wins, zero warnings".
@@ -242,7 +242,7 @@ Strategy: `JSON.parse`, then read only own properties.
 1. `JSON.parse(text)` inside `try`. On failure, return `{ dependencies: [], warnings: ["package.json is not valid JSON: <message>"] }` (1.6). A top-level value that is not a plain object (null, array, string, number, boolean) gives the same single-warning result. Empty text is a `JSON.parse` failure and takes the same path.
 2. For each section in the fixed order `dependencies` (runtime), `devDependencies` (dev), `optionalDependencies` (optional), `peerDependencies` (peer), read the value only if `Object.hasOwn(root, section)` (1.1, 1.2). `Object.hasOwn` prevents an inherited `dependencies` from being picked up.
 3. If the section value is not a non-null, non-array object, add one warning naming the section and continue (1.5). `null` counts as "present but not an object".
-4. For each `[name, value]` of `Object.entries(section)`: a non-string value gives one warning naming package and section and the entry is skipped (1.4). A string value yields a candidate `{ name, ecosystem: "npm", versionSpec: value, scope, sourceKind: sourceKindOfNpmSpec(value) }` with rank `[]`, `versionSpec` untouched (1.3, 1.10). An empty `name` is skipped with one warning because criteria 4.5 and 4.10 require `name.length >= 1`. The same name in two sections gives two candidates with different keys (1.8).
+4. For each `[name, value]` of `Object.entries(section)`: a non-string value gives one warning naming package and section and the entry is skipped (1.4). A string value yields a candidate `{ name, rawName: name, ecosystem: "npm", versionSpec: value, scope, sourceKind: sourceKindOfNpmSpec(value) }` with rank `[]`, `versionSpec` untouched (1.3, 1.10) and no normalization of `name` (1.12). An empty `name` is skipped with one warning because criteria 4.5 and 4.10 require `name.length >= 1`. The same name in two sections gives two candidates with different keys (1.8).
 6. A repeated key inside one section is resolved by `JSON.parse` itself (last value, no warning, criterion 1.11).
 5. `__proto__`, `constructor` and `prototype` need no special case. `JSON.parse` makes them own data properties, `Object.entries` lists them, and the result objects are literals whose `name` is a string value (4.9).
 
@@ -266,18 +266,18 @@ Strategy: a line-based scanner. No regex with nested quantifiers (ReDoS safety o
 3. **Strip comments** (2.5): remove from the first `#` that is at index 0 or preceded by whitespace (JavaScript `\s`) to the end of the group.
 4. **Skip** blank lines and lines whose trimmed text starts with `-` (2.7), silently.
 5. **Tokenize** the trimmed text with a hand scanner:
-   - `name` token: `[A-Za-z0-9][A-Za-z0-9._-]*`. If it does not match, warn with the line number and skip (2.8).
+   - Name_Token: `[A-Za-z0-9][A-Za-z0-9._-]*`. Upper-case letters and non-normalized spellings are accepted (2.2). If the text does not match, warn with the line number and skip (2.8).
    - optional whitespace, then optional extras `[...]` (skipped up to the first `]`; an unclosed `[` is a warning) (2.4).
    - optional whitespace, then the rest.
 6. **Rest begins with `@`** means a direct reference (2.10, 2.11). The target is the text after `@`, trimmed, cut at the first whitespace-followed-by-`;` (an environment marker). Classification of the target:
    - starts with `git+` gives `sourceKind: "git"`.
    - starts with `file:`, `./`, `../` or `/` gives `"path"`.
    - anything else is a warning and the line is skipped (2.8).
-   `versionSpec` is the trimmed target exactly as written (an empty target is a warning).
-7. **Bare reference** (2.10, 2.11): if the whole trimmed text starts with `git+`, `file:`, `./`, `../` or `/`, look for an `#egg=<name>` fragment. Because comment stripping removes `#` only when preceded by whitespace, `#egg=` survives when attached to the URL. Without a usable `egg` name, warn and skip (2.8). With one, the name is the `egg` value (up to the next `&`) and `versionSpec` is the whole trimmed text.
-8. **Registry line** (2.3, 2.8, 2.12): cut the rest at the first `;` (marker), trim. The rest must be empty (`versionSpec = "*"`) or the literal `*`, or must start with one of the comparison operators `===`, `==`, `!=`, `<=`, `>=`, `~=`, `<`, `>` (criterion 2.8). Otherwise the line "cannot be parsed as a requirement": warn and skip. In addition, a rest that still contains `\` (only possible in the middle of a joined line) is skipped with the same warning. That second rule is a design decision, not in 2.8: criterion 5.13 makes a spec with a backslash non-Representable, and parser output must always be Representable for Property 10 to hold (see Open questions).
-9. **Name normalization** (2.2): `toLowerCase()` (ASCII only by construction of the name token), then replace each run of `-`, `_`, `.` with one `-`. The function is idempotent, which Property 10 relies on.
-10. Every candidate is `ecosystem: "pypi"`, `scope: "runtime"` (2.1), with rank `[firstLineNumber]` and `where = "requirements.txt line <n>"`. `finish` then applies criterion 4.6: `Foo_Bar` on line 3 and `foo-bar` on line 9 normalize to the same key, the line-3 entry is kept, and one warning names `foo-bar`, `runtime` and line 9.
+   `versionSpec` is the trimmed target exactly as written (an empty target is a warning). A target that contains `\` is skipped with one warning that includes the 1-based number of the first line of the group (2.13).
+7. **Bare reference** (2.10, 2.11): if the whole trimmed text starts with `git+`, `file:`, `./`, `../` or `/`, look for an `#egg=<name>` fragment. Because comment stripping removes `#` only when preceded by whitespace, `#egg=` survives when attached to the URL. Without a usable `egg` name, warn and skip (2.8). With one, `rawName` is the `egg` value as written (up to the next `&`, and it must be a Name_Token, else the line is skipped under 2.8) and `versionSpec` is the whole trimmed text. A whole trimmed text that contains `\` is skipped with one warning that includes the 1-based number of the first line of the group (2.13).
+8. **Registry line** (2.3, 2.8, 2.12): cut the rest at the first `;` (marker), trim. The rest must be empty (`versionSpec = "*"`) or the literal `*`, or must start with one of the comparison operators `===`, `==`, `!=`, `<=`, `>=`, `~=`, `<`, `>` (criterion 2.8). Otherwise the line "cannot be parsed as a requirement": warn and skip. In addition, a rest that still contains `\` (only possible in the middle of a joined line) is skipped with one warning that includes the 1-based number of the first line of the group (2.13). The same backslash check applies to the git and path `versionSpec` of steps 6 and 7, which can contain a backslash on a single line. Each skipped line produces exactly one warning, never two.
+9. **Name normalization** (2.2, 2.14): `normalizePypiName(s)` in `formats/requirements-lexical.ts` maps each ASCII letter `A` to `Z` to its lowercase letter by code point arithmetic (never `toLowerCase()`, which also changes non-ASCII characters) and replaces each run of one or more `-`, `_` and `.` with one `-`, leaving every other character unchanged. It is idempotent (Property 44). The parser sets `rawName` to the Name_Token as written and `name = normalizePypiName(rawName)`, so `normalize(rawName) === name` holds by construction (2.2, 2.14). Examples: `Django` gives `name` `django`; `PyYAML` gives `pyyaml`; `SQLAlchemy` gives `sqlalchemy`; `Foo_Bar` gives `foo-bar`; `foo.bar` gives `foo-bar`.
+10. Every candidate is `ecosystem: "pypi"`, `scope: "runtime"` (2.1), with rank `[firstLineNumber]` and `where = "requirements.txt line <n>"`. For git and path references (2.10, 2.11), `rawName` is the written `<name>` or the `egg` value and `name` is its normalization. `finish` then applies criterion 4.6: `Foo_Bar` on line 3 and `foo.bar` on line 9 normalize to the same key `foo-bar`, the line-3 entry is kept with `rawName` `Foo_Bar`, and one warning names `foo-bar`, `runtime` and line 9.
 
 Warnings have the form `requirements.txt line 7: cannot parse requirement "...".` with the quoted text truncated.
 
@@ -314,15 +314,15 @@ Interpretation (all reads on own properties):
 2. Collect dependency tables: for each of `dependencies` (runtime), `dev-dependencies` (dev), `build-dependencies` (build) at top level, then for each `<cfg>` under `target`, the same three names (3.1, 3.3, 3.8). The scope depends only on the table name, never on `<cfg>`. A dependency table or a `target` table that is not a table gives one warning naming it and is skipped (3.14).
 3. For each `[key, value]` of a table:
    - `value` is a string: `versionSpec = value`, `sourceKind = "registry"` (3.4).
-   - `value` is a table: first check `version`, `package`, `git`, `path`. If any is present and is not a string, warn naming `key` and skip the entry (3.10). Then `name = package ?? key` (3.7); if `git` is a string: `git` source with `versionSpec = git` (3.11, wins over `path` and `version`); else if `path` is a string: `path` source (3.12); else `versionSpec = version ?? "*"`, registry (3.5, 3.6).
+   - `value` is a table: first check `version`, `package`, `git`, `path`. If any is present and is not a string, warn naming `key` and skip the entry (3.10). Then `name = package ?? key` (3.7) and `rawName = name`, with no normalization (3.17); if `git` is a string: `git` source with `versionSpec = git` (3.11, wins over `path` and `version`); else if `path` is a string: `path` source (3.12); else `versionSpec = version ?? "*"`, registry (3.5, 3.6).
    - any other value type (number, boolean, array, date): warn naming `key` and skip (3.14).
-4. Empty resulting `name` is skipped with a warning (4.10). A `name` or `versionSpec` that contains a lone surrogate is skipped with one warning naming `key`. This is a design decision: TOML strings hold Unicode scalar values only, and criterion 5.13 makes such values non-Representable, so skipping keeps parser output Representable (see Open questions).
+4. Empty resulting `name` is skipped with a warning (4.10). A `name` or `versionSpec` that contains a lone surrogate is skipped with one warning naming `key` (3.16). The same condition makes a Cargo Dependency non-Representable (5.13), so parser output stays Representable.
 5. Each remaining entry becomes a candidate with the rank above and `where = "Cargo.toml table [<table path>]"`. Candidates for the same key, such as `serde` in `[dependencies]` and in `[target.'cfg(unix)'.dependencies]`, or two `<cfg>` tables of the same kind, are resolved by `finish`: the one whose table header comes first in the text is kept and each other one gets one duplicate warning. A crate in `[dependencies]` and `[dev-dependencies]` has two keys and yields two Dependencies (3.8).
 
 ### `serializeManifest`
 
 ```ts
-export function serializeManifest(deps: readonly Dependency[], format: unknown): Result<string, SerializeError> {
+export function serializeManifest(deps: readonly SerializableDependency[], format: unknown): Result<string, SerializeError> {
   return guard(() => serializeUnguarded(deps, format), (e) => err({ kind: 'internal-error', message: errorName(e) }));
 }
 ```
@@ -331,32 +331,33 @@ Steps in `serializeUnguarded`:
 
 1. `format` not in `MANIFEST_FORMATS` returns `err({ kind: 'unsupported-format', format: describe(format) })` and never text (5.7).
 2. `deps` not an array returns `err({ kind: 'invalid-input' })`. More than `MAX_SERIALIZED_DEPENDENCIES` (10,000) entries returns `err({ kind: 'too-many-dependencies', limit: 10000 })` and no text (5.19).
-3. Filter: keep `d` where `isWellFormedDependency(d)` and `d.ecosystem === ecosystemOf(format)` and `supportedScopes(format).includes(d.scope)` and `isRepresentable(d, format)`. Everything else is omitted without error (5.2).
-4. Sort a copy with `compareDependencies` (Dependency_Order: `name` by code point, then `scope` in `SCOPE_ORDER`, then `ecosystem`, `versionSpec`, `sourceKind`), then keep the first entry per Dependency_Key `(name, scope)`. The ecosystem is equal for all kept entries after step 3. Sorting before dedup makes the output independent of input order (5.12), and the sort is total, so duplicates that differ only in `versionSpec` or `sourceKind` resolve the same way for every permutation.
+3. Filter, first of the three steps of criterion 5.2: keep `d` where `isWellFormedDependency(d)` (`rawName`, when present, is a string) and `d.ecosystem === ecosystemOf(format)` and `supportedScopes(format).includes(d.scope)` and `isRepresentable(d, format)`. Everything else is omitted without error (5.2).
+4. Sort a copy with `compareDependencies` (Dependency_Order: normalized `name` by code point, then `scope` in `SCOPE_ORDER`, then `ecosystem`, `versionSpec`, `sourceKind`, then `rawName` with an absent `rawName` first), then keep the first entry per Dependency_Key `(name, scope)` (second and third steps of 5.2). The ecosystem is equal for all kept entries after step 3. Filtering before dedup means a Representable Dependency survives an earlier non-Representable one with the same key, and a Dependency is dropped only when an earlier Representable one has its key (5.2). Sorting before dedup makes the output independent of input order (5.12), and the sort is total, so duplicates that differ only in `versionSpec`, `sourceKind` or `rawName` (for example `Foo_Bar` and `foo.bar`) resolve the same way for every permutation.
 5. Hand the list to the format writer. The writers walk the sorted list, so within each section or table entries are sorted by `name` and sections or tables follow `SCOPE_ORDER` (5.12).
 
 **Writers.**
 
 - `package.json`: build text by hand. Sections appear in scope order of the sorted list mapped to section names (`dev` to `devDependencies`, `optional` to `optionalDependencies`, `peer` to `peerDependencies`, `runtime` to `dependencies`); only non-empty sections are written. Keys and values use `JSON.stringify(string)` (escapes quotes, backslashes, control characters, and lone surrogates), 2-space indentation, a trailing newline. No object is built, so `__proto__` names are safe. Empty output is `{}\n` (5.3, 5.4, 5.18).
-- `Cargo.toml`: tables `[build-dependencies]`, `[dev-dependencies]`, `[dependencies]` in scope order, only non-empty ones, each entry on one line with a quoted key (`"name" = ...`) so no bare-key rules apply. Registry: `"name" = "<spec>"` (5.16). Git: `"name" = { git = "<spec>" }` (5.14). Path: `"name" = { path = "<spec>" }` (5.15). Strings are TOML basic strings: `\\`, `\"`, `\b \t \n \f \r`, other control characters and DEL as `\uXXXX`, everything else literal (5.11). Empty output is the empty string.
-- `requirements.txt`: one line per dependency, each ending in a single `\n`, no blank lines (5.6). Registry: `<name>` when `versionSpec` is `*`, else `<name> <versionSpec>`. Git or path: `<name> @ <versionSpec>` (5.17). Empty output is the empty string.
+- `Cargo.toml`: tables `[build-dependencies]`, `[dev-dependencies]`, `[dependencies]` in scope order, only non-empty ones, each entry on one line with a quoted key (`"name" = ...`) so no bare-key rules apply. Registry: `"name" = "<spec>"` (5.16). Git: `"name" = { git = "<spec>" }` (5.14). Path: `"name" = { path = "<spec>" }` (5.15). Strings are TOML basic strings: `\\`, `\"`, `\b \t \n \f \r`, other control characters and DEL as `\uXXXX`, everything else literal (5.11). `rawName` is ignored (5.11). Empty output is the empty string.
+- `requirements.txt`: one line per dependency, each ending in a single `\n`, no blank lines (5.6). `<W>` is the Written_Name from `writtenName(d)`: `d.rawName` when it is present and `normalizePypiName(d.rawName) === d.name`, otherwise `d.name` (5.11). Registry: `<W>` when `versionSpec` is `*`, else `<W> <versionSpec>`. Git or path: `<W> @ <versionSpec>` (5.17). Empty output is the empty string. `package.json` writes `name` and ignores `rawName` (5.11).
 
 ### Representable rules (`serializers/representable.ts`)
 
-Criterion 5.13 now states the semantic rule and the main lexical conditions. A few more conditions are needed for exact text recovery, and the design adds them in a separate column:
+Criterion 5.13 defines Representable completely, including the `;` and `#` conditions and the Written_Name condition. The function implements the criterion and adds nothing:
 
 ```ts
-// Requirement 5.13, plus design-only conditions D1 and D2 required for exact recovery (5.8, 5.11)
-export function isRepresentable(d: Dependency, format: ManifestFormat): boolean;
+// Requirement 5.13
+export function isRepresentable(d: SerializableDependency, format: ManifestFormat): boolean;
 ```
 
-| Format | Criterion 5.13 | Design-only conditions (not in 5.13) |
-|---|---|---|
-| `package.json` | `sourceKindOfNpmSpec(versionSpec) === sourceKind`; `name.length >= 1` | none |
-| `requirements.txt` | `git+` prefix iff `git`; `file:`/`./`/`../`/`/` prefix iff `path`; neither for `registry`; `name.length >= 1`; `name` and `versionSpec` contain no newline and no backslash; `versionSpec` has no leading or trailing whitespace; a `registry` `versionSpec` is `*` or starts with `===`, `==`, `!=`, `<=`, `>=`, `~=`, `<` or `>` | D1: `name` equals its own normalization (criterion 2.2) and matches the name token `[A-Za-z0-9][A-Za-z0-9._-]*`, so `Foo` is not written as `Foo` and parsed back as `foo`. D2: a `registry` `versionSpec` contains no `;` and no `#` preceded by whitespace; a `git` or `path` `versionSpec` contains no whitespace followed by `;` or `#` (they would be cut as marker or comment) |
-| `Cargo.toml` | every `sourceKind`; `name.length >= 1`; no lone surrogate in `name` or `versionSpec` | none |
+| Format | Criterion 5.13 conditions |
+|---|---|
+| `package.json` | `sourceKindOfNpmSpec(versionSpec) === sourceKind`; `name.length >= 1` |
+| `requirements.txt` | `name.length >= 1`; the Written_Name (`writtenName(d)`) is a Name_Token and `normalizePypiName(writtenName(d)) === name`, so `Django` with `name` `django` is Representable and a non-normalized `name` without a matching `rawName` is not; `git+` prefix iff `git`; `file:`/`./`/`../`/`/` prefix iff `path`; neither for `registry`; `versionSpec` contains no newline and no backslash and has no leading or trailing whitespace; a `registry` `versionSpec` is `*` or starts with `===`, `==`, `!=`, `<=`, `>=`, `~=`, `<` or `>`, and contains no `;` and no `#` preceded by whitespace; a `git` or `path` `versionSpec` contains no whitespace followed by `;` or `#` |
+| `Cargo.toml` | every `sourceKind`; `name.length >= 1`; no lone surrogate in `name` or `versionSpec` |
 
-Everything the parsers produce satisfies these conditions by construction (the requirements parser rejects specs with `\`, the Cargo parser skips lone surrogates, names are normalized). That is the key to Property 10: **parser output is always Representable**, so re-serializing never drops a dependency that the first parse returned. D1 and D2 narrow criterion 5.13 and are listed under Open questions.
+`rawName` takes part only through the Written_Name of `requirements.txt`. For `package.json` and `Cargo.toml` it is ignored.
+Parser output is meant to be Representable, which Property 10 (criterion 5.9) needs: re-serializing must not drop a Dependency that the first parse returned. The parsers meet this as follows. Parsed pypi names satisfy `normalize(rawName) === name` and `rawName` is a Name_Token (2.2, 2.14), so the Written_Name condition holds. A `requirements.txt` requirement whose `versionSpec` (registry, git or path) contains `\` is skipped (2.13). A Cargo entry with a lone surrogate is skipped (3.16). Registry specs never contain `;` or whitespace followed by `#`, because the parser cuts them (2.3, 2.5).
 
 ### `classify`
 
@@ -510,7 +511,7 @@ export function summarize(items: readonly AssessedDependency[]): RepoSummary {
 
 1. **Group** (`group.ts`, 12.1): iterate the input once and fill a `Map<string, Group>` keyed by the Package_Key `JSON.stringify([ecosystem, name, sourceKind])`. `scope` and `versionSpec` are not in the key, so the same package in `runtime` and `dev` joins one group. Each `Group` holds `{ name, ecosystem, sourceKind, scopeSet: Set<Scope>, classifications: Classification[] }`. For each entry the scope is added to `scopeSet`, and a non-null classification is appended to `classifications`. Maps and sets are used, so `__proto__` names are safe.
 2. **Finish each group into a Unique_Package**: `scopes = SCOPE_ORDER.filter((s) => scopeSet.has(s))` (sorted in Scope_Order, no repeats, non-empty for well-typed input) and `classification = mergeClassifications(classifications)`, which is null for an empty list.
-3. **Merge** (`merge.ts`, Merged_Classification): pick the minimum of `classifications` under `compareClassifications`: `score` descending; then status precedence `HAUNTED`, `DEAD`, `ALIVE`; then `classificationTieKey` ascending; then `canonicalKey` ascending. `classificationTieKey(c)` is the tuple of the three flags `vulnerable`, `abandoned`, `dormant` (false before true) followed by the string `c.reasons.map((r) => r.ruleId).join(',')` compared by code point. The result does not depend on input order whenever the comparator is a total order on the group's distinct classifications. The Classification_Tie_Key alone is not total: two classifications with the same score, status, flags and `ruleId` list can differ in Reason text (for example `8.3` with 800 and with 900 days). The final `canonicalKey(c)`, `JSON.stringify` of the reasons as `[ruleId, message, [[field, value], ...]]` arrays, makes the order total. This extension is needed for confluence (12.10) and is listed under Open questions.
+3. **Merge** (`merge.ts`, Merged_Classification): pick the minimum of `classifications` under `compareClassifications`: `score` descending; then status precedence `HAUNTED`, `DEAD`, `ALIVE`; then `classificationTieKey` ascending; then `canonicalKey` ascending. `classificationTieKey(c)` is the tuple of the three flags `vulnerable`, `abandoned`, `dormant` (false before true) followed by the string `c.reasons.map((r) => r.ruleId).join(',')` compared by code point. The result does not depend on input order whenever the comparator is a total order on the group's distinct classifications. The Classification_Tie_Key alone is not total: two classifications with the same score, status, flags and `ruleId` list can differ in Reason text (for example `8.3` with 800 and with 900 days). The final `canonicalKey(c)`, the Classification_Canonical_Key, makes the order total (criterion 12.22). It is the canonical JSON of the whole Classification: no insignificant whitespace, keys of every object sorted in code point order at every depth, array order (such as `reasons`) kept. Equal keys mean deeply equal Classifications, so the choice is independent of input order (12.10). `internal/deep-equal-key.ts` implements it with a recursive writer that sorts keys by `compareCodePoints` and emits strings through `JSON.stringify`.
 4. **Partition** (`partition.ts`, 12.2, 12.14): a Unique_Package is an Assessed_Package iff `sourceKind === 'registry' && classification !== null`. Otherwise it is unassessed with reason `non-registry-source` when `sourceKind` is `git` or `path` (even when a classification exists) and `no-health-data` when `sourceKind` is `registry` and `classification` is null. `total` is the number of groups, `unassessed = total - assessed`.
 5. **Counts** (12.3): a plain object `{ ALIVE: 0, HAUNTED: 0, DEAD: 0 }` incremented by the Merged_Classification status of each Assessed_Package. Keys come from the fixed union, never from input strings.
 6. **Ordering** (`order.ts`, 12.6): comparator on Assessed_Packages: `score` descending, status precedence `HAUNTED < DEAD < ALIVE`, then `name`, `ecosystem`, `sourceKind` ascending by code point, then Classification_Tie_Key ascending. Two distinct Unique_Packages never share `(name, ecosystem, sourceKind)`, because that is the Package_Key, so the order is already total and independent of input order. The last key is kept because criterion 12.6 lists it.
@@ -545,16 +546,26 @@ export type Grade = 'A' | 'B' | 'C' | 'D' | 'F';
 export type UnassessedReason = 'non-registry-source' | 'no-health-data';   // Unassessed_Reason
 
 export interface Dependency {
+  /** Normalized name: identity, ordering and deduplication use it. pypi: PEP503_Normalization of rawName. npm, cargo: equal to rawName. */
   readonly name: string;
+  /** Name as written in the manifest. Always set by the parser (npm and cargo: equal to name). Excluded from Dependency_Set comparison. */
+  readonly rawName: string;
   readonly ecosystem: Ecosystem;
   readonly versionSpec: string;
   readonly scope: Scope;
   readonly sourceKind: SourceKind;
 }
 
+/** Serializer input: a Dependency whose rawName is optional (glossary: Dependency). */
+export type SerializableDependency = Omit<Dependency, 'rawName'> & { readonly rawName?: string };
+
+/** Dependency_Set element: the five compared fields. rawName is excluded (glossary: Dependency_Set). */
+export type DependencyIdentity = Omit<Dependency, 'rawName'>;
+
 /**
- * Dependency_Key: (name, scope). The ecosystem is fixed by the Manifest_Format, so it is not part of the key.
- * sourceKind and versionSpec are not part of it. Encoded for Map/Set use as JSON.stringify([name, scope]).
+ * Dependency_Key: (name, scope), where name is the normalized name. The ecosystem is fixed by the Manifest_Format,
+ * so it is not part of the key. rawName, sourceKind and versionSpec are not part of it.
+ * Encoded for Map/Set use as JSON.stringify([name, scope]).
  */
 export type DependencyKey = readonly [name: string, scope: Scope];
 
@@ -695,7 +706,8 @@ export const SEVERITIES = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] as const satisfi
 
 - **Dependency_Key string**: `JSON.stringify([name, scope])`, used in `Set`/`Map` only, never as an object property key. **Package_Key string**: `JSON.stringify([ecosystem, name, sourceKind])`, same rule.
 - **Parser accumulation**: arrays of `Candidate` plus a `Set<string>`. No `Record<string, ...>` is ever indexed by manifest-controlled keys.
-- **Dependency_Order**: `compareDependencies(a, b)` compares `name` by code point, then `SCOPE_ORDER.indexOf(scope)`, then `ecosystem`, `versionSpec`, `sourceKind` by code point. It is a total order on Dependencies.
+- **Dependency_Order**: `compareDependencies(a, b)` compares the normalized `name` by code point, then `SCOPE_ORDER.indexOf(scope)`, then `ecosystem`, `versionSpec`, `sourceKind`, then `rawName` by code point with an absent `rawName` before any present one. It is a total order on `SerializableDependency` values.
+- **PEP503_Normalization**: `normalizePypiName(s)` (see the requirements.txt parser, step 9). `writtenName(d)` returns `d.rawName` when it is a string and `normalizePypiName(d.rawName) === d.name`, otherwise `d.name`. `isNameToken(s)` implements the Name_Token pattern with a character loop. All three live in `formats/requirements-lexical.ts` and are shared by the parser and the serializer.
 - **Result type** (`internal/result.ts`):
 
 ```ts
@@ -716,7 +728,7 @@ export type SerializeError =
 
 **Analysis of acceptance criteria**
 
-Testing with generated inputs applies: the feature is pure logic over large input spaces (parsers, serializers, scoring, aggregation). Each `[PBT]` criterion in `requirements.md` maps to at least one property below (39 tagged criteria). Untagged criteria are verified with unit tests (see the Testing Strategy). A few untagged criteria that are cheap to generalize also get a property, marked "(extra)".
+Testing with generated inputs applies: the feature is pure logic over large input spaces (parsers, serializers, scoring, aggregation). Each `[PBT]` criterion in `requirements.md` maps to at least one property below (40 tagged criteria). Untagged criteria are verified with unit tests (see the Testing Strategy). A few untagged criteria that are cheap to generalize also get a property, marked "(extra)".
 
 Reflection (redundancy removed):
 
@@ -727,6 +739,8 @@ Reflection (redundancy removed):
 - Property 20 (range) is kept even though Property 21 implies it for the raw sum, because it checks the published `score` field type and range directly.
 - Criteria 10.12 (known severities only) and 10.24 (unknown severity equals `MEDIUM`) stay separate: one is a monotonicity relation, the other an equivalence between two inputs.
 - The dependency identity rule (same package in other scopes is a separate entry, a repeat in the same `(name, scope)` collapses) is spread over criteria 1.8, 3.8, 4.6 and 5.2. Property 7 states it once for parser and serializer, and Property 4 covers the first-occurrence and warning part, so neither repeats the other.
+- Criterion 2.14 has two claims: idempotence of `normalize` over all strings, and `normalize(rawName) === name` over all parsed pypi Dependencies. Both go into one property (Property 44), which is kept separate from Property 3 because it quantifies over arbitrary strings for `normalize` and is the only property on the pypi `rawName`/`name` relation.
+- Round-trip comparisons (Properties 9 and 10) use the Dependency_Set projection, which drops `rawName`. Property 11 compares text, where `rawName` matters through the Written_Name, and is stated separately.
 - The properties are written with an independent oracle in the test code (a re-implementation from the glossary text), not by calling the module's own predicates.
 
 ### Property 1: Parsers never throw on strings
@@ -743,13 +757,13 @@ Reflection (redundancy removed):
 
 ### Property 3: Parsed dependencies are well formed
 
-*For any* string input and *for any* Manifest_Format, every returned Dependency has `name.length >= 1`, `ecosystem` equal to the ecosystem of the requested format, a `scope` in `SCOPE_ORDER`, and a `sourceKind` in `registry`, `git`, `path`; `versionSpec` is a string.
+*For any* string input and *for any* Manifest_Format, every returned Dependency has `name.length >= 1` and `rawName.length >= 1`, `ecosystem` equal to the ecosystem of the requested format, a `scope` in `SCOPE_ORDER`, and a `sourceKind` in `registry`, `git`, `path`; `versionSpec` is a string. For `package.json` and `Cargo.toml`, `rawName` equals `name`.
 
-**Validates: Requirements 4.5**
+**Validates: Requirements 4.5, 1.12, 3.17**
 
 ### Property 4: One Dependency per key, first occurrence wins, one warning per discard
 
-*For any* string input and *for any* Manifest_Format, no two returned Dependencies share the same Dependency_Key `(name, scope)`. *For any* manifest in `requirements.txt` or `Cargo.toml` format rendered from a model whose entries share Dependency_Keys but differ in `versionSpec` or `sourceKind` (names differing only by case or by `-`, `_`, `.` runs for pypi, `package` renames, `[dependencies]` against `[target.<cfg>.dependencies]`, two `<cfg>` tables of one kind, `[dependencies.foo]` entry headers, interleaved headers), the returned Dependency for each key equals the First_Occurrence of the model (line order for `requirements.txt`; table header position, then entry position for `Cargo.toml`), and the warnings contain exactly one duplicate warning for each discarded occurrence, each naming the package and its scope. *For any* `package.json` text in which a key is repeated inside one section, the result holds the last value for that key and no duplicate warning is added (the exception of criterion 1.11).
+*For any* string input and *for any* Manifest_Format, no two returned Dependencies share the same Dependency_Key `(name, scope)`. *For any* manifest in `requirements.txt` or `Cargo.toml` format rendered from a model whose entries share Dependency_Keys but differ in `versionSpec` or `sourceKind` (spellings of one pypi package that differ only by case or by `-`, `_`, `.` runs, such as `Foo_Bar` and `foo.bar`, which share one Dependency_Key; `package` renames, `[dependencies]` against `[target.<cfg>.dependencies]`, two `<cfg>` tables of one kind, `[dependencies.foo]` entry headers, interleaved headers), the returned Dependency for each key equals the First_Occurrence of the model, including its `rawName` (line order for `requirements.txt`; table header position, then entry position for `Cargo.toml`), and the warnings contain exactly one duplicate warning for each discarded occurrence, each naming the package (normalized name) and its scope. *For any* `package.json` text in which a key is repeated inside one section, the result holds the last value for that key and no duplicate warning is added (the exception of criterion 1.11).
 
 **Validates: Requirements 4.6, 1.11, 3.8**
 
@@ -761,13 +775,13 @@ Reflection (redundancy removed):
 
 ### Property 6: Parser output is sorted in Dependency_Order
 
-*For any* string input and *for any* Manifest_Format, `dependencies` is sorted by `name` ascending in Unicode code point order (not UTF-16 code unit order), then by `scope` in `SCOPE_ORDER`. *For any* manifest rendered from a model without duplicate keys, and *for any* permutation of its entries (lines, keys, entries across tables, order of tables), the Parse_Result has the same `dependencies` list in the same order. Names include integer-like names (`"1"`, `"42"`), mixed-case names and names that sort differently by code point and by UTF-16 unit (for example `"\uFF5E"` and `"\u{1F600}"`).
+*For any* string input and *for any* Manifest_Format, `dependencies` is sorted by normalized `name` ascending in Unicode code point order (not UTF-16 code unit order), then by `scope` in `SCOPE_ORDER`, regardless of the spelling (`rawName`) of the entries. *For any* manifest rendered from a model without duplicate keys, and *for any* permutation of its entries (lines, keys, entries across tables, order of tables), the Parse_Result has the same `dependencies` list in the same order. Names include integer-like names (`"1"`, `"42"`), mixed-case names and names that sort differently by code point and by UTF-16 unit (for example `"\uFF5E"` and `"\u{1F600}"`).
 
 **Validates: Requirements 4.8**
 
 ### Property 7: Dependency identity is name and scope (extra)
 
-*For any* package name and *for any* non-empty set `S` of scopes supported by the format, a manifest that declares the name once in each scope of `S` (with different `versionSpec` and `sourceKind` values) parses to exactly one Dependency per scope of `S` with that name, with no warning. *For any* Dependency list that contains the same `(name, scope)` several times, `serializeManifest` writes exactly one entry for that key, and writes separate entries for the same name in different scopes.
+*For any* package name and *for any* non-empty set `S` of scopes supported by the format, a manifest that declares the name once in each scope of `S` (with different `versionSpec` and `sourceKind` values) parses to exactly one Dependency per scope of `S` with that name, with no warning. *For any* Dependency list that contains the same `(name, scope)` several times, including repeats that differ only in `rawName`, `serializeManifest` writes exactly one entry for that key, and writes separate entries for the same name in different scopes.
 
 **Validates: Requirements 1.8, 3.8, 5.2, 4.6**
 
@@ -779,25 +793,25 @@ Reflection (redundancy removed):
 
 ### Property 9: Serialize then parse round trip
 
-*For any* Valid_Dependency_List and *for any* Manifest_Format, parsing the serialized manifest returns a Dependency_Set (set equality, independent of order) equal to the input restricted to the format's ecosystem, supported scopes and Representable Dependencies, with equality over `name`, `versionSpec`, `scope`, `sourceKind` and `ecosystem`, and returns zero warnings.
+*For any* Valid_Dependency_List and *for any* Manifest_Format, parsing the serialized manifest returns a Dependency_Set (set equality, independent of order) equal to the input restricted to the format's ecosystem, supported scopes and Representable Dependencies, with equality over normalized `name`, `versionSpec`, `scope`, `sourceKind` and `ecosystem`. Both sides are projected without `rawName` before comparison (`rawName` is excluded). The generator mixes input Dependencies with an absent `rawName`, a `rawName` whose normalization equals `name` (`Django` for `django`), and a `rawName` whose normalization differs from `name`. The last kind is written as `name`, and the parsed `rawName` then equals `name`, which the projection hides. Parsing returns zero warnings.
 
 **Validates: Requirements 5.8, 5.3**
 
 ### Property 10: Parse, serialize, parse is stable
 
-*For any* string and *for any* Manifest_Format, let `p1 = parse(s)`, `t = serialize(p1.dependencies)`, `p2 = parse(t)`. Then `t` is a successful Result and the Dependency_Set of `p2` equals the Dependency_Set of `p1`, with equality over `name`, `versionSpec`, `scope` and `sourceKind`.
+*For any* string and *for any* Manifest_Format, let `p1 = parse(s)`, `t = serialize(p1.dependencies)`, `p2 = parse(t)`. Then `t` is a successful Result and the Dependency_Set of `p2` equals the Dependency_Set of `p1`, with equality over normalized `name`, `versionSpec`, `scope` and `sourceKind` (the `rawName` projection is dropped on both sides). The noise generator includes mixed-case and non-normalized pypi names, so the Written_Name path is exercised. The generator also produces git and path references whose spec contains a backslash (for example `foo @ git+https://h/a\b`). Criterion 2.13 makes the parser skip those lines with one warning, so they never reach the serializer and the property holds.
 
 **Validates: Requirements 5.9**
 
 ### Property 11: Serialization is idempotent
 
-*For any* Valid_Dependency_List and *for any* Manifest_Format, `serialize(parse(serialize(deps)).dependencies)` is text identical to `serialize(deps)`.
+*For any* Valid_Dependency_List and *for any* Manifest_Format, `serialize(parse(serialize(deps)).dependencies)` is text identical to `serialize(deps)`. The text is compared byte for byte, so the Written_Name (`rawName` when `normalize(rawName)` equals `name`, else `name`) must be stable through one parse, which holds because the parser returns `rawName` as written.
 
 **Validates: Requirements 5.10**
 
 ### Property 12: Serializer determinism and Dependency_Order output (extra)
 
-*For any* Dependency list and *for any* permutation of it (including lists with repeated keys), `serializeManifest` returns byte-identical text on repeated calls and for the permuted list, and the Parse_Result of that text lists exactly the restricted, deduplicated input in Dependency_Order. For `requirements.txt` each line ends in one `\n` and there are no blank lines.
+*For any* Dependency list and *for any* permutation of it (including lists with repeated keys), `serializeManifest` returns byte-identical text on repeated calls and for the permuted list, and the Parse_Result of that text lists exactly the restricted, deduplicated input in Dependency_Order (by normalized `name`; ties between spellings are broken on `rawName`, absent first, before deduplication keeps the first). For `requirements.txt` each line ends in one `\n` and there are no blank lines.
 
 **Validates: Requirements 5.12, 5.6, 5.4, 5.5**
 
@@ -979,7 +993,7 @@ Reflection (redundancy removed):
 
 *For any* group of entries with the same Package_Key and non-null classifications, the classification reported for that package (in `worst`, when eligible) equals the oracle choice: highest `score`, then `HAUNTED`, `DEAD`, `ALIVE`, then smallest Classification_Tie_Key, then smallest canonical key. Adding entries with a null classification to the group changes neither the choice nor `total`.
 
-**Validates: Requirements 12.1, 12.2**
+**Validates: Requirements 12.1, 12.2, 12.22**
 
 ### Property 43: Core functions do not mutate their inputs
 
@@ -987,14 +1001,21 @@ Reflection (redundancy removed):
 
 **Validates: Requirements 13.7, 13.3**
 
+### Property 44: PEP 503 normalization is idempotent and consistent with parsed names
+
+*For any* string `s`, `normalizePypiName(normalizePypiName(s))` equals `normalizePypiName(s)`. *For any* string input, every `pypi` Dependency returned by `parseManifest(input, 'requirements.txt')` satisfies `normalizePypiName(rawName) === name`. The input generators cover mixed-case names (`Django`, `PyYAML`, `SQLAlchemy`), separator runs (`Foo__Bar`, `foo.-_bar`), spelling pairs of one package, and git and path references with `egg` or `<name> @` names.
+
+**Validates: Requirements 2.14, 2.2**
+
 **Traceability: criterion to property**
 
 | Criterion | Tag | Property |
 |---|---|---|
+| 2.14 | [PBT] | Property 44 |
 | 4.2 | [PBT] | Property 1 |
 | 4.3 | [PBT] | Property 2 |
-| 4.5 | [PBT] | Property 3 |
-| 4.6 | [PBT] | Property 4 (and Property 7) |
+| 4.5 | [PBT] | Property 3 (includes `rawName`) |
+| 4.6 | [PBT] | Property 4 (and Property 7), including spelling duplicates across `Foo_Bar` and `foo.bar` |
 | 4.7 | [PBT] | Property 5 |
 | 4.8 | [PBT] | Property 6 |
 | 5.8 | [PBT] | Property 9 |
@@ -1031,15 +1052,20 @@ Reflection (redundancy removed):
 | 12.21 | [PBT] | Property 41 |
 | 13.7 | [PBT] | Property 43 |
 | 1.8, 1.11, 3.8 | untagged | Properties 7 and 4 plus unit tests |
+| 1.12, 3.17 | untagged | Property 3 plus unit tests |
+| 2.2, 2.10, 2.11 | untagged | Property 44 plus unit tests (`Django`, `PyYAML`, `SQLAlchemy`, `Foo_Bar`) |
+| 2.13, 3.16 | untagged | unit tests (one warning each, with line number or key), covered indirectly by Property 10 |
+| 5.11, 5.13, 5.17 | untagged | Properties 9, 10 and 11 (Written_Name, Representable) plus unit tests |
 | 4.9 | untagged | Property 8 plus unit tests |
 | 5.2, 5.4 to 5.6, 5.12 | untagged | Properties 7 and 12 plus unit tests |
+| 12.22 | untagged | Properties 34 and 42 plus merge unit tests |
 | 6.3, 6.5, 6.6 | untagged | Property 14 plus unit tests |
 | 10.1, 10.17 | untagged | Property 21 |
 | 11.1 to 11.5 | untagged | Property 30 plus unit tests |
 | 12.1 to 12.7, 12.13 to 12.16 | untagged | Properties 32, 33, 36 to 42 plus unit tests |
 | 13.1, 13.2, 13.8, 13.10, 13.11 | untagged | purity checker tests (unit), not properties |
 
-All 39 `[PBT]` criteria (4.2, 4.3, 4.5 to 4.8, 5.8 to 5.10, 6.4, 8.10 to 8.12, 9.5, 9.6, 10.10 to 10.15, 10.18 to 10.20, 10.22, 10.24, 11.6, 11.7, 12.8 to 12.12, 12.17 to 12.21, 13.7) appear in the table.
+All 40 `[PBT]` criteria (2.14, 4.2, 4.3, 4.5 to 4.8, 5.8 to 5.10, 6.4, 8.10 to 8.12, 9.5, 9.6, 10.10 to 10.15, 10.18 to 10.20, 10.22, 10.24, 11.6, 11.7, 12.8 to 12.12, 12.17 to 12.21, 13.7) appear in the table.
 
 ## Error Handling
 
@@ -1095,7 +1121,10 @@ The fallback never includes stack traces or input text. A stack overflow or out-
 | Invalid TOML, or `smol-toml` throws anything | empty dependencies, one warning with line when available | 3.9, 3.15 |
 | Non-string `version`, `package`, `git`, `path` | entry skipped, one warning naming the key | 3.10 |
 | Cargo value that is not a string or table, section or `target` that is not a table | entry or section skipped, one warning naming it | 3.14 |
-| Cargo `name` or `versionSpec` with a lone surrogate | entry skipped, one warning naming the key (design decision) | 5.13 |
+| Cargo `name` or `versionSpec` with a lone surrogate | entry skipped, one warning naming the key | 3.16 |
+| `requirements.txt` `versionSpec` of any `sourceKind` (registry, git or path) containing a backslash after joining | line skipped, one warning with the 1-based line number of the group | 2.13 |
+| `requirements.txt` name that is not normalized (`Django`, `Foo_Bar`) | accepted: `name` normalized, `rawName` as written, no warning | 2.2 |
+| Serializer: pypi `rawName` whose normalization differs from `name`, or an absent `rawName` | the Written_Name is `name`; the Dependency is Representable only if `name` is a normalized Name_Token | 5.11, 5.13 |
 | Same `(name, scope)` twice | first occurrence kept, one warning per discarded one naming package and scope | 4.6 |
 | Repeated key in a `package.json` section | last value (JSON.parse), no warning | 1.11 |
 | TOML position scan finds nothing | ranks fall back to `[0, 0, enumIndex]`, still deterministic | 3.8 |
@@ -1125,7 +1154,8 @@ tests/
     parsers/package-json.test.ts            parsers/package-json.property.test.ts
     parsers/requirements-txt.test.ts        parsers/requirements-txt.property.test.ts
     parsers/cargo-toml.test.ts              parsers/cargo-toml.property.test.ts
-    parsers/parse-manifest.test.ts          parsers/parse-manifest.property.test.ts      (Properties 1-8)
+    parsers/parse-manifest.test.ts          parsers/parse-manifest.property.test.ts      (Properties 1-8, 44)
+    formats/normalize-pypi-name.test.ts     (examples: Django, PyYAML, SQLAlchemy, Foo_Bar, foo.bar, separator runs, non-ASCII untouched, Written_Name)
     parsers/toml-tree.test.ts               (mocked smol-toml throws, __proto__ regression, never throws)
     parsers/toml-positions.test.ts          (header and key scan, 3.8 First_Occurrence)
     serializers/serialize-manifest.test.ts  serializers/serialize-manifest.property.test.ts   (Properties 9-12)
@@ -1183,15 +1213,26 @@ All generators live in `tests/support/arbitraries/`.
 ```ts
 const arbName = {
   npm:   fc.oneof(tokenName, fc.constantFrom('__proto__','constructor','prototype','toString'), fc.string({ minLength: 1 }), scopedName),
-  pypi:  fc.stringMatching(/^[a-z0-9]+(-[a-z0-9]+){0,3}$/),                 // already normalized
+  pypi:  arbPypiName,                                                          // see "pypi names and spellings" below
   cargo: fc.oneof(fc.stringMatching(/^[A-Za-z_][A-Za-z0-9_-]{0,15}$/), fc.string({ minLength: 1 })),
 };
 const arbSpec = (eco, kind) => ...;   // per ecosystem and sourceKind, see below
-const arbDependency = (eco) => fc.record({ name: arbName[eco], ecosystem: fc.constant(eco), versionSpec: ..., scope: fc.constantFrom(...scopesOf(eco)), sourceKind: ... });
-const arbDependencyList = (eco) => fc.uniqueArray(arbDependency(eco), { selector: dependencyKeyString, maxLength: 60 });
+// Serializer input: rawName is optional. npm and cargo: absent or equal to name (it is ignored there). pypi: see below.
+const arbDependency = (eco) => fc.record({ name: arbName[eco], rawName: arbRawName(eco), ecosystem: fc.constant(eco), versionSpec: ..., scope: fc.constantFrom(...scopesOf(eco)), sourceKind: ... }, { requiredKeys: [...] });
+const arbDependencyList = (eco) => fc.uniqueArray(arbDependency(eco), { selector: dependencyKeyString, maxLength: 60 });   // key = normalized name + scope
 ```
 
-Per-ecosystem spec generators produce only values consistent with `sourceKind`: npm registry specs (`^1.2.3`, `~0`, `>=1 <2`, `*`, `latest`, `""`, `npm:alias@1`, unicode), npm git specs (`git+https://...`, `github:u/r`, `u/r#ref`), npm path specs (`file:../x`, `link:./y`, `workspace:*`); pypi registry specs (`>=2.0,<3`, `==1.*`, `~=1.4`, `!=2`, `*`), pypi git (`git+https://...@v1`), pypi path (`./x`, `../y`, `/abs`, `file:///z`); cargo registry (`1.0`, `^0.3`, `*`, `=1.2.3`, `>=1, <2`), cargo git (URLs), cargo path (`../crate`). "Valid_Dependency_List" in Properties 9 and 11 means lists drawn from these generators: non-empty names and no two entries of one ecosystem with the same `(name, scope)` (the same name in several scopes is allowed and common), normalized pypi names, lexically canonical specs. Non-Representable entries are deliberately mixed in at low weight (a wrong-ecosystem entry, an unsupported scope, an npm spec whose classification disagrees with `sourceKind`, a requirements spec starting with `git+` but marked `registry`) to check omission. The expected result is computed by the model `restrict(deps, format)` in `oracles/manifest-model.ts`.
+**pypi names and spellings.** A pypi dependency is generated from a normalized base name and a spelling of it:
+
+- `arbNormalizedName` is `fc.stringMatching(/^[a-z0-9]+(-[a-z0-9]+){0,3}$/)`, mixed with dictionary names (`django`, `pyyaml`, `sqlalchemy`, `foo-bar`, `a`, `a-b`).
+- `arbSpelling(base)` rewrites `base` into a spelling that normalizes back to it: random upper-casing of ASCII letters (`Django`, `PyYAML`, `SQLAlchemy`), each `-` replaced by a run of 1 to 3 characters from `-`, `_`, `.` (`Foo_Bar`, `foo.bar`, `FOO__BAR`, `foo.-_bar`). Every spelling is a Name_Token. The dictionary pairs `Foo_Bar` against `foo.bar` and `PyYAML` against `pyyaml` are always in the pool, so spelling collisions are common.
+- `arbRawName('pypi')` yields, with weights: `undefined` (absent, serializer only), a spelling of `name` (`normalize(rawName) === name`), and a deliberately inconsistent spelling of another name (serializer only; it must fall back to `name`).
+- Parser-facing generators (manifests) use only spellings, never inconsistent ones, since the parser derives `name` from `rawName`.
+- Non-ASCII look-alikes (`K` KELVIN SIGN `U+212A`, `İ`) are generated only in the noise path. They are not Name_Tokens, so the parser must reject the line with a warning and never fold them to ASCII.
+
+**Set comparison with the `rawName` projection.** Every comparison of Dependency_Sets goes through `project(d) = { name, ecosystem, versionSpec, scope, sourceKind }` in `oracles/manifest-model.ts`, applied to both sides, then compared as sets of `JSON.stringify([name, ecosystem, versionSpec, scope, sourceKind])` strings. `rawName` is compared only where a property says so (Properties 3, 4 and 44, and the text comparison in Property 11).
+
+Per-ecosystem spec generators produce only values consistent with `sourceKind`: npm registry specs (`^1.2.3`, `~0`, `>=1 <2`, `*`, `latest`, `""`, `npm:alias@1`, unicode), npm git specs (`git+https://...`, `github:u/r`, `u/r#ref`), npm path specs (`file:../x`, `link:./y`, `workspace:*`); pypi registry specs (`>=2.0,<3`, `==1.*`, `~=1.4`, `!=2`, `*`), pypi git (`git+https://...@v1`), pypi path (`./x`, `../y`, `/abs`, `file:///z`); cargo registry (`1.0`, `^0.3`, `*`, `=1.2.3`, `>=1, <2`), cargo git (URLs), cargo path (`../crate`). "Valid_Dependency_List" in Properties 9 and 11 means lists drawn from these generators: non-empty names and no two entries of one ecosystem with the same normalized `name` and `scope` (the same name in several scopes is allowed and common), pypi `name` always normalized and `rawName` absent or a spelling of it, lexically canonical specs. Non-Representable entries are deliberately mixed in at low weight (a wrong-ecosystem entry, an unsupported scope, an npm spec whose classification disagrees with `sourceKind`, a requirements spec starting with `git+` but marked `registry`, a pypi `name` that is not normalized and has no matching `rawName`) to check omission. The expected result is computed by the model `restrict(deps, format)` in `oracles/manifest-model.ts`.
 
 **Mutation and corruption path.** Takes a serialized valid manifest (or a fixture) and applies one to three mutations from: truncate at a random index; insert random characters at random positions; delete a random slice; duplicate a random line or slice; replace a random delimiter (`"`, `,`, `{`, `}`, `[`, `]`, `=`, `\`) with another; convert to CRLF or lone CR line endings; prepend a BOM; insert a huge string value (100,000 characters) as a value or name; swap in a `__proto__` name; replace a random character with an unpaired surrogate or NUL; repeat a section header. Used by Properties 1, 3 to 6, 10 and 43.
 
@@ -1200,7 +1241,7 @@ Per-ecosystem spec generators produce only values consistent with `sourceKind`: 
 **Model-based manifests (duplicates and shuffles).** Used by Properties 4, 6, 7 and 12. A model is a list of entries `{ name, scope, versionSpec, sourceKind, table }` in explicit text order, and per-format `render(model)` functions write the text. The oracle reads the model, not the text.
 
 - *Duplicates.* A pool of 2 to 4 names is drawn per manifest so that collisions are likely, with colliding entries that differ in `versionSpec` and `sourceKind`. For `requirements.txt` the spellings of one name vary (`Foo_Bar`, `foo-bar`, `FOO.BAR`, `foo__bar`) and repeats are separated by comments, blank lines, option lines and continuation lines. For `Cargo.toml` the same crate appears in `[dependencies]`, in several `[target.'<cfg>'.dependencies]` tables with distinct cfg strings (including cfgs that contain `.` and quotes), in `[dev-dependencies]` (a different key), as `[dependencies.foo]` entry headers, as `package = "x"` renames under different keys, and with table headers interleaved (`[dependencies.a]`, `[target.x.dependencies]`, `[dependencies.b]`). Traps are inserted: multi-line strings and arrays that contain header-looking lines, comments with `[dependencies]`, CRLF endings and a BOM. For `package.json` a key is repeated inside one section with different values (oracle: last value, zero warnings) and the same name is placed in several sections (separate Dependencies).
-- *Oracle.* `firstOccurrence(model)` keeps, per `(name, scope)` after pypi normalization, the entry with the smallest `(table header position, entry position)` in the model, and returns the expected Dependencies and the expected count of discard warnings.
+- *Oracle.* `firstOccurrence(model)` keeps, per `(name, scope)` after pypi normalization, the entry with the smallest `(table header position, entry position)` in the model, and returns the expected Dependencies (with the `rawName` of the kept first spelling) and the expected count of discard warnings.
 - *Shuffles.* For no-duplicate models, `fc.shuffledSubarray(entries, { minLength: n, maxLength: n })` permutes the entries (within tables, and the order of tables), and the test compares the Parse_Results for the original and shuffled renderings.
 - *Sorted-output checks.* The name pool mixes integer-like names (`"1"`, `"10"`, `"2"`), upper and lower case, `_` against `-`, an astral character against a high BMP character (`"\u{1F600}"` against `"\uFF5E"`), and the proto names. The oracle sorts with an independent code point comparator (`Array.from(s)` and `codePointAt`), never with `localeCompare` or `<`. Property 6 also feeds noise and checks sortedness with that comparator.
 - *Serializer lists.* `arbDuplicatedList` repeats `(name, scope)` pairs with different specs and appends the same name in other scopes, then shuffles the list for Property 12 (permutation) and Property 7 (identity).
@@ -1269,9 +1310,9 @@ The oracle (`oracles/facts-oracle.ts`) re-implements Valid_Fact, the three flags
 Unit tests cover what properties do not pin down well:
 
 - **Constants** (10.21): the four consistency rules and the exact table values.
-- **Parsers**: one example per criterion 1.1 to 1.10, 2.1 to 2.12, 3.1 to 3.15, 4.1, 4.4, 4.6, 4.8, 4.9, 4.10, including the required boundary examples (empty string value, `null` section, `__proto__` entry, `a/b#c` shorthand versus `@scope/pkg`, CRLF, trailing backslash on the last line, `foo @ https://x` rejected, bare `./pkg` without `#egg` rejected, `foo 1.0` rejected, `foo ===1` accepted). Duplicate examples: a `package.json` key repeated in one section (last value, no warning, 1.11), the same package in `dependencies` and `devDependencies` (two entries, 1.8), `Foo_Bar` and `foo-bar` in `requirements.txt` (first line kept, one warning), `serde` in `[dependencies]`, `[target.'cfg(unix)'.dependencies]` and `[target.'cfg(windows)'.dependencies]` with the target tables written first (the earliest header wins, two warnings), `[dependencies]` against `[dev-dependencies]` (two entries). Output order: integer-like names sorted by code point, `"\uFF5E"` after `"\u{1F600}"`.
+- **Parsers**: one example per criterion 1.1 to 1.10, 2.1 to 2.12, 3.1 to 3.15, 4.1, 4.4, 4.6, 4.8, 4.9, 4.10, including the required boundary examples (empty string value, `null` section, `__proto__` entry, `a/b#c` shorthand versus `@scope/pkg`, CRLF, trailing backslash on the last line, `foo @ https://x` rejected, bare `./pkg` without `#egg` rejected, `foo 1.0` rejected, `foo ===1` accepted). Name examples (2.2, 2.10, 2.11, 1.12, 3.17): `Django` gives `name` `django` and `rawName` `Django`; `PyYAML`, `SQLAlchemy`, `Foo_Bar` (`foo-bar`), `foo.bar`; a git reference `Foo_Bar @ git+https://h/r` and a bare `git+https://h/r#egg=Foo_Bar` keep the written `rawName`; a name with a non-ASCII letter is rejected with one warning; an npm `Foo` and a cargo `Foo_Bar` keep `name` equal to `rawName`, un-normalized; backslash spec (2.13) and lone surrogate (3.16) each give one warning. Duplicate examples: `Foo_Bar` on line 3 and `foo.bar` on line 9 give the line-3 entry (`rawName` `Foo_Bar`) and one warning; a `package.json` key repeated in one section (last value, no warning, 1.11), the same package in `dependencies` and `devDependencies` (two entries, 1.8), `Foo_Bar` and `foo-bar` in `requirements.txt` (first line kept, one warning), `serde` in `[dependencies]`, `[target.'cfg(unix)'.dependencies]` and `[target.'cfg(windows)'.dependencies]` with the target tables written first (the earliest header wins, two warnings), `[dependencies]` against `[dev-dependencies]` (two entries). Output order: integer-like names sorted by code point, `"\uFF5E"` after `"\u{1F600}"`.
 - **TOML wrapper and positions**: mocked `smol-toml` throwing an `Error`, a string and `undefined` returns a `Result` (3.15); `__proto__` regression; the position scan on multi-line strings and arrays that contain header-looking lines, comments, CRLF, BOM, quoted dotted keys, `[dependencies.foo]` headers, dotted keys at the root and inline tables.
-- **Serializer**: exact expected output text per format for a small list (5.4 to 5.6, 5.14 to 5.18), unsupported format error (5.7), empty list output parses to empty (5.3), omission cases (5.2, including a repeated `(name, scope)` and the same name in two scopes), over-`MAX_SERIALIZED_DEPENDENCIES` error (5.19), escaping examples for quotes, backslashes, control characters and unicode (5.11).
+- **Serializer**: exact expected output text per format for a small list (5.4 to 5.6, 5.14 to 5.18), Written_Name cases (5.11, 5.13, 5.17: `rawName` `Django` with `name` `django` is written as `Django`; `rawName` `Flask2` with `name` `django` and an absent `rawName` are written as `django`; a non-normalized `name` without matching `rawName` is omitted; `package.json` and `Cargo.toml` ignore `rawName`), filter-then-sort-then-dedupe order (5.2: a non-Representable earlier duplicate does not hide a Representable later one; `Foo_Bar` and `foo.bar` with equal other fields give one entry, the one whose `rawName` sorts first by code point, here `Foo_Bar`, and an absent `rawName` sorts before both), unsupported format error (5.7), empty list output parses to empty (5.3), omission cases (5.2, including a repeated `(name, scope)` and the same name in two scopes), over-`MAX_SERIALIZED_DEPENDENCIES` error (5.19), escaping examples for quotes, backslashes, control characters and unicode (5.11).
 - **Classifier**: one example per rule 6.3, 7.2 to 7.5, 8.1 to 8.9, 9.1 to 9.4, 10.2 to 10.8, 10.16, 11.2, including every boundary in the table below, and a message-length test for the longest messages.
 - **Summarizer**: examples for 12.1 to 12.7, 12.13 to 12.16 (a single package of score 46 among many zeros gives grade `D` or `F`), empty list, all-unassessed list, tie-break examples, half-up rounding (mean 2.5 rounds to 3). Grouping examples: one package in `runtime` and `dev` with different scores is one Unique_Package with `scopes` `['runtime', 'dev']` and the higher score; the same name as `registry` and as `git` is two packages; a package with one null and one non-null classification is assessed; a `git` package with a classification is `non-registry-source`. Merge examples: equal score, status and flags with different `ruleId` lists; equal on all of those with different Reason text (canonical key decides).
 - **Purity** (13.1, 13.2, 13.8, 13.10, 13.11): checker runs on real `/core` and the real `package.json` (zero violations) and on inline violating snippets, one per banned construct, asserting rule name and line and column. Allow-list examples: `import 'fs'`, `'node:fs'`, `'path'`, a bare `lodash`, `'smol-toml/x'`, the `@/core/...` alias and a relative path that leaves `/core` are violations; `import { parse } from 'smol-toml'` is a violation anywhere except `core/parsers/toml-tree.ts`; a relative import inside `/core` is clean. Pin examples: `1.2.3` and `1.2.3-beta.1` pass; `^1.2.3`, `~1.2.3`, `1.2`, `1.x`, `*`, `>=1.0.0`, `latest`, `npm:smol-toml@1.2.3` and a missing entry fail. CLI exit-code test spawns `tsx` on a temporary directory.
@@ -1302,29 +1343,34 @@ Unit tests cover what properties do not pin down well:
 - Vitest coverage (v8) on `core/**` with thresholds of 95 percent lines and 90 percent branches. Defensive branches (the safety-net fallbacks, the defensive sort) are tested by injecting a throwing getter or a spy on an internal function, not excluded.
 - CI order: `tsc --noEmit`, `npm run check:core`, `npx vitest --run`. The nightly job reruns the property tests with `FC_NUM_RUNS=10000`.
 
+
 ## Resolved decisions
 
-These were open in the previous draft and are now settled by the approved `requirements.md`.
+These were open in earlier drafts and are now settled by the approved `requirements.md`. Rules that earlier drafts left to the design now name the criterion that states them.
 
-1. **Duplicates.** Identity is `(name, scope)` (Dependency_Key). The same package in different scopes is a separate entry. A repeat within one `(name, scope)` keeps the First_Occurrence in text order and adds one warning naming the package and scope (4.6). The Summarizer groups by `(ecosystem, name, sourceKind)` into Unique_Packages that carry the set of scopes (12.1). For `Cargo.toml`, First_Occurrence by table header position uses the header and key scan in `parsers/toml-positions.ts` plus a documented rank rule. For `package.json`, `JSON.parse` keeps the last value of a repeated key and no warning is added (1.11). A crate in `[dependencies]` and in `[target.<cfg>.dependencies]` is a duplicate (3.8), which closes the earlier conflict between 3.8 and 4.6.
-2. **Ordering.** The parser does not preserve source order. Output is always in Dependency_Order (name by code point, then `SCOPE_ORDER`), and round trips compare sets (4.8, 5.8, 5.9). The integer-like key problem therefore no longer affects output. The serializer writes in the same order (5.12).
-3. **Severity.** Monotonicity (10.12) applies only to known severities. An unknown severity scores exactly like `MEDIUM` (10.24, Property 24).
-4. **TOML library.** `smol-toml` is accepted in `/core` with an exact pinned version. Every call goes through one wrapper that returns a `Result` and never throws (3.15). `/core` may depend only on pure parsing libraries with no I/O, and the static check enforces the allow-list, the exact pin and the single import site (13.10, 13.11).
-5. **`requirements.txt` grammar.** Criterion 2.8 now lists the accepted comparison operators, so `foo 1.0` is rejected by requirement, not by design choice.
-6. **Where `unassessedReason` lives.** On `Unassessed_Item` only. `Assessed_Dependency` stays `{ dependency, classification }`.
-7. **Serializer size limit.** More than `MAX_SERIALIZED_DEPENDENCIES` returns an error and no text (5.19).
+1. **Duplicates.** Identity is `(name, scope)` (Dependency_Key) with `name` the normalized name. The same package in different scopes is a separate entry. A repeat within one `(name, scope)` keeps the First_Occurrence in text order and adds one warning naming the package and scope (4.6). Two spellings of one pypi package (`Foo_Bar`, `foo.bar`) are such a repeat, and the kept Dependency keeps its own `rawName` (4.6). The Summarizer groups by `(ecosystem, name, sourceKind)` into Unique_Packages that carry the set of scopes (12.1). For `Cargo.toml`, First_Occurrence by table header position uses the header and key scan in `parsers/toml-positions.ts` (3.8). For `package.json`, `JSON.parse` keeps the last value of a repeated key and no warning is added (1.11).
+2. **Ordering.** The parser does not preserve source order. Output is always in Dependency_Order (normalized name by code point, then `SCOPE_ORDER`; the serializer breaks remaining ties on `rawName`, absent first), and round trips compare sets (4.8, 5.8, 5.9, 5.12).
+3. **Names and `rawName`.** `name` is the identity and `rawName` is the spelling as written. pypi `name` is the PEP503_Normalization of `rawName`, and non-normalized names are accepted (2.2). npm and cargo keep `rawName` equal to `name` (1.12, 3.17). The round trip compares the projection without `rawName` (5.8, 5.9). The idempotence and consistency of normalization is Property 44 (2.14).
+4. **Written_Name.** `requirements.txt` output uses `rawName` when its normalization equals `name`, otherwise `name` (5.11, 5.13, 5.17). `package.json` and `Cargo.toml` ignore `rawName` (5.11). This replaces the former rule that non-normalized names are not Representable.
+5. **Representable.** Criterion 5.13 is the complete rule, including the `;` and `#` conditions for specs and the Written_Name condition for names. The design adds no conditions of its own.
+6. **Serializer order of operations.** Filter, then sort in Dependency_Order, then deduplicate by key (5.2). A Representable Dependency survives an earlier non-Representable one with the same key.
+7. **Parser skips that keep output Representable.** A `requirements.txt` spec of any `sourceKind` (registry, git or path) with a backslash after continuation joining is skipped with one warning including the line (2.13). A Cargo entry with a lone surrogate in `name` or `versionSpec` is skipped with one warning naming the key (3.16).
+8. **Merged_Classification.** The total order is score descending, Status precedence, Classification_Tie_Key, then Classification_Canonical_Key (12.22), so the summary is independent of input order (12.10).
+9. **Severity.** Monotonicity (10.12) applies only to known severities. An unknown severity scores exactly like `MEDIUM` (10.24, Property 24).
+10. **TOML library.** `smol-toml` is accepted in `/core` with an exact pinned version. Every call goes through one wrapper that returns a `Result` and never throws (3.15). The static check enforces the allow-list, the exact pin and the single import site (13.10, 13.11).
+11. **`requirements.txt` grammar.** Criterion 2.8 lists the accepted comparison operators, so `foo 1.0` is rejected by requirement.
+12. **Where `unassessedReason` lives.** On `Unassessed_Item` only. `Assessed_Dependency` stays `{ dependency, classification }`.
+13. **Serializer size limit.** More than `MAX_SERIALIZED_DEPENDENCIES` returns an error and no text (5.19).
+14. **Backslash in git and path specs.** Criterion 5.13 makes any `requirements.txt` `versionSpec` with a backslash non-Representable. Criterion 2.13 now skips every requirement (registry, git or path) whose `versionSpec` still contains a backslash after joining, with one warning that includes the line number. `foo @ git+https://h/a\b` is therefore skipped, and `parse(serialize(parse(x)))` keeps 5.9 (Property 10).
 
 ## Open questions / risks
 
-Items 1 and 2 can change requirements text. The rest are decisions the design made where the requirements are silent.
+These are decisions the design made where the requirements are silent.
 
-1. **Representable is narrower than criterion 5.13 for `requirements.txt`.** Criterion 5.13 now covers non-empty names, newline, backslash, outer whitespace, operator-led registry specs and lone surrogates. Exact recovery needs two more conditions (D1 and D2 in "Representable rules"): the `name` must equal its own normalization and match the name token, and a spec must not contain `;` or whitespace followed by `#` (a `git` or `path` spec must not contain whitespace followed by `;` or `#`). Please confirm, or add D1 and D2 to 5.13. Without them, `Foo` would be written as `Foo` and parsed back as `foo`, which breaks Property 9.
-2. **Merged_Classification tie key is not total.** Classification_Tie_Key (flags plus `ruleId` list) cannot separate two classifications with equal score, status, flags and `ruleId`s but different Reason text, for example `8.3` with 800 and with 900 days. Input order would then change `worst` and break confluence (12.10). The design adds a final `canonicalKey` (reasons as `[ruleId, message, facts]`) after the Classification_Tie_Key. Please confirm, or extend the glossary definition of Classification_Tie_Key. The 12.6 ordering itself needs no extension, because distinct Unique_Packages never share `(name, ecosystem, sourceKind)`.
-3. **Parsers skip entries that criterion 5.13 would make non-Representable.** The `requirements.txt` parser skips a registry line whose spec still contains `\` (it can occur only inside a joined line), and the Cargo parser skips an entry with a lone surrogate in `name` or `versionSpec`, each with one warning. Without this, parser output would contain Dependencies that the serializer omits and Property 10 would fail. Criteria 2.8 and 3.10 do not mention these cases. Please confirm or amend them.
-4. **Dedup versus Representable in the serializer.** Criterion 5.2 omits a Dependency that "repeats the `name` and `scope` of an earlier Dependency of the same `ecosystem`". The design filters by ecosystem, scope support and Representable first, then keeps the first remaining entry per `(name, scope)` in Dependency_Order. A later, Representable duplicate therefore survives when the earlier one was non-Representable. The literal reading would drop it. Valid_Dependency_Lists have no duplicate keys, so the properties are unaffected. Confirm which reading is intended.
-5. **Cargo First_Occurrence is best effort for inline tables.** The scan separates entries by header line and key line. Entries inside one inline table share a line and fall back to enumeration order, whose integer-like-keys-first quirk matters only for two renamed entries of one inline table with the same `package` name. The scan cannot fail the parse: when it finds nothing, ranks fall back to `[0, 0, enumIndex]`.
-6. **Pinned `smol-toml` version.** The version number is chosen at implementation time after the `__proto__` regression test passes, and the build check keeps it exact. Bundle size is measured then.
-7. **Grade thresholds.** `GRADE_AVERAGE_MAX` (10, 20, 30, 45) and `GRADE_WORST_MAX` (15, 30, 45, 60) come from the requirements and were not re-derived. A repo of all-ALIVE scores 0 gets `A`; a lone `HIGH` vulnerability (35 points) on one package gives `C` even in a 100-package repo; a lone archived package (30) gives `B`. Confirm these feel right before UI work builds on them.
-8. **Other behaviors the design chose.** A `package.json` or Cargo entry with an empty name is skipped with a warning (4.10). A Cargo dependency value that is neither string nor table, and a dependency section or `target` that is not a table, produce one warning each (3.14). The warning list is not capped, so a hostile 1,000,000-character file of bad lines yields hundreds of thousands of warnings; a cap would conflict with "exactly one warning" per bad line (2.8). Duplicate warnings are appended after the parser's own warnings, in First_Occurrence order.
-9. **Property tests and `MAX_MANIFEST_LENGTH`.** Criterion 4.2 quantifies over strings up to 1,000,000 characters. Random generation up to that size is too slow for 100 or more runs, so properties use sizes up to about 20,000 characters and the maximum-size boundary is covered by examples and a timing test.
-10. **Purity checker dependency.** The checker uses the TypeScript compiler API (already present through Next.js), including `ts.parseJsonText` for the `package.json` pin check, and lives in `/scripts`, outside `/core`.
+1. **Cargo First_Occurrence is best effort for inline tables.** The scan separates entries by header line and key line. Entries inside one inline table share a line and fall back to enumeration order, whose integer-like-keys-first quirk matters only for two renamed entries of one inline table with the same `package` name. The scan cannot fail the parse: when it finds nothing, ranks fall back to `[0, 0, enumIndex]`.
+2. **Pinned `smol-toml` version.** The version number is chosen at implementation time after the `__proto__` regression test passes, and the build check keeps it exact. Bundle size is measured then.
+3. **Grade thresholds.** `GRADE_AVERAGE_MAX` (10, 20, 30, 45) and `GRADE_WORST_MAX` (15, 30, 45, 60) come from the requirements and were not re-derived. A repo of all-ALIVE scores 0 gets `A`; a lone `HIGH` vulnerability (35 points) on one package gives `C` even in a 100-package repo; a lone archived package (30) gives `B`. Confirm these feel right before UI work builds on them.
+5. **Other behaviors the design chose.** A `package.json` or Cargo entry with an empty name is skipped with a warning (4.10). A Cargo dependency value that is neither string nor table, and a dependency section or `target` that is not a table, produce one warning each (3.14). The warning list is not capped, so a hostile 1,000,000-character file of bad lines yields hundreds of thousands of warnings; a cap would conflict with "exactly one warning" per bad line (2.8). Duplicate warnings are appended after the parser's own warnings, in First_Occurrence order.
+6. **Property tests and `MAX_MANIFEST_LENGTH`.** Criterion 4.2 quantifies over strings up to 1,000,000 characters. Random generation up to that size is too slow for 100 or more runs, so properties use sizes up to about 20,000 characters and the maximum-size boundary is covered by examples and a timing test.
+7. **Purity checker dependency.** The checker uses the TypeScript compiler API (already present through Next.js), including `ts.parseJsonText` for the `package.json` pin check, and lives in `/scripts`, outside `/core`.
+8. **Duplicate warning wording for spellings.** The duplicate warning names the normalized `name`, not the discarded spelling, so `Foo_Bar` against `foo.bar` reads `"foo-bar"`. Criterion 4.6 only requires that the package and scope be named. Say so if the discarded spelling should be quoted too.

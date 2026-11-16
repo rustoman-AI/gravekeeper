@@ -6,13 +6,6 @@ This plan builds the pure logic layer in `/core` in five groups: project scaffol
 
 Implementation language: TypeScript (strict). The project root is the `gravekeeper` folder. Test files follow `<module>.test.ts` and `<module>.property.test.ts`, under `/tests` as laid out in `design.md`.
 
-Design defaults applied (each is repeated in the task that implements it):
-
-- `requirements.txt` Representable extras D1 and D2 (design "Representable rules"). They are not in criterion 5.13.
-- Merged_Classification tie order ends with `canonicalKey` after the Classification_Tie_Key. Not in the glossary.
-- Parsers skip, with one warning, a `requirements.txt` registry spec that contains a backslash and a `Cargo.toml` name or spec with a lone surrogate. Not in criteria 2.8 and 3.10.
-- Serializer order is filter (ecosystem, scope, Representable), then sort, then dedupe by `(name, scope)`. This is a narrower reading than the literal text of criterion 5.2.
-
 ## Tasks
 
 - [ ] 1. Project scaffold
@@ -30,7 +23,7 @@ Design defaults applied (each is repeated in the task that implements it):
   - [ ] 1.3 Add test tooling and the pinned TOML dependency
     - Install `vitest`, `fast-check`, `tsx` as dev dependencies and `smol-toml` under `dependencies` with `--save-exact` (a plain `<major>.<minor>.<patch>` string, no `^` or `~`).
     - Add `vitest.config.ts` (include `tests/**/*.test.ts`, 30 second `testTimeout`, Node environment) and package scripts `typecheck` (`tsc --noEmit`), `test` (`vitest --run`), keeping the generated `lint` script.
-    - The exact `smol-toml` version is chosen here; the `__proto__` regression test in task 5.16 must pass on it.
+    - The exact `smol-toml` version is chosen here; the `__proto__` regression test in task 5.17 must pass on it.
     - _Requirements: 3.15, 13.10_
 
   - [ ] 1.4 Create the folder structure and fast-check config
@@ -47,8 +40,8 @@ Design defaults applied (each is repeated in the task that implements it):
 
 - [ ] 3. Types, constants, internal helpers and the purity checker
   - [ ] 3.1 Define the model types
-    - Create `core/model/types.ts` and `core/model/index.ts` with every type from the design's Data Models section (`Dependency`, `SourceKind`, `Scope`, `Severity`, `Status`, `Grade`, `HealthFacts`, `RawHealthFacts`, `RuleId`, `Reason`, `Classification`, `ParseResult`, `AssessedDependency`, `UniquePackage`, `RankedPackage`, `UnassessedItem`, `RepoSummary`, and the rest).
-    - _Requirements: 13.4, 13.5_
+    - Create `core/model/types.ts` and `core/model/index.ts` with every type from the design's Data Models section (`Dependency` with `rawName`, `SerializableDependency` (a `Dependency` with an optional `rawName`), `SourceKind`, `Scope`, `Severity`, `Status`, `Grade`, `HealthFacts`, `RawHealthFacts`, `RuleId`, `Reason`, `Classification`, `ParseResult`, `AssessedDependency`, `UniquePackage`, `RankedPackage`, `UnassessedItem`, `RepoSummary`, and the rest).
+    - _Requirements: 1.12, 2.2, 3.17, 5.11, 13.4, 13.5_
 
   - [ ] 3.2 Define the constants
     - Create `core/model/constants.ts` with the `CONSTANTS` object (`as const satisfies ConstantsShape`), named re-exports of every key, `SCOPE_ORDER`, `CORE_ALLOWED_PACKAGES` (`smol-toml` only), `SEVERITIES`, and the values from the requirements Constants table.
@@ -99,25 +92,25 @@ Design defaults applied (each is repeated in the task that implements it):
 
 - [ ] 5. Parsers and serializer
   - [ ] 5.1 Implement the shared format helpers
-    - Create `core/formats/manifest-format.ts` (`MANIFEST_FORMATS`, `ecosystemOf`, `supportedScopes`), `key.ts` (`dependencyKey` as `JSON.stringify([name, scope])`), `order.ts` (`compareDependencies` = Dependency_Order, `scopeIndex`), `npm-source-kind.ts` (`sourceKindOfNpmSpec`, prefix checks plus one non-backtracking scan) and `requirements-lexical.ts` (name token, `normalizePypiName`, comparison operator list, canonical-spec predicate, direct-reference helpers).
+    - Create `core/formats/manifest-format.ts` (`MANIFEST_FORMATS`, `ecosystemOf`, `supportedScopes`), `key.ts` (`dependencyKey` as `JSON.stringify([name, scope])`), `order.ts` (`compareDependencies` = Dependency_Order on the normalized `name`, with `rawName` as the last tie-break and an absent `rawName` first, `scopeIndex`), `npm-source-kind.ts` (`sourceKindOfNpmSpec`, prefix checks plus one non-backtracking scan) and `requirements-lexical.ts` (`normalizePypiName` as PEP503_Normalization by ASCII code point arithmetic, `isNameToken`, `writtenName`, comparison operator list, canonical-spec predicate, direct-reference helpers).
     - Add a `// Requirement <n>` comment above each rule-like function.
-    - _Requirements: 1.9, 2.2, 2.8, 4.8, 5.12, 5.13_
+    - _Requirements: 1.9, 2.2, 2.8, 2.14, 4.8, 5.11, 5.12, 5.13_
 
   - [ ] 5.2 Write unit tests for the format helpers
-    - `tests/core/formats/formats.test.ts`: `sourceKindOfNpmSpec` (`file:`, `link:`, `workspace:` to path; `git+`, `git://`, `github:`, `gitlab:`, `bitbucket:` to git; `a/b#c` and `foo/bar#v1.0` to git; `@scope/pkg`, `1.0.0`, `` (empty) to registry); `normalizePypiName` is idempotent and collapses runs of `-`, `_`, `.`; `compareDependencies` orders by code point then `SCOPE_ORDER` then the tie fields (astral against high BMP, integer-like names).
-    - _Requirements: 1.9, 2.2, 4.8_
+    - `tests/core/formats/formats.test.ts`: `sourceKindOfNpmSpec` (`file:`, `link:`, `workspace:` to path; `git+`, `git://`, `github:`, `gitlab:`, `bitbucket:` to git; `a/b#c` and `foo/bar#v1.0` to git; `@scope/pkg`, `1.0.0`, `` (empty) to registry); `normalizePypiName` lower-cases only ASCII `A` to `Z` (non-ASCII letters unchanged), collapses runs of `-`, `_`, `.` into one `-`, is idempotent, and maps `Django`, `PyYAML`, `SQLAlchemy`, `Foo_Bar` and `foo.bar` to `django`, `pyyaml`, `sqlalchemy`, `foo-bar` and `foo-bar`; `isNameToken` accepts `Django` and `a.b_c-d` and rejects an empty string, `-a` and `a b`; `writtenName` returns `rawName` when its normalization equals `name`, otherwise `name`, and `name` when `rawName` is absent; `compareDependencies` orders by code point then `SCOPE_ORDER` then the tie fields, ending with `rawName` (absent first) (astral against high BMP, integer-like names).
+    - _Requirements: 1.9, 2.2, 2.14, 4.8, 5.11_
 
   - [ ] 5.3 Implement `finish` (rank, dedupe, sort)
-    - Create `core/parsers/finish.ts` with `Candidate`, stable sort by rank (lexicographic number arrays), first occurrence wins per `dependencyKey`, one duplicate warning per discard (`<where>: duplicate dependency "<name>" in scope "<scope>"; the first occurrence was kept.`, `where` truncated to 80 characters), final sort with `compareDependencies`, warnings ordered as parser warnings then duplicate warnings.
+    - Create `core/parsers/finish.ts` with `Candidate`, stable sort by rank (lexicographic number arrays), first occurrence wins per `dependencyKey` (built from the normalized `name`, so `Foo_Bar` and `foo.bar` share a key; the kept entry keeps its own `rawName`), one duplicate warning per discard (naming the normalized name and the scope) (`<where>: duplicate dependency "<name>" in scope "<scope>"; the first occurrence was kept.`, `where` truncated to 80 characters), final sort with `compareDependencies`, warnings ordered as parser warnings then duplicate warnings.
     - _Requirements: 4.6, 4.7, 4.8_
 
   - [ ] 5.4 Write unit tests for `finish`
-    - `tests/core/parsers/finish.test.ts`: first occurrence kept regardless of `sourceKind`; one warning per discard naming package and scope; output sorted in Dependency_Order independent of candidate order; same name in two scopes is two entries; names containing separators do not collide.
+    - `tests/core/parsers/finish.test.ts`: first occurrence kept regardless of `sourceKind` and `rawName` (`Foo_Bar` before `foo.bar` keeps `Foo_Bar`, one warning naming `foo-bar`); one warning per discard naming package and scope; output sorted in Dependency_Order independent of candidate order; same name in two scopes is two entries; names containing separators do not collide.
     - _Requirements: 4.6, 4.8_
 
   - [ ] 5.5 Implement the `package.json` parser
-    - Create `core/parsers/package-json.ts`: `JSON.parse` in `try`; non-object top level, invalid or empty text gives one warning; read the four sections with `Object.hasOwn`; non-object section gives one warning; non-string value gives one warning naming package and section; empty name skipped with one warning; `versionSpec` untouched; `sourceKind` from `sourceKindOfNpmSpec`; candidates have rank `[]`. Header comment documents the 1.11 exception (last value wins, no duplicate warning).
-    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 4.9, 4.10_
+    - Create `core/parsers/package-json.ts`: `JSON.parse` in `try`; non-object top level, invalid or empty text gives one warning; read the four sections with `Object.hasOwn`; non-object section gives one warning; non-string value gives one warning naming package and section; empty name skipped with one warning; `versionSpec` untouched; `rawName` equal to `name` with no normalization (1.12); `sourceKind` from `sourceKindOfNpmSpec`; candidates have rank `[]`. Header comment documents the 1.11 exception (last value wins, no duplicate warning).
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 1.12, 4.9, 4.10_
 
   - [ ] 5.6 Implement `parseManifest` and register `package.json`
     - Create `core/parsers/index.ts`: `guard` wrapper with the internal-error fallback; format validated first and never inferred; non-string `text` gives one warning "Manifest input must be a string, received <type>." (`typeOf` returns `null` and `array`); length above `MAX_MANIFEST_LENGTH` gives one warning stating the value; dispatch through a `PARSERS` map that currently holds `package.json`; then `finish`.
@@ -125,11 +118,11 @@ Design defaults applied (each is repeated in the task that implements it):
     - _Requirements: 4.1, 4.3, 4.4, 4.7_
 
   - [ ] 5.7 Write unit tests for the `package.json` parser and `parseManifest`
-    - `tests/core/parsers/package-json.test.ts` and `tests/core/parsers/parse-manifest.test.ts`: one example per criterion 1.1 to 1.10; empty string value kept; `null` section warns once; `__proto__`, `constructor`, `prototype` entries are ordinary Dependencies and `Object.prototype` is untouched; same name in two sections gives two entries; a key repeated in one section keeps the last value with no warning (1.11); empty name skipped with one warning; non-string text and unsupported format; text of exactly `MAX_MANIFEST_LENGTH` is parsed and `MAX_MANIFEST_LENGTH + 1` is rejected with one warning stating 1000000.
-    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 4.1, 4.3, 4.4, 4.9, 4.10_
+    - `tests/core/parsers/package-json.test.ts` and `tests/core/parsers/parse-manifest.test.ts`: one example per criterion 1.1 to 1.10; `rawName` equals `name` and mixed-case names are not normalized (1.12); empty string value kept; `null` section warns once; `__proto__`, `constructor`, `prototype` entries are ordinary Dependencies and `Object.prototype` is untouched; same name in two sections gives two entries; a key repeated in one section keeps the last value with no warning (1.11); empty name skipped with one warning; non-string text and unsupported format; text of exactly `MAX_MANIFEST_LENGTH` is parsed and `MAX_MANIFEST_LENGTH + 1` is rejected with one warning stating 1000000.
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 1.12, 4.1, 4.3, 4.4, 4.9, 4.10_
 
   - [ ] 5.8 Build shared manifest test support
-    - Create `tests/support/arbitraries/tokens.ts` (per-format token dictionaries, noise strings, mutation operators from the design: truncate, insert, delete, duplicate, delimiter swap, CRLF/CR, BOM, huge value, `__proto__` name, unpaired surrogate, NUL) and `tests/support/oracles/manifest-model.ts` (independent code-point comparator via `Array.from` and `codePointAt`, `firstOccurrence(model)`, `restrict(deps, format)`, set equality helper).
+    - Create `tests/support/arbitraries/tokens.ts` (per-format token dictionaries, noise strings, mutation operators from the design: truncate, insert, delete, duplicate, delimiter swap, CRLF/CR, BOM, huge value, `__proto__` name, unpaired surrogate, NUL) and `tests/support/oracles/manifest-model.ts` (independent code-point comparator via `Array.from` and `codePointAt`, `firstOccurrence(model)`, `restrict(deps, format)`, set equality helper that compares the five Dependency_Set fields and drops `rawName`, and a `normalize` oracle written independently of `normalizePypiName`).
     - Per-format renderers and arbitraries go in their own files in later tasks.
     - _Requirements: 4.2, 4.5, 4.6, 4.8_
 
@@ -137,7 +130,7 @@ Design defaults applied (each is repeated in the task that implements it):
     - `tests/core/parsers/package-json.property.test.ts` with `tests/support/arbitraries/package-json.ts` (valid path, mutation path, noise path, name pool with integer-like, mixed-case, astral and proto names).
     - **Property 3: Parsed dependencies are well formed** (format `package.json`)
     - **Property 6: Parser output is sorted in Dependency_Order** (format `package.json`, including permuted sections and keys)
-    - **Validates: Requirements 4.5, 4.8**
+    - **Validates: Requirements 4.5, 4.8, 1.12**
 
   - [ ] 5.10 Write property tests for `package.json` duplicates, identity and prototype safety
     - Append to `tests/core/parsers/package-json.property.test.ts`.
@@ -147,123 +140,128 @@ Design defaults applied (each is repeated in the task that implements it):
     - **Validates: Requirements 4.6, 1.11, 1.8, 4.9**
 
   - [ ] 5.11 Implement the `requirements.txt` parser and register it
-    - Create `core/parsers/requirements-txt.ts` as the line scanner from the design: split on `\r\n`, `\n`, `\r`; join backslash continuations (final backslash without successor is dropped); strip comments from `#` at index 0 or after whitespace; skip blank and `-` lines silently; hand-written tokenizer (name token, extras, rest); direct references `<name> @ <target>` and bare `#egg=` references with `git` and `path` classification; registry rest must be empty, `*`, or start with `===`, `==`, `!=`, `<=`, `>=`, `~=`, `<`, `>`; names normalized with `normalizePypiName`; candidates ranked `[firstLineNumber]`, `where = "requirements.txt line <n>"`; no regex with nested quantifiers.
-    - Design default: a registry spec that still contains a backslash is skipped with one warning (not in criterion 2.8; it keeps parser output Representable under criterion 5.13).
+    - Create `core/parsers/requirements-txt.ts` as the line scanner from the design: split on `\r\n`, `\n`, `\r`; join backslash continuations (final backslash without successor is dropped); strip comments from `#` at index 0 or after whitespace; skip blank and `-` lines silently; hand-written tokenizer (name token, extras, rest); direct references `<name> @ <target>` and bare `#egg=` references with `git` and `path` classification; registry rest must be empty, `*`, or start with `===`, `==`, `!=`, `<=`, `>=`, `~=`, `<`, `>`; candidates ranked `[firstLineNumber]`, `where = "requirements.txt line <n>"`; no regex with nested quantifiers.
+    - Names: accept any Name_Token, including non-normalized spellings such as `Django`, `PyYAML` and `SQLAlchemy`; set `rawName` to the name as written and `name = normalizePypiName(rawName)` (2.2); for git and path references take `rawName` from `<name>` or the `egg` fragment (2.10, 2.11). A spec (registry, git or path) that still contains a backslash after continuation joining is skipped with one warning that has the first line number of the group (2.13).
     - Register it in the `PARSERS` map in `core/parsers/index.ts`.
-    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 2.10, 2.11, 2.12, 4.6, 4.9, 4.10_
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 2.10, 2.11, 2.12, 2.13, 2.14, 4.6, 4.9, 4.10_
 
   - [ ] 5.12 Write unit tests for the `requirements.txt` parser
-    - `tests/core/parsers/requirements-txt.test.ts`: one example per criterion 2.1 to 2.12; extras excluded; markers removed; `#` inside a URL fragment kept; CRLF; trailing backslash on the last line; `foo @ https://x` rejected; bare `./pkg` without `#egg` rejected; `foo 1.0` rejected; `foo ===1` accepted; option lines skipped silently; warning carries the first line number of a joined group; `Foo_Bar` on line 3 and `foo-bar` on line 9 keep line 3 and warn once; a spec with a backslash in a joined line is skipped with one warning.
-    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 2.10, 2.11, 2.12, 4.6_
+    - `tests/core/parsers/requirements-txt.test.ts`: one example per criterion 2.1 to 2.12; extras excluded; markers removed; `#` inside a URL fragment kept; CRLF; trailing backslash on the last line; `Django`, `PyYAML` and `SQLAlchemy` parse with `name` `django`, `pyyaml`, `sqlalchemy` and `rawName` as written, with no warning (2.2); `Foo_Bar` on line 3 and `foo.bar` on line 9 give one Dependency (`name` `foo-bar`, `rawName` `Foo_Bar`) and one warning naming `foo-bar` and line 9, and the reverse order keeps `foo.bar` (4.6); git and path references take `rawName` from `<name>` or `#egg=` and `name` from its normalization; `foo @ https://x` rejected; bare `./pkg` without `#egg` rejected; `foo 1.0` rejected; `foo ===1` accepted; option lines skipped silently; warning carries the first line number of a joined group; `Foo_Bar` on line 3 and `foo-bar` on line 9 keep line 3 and warn once; a spec with a backslash in a joined line, and a git or path reference with a backslash, are each skipped with one warning that has the first line number of the group (2.13).
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 2.10, 2.11, 2.12, 2.13, 4.6_
 
-  - [ ] 5.13 Write property tests for `requirements.txt` shape and ordering
-    - `tests/core/parsers/requirements-txt.property.test.ts` with `tests/support/arbitraries/requirements.ts` (valid lines, comments, continuations, option lines, noise, mutations).
-    - **Property 3: Parsed dependencies are well formed** (format `requirements.txt`)
+  - [ ] 5.13 Write property test for PEP503_Normalization and parsed pypi names
+    - Create `tests/core/parsers/requirements-txt.property.test.ts` and `tests/support/arbitraries/requirements.ts` (name generators: mixed-case names `Django`, `PyYAML`, `SQLAlchemy`, separator runs `Foo__Bar` and `foo.-_bar`, spelling pairs of one package, git and path references with `#egg=` or `<name> @` names, arbitrary strings for the idempotence half).
+    - **Property 44: PEP 503 normalization is idempotent and consistent with parsed names** (`normalizePypiName(normalizePypiName(s))` equals `normalizePypiName(s)` for all strings; every `pypi` Dependency from `parseManifest(input, 'requirements.txt')` has `normalizePypiName(rawName) === name`)
+    - **Validates: Requirements 2.14, 2.2**
+
+  - [ ] 5.14 Write property tests for `requirements.txt` shape and ordering
+    - Append to `tests/core/parsers/requirements-txt.property.test.ts` and extend `tests/support/arbitraries/requirements.ts` (valid lines, comments, continuations, option lines, noise, mutations).
+    - **Property 3: Parsed dependencies are well formed** (format `requirements.txt`, including `rawName` and `name` both at least 1 character)
     - **Property 6: Parser output is sorted in Dependency_Order** (format `requirements.txt`, including permuted lines)
-    - **Validates: Requirements 4.5, 4.8**
+    - **Validates: Requirements 4.5, 4.8, 2.2**
 
-  - [ ] 5.14 Write property tests for `requirements.txt` duplicates, identity and prototype safety
-    - Append to `tests/core/parsers/requirements-txt.property.test.ts` using the model-based renderer: name spellings `Foo_Bar`, `foo-bar`, `FOO.BAR`, `foo__bar`, repeats separated by comments, blanks, option lines and continuations.
-    - **Property 4: One Dependency per key, first occurrence wins, one warning per discard** (line order, one warning per discard naming package and scope)
+  - [ ] 5.15 Write property tests for `requirements.txt` duplicates, identity and prototype safety
+    - Append to `tests/core/parsers/requirements-txt.property.test.ts` using the model-based renderer: name spellings `Foo_Bar`, `foo-bar`, `FOO.BAR`, `foo__bar`, repeats separated by comments, blanks, option lines and continuations; the model compares the kept `rawName` with the first spelling.
+    - **Property 4: One Dependency per key, first occurrence wins, one warning per discard** (line order; the kept Dependency has the `rawName` of the first spelling; one warning per discard naming the normalized package name and scope)
     - **Property 7: Dependency identity is name and scope** (parser side)
     - **Property 8: Prototype safety**
-    - **Validates: Requirements 4.6, 4.9**
+    - **Validates: Requirements 4.6, 2.2, 4.9**
 
-  - [ ] 5.15 Implement the TOML wrapper
+  - [ ] 5.16 Implement the TOML wrapper
     - Create `core/parsers/toml-tree.ts`, the only module that imports `smol-toml`. Export `TomlTable` and `parseToml(text): Result<TomlTable, { message: string; line?: number }>`. One `try`/`catch (e: unknown)` handles `Error`, non-Error throws and `RangeError`; `line` is set only when the thrown value has a finite numeric `line`; the message is the error name plus a truncated message.
     - _Requirements: 3.9, 3.15, 13.11_
 
-  - [ ] 5.16 Write unit tests for the TOML wrapper
+  - [ ] 5.17 Write unit tests for the TOML wrapper
     - `tests/core/parsers/toml-tree.test.ts`: mock `smol-toml` to throw an `Error`, a string and `undefined` and assert a `Result` each time; line number passed through when present; `__proto__`, `constructor`, `prototype` regression (`[dependencies]` with those keys are own enumerable properties, `Object.prototype` and `({}).__proto__` unchanged, `Object.entries` lists them). This test must pass again on every `smol-toml` version bump.
     - _Requirements: 3.9, 3.15, 4.9_
 
-  - [ ] 5.17 Implement the TOML position scan
+  - [ ] 5.18 Implement the TOML position scan
     - Create `core/parsers/toml-positions.ts` (no imports): one-pass scanner tracking basic, literal, multi-line basic and multi-line literal strings, comments, bracket depth and `\r\n`; header and key-line lexing of dotted keys (bare, basic-quoted, literal-quoted); `Map` index keyed by `JSON.stringify(path)` with every prefix registered and the smaller `[headerLine, keyLine]` winning; `positionOf(path)` returns the longest recorded prefix or `[0, 0]`.
     - _Requirements: 3.8_
 
-  - [ ] 5.18 Write unit tests for the position scan
+  - [ ] 5.19 Write unit tests for the position scan
     - `tests/core/parsers/toml-positions.test.ts`: multi-line strings containing header-looking lines, multi-line arrays whose rows start with `[`, comments, CRLF, BOM, quoted keys containing dots, `[dependencies.foo]` entry headers, dotted keys at the root, inline tables, and the `[0, 0]` fallback when nothing is found.
     - _Requirements: 3.8_
 
-  - [ ] 5.19 Implement the `Cargo.toml` parser and register it
+  - [ ] 5.20 Implement the `Cargo.toml` parser and register it
     - Create `core/parsers/cargo-toml.ts`: `parseToml` error gives one warning with the line when available; collect `dependencies`, `dev-dependencies`, `build-dependencies` at top level and under each `target.<cfg>` using own-property reads only (scope depends only on the table name); string value is registry; table value checks `version`, `package`, `git`, `path` types first (non-string omits the entry with one warning naming the key), `name = package ?? key`, `git` wins over `path` and `version`, `path` wins over `version`, default `versionSpec` is `*`; non-table section or `target` and non-string, non-table values give one warning each; empty name skipped with one warning; rank `[...positionOf(path), enumIndex]`, `where = "Cargo.toml table [<table path>]"`.
-    - Design default: a `name` or `versionSpec` containing a lone surrogate is skipped with one warning naming the key (not in criterion 3.10; it keeps parser output Representable under criterion 5.13).
+    - Set `rawName` equal to `name` (the `package` value when present, else the key) with no normalization (3.17). A `name` or `versionSpec` containing a lone surrogate is skipped with one warning naming the key (3.16).
     - Register it in the `PARSERS` map in `core/parsers/index.ts`.
-    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14, 3.15, 4.6, 4.9, 4.10_
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14, 3.15, 3.16, 3.17, 4.6, 4.9, 4.10_
 
-  - [ ] 5.20 Write unit tests for the `Cargo.toml` parser
-    - `tests/core/parsers/cargo-toml.test.ts`: one example per criterion 3.1 to 3.15; `serde` in `[dependencies]`, `[target.'cfg(unix)'.dependencies]` and `[target.'cfg(windows)'.dependencies]` with the target tables written first (earliest header wins, two warnings); `[dependencies]` against `[dev-dependencies]` gives two entries; `package` rename; `git` beats `path` beats `version`; non-string `version` omits the entry; invalid TOML gives one warning with a line; lone surrogate entry skipped with one warning; `git` and `path` entries kept without warnings.
-    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14, 4.6_
+  - [ ] 5.21 Write unit tests for the `Cargo.toml` parser
+    - `tests/core/parsers/cargo-toml.test.ts`: one example per criterion 3.1 to 3.17 (`rawName` equals `name`, also for a `package` rename and for mixed-case names; lone surrogate in the name or the spec skips the entry with one warning, 3.16); `serde` in `[dependencies]`, `[target.'cfg(unix)'.dependencies]` and `[target.'cfg(windows)'.dependencies]` with the target tables written first (earliest header wins, two warnings); `[dependencies]` against `[dev-dependencies]` gives two entries; `package` rename; `git` beats `path` beats `version`; non-string `version` omits the entry; invalid TOML gives one warning with a line; lone surrogate entry skipped with one warning; `git` and `path` entries kept without warnings.
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14, 3.15, 3.16, 3.17, 4.6_
 
-  - [ ] 5.21 Write property tests for `Cargo.toml` shape and ordering
+  - [ ] 5.22 Write property tests for `Cargo.toml` shape and ordering
     - `tests/core/parsers/cargo-toml.property.test.ts` with `tests/support/arbitraries/cargo.ts` (valid tables, mutations, noise, trap strings that contain header-looking lines, comments with `[dependencies]`, CRLF, BOM).
     - **Property 3: Parsed dependencies are well formed** (format `Cargo.toml`)
     - **Property 6: Parser output is sorted in Dependency_Order** (format `Cargo.toml`, including permuted entries and tables)
-    - **Validates: Requirements 4.5, 4.8**
+    - **Validates: Requirements 4.5, 4.8, 3.17**
 
-  - [ ] 5.22 Write property tests for `Cargo.toml` duplicates, identity and prototype safety
+  - [ ] 5.23 Write property tests for `Cargo.toml` duplicates, identity and prototype safety
     - Append to `tests/core/parsers/cargo-toml.property.test.ts` using the model-based renderer: `[dependencies]` against several `[target.'<cfg>'.dependencies]` tables (cfg strings containing `.` and quotes), `[dev-dependencies]`, `[dependencies.foo]` entry headers, `package` renames under different keys, interleaved headers.
     - **Property 4: One Dependency per key, first occurrence wins, one warning per discard** (table header position, then entry position)
     - **Property 7: Dependency identity is name and scope** (parser side)
     - **Property 8: Prototype safety**
     - **Validates: Requirements 4.6, 3.8, 4.9**
 
-  - [ ] 5.23 Write cross-format property tests for `parseManifest`
+  - [ ] 5.24 Write cross-format property tests for `parseManifest`
     - `tests/core/parsers/parse-manifest.property.test.ts`. Each format's text is also fed to the other two parsers; non-string inputs come from `fc.anything()` filtered plus `null`, `undefined`, `NaN`, `[]`, `{}`, a function, a symbol and a bigint.
     - **Property 1: Parsers never throw on strings** (strings up to about 20,000 characters; no warning starts with the internal-error prefix)
     - **Property 2: Non-string input is rejected with one warning**
     - **Property 5: Parser determinism**
     - **Validates: Requirements 4.2, 4.3, 4.7**
 
-  - [ ] 5.24 Write the performance and size-boundary unit tests
+  - [ ] 5.25 Write the performance and size-boundary unit tests
     - Append to `tests/core/parsers/parse-manifest.test.ts`: a maximum-length hostile string per format (1,000,000 `a` characters, long runs of `[`, `\`, `"`) completes within a generous time limit and returns a `Parse_Result`; `MAX_MANIFEST_LENGTH` boundary per format.
     - _Requirements: 4.2, 4.4_
 
-  - [ ] 5.25 Implement the Representable rules
+  - [ ] 5.26 Implement the Representable rules
     - Create `core/serializers/representable.ts` with `isRepresentable(dep, format)` following criterion 5.13 per format, with a `// Requirement 5.13` comment.
-    - Design defaults D1 and D2 (not in criterion 5.13; they are needed for exact recovery): for `requirements.txt`, D1 the `name` equals its own normalization and matches the name token `[A-Za-z0-9][A-Za-z0-9._-]*`; D2 a `registry` `versionSpec` contains no `;` and no `#` preceded by whitespace, and a `git` or `path` `versionSpec` contains no whitespace followed by `;` or `#`.
-    - _Requirements: 5.13, 5.1, 5.2_
+    - Follow criterion 5.13 exactly and add nothing. For `requirements.txt` that includes: `name` non-empty; `writtenName(d)` is a Name_Token and `normalizePypiName(writtenName(d)) === name` (so `Django` with `name` `django` is Representable and a non-normalized `name` without a matching `rawName` is not); `versionSpec` has no newline, no backslash and no outer whitespace; a `registry` spec is `*` or starts with a comparison operator and has no `;` and no `#` preceded by whitespace; a `git` or `path` spec has no whitespace followed by `;` or `#`. `rawName` matters only through the Written_Name of `requirements.txt` and is ignored for `package.json` and `Cargo.toml`.
+    - _Requirements: 5.13, 5.11, 5.1, 5.2_
 
-  - [ ] 5.26 Write unit tests for Representable
-    - `tests/core/serializers/representable.test.ts`: every condition of criterion 5.13 per format (npm `sourceKind` mismatch, `git+` registry mismatch, newline, backslash, outer whitespace, registry spec without operator, empty name, lone surrogate in Cargo), plus D1 (`Foo` rejected) and D2 (`;` and ` #` cases rejected). Also assert that parser outputs from examples are Representable.
+  - [ ] 5.27 Write unit tests for Representable
+    - `tests/core/serializers/representable.test.ts`: every condition of criterion 5.13 per format (npm `sourceKind` mismatch, `git+` registry mismatch, newline, backslash, outer whitespace, registry spec without operator, empty name, lone surrogate in Cargo), plus the Written_Name condition (name `Foo` without `rawName` rejected; `name` `django` with `rawName` `Django` accepted; `name` `django` with `rawName` `Flask` rejected; `rawName` that is not a Name_Token rejected) and the `;` and ` #` cases (rejected for `registry`, and whitespace followed by `;` or `#` rejected for `git` and `path`). Also assert that parser outputs from examples are Representable.
     - _Requirements: 5.13_
 
-  - [ ] 5.27 Implement `serializeManifest` and the `package.json` writer
-    - Create `core/serializers/index.ts`: `guard` wrapper with the `internal-error` fallback; unsupported format gives `err({ kind: 'unsupported-format' })`; non-array gives `invalid-input`; more than `MAX_SERIALIZED_DEPENDENCIES` gives `too-many-dependencies` and no text; filter by well-formedness, ecosystem, supported scope and `isRepresentable`; then sort with `compareDependencies` and keep the first entry per `(name, scope)`; pass to the format writer. This filter-then-dedupe order is the design default (a narrower reading than the literal text of criterion 5.2).
+  - [ ] 5.28 Implement `serializeManifest` and the `package.json` writer
+    - Create `core/serializers/index.ts`: `guard` wrapper with the `internal-error` fallback; unsupported format gives `err({ kind: 'unsupported-format' })`; non-array gives `invalid-input`; more than `MAX_SERIALIZED_DEPENDENCIES` gives `too-many-dependencies` and no text; filter by well-formedness, ecosystem, supported scope and `isRepresentable`; then sort with `compareDependencies` and keep the first entry per `(name, scope)`; pass to the format writer. This is the filter, sort, dedupe order of criterion 5.2: a Representable Dependency that repeats the key of an earlier non-Representable one survives.
     - Create `core/serializers/package-json.ts`: hand-built text from `JSON.stringify(string)` fragments, sections in scope order (`dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies`), only non-empty sections, 2-space indent, trailing newline, empty output `{}\n`.
     - Export `serializeManifest` from `core/index.ts`.
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.7, 5.11, 5.12, 5.18, 5.19_
 
-  - [ ] 5.28 Implement the `requirements.txt` writer
-    - Create `core/serializers/requirements-txt.ts`: one line per dependency ending in a single `\n`, no blank lines; registry is `<name>` when the spec is `*` else `<name> <versionSpec>`; git and path are `<name> @ <versionSpec>`; empty output is the empty string. Register it in `core/serializers/index.ts`.
+  - [ ] 5.29 Implement the `requirements.txt` writer
+    - Create `core/serializers/requirements-txt.ts`: one line per dependency ending in a single `\n`, no blank lines; registry is `<Written_Name>` when the spec is `*` else `<Written_Name> <versionSpec>`; git and path are `<Written_Name> @ <versionSpec>`, where `<Written_Name>` comes from `writtenName(d)` (`rawName` when `normalizePypiName(rawName) === name`, else `name`; 5.11, 5.17); empty output is the empty string. Register it in `core/serializers/index.ts`.
     - _Requirements: 5.3, 5.6, 5.11, 5.12, 5.17_
 
-  - [ ] 5.29 Implement the `Cargo.toml` writer
+  - [ ] 5.30 Implement the `Cargo.toml` writer
     - Create `core/serializers/cargo-toml.ts`: tables `[build-dependencies]`, `[dev-dependencies]`, `[dependencies]` in scope order (only non-empty ones); one line per entry with a quoted key; registry `"name" = "<spec>"`, git `"name" = { git = "<spec>" }`, path `"name" = { path = "<spec>" }`; TOML basic-string escaping (`\\`, `\"`, `\b \t \n \f \r`, other control characters and DEL as `\uXXXX`); empty output is the empty string. Register it in `core/serializers/index.ts`.
     - _Requirements: 5.3, 5.5, 5.11, 5.12, 5.14, 5.15, 5.16_
 
-  - [ ] 5.30 Write unit tests for the serializer
-    - `tests/core/serializers/serialize-manifest.test.ts`: exact expected text per format for a small list; unsupported format error and no text; non-array input; empty list and no-match list parse to an empty set; omission cases (wrong ecosystem, unsupported scope, non-Representable, repeated `(name, scope)`; same name in two scopes kept); `MAX_SERIALIZED_DEPENDENCIES` written and `+1` errors with no text; escaping of quotes, backslashes, control characters and unicode in JSON and TOML; `__proto__` names; byte-identical output on repeat calls.
+  - [ ] 5.31 Write unit tests for the serializer
+    - `tests/core/serializers/serialize-manifest.test.ts`: exact expected text per format for a small list; unsupported format error and no text; non-array input; empty list and no-match list parse to an empty set; omission cases (wrong ecosystem, unsupported scope, non-Representable, repeated `(name, scope)`; same name in two scopes kept); `MAX_SERIALIZED_DEPENDENCIES` written and `+1` errors with no text; escaping of quotes, backslashes, control characters and unicode in JSON and TOML; `__proto__` names; byte-identical output on repeat calls; `requirements.txt` writes the Written_Name (`Django` with `name` `django` is written as `Django`, 5.11; `rawName` `Flask` with `name` `django` is written as `django`; absent `rawName` writes `name`; `Foo_Bar` and `foo.bar` entries with the same key give one line, the one with the smaller `rawName` code point order, absent first, 5.2), git and path lines are `<Written_Name> @ <spec>` (5.17), and `package.json` and `Cargo.toml` ignore `rawName` (5.11).
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.11, 5.12, 5.14, 5.15, 5.16, 5.17, 5.18, 5.19_
 
-  - [ ] 5.31 Write the serialize-then-parse round-trip property test
-    - `tests/core/serializers/serialize-manifest.property.test.ts` with `tests/support/arbitraries/dependencies.ts` (per-ecosystem spec generators consistent with `sourceKind`, `arbDependencyList` with `uniqueArray` on the key, low-weight non-Representable entries) and fixtures in `tests/fixtures/` (a few real-world public `package.json`, `requirements.txt`, `Cargo.toml` samples) used as `examples` seeds and example tests.
-    - **Property 9: Serialize then parse round trip** (no warnings; expected set from `restrict`)
+  - [ ] 5.32 Write the serialize-then-parse round-trip property test
+    - `tests/core/serializers/serialize-manifest.property.test.ts` with `tests/support/arbitraries/dependencies.ts` (per-ecosystem spec generators consistent with `sourceKind`, `arbDependencyList` with `uniqueArray` on the key, low-weight non-Representable entries, and `rawName` in three kinds: absent, normalizing to `name` such as `Django` for `django`, and normalizing to something else; both sides are projected without `rawName` before the set comparison) and fixtures in `tests/fixtures/` (a few real-world public `package.json`, `requirements.txt`, `Cargo.toml` samples) used as `examples` seeds and example tests.
+    - **Property 9: Serialize then parse round trip** (no warnings; expected set from `restrict`, compared on the projection without `rawName`, per criterion 5.8)
     - **Validates: Requirements 5.8, 5.3**
 
-  - [ ] 5.32 Write the parse-serialize-parse property test
+  - [ ] 5.33 Write the parse-serialize-parse property test
     - Append to `tests/core/serializers/serialize-manifest.property.test.ts` (noise, mutation and fixture inputs for all three formats).
-    - **Property 10: Parse, serialize, parse is stable** (the serialize result is `ok` and both Dependency_Sets are equal)
+    - **Property 10: Parse, serialize, parse is stable** (the serialize result is `ok` and both Dependency_Sets are equal on the projection without `rawName`; the noise generator includes mixed-case and non-normalized pypi names, and git and path references with a backslash, which the parser skips under 2.13)
     - **Validates: Requirements 5.9**
 
-  - [ ] 5.33 Write the serialization idempotence property test
+  - [ ] 5.34 Write the serialization idempotence property test
     - Append to `tests/core/serializers/serialize-manifest.property.test.ts`.
-    - **Property 11: Serialization is idempotent**
+    - **Property 11: Serialization is idempotent** (text compared byte for byte, so the Written_Name must be stable through one parse; the generator mixes the three `rawName` kinds)
     - **Validates: Requirements 5.10**
 
-  - [ ] 5.34 Write the serializer determinism and identity property tests
+  - [ ] 5.35 Write the serializer determinism and identity property tests
     - Append to `tests/core/serializers/serialize-manifest.property.test.ts` with `arbDuplicatedList` and permutations.
-    - **Property 12: Serializer determinism and Dependency_Order output** (byte-identical text for permutations; `requirements.txt` lines end in one `\n` with no blank lines)
+    - **Property 12: Serializer determinism and Dependency_Order output** (spellings of one pypi name with different `rawName` tie-break on `rawName`, absent first, before deduplication; the parsed result is compared on the projection without `rawName`; byte-identical text for permutations; `requirements.txt` lines end in one `\n` with no blank lines)
     - **Property 7: Dependency identity is name and scope** (serializer side: one entry per `(name, scope)`, separate entries per scope)
     - **Validates: Requirements 5.12, 5.6, 5.4, 5.5, 5.2, 4.6**
 
@@ -385,21 +383,21 @@ Design defaults applied (each is repeated in the task that implements it):
 
 - [ ] 9. Repo summary
   - [ ] 9.1 Implement grouping
-    - Create `core/summarizer/group.ts`: one pass over the input filling a `Map` keyed by `JSON.stringify([ecosystem, name, sourceKind])`; each group holds a `Set` of scopes and the non-null classifications; `scopes = SCOPE_ORDER.filter(...)`.
+    - Create `core/summarizer/group.ts`: one pass over the input filling a `Map` keyed by the Package_Key `JSON.stringify([ecosystem, name, sourceKind])` (12.1); each group holds a `Set` of scopes and the non-null classifications; `scopes = SCOPE_ORDER.filter(...)`.
     - _Requirements: 12.1_
 
   - [ ] 9.2 Implement classification merging
-    - Create `core/summarizer/merge.ts`: `classificationTieKey` (flags with false before true, then `ruleId`s joined by `,` compared by code point), `compareClassifications` (score descending, status precedence `HAUNTED`, `DEAD`, `ALIVE`, tie key ascending, then `canonicalKey` ascending), and `mergeClassifications` returning null for an empty list.
-    - Design default: the final `canonicalKey` step is not in the glossary's Classification_Tie_Key; it is needed so classifications that differ only in Reason text still give an input-order-independent result.
-    - _Requirements: 12.1, 12.2, 12.10_
+    - Create `core/summarizer/merge.ts`: `classificationTieKey` (flags with false before true, then `ruleId`s joined by `,` compared by code point), `compareClassifications` (12.22: score descending, status precedence `HAUNTED`, `DEAD`, `ALIVE`, Classification_Tie_Key ascending, then Classification_Canonical_Key via `canonicalKey` ascending), and `mergeClassifications` returning null for an empty list.
+    - The total order is criterion 12.22: highest score, then status precedence, then Classification_Tie_Key ascending, then Classification_Canonical_Key ascending, where the canonical key is the canonical JSON of the whole Classification (object keys sorted by code point at every depth, array order kept), so classifications that differ only in Reason text still give an input-order-independent result.
+    - _Requirements: 12.1, 12.2, 12.10, 12.22_
 
   - [ ] 9.3 Write unit tests for grouping
-    - `tests/core/summarizer/group.test.ts`: one package in `runtime` and `dev` is one Unique_Package with `scopes` `['runtime', 'dev']`; the same name as `registry` and as `git` is two packages; `__proto__` names are safe; `scopes` sorted in `SCOPE_ORDER` with no repeats.
+    - `tests/core/summarizer/group.test.ts`: grouping key is `(ecosystem, name, sourceKind)` (12.1): one package in `runtime` and `dev` is one Unique_Package with `scopes` `['runtime', 'dev']`; the same name as `registry` and as `git` is two packages; the same name in `npm` and `cargo` is two packages; `__proto__` names are safe; `scopes` sorted in `SCOPE_ORDER` with no repeats.
     - _Requirements: 12.1_
 
   - [ ] 9.4 Write unit tests for merging
-    - `tests/core/summarizer/merge.test.ts`: highest score wins; equal score uses `HAUNTED`, `DEAD`, `ALIVE`; equal on that uses the tie key; equal on all of those but different Reason text (800 against 900 days) is decided by `canonicalKey` in either input order; one null among non-null is ignored; all null gives null.
-    - _Requirements: 12.1, 12.10_
+    - `tests/core/summarizer/merge.test.ts`: highest score wins; equal score uses `HAUNTED`, `DEAD`, `ALIVE`; equal on that uses the tie key; equal on all of those but different Reason text (800 against 900 days) is decided by the Classification_Canonical_Key in either input order (12.22); the canonical key sorts object keys at every depth and keeps `reasons` order; one null among non-null is ignored; all null gives null.
+    - _Requirements: 12.1, 12.10, 12.22_
 
   - [ ] 9.5 Implement partition and ordering
     - Create `core/summarizer/partition.ts` (assessed iff `sourceKind === 'registry'` and a non-null Merged_Classification; `non-registry-source` takes precedence over `no-health-data`) and `core/summarizer/order.ts` (criterion 12.6 comparator: score descending, status precedence, `name`, `ecosystem`, `sourceKind`, tie key, all string comparisons by code point; unassessed items ordered by `ecosystem`, `name`, `sourceKind`).
@@ -418,16 +416,16 @@ Design defaults applied (each is repeated in the task that implements it):
     - _Requirements: 12.2, 12.6, 12.14_
 
   - [ ] 9.9 Implement `summarize`
-    - Create `core/summarizer/index.ts`: `guard` wrapper falling back to the summary of an empty list; group, merge, partition; `counts` object with fixed keys; integer half-up mean `Math.floor((2 * sum + n) / (2 * n))`; sort a copy of the input list (never mutate the argument); `maxScorePackage` from the first package of the full 12.6 order before the 12.7 exclusion and before truncation; `worst` excludes `ALIVE` with score 0 and unassessed packages and is cut to `WORST_LIST_SIZE`; `unassessedItems`; grade as the worse of Average_Grade and Worst_Grade; null fields and zero counts when `assessed` is 0.
+    - Create `core/summarizer/index.ts`: `guard` wrapper falling back to the summary of an empty list; group by the Package_Key (12.1), merge with the 12.22 order (Classification_Canonical_Key last), partition; `counts` object with fixed keys; integer half-up mean `Math.floor((2 * sum + n) / (2 * n))`; sort a copy of the input list (never mutate the argument); `maxScorePackage` from the first package of the full 12.6 order before the 12.7 exclusion and before truncation; `worst` excludes `ALIVE` with score 0 and unassessed packages and is cut to `WORST_LIST_SIZE`; `unassessedItems`; grade as the worse of Average_Grade and Worst_Grade; null fields and zero counts when `assessed` is 0.
     - Export `summarize` from `core/index.ts`.
-    - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.13, 12.14, 12.15, 12.16, 13.3_
+    - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.13, 12.14, 12.15, 12.16, 12.22, 13.3_
 
   - [ ] 9.10 Write unit tests for `summarize`
-    - `tests/core/summarizer/summarize.test.ts`: empty list; all-unassessed list; counts and `unassessed` arithmetic; mean 2.5 rounds to 3; a single package of score 46 among many zeros gives `D` or `F`; `worst` truncation at 0, 1, 10, 11 assessed; `ALIVE` score 0 excluded; all entries tied; `maxScorePackage` chosen before truncation and exclusion; a package with one null and one non-null classification is assessed; `unassessedItems` reasons and order; the input array is not mutated.
-    - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.13, 12.14, 12.15, 12.16, 13.3_
+    - `tests/core/summarizer/summarize.test.ts`: empty list; all-unassessed list; counts and `unassessed` arithmetic; mean 2.5 rounds to 3; a single package of score 46 among many zeros gives `D` or `F`; `worst` truncation at 0, 1, 10, 11 assessed; `ALIVE` score 0 excluded; all entries tied; `maxScorePackage` chosen before truncation and exclusion; a package with one null and one non-null classification is assessed; two entries of one Package_Key whose classifications differ only in Reason text give the same `worst` entry in either input order (12.22); `unassessedItems` reasons and order; the input array is not mutated.
+    - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.13, 12.14, 12.15, 12.16, 12.22, 13.3_
 
   - [ ] 9.11 Build summarizer test support
-    - Create `tests/support/arbitraries/assessed.ts` (`arbAssessedDependency` with a tiny name alphabet `a`, `b`, `a-b`, `Z`, `é`, few ecosystems and scopes, 70 percent `registry`, 15 percent null classification, real `classify` output and synthetic coherent classifications with scores from `0, 1, 45, 46, 60, 61, 100`, pairs that tie on everything except Reason text; list arbitraries up to 40 entries plus targeted lists; permutation and scope-repetition helpers) and `tests/support/oracles/summary-oracle.ts` (independent grouping with a `Map`, merge, half-up integer mean, code-point comparator, grade tables, `scopes`, `unassessedItems`).
+    - Create `tests/support/arbitraries/assessed.ts` (`arbAssessedDependency` with a tiny name alphabet `a`, `b`, `a-b`, `Z`, `é`, few ecosystems and scopes, 70 percent `registry`, 15 percent null classification, real `classify` output and synthetic coherent classifications with scores from `0, 1, 45, 46, 60, 61, 100`, pairs that tie on everything except Reason text; list arbitraries up to 40 entries plus targeted lists; permutation and scope-repetition helpers) and `tests/support/oracles/summary-oracle.ts` (independent grouping by `(ecosystem, name, sourceKind)` with a `Map`, merge by the 12.22 order with its own canonical-JSON key writer, half-up integer mean, code-point comparator, grade tables, `scopes`, `unassessedItems`).
     - _Requirements: 12.1, 12.6, 12.10_
 
   - [ ] 9.12 Write property tests: partition and averages
@@ -462,8 +460,8 @@ Design defaults applied (each is repeated in the task that implements it):
 
   - [ ] 9.17 Write property test: merged classification choice
     - Append to `tests/core/summarizer/summarize.property.test.ts`.
-    - **Property 42: Merged classification picks the best classification of the group**
-    - **Validates: Requirements 12.1, 12.2**
+    - **Property 42: Merged classification picks the best classification of the group** (ties on score, status and Classification_Tie_Key are resolved by the Classification_Canonical_Key, independent of input order)
+    - **Validates: Requirements 12.1, 12.2, 12.22**
 
   - [ ] 9.18 Write the no-mutation property test
     - `tests/core/no-mutation.property.test.ts`: for `parseManifest`, `serializeManifest`, `classify` and `summarize`, a deep copy taken before the call equals the input after the call, and the call also succeeds on a deeply frozen copy.
@@ -497,19 +495,19 @@ Design defaults applied (each is repeated in the task that implements it):
     { "id": 6, "tasks": ["3.3", "3.6", "3.9", "3.10"] },
     { "id": 7, "tasks": ["3.11"] },
     { "id": 8, "tasks": ["5.1"] },
-    { "id": 9, "tasks": ["5.2", "5.3", "5.5", "5.8", "5.15", "5.17"] },
-    { "id": 10, "tasks": ["5.4", "5.6", "5.16", "5.18"] },
+    { "id": 9, "tasks": ["5.2", "5.3", "5.5", "5.8", "5.16", "5.18"] },
+    { "id": 10, "tasks": ["5.4", "5.6", "5.17", "5.19"] },
     { "id": 11, "tasks": ["5.7", "5.9", "5.11"] },
-    { "id": 12, "tasks": ["5.10", "5.12", "5.13", "5.19"] },
-    { "id": 13, "tasks": ["5.14", "5.20", "5.21", "5.23", "5.24", "5.25"] },
-    { "id": 14, "tasks": ["5.22", "5.26", "5.27"] },
-    { "id": 15, "tasks": ["5.28"] },
-    { "id": 16, "tasks": ["5.29"] },
-    { "id": 17, "tasks": ["5.30"] },
-    { "id": 18, "tasks": ["5.31"] },
-    { "id": 19, "tasks": ["5.32"] },
-    { "id": 20, "tasks": ["5.33"] },
-    { "id": 21, "tasks": ["5.34"] },
+    { "id": 12, "tasks": ["5.10", "5.12", "5.13", "5.20"] },
+    { "id": 13, "tasks": ["5.14", "5.21", "5.22", "5.24", "5.25", "5.26"] },
+    { "id": 14, "tasks": ["5.15", "5.23", "5.27", "5.28"] },
+    { "id": 15, "tasks": ["5.29"] },
+    { "id": 16, "tasks": ["5.30"] },
+    { "id": 17, "tasks": ["5.31"] },
+    { "id": 18, "tasks": ["5.32"] },
+    { "id": 19, "tasks": ["5.33"] },
+    { "id": 20, "tasks": ["5.34"] },
+    { "id": 21, "tasks": ["5.35"] },
     { "id": 22, "tasks": ["7.1", "7.3"] },
     { "id": 23, "tasks": ["7.2", "7.4"] },
     { "id": 24, "tasks": ["7.5", "7.6"] },
