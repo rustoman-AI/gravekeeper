@@ -99,7 +99,7 @@ core/
     merge.ts                Merged_Classification, Classification_Tie_Key, canonicalKey
     partition.ts            assessed vs unassessed, Unassessed_Reason
     order.ts                comparator of criterion 12.6 (total on distinct Package_Keys)
-    grade.ts                grade(score), worseGrade()
+    grade.ts                grade(score)
 ```
 
 Tests live outside `/core` (`/tests/core/...`, per `structure.md`), so they may use Node APIs. The purity checker and its CLI live in `/scripts`, also outside `/core`.
@@ -254,7 +254,7 @@ Strategy: `JSON.parse`, then read only own properties.
 | 3 | GitHub shorthand: cut at the first `#` (the rest is `<ref>`), then exactly one `/`, with a non-empty user part and a non-empty repo part made only of `[A-Za-z0-9._-]` | `git` |
 | 4 | otherwise | `registry` |
 
-The shorthand check splits at the first `#` and then splits the head at `/` and validates each side character by character. A spec such as `foo/bar#v1.0` is git. `@scope/pkg` is not (the user part contains `@`). `1.0.0` has no `/` and stays registry.
+The shorthand check splits at the first `#` and then splits the head at `/` and validates each side character by character. A spec such as `foo/bar#v1.0` is git, and so is `a/b#` (an empty `<ref>` is allowed). `@scope/pkg` is not (the user part contains `@`). `1.0.0` has no `/` and stays registry.
 
 ### `requirements.txt` parser
 
@@ -265,7 +265,7 @@ Strategy: a line-based scanner. No regex with nested quantifiers (ReDoS safety o
 3. **Strip comments** (2.5): remove from the first `#` that is at index 0 or preceded by whitespace (JavaScript `\s`) to the end of the group.
 4. **Skip** blank lines and lines whose trimmed text starts with `-` (2.7), silently.
 5. **Tokenize** the trimmed text with a hand scanner:
-   - Name_Token: `[A-Za-z0-9][A-Za-z0-9._-]*`. Upper-case letters and non-normalized spellings are accepted (2.2). If the text does not match, warn with the line number and skip (2.8).
+   - Name_Token: `[A-Za-z0-9][A-Za-z0-9._-]*`. Upper-case letters and non-normalized spellings are accepted (2.2). If the text does not match, warn with the line number and skip (2.8). `__proto__` is rejected here, because it does not start with an alphanumeric character: the line gets exactly one warning, no Dependency, and no prototype is touched (4.11). `constructor` and `prototype` are valid Name_Tokens and become ordinary Dependencies (4.9).
    - optional whitespace, then optional extras `[...]` (skipped up to the first `]`; an unclosed `[` is a warning) (2.4).
    - optional whitespace, then the rest.
 6. **Rest begins with `@`** means a direct reference (2.10, 2.11). The target is the text after `@`, trimmed, cut at the first whitespace-followed-by-`;` (an environment marker). Classification of the target:
@@ -335,7 +335,7 @@ Steps in `serializeUnguarded`:
 **Writers.**
 
 - `package.json`: build text by hand. Sections appear in scope order of the sorted list mapped to section names (`dev` to `devDependencies`, `optional` to `optionalDependencies`, `peer` to `peerDependencies`, `runtime` to `dependencies`); only non-empty sections are written. Keys and values use `JSON.stringify(string)` (escapes quotes, backslashes, control characters, and lone surrogates), 2-space indentation, a trailing newline. No object is built, so `__proto__` names are safe. Empty output is `{}\n` (5.3, 5.4, 5.18).
-- `Cargo.toml`: tables `[dependencies]`, `[dev-dependencies]`, `[build-dependencies]` in scope order (SCOPE_ORDER), only non-empty ones, each entry on one line with a quoted key (`"name" = ...`) so no bare-key rules apply. Registry: `"name" = "<spec>"` (5.16). Git: `"name" = { git = "<spec>" }` (5.14). Path: `"name" = { path = "<spec>" }` (5.15). Strings are TOML basic strings: `\\`, `\"`, `\b \t \n \f \r`, other control characters and DEL as `\uXXXX`, everything else literal (5.11). `rawName` is ignored (5.11). Empty output is the empty string.
+- `Cargo.toml`: tables `[dependencies]`, `[dev-dependencies]`, `[build-dependencies]` in scope order (SCOPE_ORDER), only non-empty ones (`tasks.md` task 5.28 still lists the old order `[build-dependencies]`, `[dev-dependencies]`, `[dependencies]`; `SCOPE_ORDER` is authoritative, decision 20), each entry on one line with a quoted key (`"name" = ...`) so no bare-key rules apply. Registry: `"name" = "<spec>"` (5.16). Git: `"name" = { git = "<spec>" }` (5.14). Path: `"name" = { path = "<spec>" }` (5.15). Strings are TOML basic strings: `\\`, `\"`, `\b \t \n \f \r`, other control characters and DEL as `\uXXXX`, everything else literal (5.11). `rawName` is ignored (5.11). Empty output is the empty string.
 - `requirements.txt`: one line per dependency, each ending in a single `\n`, no blank lines (5.6). `<W>` is the Written_Name from `writtenName(d)`: `d.rawName` when it is present and `normalizePypiName(d.rawName) === d.name`, otherwise `d.name` (5.11). Registry: `<W>` when `versionSpec` is `*`, else `<W> <versionSpec>`. Git or path: `<W> @ <versionSpec>` (5.17). Empty output is the empty string. `package.json` writes `name` and ignores `rawName` (5.11).
 
 ### Representable rules (`serializers/representable.ts`)
@@ -515,17 +515,15 @@ export function summarize(items: readonly AssessedDependency[]): RepoSummary {
 7. **Statistics** (12.4, 12.5, 12.13): if `assessed === 0` the nullable fields are null, `counts` are all 0, and `worst` is empty. Otherwise `averageScore = Math.floor((2 * sum + n) / (2 * n))` over the Assessed_Packages (each counted once; integer arithmetic, halves round up, no floating point), `maxScore` is the maximum score, and `maxScorePackage` is `{ name, ecosystem }` of the first package of the full sorted list (before the 12.7 exclusion and before truncation).
 8. **Worst list** (12.6, 12.7): from the sorted list drop packages with status `ALIVE` and score 0, take `WORST_LIST_SIZE`, and map each to a Ranked_Package `{ name, ecosystem, sourceKind, scopes, classification }`.
 9. **Unassessed items** (12.14): one Unassessed_Item `{ name, ecosystem, sourceKind, scopes, unassessedReason }` per unassessed Unique_Package, sorted by `ecosystem`, `name`, `sourceKind` by code point. The Package_Key makes this order total.
-10. **Grade** (`grade.ts`, 12.15, 12.16):
+10. **Grade** (`grade.ts`, 12.15, 12.16, 12.23, 12.24):
 
 ```ts
-const ORDER = ['A', 'B', 'C', 'D', 'F'] as const;
 // Requirement 12.15: one threshold set, GRADE_A_MAX 19, GRADE_B_MAX 39, GRADE_C_MAX 59, GRADE_D_MAX 79, otherwise F
 export function grade(score: number): Grade;
-const worse = (a: Grade, b: Grade): Grade => (ORDER.indexOf(a) >= ORDER.indexOf(b) ? a : b);
-repoGrade = worse(grade(averageScore), grade(maxScore));
+repoGrade = assessed === 0 ? null : grade(maxScore);
 ```
 
-Because `maxScore` of 60 or more has Worst_Grade `D` or `F`, a single dangerous package cannot be hidden by a low average (12.16). The input array is copied before sorting so the caller's array is never mutated (13.3).
+The repo grade is `grade(maxScore)` and nothing else. `averageScore` is reported as a number and has no Grade of its own. The earlier "worse of average grade and worst-package grade" rule and the Average_Grade and Worst_Grade terms are removed (decision 18). `grade` is monotonic: a larger score never gives a better Grade. Two consequences follow, and Properties 45 and 46 test them. First, `maxScore` is the maximum Merged_Classification score of the Assessed_Packages, so the repo grade is never better than `grade(score)` of any one Assessed_Package (12.23). Second, adding one Assessed_Dependency can only add a package or raise the Merged_Classification score of an existing package, so `maxScore` never falls and the grade never improves (12.24). Adding an entry to an empty list may turn `null` into any Grade, and `null` is outside the Grade order. A single package with a score above `GRADE_C_MAX` (59) gives `D` or `F` (12.16). The input array is copied before sorting so the caller's array is never mutated (13.3).
 
 ## Data Models
 
@@ -786,9 +784,9 @@ Reflection (redundancy removed):
 
 ### Property 8: Prototype safety (extra)
 
-*For any* manifest in any format that declares dependencies named from `{ "__proto__", "constructor", "prototype", "toString", "hasOwnProperty" }` mixed with random names, every such name appears as an ordinary Dependency with that exact name and the declared fields, `Object.prototype` is unchanged afterwards (same own keys, and `({}).polluted === undefined`), and no returned object has a prototype other than `Object.prototype`.
+*For any* `package.json` or `Cargo.toml` manifest that declares dependencies named from `{ "__proto__", "constructor", "prototype", "toString", "hasOwnProperty" }` mixed with random names, every such name appears as an ordinary Dependency with that exact name and the declared fields, `Object.prototype` is unchanged afterwards (same own keys, and `({}).polluted === undefined`), and no returned object has a prototype other than `Object.prototype`. *For any* `requirements.txt` text, the names `constructor`, `prototype`, `toString` and `hasOwnProperty` are valid Name_Tokens and appear as ordinary Dependencies, while a line whose package name is `__proto__` is not a Name_Token (criterion 2.8 requires a leading alphanumeric character). That line is rejected cleanly: exactly one warning that includes its 1-based line number, no Dependency for it, and no change to `Object.prototype` or to the prototype of any returned object. `__proto__` is therefore a real dependency name only for `package.json` and `Cargo.toml`.
 
-**Validates: Requirements 4.9**
+**Validates: Requirements 4.9, 4.11**
 
 ### Property 9: Serialize then parse round trip
 
@@ -964,9 +962,9 @@ Reflection (redundancy removed):
 
 **Validates: Requirements 12.17, 12.5**
 
-### Property 38: Grade is never better than its two components
+### Property 38: Repo grade equals the grade of the maximum score
 
-*For any* list of Assessed_Dependencies with `assessed > 0`, `grade` is never better than the Worst_Grade of `maxScore` and never better than the Average_Grade of `averageScore`, and equals the worse of `grade(averageScore)` and `grade(maxScore)`. Because one threshold set serves both and `maxScore >= averageScore`, that value also equals `grade(maxScore)`, and the test asserts both forms. `grade(score)` is monotonic (a larger score never gives a better Grade) and equals `A` for 0 to 19, `B` for 20 to 39, `C` for 40 to 59, `D` for 60 to 79 and `F` for 80 to 100. When `maxScore > GRADE_C_MAX` (59), `grade` is `D` or `F`.
+*For any* list of Assessed_Dependencies with `assessed > 0`, `grade` equals `grade(maxScore)` and does not depend on `averageScore`. `grade(score)` is monotonic (a larger score never gives a better Grade) and equals `A` for 0 to 19, `B` for 20 to 39, `C` for 40 to 59, `D` for 60 to 79 and `F` for 80 to 100. When some Assessed_Package has a score above `GRADE_C_MAX` (59), `grade` is `D` or `F`.
 
 **Validates: Requirements 12.18, 12.15, 12.16**
 
@@ -1005,6 +1003,18 @@ Reflection (redundancy removed):
 *For any* string `s`, `normalizePypiName(normalizePypiName(s))` equals `normalizePypiName(s)`. *For any* string input, every `pypi` Dependency returned by `parseManifest(input, 'requirements.txt')` satisfies `normalizePypiName(rawName) === name`. The input generators cover mixed-case names (`Django`, `PyYAML`, `SQLAlchemy`), separator runs (`Foo__Bar`, `foo.-_bar`), spelling pairs of one package, and git and path references with `egg` or `<name> @` names.
 
 **Validates: Requirements 2.14, 2.2**
+
+### Property 45: Repo grade is never better than any assessed package
+
+*For any* list of Assessed_Dependencies with `assessed > 0`, `grade` is not better than `grade(score)` of the Merged_Classification Risk_Score of any Assessed_Package, with each Unique_Package counted once (Grade order `A` best to `F` worst, compared by position in `['A','B','C','D','F']`). The oracle merges per Package_Key independently, so a package that appears in several scopes counts with its highest-risk Classification.
+
+**Validates: Requirements 12.23, 12.15**
+
+### Property 46: Adding an assessed dependency never improves the repo grade
+
+*For any* list `L` of Assessed_Dependencies and *for any* additional Assessed_Dependency `e` (a new package, a new scope of an existing package, a duplicate, a `git` or `path` entry, or an entry with a null classification), when `summarize(L).grade` is not null, `summarize(L + e).grade` is not better than `summarize(L).grade`. When `summarize(L).grade` is null, which means `assessed` is 0, the grade of `L + e` is null or any Grade, and the property makes no claim. The test also checks that an entry that leaves the set of Assessed_Packages unchanged leaves the grade unchanged.
+
+**Validates: Requirements 12.24, 12.15**
 
 **Traceability: criterion to property**
 
@@ -1049,13 +1059,16 @@ Reflection (redundancy removed):
 | 12.19 | [PBT] | Property 39 |
 | 12.20 | [PBT] | Property 40 |
 | 12.21 | [PBT] | Property 41 |
+| 12.23 | [PBT] | Property 45 |
+| 12.24 | [PBT] | Property 46 |
+| 4.11 | [PBT] | Property 8 |
 | 13.7 | [PBT] | Property 43 |
 | 1.8, 1.11, 3.8, 3.18, 3.19 | untagged | Properties 7 and 4 plus unit tests |
 | 1.12, 3.17 | untagged | Property 3 plus unit tests |
 | 2.2, 2.10, 2.11 | untagged | Property 44 plus unit tests (`Django`, `PyYAML`, `SQLAlchemy`, `Foo_Bar`) |
 | 2.13, 3.16 | untagged | unit tests (one warning each, with line number or key), covered indirectly by Property 10 |
 | 5.11, 5.13, 5.17 | untagged | Properties 9, 10 and 11 (Written_Name, Representable) plus unit tests |
-| 4.9 | untagged | Property 8 plus unit tests |
+| 4.9 | untagged | Property 8 (`package.json`, `Cargo.toml` and the valid `requirements.txt` names) plus unit tests |
 | 5.2, 5.4 to 5.6, 5.12 | untagged | Properties 7 and 12 plus unit tests |
 | 12.22 | untagged | Properties 34 and 42 plus merge unit tests |
 | 6.3, 6.5, 6.6 | untagged | Property 14 plus unit tests |
@@ -1064,7 +1077,7 @@ Reflection (redundancy removed):
 | 12.1 to 12.7, 12.13 to 12.16 | untagged | Properties 32, 33, 36 to 42 plus unit tests |
 | 13.1, 13.2, 13.8, 13.10, 13.11 | untagged | purity checker tests (unit), not properties |
 
-All 40 `[PBT]` criteria (2.14, 4.2, 4.3, 4.5 to 4.8, 5.8 to 5.10, 6.4, 8.10 to 8.12, 9.5, 9.6, 10.10 to 10.15, 10.18 to 10.20, 10.22, 10.24, 11.6, 11.7, 12.8 to 12.12, 12.17 to 12.21, 13.7) appear in the table.
+All 43 `[PBT]` criteria (2.14, 4.2, 4.3, 4.5 to 4.8, 4.11, 5.8 to 5.10, 6.4, 8.10 to 8.12, 9.5, 9.6, 10.10 to 10.15, 10.18 to 10.20, 10.22, 10.24, 11.6, 11.7, 12.8 to 12.12, 12.17 to 12.21, 12.23, 12.24, 13.7) appear in the table.
 
 ## Error Handling
 
@@ -1300,7 +1313,7 @@ The oracle (`oracles/facts-oracle.ts`) re-implements Valid_Fact, the three flags
 - Lists: `fc.array(arbAssessedDependency, { maxLength: 40 })` plus targeted lists: all unassessed, empty, more than `WORST_LIST_SIZE` entries sharing one score, a single dangerous package among many perfect ones.
 - Permutations: `fc.array(a).chain(xs => fc.tuple(fc.constant(xs), fc.shuffledSubarray(xs, { minLength: xs.length, maxLength: xs.length })))`, so Property 34 compares a list with a shuffled version of itself (including identical entries).
 - Scope repetition (Property 41): `fc.subarray(entries)` picks entries, and each pick is copied with a scope from `SCOPE_ORDER` that the entry does not already have (everything else identical). The expected summary is the original summary with the scope added to the affected packages' `scopes` by the oracle.
-- Oracle: `oracles/summary-oracle.ts` groups by Package_Key with a `Map`, merges classifications with an independent comparator (score, status precedence, tie key, canonical key), computes the expected counts, mean with half-up rounding (integer math), the ordering by an independent code-point comparator (no `localeCompare`), the grade via the threshold tables, `scopes` sorted in `SCOPE_ORDER`, and `unassessedItems`.
+- Oracle: `oracles/summary-oracle.ts` groups by Package_Key with a `Map`, merges classifications with an independent comparator (score, status precedence, tie key, canonical key), computes the expected counts, mean with half-up rounding (integer math), the ordering by an independent code-point comparator (no `localeCompare`), the grade as `grade(maxScore)` through the threshold constants, `scopes` sorted in `SCOPE_ORDER`, and `unassessedItems`.
 
 ### Unit tests (examples)
 
@@ -1326,7 +1339,7 @@ Unit tests cover what properties do not pin down well:
 | `maxSeverity` | each Severity, null with count at least 1 (assumed `MEDIUM`, Reason says "assumed"), invalid string, ignored when count is 0 |
 | `maintainerCount` | 0, 1, 2, null, `-1`, `1.5` |
 | Component caps | archived plus deprecated plus release 8.3 (subtotal 75 capped to 30); CRITICAL with 7 vulnerabilities (55); worst case total 100 |
-| Grades | scores 0, 19, 20, 39, 40, 59, 60, 79, 80, 100 through `grade(score)`, `averageScore` and `maxScore` on both sides of each threshold, and the combination rule |
+| Grades | scores 0, 19, 20, 39, 40, 59, 60, 79, 80, 100 through `grade(score)`, `averageScore` and `maxScore` on both sides of each threshold, and `grade(maxScore)` with `averageScore` on the other side of the threshold (the average never changes the grade) |
 | Summary | 0, 1, 10, 11 assessed (worst list truncation), ALIVE with score 0 excluded, all entries tied |
 | Manifest size | length `MAX_MANIFEST_LENGTH` (parsed) and `MAX_MANIFEST_LENGTH + 1` (rejected) |
 | Serializer size | `MAX_SERIALIZED_DEPENDENCIES` entries (written) and `MAX_SERIALIZED_DEPENDENCIES + 1` (error, no text) |
@@ -1360,8 +1373,12 @@ These were open in earlier drafts and are now settled by the approved `requireme
 13. **Serializer size limit.** More than `MAX_SERIALIZED_DEPENDENCIES` returns an error and no text (5.19).
 14. **Backslash in git and path specs.** Criterion 5.13 makes any `requirements.txt` `versionSpec` with a backslash non-Representable. Criterion 2.13 now skips every requirement (registry, git or path) whose `versionSpec` still contains a backslash after joining, with one warning that includes the line number. `foo @ git+https://h/a\b` is therefore skipped, and `parse(serialize(parse(x)))` keeps 5.9 (Property 10).
 15. **`smol-toml` version.** The version is the latest stable release at install time, pinned exactly with `--save-exact` (no `^` or `~`) (3.15, 13.10, task 1.3). The `__proto__` regression test must pass on it, and the static check keeps the pin exact.
-16. **Grade thresholds.** One named set on the risk score replaces the two former tables: `GRADE_A_MAX` 19, `GRADE_B_MAX` 39, `GRADE_C_MAX` 59, `GRADE_D_MAX` 79, and `F` for 80 to 100, applied by `grade(score)` (12.15). The repo grade stays the worse of `grade(averageScore)` and `grade(maxScore)`. A lone package with score 60 or more gives `D` or `F` (12.16).
+16. **Grade thresholds.** One named set on the risk score replaces the two former tables: `GRADE_A_MAX` 19, `GRADE_B_MAX` 39, `GRADE_C_MAX` 59, `GRADE_D_MAX` 79, and `F` for 80 to 100, applied by `grade(score)` (12.15). The repo grade is `grade(maxScore)` (decision 18). A lone package with score 60 or more gives `D` or `F` (12.16).
 17. **No source positions for Cargo.** v1 records no line or column for `Cargo.toml` entries, so `parsers/toml-positions.ts` is removed. First_Occurrence for Cargo duplicates is position-free: the top-level table of a scope first, then `[target.<cfg>.*]` tables in the key enumeration order of `smol-toml`, then entries in enumeration order within a table (3.18). Cargo warnings name the package and the table (3.19). For invalid TOML (3.9) the line number is kept only when the `smol-toml` error provides it; the parser does no scan of its own.
+18. **Repo grade.** The repo `grade` is `grade(maxScore)` with the thresholds `GRADE_A_MAX` 19, `GRADE_B_MAX` 39, `GRADE_C_MAX` 59 and `GRADE_D_MAX` 79 (`F` for 80 to 100), and is null when no package is assessed (12.5, 12.15). The "worse of average grade and worst-package grade" rule and the Average_Grade and Worst_Grade terms are removed. `averageScore` stays in Repo_Summary as a number with no Grade of its own. This closes the former open question 5 (separate thresholds for the average): the user decided that the average does not affect the grade. Two properties guard the rule: the grade is never better than the grade of any assessed package (12.23, Property 45), and adding an Assessed_Dependency never improves it (12.24, Property 46).
+19. **`__proto__` in `requirements.txt`.** The name `__proto__` cannot be a `requirements.txt` name, because criterion 2.8 requires a leading alphanumeric character. It is therefore only checked as a clean rejection there (one warning with the line number, no Dependency, no prototype change; 4.11). For `package.json` and `Cargo.toml` it stays a real dependency name (4.9). Property 8 covers both cases.
+20. **Cargo writer table order.** The writer emits `[dependencies]`, `[dev-dependencies]`, `[build-dependencies]`, which is `SCOPE_ORDER` (see "Serializers"). `tasks.md` task 5.28 still lists the old order `[build-dependencies]`, `[dev-dependencies]`, `[dependencies]`, because the task file is managed by the task tool and was not edited. The implementation and this design follow `SCOPE_ORDER`.
+21. **Grade tasks in `tasks.md`.** The grade tasks 9.6, 9.7, 9.14 and 9.15 predate decision 18 and still describe the worse-of rule. `requirements.md` and this design are authoritative.
 
 ## Open questions / risks
 
@@ -1371,4 +1388,3 @@ These are decisions the design made where the requirements are silent.
 2. **Property tests and `MAX_MANIFEST_LENGTH`.** Criterion 4.2 quantifies over strings up to 1,000,000 characters. Random generation up to that size is too slow for 100 or more runs, so properties use sizes up to about 20,000 characters and the maximum-size boundary is covered by examples and a timing test.
 3. **Purity checker dependency.** The checker uses the TypeScript compiler API (already present through Next.js), including `ts.parseJsonText` for the `package.json` pin check, and lives in `/scripts`, outside `/core`.
 4. **Duplicate warning wording for spellings.** The duplicate warning names the normalized `name`, not the discarded spelling, so `Foo_Bar` against `foo.bar` reads `"foo-bar"`. Criterion 4.6 only requires that the package and scope be named. Say so if the discarded spelling should be quoted too.
-5. **Separate thresholds for the average score.** With one threshold set, the worse-of rule of criterion 12.15 always equals `grade(maxScore)`, because `maxScore >= averageScore` and `grade` never improves as the score grows. The `averageScore` therefore never changes the repo grade. Should the average have its own thresholds so that it can lower the grade? The rule itself is unchanged until you decide.

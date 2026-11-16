@@ -39,3 +39,11 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 - Spec ambiguities found and resolved: criterion 1.9 `a/b#` (empty ref) — core said git, oracle said registry; 1.9 clarified to allow an empty ref (git). Cargo writer table order contradicted SCOPE_ORDER; switched to [dependencies], [dev-dependencies], [build-dependencies].
 - Open: `__proto__` cannot be a requirements.txt name (2.8 requires a leading alphanumeric), so Property 8 for that format only checks clean rejection.
 - Disclosed narrowing: 5.21 Cargo duplicate generator always tags table entries with a unique version so the kept occurrence is identifiable; version-less tables stay covered by Property 3 tests.
+
+## Notes for the write-up (written by Kiro)
+- Parallel execution: Kiro did not run the plan as one long sequential script. It read the task dependency graph, picked every task whose inputs were ready, and handed up to five of them at once to separate sub-agents. Each sub-agent was told which files the others were writing at the same moment, and the reports show it ("another agent is writing finish.ts", "the orchestrator needs to mark it complete"). The orchestrator only updated task status, committed per group and checked results.
+- Logic gap found in my own requirement: I asked for a repo grade equal to "the worse of the average-based grade and the worst-package grade" with one set of thresholds. While writing the design, Kiro pointed out that the maximum score is always at least the average, so the worse of the two grades is always just the worst-package grade, and the average-based half of the rule never matters. The rule looked reasonable in prose and would have shipped as dead logic. Because the spec forced every rule into a precise, numbered criterion with a property attached, the redundancy became visible before any code existed. Decision: grade = grade(maxScore); averageScore stays as a plain number.
+
+## Session 7
+- Asked: accept checkpoint 6 decisions, simplify the grade rule, fresh-clone check, add CI, then run the classifier and summary groups to the end.
+- Fresh clone of 97a825c: npm ci, typecheck, lint, check:core and vitest (20 files, 402 tests) all passed. Nothing missing from package.json (tsx is in devDependencies).
