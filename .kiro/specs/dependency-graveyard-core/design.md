@@ -1295,7 +1295,7 @@ export const arbValidFacts = /* same record but only valid values or null (no wr
 
 | Generator | Derivation | Property |
 |---|---|---|
-| `arbVulnIncrement` | base with a Valid_Fact `openVulnerabilityCount` (boundary-biased: 0, 1, 2, 6, 7), second = count + 1 | 22 |
+| `arbVulnIncrement` | base with a Valid_Fact `openVulnerabilityCount` (boundary-biased: 0, 1, 2, 3, 4), second = count + 1 | 22 |
 | `arbSeverityRaise` | base with a known `maxSeverity`, second = a strictly higher known Severity (choose index pair `i < j` in `SEVERITIES`, so no `fc.pre`) | 23 |
 | `arbUnknownSeverityPair` | base facts (count biased to 0, 1, 2, null, 7) and a bad severity drawn from `null`, missing, `'critical'`, `'SEVERE'`, `''`, numbers, objects; second = same facts with `maxSeverity: 'MEDIUM'`. The oracle removes `6.3` from both `ruleId` sequences before comparing | 24 |
 | `arbReleasePair` | base facts plus `d1 <= d2` from `arbValidDays`, with a 40 percent weight on pairs that straddle `STALE_DAYS` or `ABANDONMENT_DAYS`; `daysSinceLastCommit` biased to `STALE_DAYS - 1`, `STALE_DAYS`, null | 25 |
@@ -1335,7 +1335,7 @@ Unit tests cover what properties do not pin down well:
 |---|---|
 | `daysSinceLastRelease` | `ABANDONMENT_DAYS - 1` (no 8.3, no 8.4, but 10.6), `ABANDONMENT_DAYS` (8.3 or 8.4), `STALE_DAYS - 1`, `STALE_DAYS` (10.6 begins), 0, `-0`, fractional, `NaN`, `Infinity`, negative |
 | `daysSinceLastCommit` at release at least 730 | `STALE_DAYS - 1` gives 8.4 and no 8.3, `STALE_DAYS` gives 8.3 and no 8.4, null gives 8.3 with "assumed stale", 0 gives 8.4 |
-| `openVulnerabilityCount` | 0, 1, 2, 6 (extra points just below cap), 7 (cap reached), 100, `-1`, `0.5`, `NaN`, `Infinity`, null |
+| `openVulnerabilityCount` | 0, 1, 2, 3 (extra points just below cap), 4 (cap reached), 7, 100, `-1`, `0.5`, `NaN`, `Infinity`, null |
 | `maxSeverity` | each Severity, null with count at least 1 (assumed `MEDIUM`, Reason says "assumed"), invalid string, ignored when count is 0 |
 | `maintainerCount` | 0, 1, 2, null, `-1`, `1.5` |
 | Component caps | archived plus deprecated plus release 8.3 (subtotal 75 capped to 30); CRITICAL with 7 vulnerabilities (55); worst case total 100 |

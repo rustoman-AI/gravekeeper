@@ -1,6 +1,6 @@
 // Validates: Requirements 13.5
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import type { Result, SerializeError } from '../../core/internal/result';
+import type { Result, SerializeError } from '../../core';
 import * as core from '../../core';
 import {
   CONSTANTS,
