@@ -1,0 +1,16 @@
+{
+    "version":  "v1",
+    "hooks":  [
+                  {
+                      "name":  "Core purity check on save",
+                      "description":  "After saving a .ts file under core/, run npm run check:core (import allow-list, no fetch/fs/Date.now/Math.random, exact smol-toml pin).",
+                      "trigger":  "PostFileSave",
+                      "matcher":  "(^|[\\\\/])(?\u003c!tests[\\\\/])core[\\\\/].+\\.ts$",
+                      "timeout":  60,
+                      "action":  {
+                                     "type":  "command",
+                                     "command":  "node scripts/hooks/check-core-on-save.mjs"
+                                 }
+                  }
+              ]
+}
