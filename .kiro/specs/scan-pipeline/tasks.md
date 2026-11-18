@@ -472,7 +472,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/source-result.test.ts`: valid JSON, empty body, truncated JSON, a JSON scalar, `absent`, `failed` with each `AdapterReason`.
     - _Requirements: 15.15, 3.10_
 
-  - [~] 3.30 Implement the GitHub source adapter
+  - [x] 3.30 Implement the GitHub source adapter
     - Create `adapters/github/github-source.ts`: `createGithubSource(client, config, tokenPresent)`; repository and branch requests with `cache: null`, tree request cached with the Commit_SHA in the URL, manifest text from `GITHUB_RAW_HOST` for the default Web_Host (no gate) and from the blobs endpoint with the gate for GHES, GraphQL `POST` with `auth: 'github'` and `storeWhen: 'graphql-no-foreign-errors'`; path segments with `encodeURIComponent`.
     - _Requirements: 2.6, 3.1, 3.4, 3.8, 11.1, 14.3, 14.11, 19.2, 19.4_
 
@@ -485,7 +485,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 40: GitHub budget threshold is never crossed**
     - **Validates: Requirements 14.9**
 
-  - [~] 3.33 Implement the deps.dev source adapter
+  - [x] 3.33 Implement the deps.dev source adapter
     - Create `adapters/depsdev/depsdev-source.ts`: package, version, `versionbatch` (system in uppercase, at most `DEPSDEV_BATCH_SIZE` requests) and advisory requests; 404 is `absent` for package and advisory; advisory policy `ADVISORY_CACHE_TTL_SECONDS` with `l2Kind: 'depsdev-advisory'`; other bodies `l2Kind: null` with `UPSTREAM_CACHE_TTL_SECONDS`.
     - _Requirements: 8.1, 8.8, 9.20, 9.21, 9.23, 19.17, 19.18, 19.20_
 
@@ -493,7 +493,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/sources/depsdev-source.test.ts`: URL, method and body per method, uppercase `system`, encoded package names, cache policies and `l2Kind`, batch size guard.
     - _Requirements: 8.8, 9.20, 9.21, 19.17, 19.18, 19.20_
 
-  - [~] 3.35 Implement the OSV source adapter
+  - [x] 3.35 Implement the OSV source adapter
     - Create `adapters/osv/osv-source.ts`: `queryBatch` (at most `OSV_BATCH_SIZE` queries, keys in a fixed order) and `getVulnerability` (`notFound: 'failed'`, `ADVISORY_CACHE_TTL_SECONDS`, `l2Kind: 'osv-advisory'`).
     - _Requirements: 9.1, 9.4, 9.9, 17.6, 19.17, 19.18, 19.20_
 
@@ -501,7 +501,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/sources/osv-source.test.ts`: request body key order, ecosystem names, a 404 on the detail request is `failed`, cache policies.
     - _Requirements: 9.1, 9.4, 9.9, 17.6, 19.17, 19.20_
 
-  - [~] 3.37 Implement the npm source adapter
+  - [x] 3.37 Implement the npm source adapter
     - Create `adapters/npm/npm-source.ts`: `getLatest(name)` to `https://registry.npmjs.org/{name}/latest`, 404 is `absent`, scoped names encoded.
     - _Requirements: 12.1, 8.6, 12.7_
 
@@ -509,7 +509,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/sources/npm-source.test.ts`: URL for plain and scoped names, 404 `absent`, cache policy.
     - _Requirements: 12.1, 8.6, 12.7_
 
-  - [~] 3.39 Implement the crates.io source adapter
+  - [x] 3.39 Implement the crates.io source adapter
     - Create `adapters/cratesio/cratesio-source.ts`: `getOwners(name)` with `User-Agent` from `GRAVEKEEPER_USER_AGENT`, `CRATES_OWNERS_TTL_SECONDS` with `l2Kind: 'crates-owners'`, 404 `absent`; the shared limiter policy `CONCURRENCY_CRATESIO` with `CRATESIO_MIN_INTERVAL_MS` is applied by the HTTP client.
     - _Requirements: 12.2, 12.7, 12.13, 15.16, 19.20_
 
@@ -517,7 +517,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/sources/cratesio-source.test.ts`: URL, `User-Agent` header, cache policy and `l2Kind`, 404 `absent`.
     - _Requirements: 12.2, 12.7, 12.13, 19.20_
 
-  - [~] 3.41 Implement the PyPI source adapter
+  - [x] 3.41 Implement the PyPI source adapter
     - Create `adapters/pypi/pypi-source.ts`: `getProject(name)` to `https://pypi.org/pypi/{name}/json`, 404 is `absent`.
     - _Requirements: 12.5, 12.7_
 
