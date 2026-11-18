@@ -57,3 +57,14 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 - User decision on Property 24: ignore both 6.3 and 11.2 when comparing Reason sequences (criterion 10.24 and Property 24 amended). Classifier behaviour unchanged.
 - Group 9 (repo summary, tasks 9.1-9.19, checkpoint 10): no property counterexample against production code (Properties 32-46, up to 5000 runs). Test-code issues only: in 9.16 an import edit did not apply (CRLF file), so the first "counterexamples" were ReferenceErrors, not product failures.
 - Final checkpoint: 34 test files, 686 tests, 77 property tests (75 fc.assert), Property IDs 1-46 all covered; passes at 100 and 1000 runs.
+
+## Session 8
+- Asked: housekeeping (export Result/SerializeError, fix vuln-cap text, CI actions v5), three hooks (related tests on save, check:core on save, manual Spec sync), then requirements only for a new scan-pipeline spec with every endpoint field checked against real responses.
+- Did well: (fill in after review). Endpoint shapes were checked with real HTTP calls; this found that OSV querybatch returns no severity (only ids), severity is a CVSS vector string, RustSec "informational" advisories (e.g. "failure is unmaintained") are not vulnerabilities, PyPI does expose owners via ownership.roles, and GraphQL returns partial data with NOT_FOUND errors per alias.
+- Erred: (fill in after review). No fetch MCP server is configured, so verification used PowerShell and gh instead; the table says so. Requirement detailers had no file-write tool; first attempt tried temp files, user asked to write the detailed text straight into requirements.md.
+
+## Session 9
+- Asked: confirm spec location, apply scan-pipeline decisions (unmaintained -> deprecated, single 25 s deadline with abort, deps.dev advisory score), ignore tsconfig.tsbuildinfo, analyze requirements, commit, then design.
+- Live check: deps.dev GET /v3/advisories/{id} returns a numeric cvss3Score (GHSA-p8p7-x288-28g6 = 6.1) but no withdrawn or informational flag; RUSTSEC-2020-0036 ("failure is unmaintained") scores 9.8 there. So the score is the primary severity source, but the OSV detail request is still needed to exclude informational and withdrawn advisories.
+- Analyze Requirements failed twice with an internal service error (-32603), probably the 160 KB document size; a reviewer pass replaced it: 38 findings, 33 fixed in place, 5 new open questions (OQ 29-33).
+- Erred: (fill in after review). A sub-agent's regex replace deleted most of the Open questions section and it rebuilt it from memory; numbering 1-28 checked afterwards.
