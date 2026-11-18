@@ -1,4 +1,4 @@
-// Requirement 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.9, 11.12, 11.14
+// Requirement 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.9, 11.12, 11.14, 11.15
 import { compareCodePoints } from './compare-code-points';
 import { dayCount } from './day-count';
 import { readOwn } from './read-own';
@@ -128,6 +128,11 @@ export function mapGraphqlRepos(
         continue;
       }
       if (!dataIsObject) {
+        results.push({ alias, kind: 'failed' });
+        continue;
+      }
+      if (node === null || node === undefined) {
+        // Requirement 11.15: no data for the alias and no NOT_FOUND of its own.
         results.push({ alias, kind: 'failed' });
         continue;
       }

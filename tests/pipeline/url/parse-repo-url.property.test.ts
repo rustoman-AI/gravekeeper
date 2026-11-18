@@ -3,7 +3,14 @@ import { describe, it } from 'vitest';
 import { formatRepoUrl } from '../../../pipeline/url/format-repo-url';
 import { parseRepoUrl } from '../../../pipeline/url/parse-repo-url';
 import type { RepoRef } from '../../../pipeline/url/parse-repo-url';
-import { refWithSpelling, urlSpelling, validRepoRef } from '../../support/arbitraries/urls';
+import {
+  anyInputString,
+  mutatedUrl,
+  refWithSpelling,
+  urlSpelling,
+  validRepoRef,
+  WEB_HOSTS,
+} from '../../support/arbitraries/urls';
 import { cfg } from '../../support/fc-config';
 
 function mustParse(input: string, webHost: string): RepoRef {
@@ -55,6 +62,33 @@ describe('URL parser properties', () => {
           );
         },
       ),
+      cfg(),
+    );
+  });
+});
+
+describe('URL parser totality and mutation properties', () => {
+  // Feature: scan-pipeline, Property 3: URL parsing is total
+  // Validates: Requirements 1.14
+  it('returns a Repo_Ref or invalid-url for any string and never throws', () => {
+    fc.assert(
+      fc.property(anyInputString, fc.constantFrom(...WEB_HOSTS), (input, webHost) => {
+        const result = parseRepoUrl(input, webHost);
+        return result.ok || result.error.code === 'invalid-url';
+      }),
+      cfg(),
+    );
+  });
+
+  // Feature: scan-pipeline, Property 4: One mutation of an accepted URL is rejected
+  // Validates: Requirements 1.17
+  it('rejects an accepted URL after exactly one mutation', () => {
+    fc.assert(
+      fc.property(mutatedUrl(), ({ webHost, original, input }) => {
+        if (!parseRepoUrl(original, webHost).ok) return false;
+        const result = parseRepoUrl(input, webHost);
+        return !result.ok && result.error.code === 'invalid-url';
+      }),
       cfg(),
     );
   });

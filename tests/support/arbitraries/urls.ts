@@ -126,3 +126,99 @@ export const refWithSpelling = (
   validRepoRef(hosts).chain((ref) =>
     urlSpelling(ref).map((spelling) => ({ webHost: ref.host, spelling })),
   );
+
+// Requirement 1.14: arbitrary text for totality. Mixes unrestricted code units (lone surrogates,
+// controls), full Unicode, URL-shaped text and accepted spellings with a random splice.
+export const anyInputString: fc.Arbitrary<string> = fc.oneof(
+  fc.string({ unit: 'binary', maxLength: 80 }),
+  fc.string({ unit: 'grapheme', maxLength: 80 }),
+  fc.string({ unit: fc.constantFrom(...'/:@?#%.-_ aAgGhHtTpPsSwW1é日\t\u0000\ud800\udc00'.split('')), maxLength: 80 }),
+  fc.string({ unit: 'binary', minLength: 500, maxLength: 700 }),
+  fc
+    .tuple(
+      validRepoRef().chain((ref) => urlSpelling(ref)),
+      fc.nat(400),
+      fc.string({ unit: 'binary', maxLength: 6 }),
+    )
+    .map(([s, at, junk]) => {
+      const i = at % (s.input.length + 1);
+      return s.input.slice(0, i) + junk + s.input.slice(i);
+    }),
+  fc
+    .tuple(validRepoRef().chain((ref) => urlSpelling(ref)), fc.nat(400))
+    .map(([s, at]) => s.input.slice(0, at % (s.input.length + 1))),
+  fc.constantFrom('', ' ', 'github.com', 'https://', 'https://github.com', '%', '/tree/', '\ud800'),
+);
+
+export type MutationKind = 'host' | 'port' | 'userinfo' | 'query' | 'segment';
+
+export interface MutatedUrl {
+  readonly webHost: string;
+  readonly original: string;
+  readonly kind: MutationKind;
+  readonly input: string;
+}
+
+const OTHER_HOSTS = [
+  'example.org',
+  'gitlab.com',
+  'github.com.evil.example',
+  'notgithub.com',
+  'github.co',
+  'www.www.github.com',
+  'bitbucket.org',
+];
+const SCHEME_AND_WWW = /^((?:[A-Za-z]+:\/\/)?(?:www\.)?)[^/?#]+/i;
+
+// Requirement 1.17: applies exactly one mutation to an accepted spelling.
+export const mutatedUrl = (hosts: readonly string[] = WEB_HOSTS): fc.Arbitrary<MutatedUrl> =>
+  validRepoRef(hosts).chain((ref) =>
+    fc
+      .record({
+        spelling: urlSpelling(ref),
+        kind: fc.constantFrom<MutationKind>('host', 'port', 'userinfo', 'query', 'segment'),
+        otherHost: fc.constantFrom(...OTHER_HOSTS),
+        port: fc.oneof(fc.nat({ max: 99999 }).map(String), fc.constant('')),
+        user: fc.tuple(alnumWord, fc.option(alnumWord, { nil: null })),
+        queryName: fc.constantFrom('foo', 'x', 'tabs', 'TAB', 'Tab', 'tab2', 'ref', 'a.b'),
+        queryValue: fc.option(fc.constantFrom('1', 'x', ''), { nil: null }),
+        order: fc.boolean(),
+        segment: fc.constantFrom('blob', 'issues', 'pulls', 'Tree', 'commits'),
+      })
+      .map((v) => {
+        // Branches percent-encode `?` and `#`, so the first raw one starts the suffix.
+        const trimmed = v.spelling.input.trim();
+        const cut = trimmed.search(/[?#]/);
+        const base = (cut < 0 ? trimmed : trimmed.slice(0, cut)).replace(/\/$/, '');
+        let input: string;
+        switch (v.kind) {
+          case 'host':
+            input = base.replace(SCHEME_AND_WWW, `$1${v.otherHost}`);
+            break;
+          case 'port':
+            input = base.replace(/^((?:[A-Za-z]+:\/\/)?(?:www\.)?[^/?#]+)/i, `$1:${v.port}`);
+            break;
+          case 'userinfo':
+            input = base.replace(
+              /^((?:[A-Za-z]+:\/\/)?)/,
+              `$1${v.user[0]}${v.user[1] === null ? '' : `:${v.user[1]}`}@`,
+            );
+            break;
+          case 'query': {
+            const param = v.queryValue === null ? v.queryName : `${v.queryName}=${v.queryValue}`;
+            input = v.order ? `${base}?${param}&tab=x` : `${base}?tab=x&${param}`;
+            break;
+          }
+          case 'segment':
+            input =
+              ref.branch === null
+                ? `${base}/${v.segment}`
+                : base.replace(
+                    /^((?:[A-Za-z]+:\/\/)?[^/]+\/[^/]+\/[^/]+)\/tree\//i,
+                    `$1/${v.segment}/`,
+                  );
+            break;
+        }
+        return { webHost: ref.host, original: v.spelling.input, kind: v.kind, input };
+      }),
+  );
