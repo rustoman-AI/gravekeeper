@@ -68,3 +68,9 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 - Live check: deps.dev GET /v3/advisories/{id} returns a numeric cvss3Score (GHSA-p8p7-x288-28g6 = 6.1) but no withdrawn or informational flag; RUSTSEC-2020-0036 ("failure is unmaintained") scores 9.8 there. So the score is the primary severity source, but the OSV detail request is still needed to exclude informational and withdrawn advisories.
 - Analyze Requirements failed twice with an internal service error (-32603), probably the 160 KB document size; a reviewer pass replaced it: 38 findings, 33 fixed in place, 5 new open questions (OQ 29-33).
 - Erred: (fill in after review). A sub-agent's regex replace deleted most of the Open questions section and it rebuilt it from memory; numbering 1-28 checked afterwards.
+
+## Session 10
+- Asked: close OQ 29-33 (canonical owner/repo/branch from GitHub so a cache hit equals a fresh scan), Vercel Runtime Cache on by default as L2, crates.io owner caching and partial-scan TTL, maxDuration 30, every design constant in the requirements table, fixture sets under 1 MiB; then tasks and execution through the mapping group.
+- Measured fixture sizes live: home-assistant/core's tree response alone is 8.9 MB (about 45 MB for the set), so it was replaced by revmic/canopy (Flask-Script==0.6.6 -> source repo resolves to smurfix/flask-script, isArchived true). request/request 0.81 MB, revmic/canopy 0.79 MB, zoxide 0.43 MB (estimates).
+- Found: PyPI /pypi/{name}/json is over MAX_RESPONSE_BYTES for popular packages (sqlalchemy 6.06 MB, aiohttp 9.5 MB), so maintainerCount would often be unknown; the per-version endpoint has ownership and is ~60-100 KB. Raised as OQ-D11.
+- Decision Kiro made: the Scan_Cache key now includes branch and defaultBranch so "cache hit equals fresh scan" can hold for two branches at the same commit.
