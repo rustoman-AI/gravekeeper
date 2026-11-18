@@ -5,5 +5,6 @@ export default defineConfig({
     include: ["tests/**/*.test.ts"],
     testTimeout: 30000,
     environment: "node",
+    setupFiles: ["tests/support/offline-fetch.ts"],
   },
 });

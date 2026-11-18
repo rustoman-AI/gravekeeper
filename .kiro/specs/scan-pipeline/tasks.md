@@ -350,7 +350,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 3. HTTP client and source adapters
-  - [~] 3.1 Implement the retry policy
+  - [x] 3.1 Implement the retry policy
     - Create `adapters/http/retry-policy.ts`: `backoffDelayMs(attemptsMade, r)`, `parseRetryAfter(value)` (non-negative integer seconds only), `decideAfterAttempt(...)` (the decision table of the design, wait checks in the order deadline, `RETRY_AFTER_MAX_MS`, total timeout, gate) and `resolveRedirect(firstUrl, currentUrl, location, hops, method)` returning `follow` or `refuse`. Pure, no clock or random access.
     - _Requirements: 15.4, 15.5, 15.6, 15.7, 15.8, 15.13, 15.17, 15.19, 15.20, 15.21_
 
@@ -363,7 +363,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 44: Backoff delay is within bounds**
     - **Validates: Requirements 15.13**
 
-  - [~] 3.4 Implement the concurrency limiter
+  - [x] 3.4 Implement the concurrency limiter
     - Create `adapters/http/concurrency-limiter.ts`: `createConcurrencyLimiter(limit, minIntervalMs)` returning `ConcurrencyLimiter`; slot waits abortable (`{ acquired: false }`), spacing between starts through the injected `Timer` and `Clock`.
     - _Requirements: 15.3, 15.14, 15.16_
 
@@ -376,7 +376,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 45: The concurrency limiter respects its limit**
     - **Validates: Requirements 15.14**
 
-  - [~] 3.7 Implement secret scrubbing
+  - [x] 3.7 Implement secret scrubbing
     - Create `adapters/http/redact.ts`: `scrubSecrets(text, secrets)` replaces every occurrence of a secret and of `Bearer ` plus a secret with `[redacted]`; empty secrets are ignored.
     - _Requirements: 20.4, 20.8, 20.9_
 
@@ -384,7 +384,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/redact.test.ts`: several occurrences, overlapping secrets, case of `Bearer`, regular-expression metacharacters in the secret, no secret set.
     - _Requirements: 20.4, 20.8, 20.9_
 
-  - [~] 3.9 Implement the limited body reader
+  - [x] 3.9 Implement the limited body reader
     - Create `adapters/http/body-reader.ts`: `readBodyLimited(response, maxBytes, signal)` streams chunks, counts bytes, cancels the reader and discards everything at the first byte over the limit; a body of exactly the limit is accepted; abort stops the read.
     - _Requirements: 15.2_
 
@@ -392,7 +392,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/body-reader.test.ts`: body of `MAX_RESPONSE_BYTES` accepted, `+ 1` rejected with the reader cancelled, multi-chunk bodies, abort during the read, invalid UTF-8.
     - _Requirements: 15.2_
 
-  - [~] 3.11 Implement the system runtime adapters
+  - [x] 3.11 Implement the system runtime adapters
     - Create `adapters/runtime/system-clock.ts`, `system-timer.ts` (`setTimeout`, `clearTimeout`, abortable `sleep`), `system-random.ts` and `console-logger.ts` (writes only the four `LogEntry` fields). These are the only adapter files allowed to call `Date.now`, `setTimeout` or `Math.random`.
     - _Requirements: 15.10, 20.6_
 
@@ -400,7 +400,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/system-runtime.test.ts` (with Vitest fake timers): `sleep` resolves `'elapsed'` or `'aborted'`, `clearTimeout` cancels, the logger output has exactly the keys `source`, `status`, `durationMs`, `code`.
     - _Requirements: 15.10, 20.6_
 
-  - [~] 3.13 Implement the token reader and environment reader
+  - [x] 3.13 Implement the token reader and environment reader
     - Create `adapters/runtime/token-reader.ts` (the only file in the repository that contains `process.env.GITHUB_TOKEN`; empty string counts as unset) and `adapters/runtime/env.ts` (`GITHUB_API_URL`, `GITHUB_GRAPHQL_URL`, `GRAVEKEEPER_RUNTIME_CACHE`, `GRAVEKEEPER_USER_AGENT`; `off` is the only value that disables L2).
     - _Requirements: 2.7, 20.1, 20.10, 19.19, 22.17_
 
@@ -408,11 +408,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/env.test.ts`: unset and empty token, `GRAVEKEEPER_RUNTIME_CACHE` of `off`, `on`, empty, unset and an arbitrary value, the token never appears in the object returned by `env.ts`, the real tree has exactly one file with `process.env.GITHUB_TOKEN`.
     - _Requirements: 2.7, 20.1, 20.10, 19.19, 22.17_
 
-  - [~] 3.15 Build the scripted fetch and the script arbitraries
+  - [x] 3.15 Build the scripted fetch and the script arbitraries
     - Create `tests/support/scripted-fetch.ts` (`(url, attemptIndex) => Step`, sleeps on the fake timer, honors `init.signal` with an `AbortError`, records `sentAtMs`, `abortedAtMs`, request headers and `redirect` mode), `tests/support/arbitraries/scripts.ts` (per-source steps with failure probability, latencies around `REQUEST_TIMEOUT_MS`, `REQUEST_TOTAL_TIMEOUT_MS` and `SCAN_DEADLINE_MS`, `Retry-After` values, oversize bodies, budget header sequences) and `tests/support/arbitraries/redirects.ts` (chains of 301, 302, 303, 307, 308 with same-origin and cross-origin, relative and absolute and missing `Location`, lengths 0 to `REDIRECT_MAX_HOPS + 2`, header sets that include `Authorization`).
     - _Requirements: 15.9, 15.19, 15.21, 16.13, 23.1_
 
-  - [~] 3.16 Install the offline fetch guard
+  - [x] 3.16 Install the offline fetch guard
     - Create `tests/support/offline-fetch.ts` replacing `globalThis.fetch` with a function that records the call and throws `OfflineFetchError`, plus an `afterEach` that fails the test when a call was recorded; inactive for files under `tests/live` when `GRAVEKEEPER_LIVE_TESTS` is `1`. Add `setupFiles: ['tests/support/offline-fetch.ts']` to `vitest.config.ts`.
     - _Requirements: 23.1_
 
@@ -456,7 +456,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 73: Redirect chains never leave the origin or exceed the hop limit**
     - **Validates: Requirements 15.21**
 
-  - [~] 3.26 Implement GitHub budget tracking
+  - [x] 3.26 Implement GitHub budget tracking
     - Create `pipeline/scan/github-budget.ts`: `GithubBudget` implements `AttemptGate`; starts unknown for every scan, `remaining` set only from an integer read through `readRestRateLimit` or `readGraphqlRateLimit`, `allow()` false when `remaining !== null && remaining < GITHUB_BUDGET_THRESHOLD`, keeps the last `resetAt`.
     - _Requirements: 14.2, 14.3, 14.4, 14.6, 14.8, 14.9_
 
@@ -464,7 +464,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/scan/github-budget.test.ts`: unknown at start, integer below, at and above the threshold, non-integer and empty values ignored, a later higher value reopens the gate, `resetAt` kept.
     - _Requirements: 14.2, 14.3, 14.4, 14.6, 14.9_
 
-  - [~] 3.28 Implement the SourceResult conversion
+  - [x] 3.28 Implement the SourceResult conversion
     - Create `adapters/http/source-result.ts`: `toSourceResult(outcome)` and `toTextResult(outcome)` mapping `ok`, `absent`, `failed` outcomes; a 2xx body that is not JSON gives `unparsable`; headers kept as the allow-list.
     - _Requirements: 15.15, 17.6, 4.11, 3.10_
 
