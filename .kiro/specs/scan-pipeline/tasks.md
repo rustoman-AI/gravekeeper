@@ -165,7 +165,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/mapping/deps-dev.test.ts` and `tests/support/arbitraries/shapes/ef-1.ts`, `ef-2.ts`, `ef-3.ts` (valid bodies in the shapes verified on 2026-11-17): field cases per Endpoint_Fact_Map row, host other than Web_Host is absent, batch response with a missing, extra or reordered entry, uppercase `system`.
     - _Requirements: 8.2, 8.3, 8.4, 8.7, 8.8, 8.9, 8.16, 2.8_
 
-  - [-] 1.37 Write property tests for the deps.dev mappers
+  - [x] 1.37 Write property tests for the deps.dev mappers
     - `tests/pipeline/mapping/deps-dev.property.test.ts`.
     - **Property 18: Release age is the minimum Day_Count over valid timestamps**
     - **Property 19: Batch responses are matched by key, not by position**
@@ -222,7 +222,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Append to `tests/pipeline/mapping/osv.test.ts` with `tests/support/arbitraries/shapes/ef-6.ts`: withdrawn excluded, informational excluded, alias merge (including transitive and one-sided links), unfetched ids counted, `maxSeverity` from fetched advisories only, a withdrawn informational advisory gets no id in `informationalIds`.
     - _Requirements: 9.5, 9.6, 9.7, 9.8, 9.9, 9.12, 9.14_
 
-  - [~] 1.49 Write property tests for vulnerability counts
+  - [x] 1.49 Write property tests for vulnerability counts
     - Append to `tests/pipeline/mapping/osv.property.test.ts`.
     - **Property 20: Vulnerability count bounds**
     - **Property 21: Vulnerability facts do not depend on advisory order**
@@ -230,7 +230,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 25: Unfetched advisory ids are counted**
     - **Validates: Requirements 9.12, 9.13, 9.14, 9.18**
 
-  - [~] 1.50 Write the property test for maximum severity
+  - [x] 1.50 Write the property test for maximum severity
     - Append to `tests/pipeline/mapping/severity.property.test.ts`.
     - **Property 32: Maximum severity over advisories**
     - **Validates: Requirements 10.17**
@@ -308,7 +308,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/mapping/selection.test.ts`: default root selection order, `no-root-manifest` case, duplicates, `SCAN_MAX_MANIFESTS` and `+ 1`, check order 5.4 before 5.5, wrong case and wrong last segment, path inside `node_modules` accepted.
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-  - [~] 1.67 Write the property test for manifest selection
+  - [x] 1.67 Write the property test for manifest selection
     - `tests/pipeline/mapping/selection.property.test.ts`.
     - **Property 10: Manifest selection invariants**
     - **Validates: Requirements 5.13**
@@ -317,26 +317,26 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/mapping/assemble.ts`: `assembleFacts(raw, asOf)` returning exactly the seven fact keys and the target notes. `deprecated` from deps.dev for the Selected_Version, filled from `mapNpmLatest` for npm with basis `default`, set `true` by `unmaintainedIds` for `cargo`; `maintainerCount` only from the maintainer mapper of the ecosystem; notes for `package-not-found`, `informational-advisory-excluded`, `unmaintained-advisory`, `advisory-details-incomplete`, `osv-pagination-ignored`, `maintainers-lower-bound` and selection notes.
     - _Requirements: 13.4, 13.11, 13.12, 13.13, 13.14, 8.4, 8.5, 8.6, 9.6, 9.9, 9.11, 9.22, 12.4_
 
-  - [~] 1.69 Write unit tests for `assembleFacts`
+  - [x] 1.69 Write unit tests for `assembleFacts`
     - `tests/pipeline/mapping/assemble.test.ts`: all sources ok, each source unavailable gives only its facts null, the `deprecated` composition rules, `unmaintained` for crates sets `deprecated` and adds the note, `unsound` and `notice` do not, truncated OSV result, `no-source-repo`.
     - _Requirements: 13.4, 13.11, 13.14, 8.4, 8.6, 9.6, 9.22_
 
-  - [~] 1.70 Write property tests for `assembleFacts`
+  - [x] 1.70 Write property tests for `assembleFacts`
     - `tests/pipeline/mapping/assemble.property.test.ts`.
     - **Property 37: Assembled facts have the declared types**
     - **Property 38: Assembly is deterministic**
     - **Property 26: Unmaintained advisories set deprecated for crates**
     - **Validates: Requirements 13.11, 13.13, 9.22**
 
-  - [~] 1.71 Export all Mappers from `pipeline/mapping/index.ts`
+  - [x] 1.71 Export all Mappers from `pipeline/mapping/index.ts`
     - Re-export every Mapper and every type of `pipeline/mapping`. No other module in the group edits this file.
     - _Requirements: 13.1, 22.2_
 
-  - [~] 1.72 Build the Mapper registry for property tests
+  - [x] 1.72 Build the Mapper registry for property tests
     - Create `tests/support/mapper-registry.ts` listing every export of `pipeline/mapping/index.ts` with a validator of its declared output type and a way to call it with a generated JSON value and a generated `asOf`.
     - _Requirements: 13.10, 13.15_
 
-  - [~] 1.73 Write the registry completeness test
+  - [x] 1.73 Write the registry completeness test
     - `tests/pipeline/mapping/mapper-registry.test.ts`: fails when an exported Mapper is missing from the registry.
     - _Requirements: 13.10, 13.15_
 

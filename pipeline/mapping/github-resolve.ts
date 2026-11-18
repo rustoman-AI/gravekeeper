@@ -18,7 +18,11 @@ function isObject(value: unknown): boolean {
 }
 
 function validBranch(value: unknown): value is string {
-  return typeof value === 'string' && value.length > 0 && value.length <= BRANCH_MAX_LENGTH;
+  if (typeof value !== 'string' || value.length === 0) return false;
+  // Length is counted in Unicode code points, as the URL parser counts branches.
+  // A string of at most BRANCH_MAX_LENGTH UTF-16 units cannot exceed it in code points.
+  if (value.length <= BRANCH_MAX_LENGTH) return true;
+  return Array.from(value).length <= BRANCH_MAX_LENGTH;
 }
 
 /**

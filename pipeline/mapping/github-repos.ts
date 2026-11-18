@@ -120,8 +120,9 @@ export function mapGraphqlRepos(
         continue;
       }
       const node: unknown = dataIsObject ? readOwn(data, alias) : undefined;
+      // Null or missing data (absent key, or no data object) plus an own NOT_FOUND.
       const notFound =
-        (node === null || (dataIsObject === false && node === undefined)) &&
+        (node === null || node === undefined) &&
         aliasErrors.some((e) => readOwn(e, 'type') === 'NOT_FOUND' && isExactAliasPath(e, alias));
       if (notFound) {
         results.push({ alias, kind: 'not-found' });

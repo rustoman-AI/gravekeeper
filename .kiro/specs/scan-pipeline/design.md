@@ -644,14 +644,14 @@ export interface AssembledFacts {
 }
 ```
 
-How the Mappers compose for `deprecated` (R8.4, R8.6, R9.6, R13.4): `mapDepsDevPackage` gives the deps.dev value for the Selected_Version. For `npm` with basis `default` and a null deps.dev value, `mapNpmLatest(...).deprecated` fills it. For `cargo`, `unmaintainedIds.length > 0` sets it to `true`, overriding `false` and `null`. `maintainerCount` comes only from the maintainer mapper of the ecosystem. For `pypi`, `RawTargetInputs.maintainers` is the per-version document of the Selected_Version (EF-22). When the Selected_Version is null the orchestrator sends no request and passes `{ state: 'absent' }` with no Work_Unit, so `maintainerCount` is null (R12.16).
+How the Mappers compose for `deprecated` (R8.4, R8.6, R9.6, R13.4): `mapDepsDevPackage` gives the deps.dev value for the Selected_Version. For `npm` with basis `default` and a null deps.dev value, `mapNpmLatest(...).deprecated` fills it. For `cargo`, `unmaintainedIds.length > 0` sets it to `true`, overriding `false` and `null`, and adds the `unmaintained-advisory` note whenever `unmaintainedIds.length > 0`, also when the deps.dev value was already `true` (R9.6, R9.22, session 12). `maintainerCount` comes only from the maintainer mapper of the ecosystem. For `pypi`, `RawTargetInputs.maintainers` is the per-version document of the Selected_Version (EF-22). When the Selected_Version is null the orchestrator sends no request and passes `{ state: 'absent' }` with no Work_Unit, so `maintainerCount` is null (R12.16).
 
 **GraphQL mapper: attribution of errors (R11.5, R11.9, R11.15).** `mapGraphqlRepos` builds the alias set from the `GraphqlBatch` it was given and attributes `errors[]` to aliases only through `errors[].path[0]` when that value is one of those alias names. An error with no `path`, a `path` that is not an array, an empty `path`, or a first element that names no alias of the batch is unattributable and is ignored for attribution. The outcome of each alias then follows `data.rN` and its own errors:
 
 | `data.rN` | Own errors (attributed through `path[0]`) | Result |
 |---|---|---|
 | object | none, or any unattributable errors | `ok`, facts from the object |
-| null or missing | `NOT_FOUND` (R11.5) | `not-found` (counts `ok`, facts null) |
+| null or missing | `NOT_FOUND` with `path` exactly `["rN"]` (R11.5; a missing `data.rN` is treated like null, session 12) | `not-found` (counts `ok`, facts null) |
 | null or missing | a non-`NOT_FOUND` type (R11.9) | `failed` |
 | null or missing | none (including when only unattributable errors exist) | `failed` |
 | object | a non-`NOT_FOUND` error of its own | `failed` for that alias (R11.9) |
@@ -1294,7 +1294,7 @@ Counterexample that caused this wording (fast-check seed -914370393): `GITHUB_AP
 
 ### Property 19: Batch responses are matched by key, not by position
 
-*For any* `versionbatch` body and any permutation of its `responses`, `mapDepsDevVersionBatch` returns equal Source_Repo results for each request.
+*For any* `versionbatch` body whose `responses[].request.versionKey` values are pairwise distinct (`name` and `version` compared exactly, `system` compared case-insensitively) and any permutation of its `responses`, `mapDepsDevVersionBatch` returns equal Source_Repo results for each request. Bodies in which a key repeats are outside this property: R8.9 selects the first matching entry in array order, and an example test pins that rule.
 
 **Validates: Requirements 8.16**
 
@@ -1336,7 +1336,7 @@ Counterexample that caused this wording (fast-check seed -914370393): `GITHUB_AP
 
 ### Property 26: Unmaintained advisories set deprecated for crates
 
-*For any* set of fetched advisories of a `cargo` Lookup_Target and any initial `deprecated` value (true, false or null), `deprecated` is true when at least one fetched, non-withdrawn advisory has an `affected[]` entry with `database_specific.informational` exactly `unmaintained`, and the initial value otherwise (including for `unsound`, `notice` and other values, and for every `npm` or `pypi` Lookup_Target). An `unmaintained-advisory` note exists if and only if `deprecated` was set by this rule.
+*For any* set of fetched advisories of a `cargo` Lookup_Target and any initial `deprecated` value (true, false or null), `deprecated` is true when at least one fetched, non-withdrawn advisory has an `affected[]` entry with `database_specific.informational` exactly `unmaintained`, and the initial value otherwise (including for `unsound`, `notice` and other values, and for every `npm` or `pypi` Lookup_Target). An `unmaintained-advisory` note exists if and only if the Lookup_Target has at least one such advisory, independent of the initial `deprecated` value.
 
 **Validates: Requirements 9.22**
 
@@ -1630,7 +1630,7 @@ This property supports the Runtime Cache tier (OQ-D1, enabled by default) and ex
 
 ### Property 75: Unattributable GraphQL errors do not change alias outcomes
 
-*For any* GraphQL response body and any list of unattributable errors added to it (errors with no `path`, or with a `path` whose first element names no alias of the batch), `mapGraphqlRepos` maps every alias that has a `data.rN` object to `ok` with the same `archived` and `daysSinceLastCommit` as for the body without those errors, and maps every alias that has no `data.rN` object and no `NOT_FOUND` error of its own to `failed`.
+*For any* GraphQL response body and any list of unattributable errors added to it (errors with no `path`, or with a `path` whose first element names no alias of the batch), `mapGraphqlRepos` maps every alias that has a `data.rN` object to `ok` with the same `archived` and `daysSinceLastCommit` as for the body without those errors, and maps every alias that has no `data.rN` object (null or missing) and no `NOT_FOUND` error of its own with `path` exactly `["rN"]` to `failed`. An alias with such a `NOT_FOUND` error and a null or missing `data.rN` maps to `not-found` (`ok`, null facts).
 
 **Validates: Requirements 11.16**
 
@@ -1834,6 +1834,13 @@ The 12 stubbed cases of R23.12 are named after the requirement and live in `run-
 3. **Scan_Cache key with `branch` and `defaultBranch` (D11, R19.5): accepted.**
 4. **Day_Count for a date after `asOf`.** R6.4 gives 0 (clamped), not null. The text of `tasks.md` task 1.29 says a date after `asOf` gives null. That text is outdated on this point, and the requirement is authoritative.
 5. **Unattributable GraphQL errors (R11.15, R11.16, P75).** Errors with no `path`, or with a `path` whose first element names no alias of the batch, are ignored for attribution. Aliases with a data object stay `ok`. Aliases with no data object and no `NOT_FOUND` error of their own become `failed`.
+
+### Resolved decisions (2026-11-18 session 12)
+
+1. **Property 19 and repeated versionbatch keys (R8.9, R8.16, P19).** P19 applies to `versionbatch` bodies whose response keys are pairwise distinct (`versionKey.system` compared case-insensitively, `name` and `version` exact). When a key repeats, R8.9 applies (first matching entry in array order) and an example test pins it. Counterexample that led to this: fast-check seed 838385792, two responses with key `NPM c 1.0.0`, one without `version` and one with `SOURCE_REPO github.com/o/r`. A permutation swaps which one is first, so the result changed.
+2. **Unmaintained note (R9.6, R9.22, P26).** R9.6 wins. For every `cargo` Lookup_Target with at least one non-withdrawn advisory whose `affected[]` has `informational` exactly `unmaintained`, `deprecated` is true and the `unmaintained-advisory` note is added, whether or not `deprecated` was already true. R9.22 and P26 state the note condition as "if and only if the target has such an advisory", independent of the initial `deprecated` value.
+3. **GraphQL alias with missing `data.rN` (R11.5, R11.15, R11.16, P75).** An alias whose `data.rN` is missing, not only null, and that has its own `NOT_FOUND` error with `path` exactly `["rN"]` maps to `not-found` (facts null, unit `ok`), the same as null. The outcome table and P75 are updated.
+4. **`default_branch` length unit (R3.3, R3.9).** The length of `default_branch` is counted in Unicode code points, the same unit the URL parser uses for branches (R1.10). The constants row of `BRANCH_MAX_LENGTH` says so. EF-12 does not mention a length.
 
 ### Design open questions (for the user)
 

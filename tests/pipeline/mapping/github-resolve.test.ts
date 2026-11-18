@@ -75,6 +75,23 @@ describe('readRepository', () => {
       expect(readRepository(body, null)).toEqual({ ok: false, error: 'invalid' });
     });
 
+    it('accepts an emoji name of BRANCH_MAX_LENGTH code points', () => {
+      const name = '🌿'.repeat(BRANCH_MAX_LENGTH);
+      expect(name.length).toBe(2 * BRANCH_MAX_LENGTH);
+      expect(readRepository(repo({ default_branch: name }), null)).toMatchObject({
+        ok: true,
+        value: { defaultBranch: name },
+      });
+    });
+
+    it('rejects an emoji name of BRANCH_MAX_LENGTH + 1 code points', () => {
+      const name = '🌿'.repeat(BRANCH_MAX_LENGTH + 1);
+      expect(readRepository(repo({ default_branch: name }), null)).toEqual({
+        ok: false,
+        error: 'invalid',
+      });
+    });
+
     it('gives null instead of an error when a branch is requested', () => {
       const body = repo({ default_branch: '' });
       expect(readRepository(body, 'dev')).toMatchObject({

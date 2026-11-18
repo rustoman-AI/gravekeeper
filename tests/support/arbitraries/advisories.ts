@@ -1,4 +1,7 @@
 import * as fc from 'fast-check';
+import type { Severity } from '../../../core';
+import { mapOsvAdvisory } from '../../../pipeline/mapping/osv-advisory';
+import type { AdvisoryRecord } from '../../../pipeline/mapping/types';
 import { osvBatchBody, osvResult } from './shapes/ef-5';
 
 // Requirement 9: generators for OSV querybatch results and OSV advisory bodies.
@@ -69,3 +72,62 @@ export const arbAdvisoryBody: fc.Arbitrary<Record<string, unknown>> = fc.record(
   },
   { requiredKeys: ['id'] },
 );
+
+/** Ids drawn from a small pool so that records share ids and aliases often. */
+const arbPoolId: fc.Arbitrary<string> = fc.constantFrom('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', '\u{1F600}');
+
+/** A mapped advisory record whose ids and aliases collide often. */
+export const arbAdvisoryRecord: fc.Arbitrary<AdvisoryRecord> = fc.record({
+  id: arbPoolId,
+  aliases: fc.array(arbPoolId, { maxLength: 4 }),
+  withdrawn: fc.boolean(),
+  informational: fc.boolean(),
+  unmaintained: fc.boolean(),
+  severity: fc.constantFrom<Severity | null>(null, 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'),
+});
+
+/** Records from advisory bodies (EF-6) mapped through `mapOsvAdvisory`. */
+export const arbMappedRecords: fc.Arbitrary<AdvisoryRecord[]> = fc
+  .array(fc.tuple(arbAdvisoryBody, fc.option(fc.double({ min: 0, max: 10, noNaN: true }), { nil: null })), { maxLength: 8 })
+  .map((pairs) => {
+    const out: AdvisoryRecord[] = [];
+    for (const [body, score] of pairs) {
+      const rec = mapOsvAdvisory(body, score);
+      if (rec !== null) out.push(rec);
+    }
+    return out;
+  });
+
+/** Records from either source plus a list of unfetched ids. */
+export const arbRecordsAndUnfetched: fc.Arbitrary<{ records: AdvisoryRecord[]; unfetched: string[] }> = fc.record({
+  records: fc.oneof(fc.array(arbAdvisoryRecord, { maxLength: 10 }), arbMappedRecords),
+  unfetched: fc.array(fc.oneof(arbPoolId, arbAdvisoryId), { maxLength: 8 }),
+});
+
+/**
+ * Counted advisories with pairwise distinct ids and no shared aliases. All ids and
+ * aliases are distinct strings, so no record's alias equals any id or other alias.
+ * Returns at least two records.
+ */
+export const arbDisjointCounted: fc.Arbitrary<{ records: AdvisoryRecord[]; i: number; j: number }> = fc
+  .tuple(
+    fc.integer({ min: 2, max: 8 }),
+    fc.array(fc.integer({ min: 0, max: 3 }), { minLength: 8, maxLength: 8 }),
+    fc.array(fc.constantFrom<Severity | null>(null, 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'), { minLength: 8, maxLength: 8 }),
+  )
+  .chain(([n, aliasCounts, sevs]) => {
+    const records: AdvisoryRecord[] = [];
+    for (let k = 0; k < n; k += 1) {
+      records.push({
+        id: `ID-${k}`,
+        aliases: Array.from({ length: aliasCounts[k] }, (_, a) => `AL-${k}-${a}`),
+        withdrawn: false,
+        informational: false,
+        unmaintained: k % 2 === 0,
+        severity: sevs[k],
+      });
+    }
+    return fc
+      .tuple(fc.integer({ min: 0, max: n - 1 }), fc.integer({ min: 1, max: n - 1 }))
+      .map(([i, d]) => ({ records, i, j: (i + d) % n }));
+  });

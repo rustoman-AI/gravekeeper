@@ -104,7 +104,11 @@ describe('github-repos properties', () => {
         archived: fc.oneof(fc.boolean(), arbNonBoolean),
         date: fc.oneof(arbValidDate, arbInvalidDate),
       }),
-      fc.record({ kind: fc.constantFrom('null' as const, 'missing' as const, 'notfound' as const) }),
+      // 'nfmissing': key absent from data with an own NOT_FOUND. User-approved
+      // behaviour change (task 1.52): maps to not-found, same as null + NOT_FOUND (11.5).
+      fc.record({
+        kind: fc.constantFrom('null' as const, 'missing' as const, 'notfound' as const, 'nfmissing' as const),
+      }),
     );
     fc.assert(
       fc.property(
@@ -123,7 +127,7 @@ describe('github-repos properties', () => {
             else if (s.kind === 'notfound') {
               data[alias] = null;
               own.push(notFoundError(alias));
-            }
+            } else if (s.kind === 'nfmissing') own.push(notFoundError(alias));
           });
           const base = mapGraphqlRepos(graphqlBody(data, own.length > 0 ? own : undefined), batch, AS_OF);
           const withExtra = mapGraphqlRepos(graphqlBody(data, [...own, ...extra]), batch, AS_OF);
@@ -131,7 +135,7 @@ describe('github-repos properties', () => {
           specs.forEach((s, i) => {
             const r = withExtra[i];
             if (s.kind === 'node') expect(r?.kind).toBe('ok');
-            else if (s.kind === 'notfound') expect(r?.kind).toBe('not-found');
+            else if (s.kind === 'notfound' || s.kind === 'nfmissing') expect(r?.kind).toBe('not-found');
             else expect(r?.kind).toBe('failed');
           });
         },

@@ -25,8 +25,10 @@ describe('github-resolve properties', () => {
             expect(v.owner.includes('/')).toBe(false);
             expect(v.repo.includes('/')).toBe(false);
             if (v.defaultBranch !== null) {
-              expect(v.defaultBranch.length).toBeGreaterThan(0);
-              expect(v.defaultBranch.length).toBeLessThanOrEqual(BRANCH_MAX_LENGTH);
+              // Oracle counts code points (user-approved change from UTF-16 units).
+              const points = Array.from(v.defaultBranch).length;
+              expect(points).toBeGreaterThan(0);
+              expect(points).toBeLessThanOrEqual(BRANCH_MAX_LENGTH);
             } else {
               expect(requested).not.toBeNull();
             }

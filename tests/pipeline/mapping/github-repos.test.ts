@@ -138,6 +138,21 @@ describe('mapGraphqlRepos', () => {
       ]);
     });
 
+    it('maps an absent key with an own NOT_FOUND to not-found (data object present)', () => {
+      const body = graphqlBody({ r1: repoNode() }, [notFoundError('r0')]);
+      expect(mapGraphqlRepos(body, batch, AS_OF).map((r) => r.kind)).toEqual(['not-found', 'ok']);
+    });
+
+    it('maps no data at all with own NOT_FOUND to not-found, others stay failed', () => {
+      for (const data of [undefined, null]) {
+        const body = graphqlBody(data, [notFoundError('r0')]);
+        expect(mapGraphqlRepos(body, batch, AS_OF)).toEqual([
+          { alias: 'r0', kind: 'not-found' },
+          { alias: 'r1', kind: 'failed' },
+        ]);
+      }
+    });
+
     it('still maps an own NOT_FOUND next to unattributable errors', () => {
       const body = graphqlBody({ r0: null, r1: repoNode() }, [
         ...unattributableErrors(),

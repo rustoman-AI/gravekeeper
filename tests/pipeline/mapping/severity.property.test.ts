@@ -1,6 +1,7 @@
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { cvssSeverity, severityFromScore } from '../../../pipeline/mapping/cvss';
+import { aggregateAdvisories, mapOsvAdvisory } from '../../../pipeline/mapping/osv-advisory';
 import { severityOf } from '../../../pipeline/mapping/severity';
 import { arbCvssVector } from '../../support/arbitraries/cvss';
 import { cfg } from '../../support/fc-config';
@@ -104,6 +105,61 @@ describe('severity properties', () => {
       fc.property(arbScore, arbOsv, (score, osv) => {
         expect(severityOf(score, osv)).toBe(severityFromScore(score));
       }),
+      cfg(),
+    );
+  });
+});
+
+describe('maximum severity properties', () => {
+  const LABELS: Readonly<Record<string, string>> = { LOW: 'LOW', MODERATE: 'MEDIUM', HIGH: 'HIGH', CRITICAL: 'CRITICAL' };
+
+  /** Independent oracle of the R10.5 order: score, accepted label, severity[] entries, unknown. */
+  function oracleSeverity(score: number | null, body: { database_specific?: { severity?: unknown }; severity: readonly unknown[] }): string | null {
+    if (score !== null) return severityFromScore(score);
+    const label = body.database_specific?.severity;
+    if (typeof label === 'string' && Object.prototype.hasOwnProperty.call(LABELS, label)) return LABELS[label]!;
+    return oracleFromEntries(body.severity);
+  }
+
+  const arbScore: fc.Arbitrary<number | null> = fc.oneof(
+    { weight: 2, arbitrary: fc.constant(null) },
+    { weight: 3, arbitrary: fc.double({ min: 0, max: 10, noNaN: true }) },
+    { weight: 1, arbitrary: fc.constantFrom(0, 0.1, 3.9, 4, 6.9, 7, 8.9, 9, 10) },
+  );
+  const arbAdvisoryParts = fc.record({
+    score: arbScore,
+    database_specific: fc.record(
+      { severity: fc.oneof(fc.constantFrom('LOW', 'MODERATE', 'HIGH', 'CRITICAL'), arbRejectedLabel) },
+      { requiredKeys: [] },
+    ),
+    severity: arbEntries,
+  });
+  const arbAdvisorySet = fc.array(arbAdvisoryParts, { maxLength: 8 });
+
+  // Feature: scan-pipeline, Property 32: Maximum severity over advisories
+  // Validates: Requirements 10.17
+  it('P32 maxSeverity is the highest per-advisory severity and ignores order', () => {
+    fc.assert(
+      fc.property(
+        arbAdvisorySet.chain((set) => fc.tuple(fc.constant(set), fc.shuffledSubarray(set, { minLength: set.length, maxLength: set.length }))),
+        ([set, permuted]) => {
+          const toRecords = (list: typeof set) =>
+            list.map((p, i) => {
+              const { score, ...body } = p;
+              const record = mapOsvAdvisory({ id: `ID-${String(i)}`, ...body }, score);
+              expect(record).not.toBeNull();
+              return record!;
+            });
+          let expected: string | null = null;
+          for (const p of set) {
+            const s = oracleSeverity(p.score, p);
+            if (s !== null && (expected === null || RANK[s]! > RANK[expected]!)) expected = s;
+          }
+          expect(aggregateAdvisories(toRecords(set), []).maxSeverity).toBe(expected);
+          // Permuted order must give the same result (ids are reassigned by position, which does not affect severity).
+          expect(aggregateAdvisories(toRecords(permuted), []).maxSeverity).toBe(expected);
+        },
+      ),
       cfg(),
     );
   });
