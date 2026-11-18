@@ -8,14 +8,6 @@ import { toSourceResult } from "../http/source-result";
 
 const NPM_REGISTRY_URL = "https://registry.npmjs.org";
 
-/**
- * Path segment for a package name. The npm registry documents `@scope%2Fname`:
- * the `@` stays, the `/` is encoded.
- */
-function encodeName(name: string): string {
-  return encodeURIComponent(name).replace(/^%40/, "@");
-}
-
 /** EF-20. 404 is absent. Cached in L1 only (general upstream policy). */
 export function createNpmSource(http: HttpClient): NpmSource {
   return {
@@ -23,7 +15,7 @@ export function createNpmSource(http: HttpClient): NpmSource {
       const request: HttpRequest = {
         source: "npm",
         method: "GET",
-        url: `${NPM_REGISTRY_URL}/${encodeName(name)}/latest`,
+        url: `${NPM_REGISTRY_URL}/${encodeURIComponent(name)}/latest`,
         headers: { accept: "application/json" },
         body: null,
         auth: "none",

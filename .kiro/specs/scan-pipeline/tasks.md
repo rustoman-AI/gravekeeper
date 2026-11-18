@@ -358,7 +358,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/retry-policy.test.ts`: every row of the decision table, `Retry-After` of `0`, an integer at `RETRY_AFTER_MAX_MS` and above, a date-form value ignored, GitHub 403 with and without `Retry-After`, wait crossing the deadline and the total timeout, redirect `follow` and each `refuse` case.
     - _Requirements: 15.4, 15.5, 15.6, 15.7, 15.8, 15.17, 15.19, 15.20_
 
-  - [~] 3.3 Write the property test for backoff
+  - [x] 3.3 Write the property test for backoff
     - `tests/adapters/retry-policy.property.test.ts`.
     - **Property 44: Backoff delay is within bounds**
     - **Validates: Requirements 15.13**
@@ -371,7 +371,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/concurrency-limiter.test.ts`: limit 1 and 4, FIFO start order, abort while waiting, a failing task releases its slot, `minIntervalMs` spacing on the fake runtime.
     - _Requirements: 15.3, 15.14, 15.16_
 
-  - [~] 3.6 Write the property test for the limiter
+  - [x] 3.6 Write the property test for the limiter
     - `tests/adapters/concurrency-limiter.property.test.ts`.
     - **Property 45: The concurrency limiter respects its limit**
     - **Validates: Requirements 15.14**
@@ -424,11 +424,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/http/github-authorizer.ts`: `createGithubAuthorizer(readToken, config)` returns `(url: URL) => string | null`, giving `"Bearer " + token` only for scheme `https`, a host (case-insensitive) equal to the host of the API URL or the GraphQL URL, and a set token.
     - _Requirements: 20.2, 20.3, 20.7_
 
-  - [~] 3.19 Write unit tests for the authorizer
+  - [x] 3.19 Write unit tests for the authorizer
     - `tests/adapters/github-authorizer.test.ts`: API and GraphQL host get the header, `raw.githubusercontent.com`, other registries and look-alike hosts (`api.github.com.evil.test`, `API.GITHUB.COM` with a port) do not, `http` does not, unset token gives `null`.
     - _Requirements: 20.2, 20.3, 20.7_
 
-  - [~] 3.20 Implement the HTTP client
+  - [x] 3.20 Implement the HTTP client
     - Create `adapters/http/http-client.ts`: `createHttpClient(options)` with the Work_Unit loop and the attempt of the design (per-attempt timeout on the injected timer, `AbortSignal.any`, `redirect: 'manual'` with same-origin redirects followed for GET up to `REDIRECT_MAX_HOPS`, `Authorization` recomputed per hop by the authorizer, header allow-list `content-type`, `retry-after`, `x-ratelimit-*`, body size cap, scrubbing before the body is returned, gate `allow` and `observe`, `failed` outcomes carry no body, Retry-After and backoff handling through `retry-policy.ts`). Never throws and never rejects.
     - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7, 15.8, 15.9, 15.10, 15.15, 15.16, 15.17, 15.19, 15.20, 15.21, 16.5, 16.8, 16.9, 20.2, 20.3, 20.4_
 
@@ -476,7 +476,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/github/github-source.ts`: `createGithubSource(client, config, tokenPresent)`; repository and branch requests with `cache: null`, tree request cached with the Commit_SHA in the URL, manifest text from `GITHUB_RAW_HOST` for the default Web_Host (no gate) and from the blobs endpoint with the gate for GHES, GraphQL `POST` with `auth: 'github'` and `storeWhen: 'graphql-no-foreign-errors'`; path segments with `encodeURIComponent`.
     - _Requirements: 2.6, 3.1, 3.4, 3.8, 11.1, 14.3, 14.11, 19.2, 19.4_
 
-  - [~] 3.31 Write unit tests for the GitHub source adapter
+  - [x] 3.31 Write unit tests for the GitHub source adapter
     - `tests/adapters/sources/github-source.test.ts` (scripted `HttpClient`): exact URL, method, headers and body of every method, `cache` policies, raw host versus blobs endpoint, `hasToken`, branch with `/` and `%` requested unchanged.
     - _Requirements: 2.6, 3.1, 3.4, 3.8, 14.11, 19.4_
 
@@ -489,7 +489,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/depsdev/depsdev-source.ts`: package, version, `versionbatch` (system in uppercase, at most `DEPSDEV_BATCH_SIZE` requests) and advisory requests; 404 is `absent` for package and advisory; advisory policy `ADVISORY_CACHE_TTL_SECONDS` with `l2Kind: 'depsdev-advisory'`; other bodies `l2Kind: null` with `UPSTREAM_CACHE_TTL_SECONDS`.
     - _Requirements: 8.1, 8.8, 9.20, 9.21, 9.23, 19.17, 19.18, 19.20_
 
-  - [~] 3.34 Write unit tests for the deps.dev source adapter
+  - [x] 3.34 Write unit tests for the deps.dev source adapter
     - `tests/adapters/sources/depsdev-source.test.ts`: URL, method and body per method, uppercase `system`, encoded package names, cache policies and `l2Kind`, batch size guard.
     - _Requirements: 8.8, 9.20, 9.21, 19.17, 19.18, 19.20_
 
@@ -497,7 +497,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/osv/osv-source.ts`: `queryBatch` (at most `OSV_BATCH_SIZE` queries, keys in a fixed order) and `getVulnerability` (`notFound: 'failed'`, `ADVISORY_CACHE_TTL_SECONDS`, `l2Kind: 'osv-advisory'`).
     - _Requirements: 9.1, 9.4, 9.9, 17.6, 19.17, 19.18, 19.20_
 
-  - [~] 3.36 Write unit tests for the OSV source adapter
+  - [x] 3.36 Write unit tests for the OSV source adapter
     - `tests/adapters/sources/osv-source.test.ts`: request body key order, ecosystem names, a 404 on the detail request is `failed`, cache policies.
     - _Requirements: 9.1, 9.4, 9.9, 17.6, 19.17, 19.20_
 
@@ -505,7 +505,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/npm/npm-source.ts`: `getLatest(name)` to `https://registry.npmjs.org/{name}/latest`, 404 is `absent`, scoped names encoded.
     - _Requirements: 12.1, 8.6, 12.7_
 
-  - [~] 3.38 Write unit tests for the npm source adapter
+  - [x] 3.38 Write unit tests for the npm source adapter
     - `tests/adapters/sources/npm-source.test.ts`: URL for plain and scoped names, 404 `absent`, cache policy.
     - _Requirements: 12.1, 8.6, 12.7_
 
@@ -513,7 +513,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/cratesio/cratesio-source.ts`: `getOwners(name)` with `User-Agent` from `GRAVEKEEPER_USER_AGENT`, `CRATES_OWNERS_TTL_SECONDS` with `l2Kind: 'crates-owners'`, 404 `absent`; the shared limiter policy `CONCURRENCY_CRATESIO` with `CRATESIO_MIN_INTERVAL_MS` is applied by the HTTP client.
     - _Requirements: 12.2, 12.7, 12.13, 15.16, 19.20_
 
-  - [~] 3.40 Write unit tests for the crates.io source adapter
+  - [x] 3.40 Write unit tests for the crates.io source adapter
     - `tests/adapters/sources/cratesio-source.test.ts`: URL, `User-Agent` header, cache policy and `l2Kind`, 404 `absent`.
     - _Requirements: 12.2, 12.7, 12.13, 19.20_
 
@@ -521,7 +521,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/pypi/pypi-source.ts`: `getProject(name)` to `https://pypi.org/pypi/{name}/json`, 404 is `absent`.
     - _Requirements: 12.5, 12.7_
 
-  - [~] 3.42 Write unit tests for the PyPI source adapter
+  - [x] 3.42 Write unit tests for the PyPI source adapter
     - `tests/adapters/sources/pypi-source.test.ts`: URL with a normalized name, 404 `absent`, a body over `MAX_RESPONSE_BYTES` surfaces as `failed` `http-error` through the client.
     - _Requirements: 12.5, 12.7, 15.2_
 

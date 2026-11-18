@@ -12,14 +12,16 @@ const OSV_BASE_URL = "https://api.osv.dev";
 export function createOsvSource(http: HttpClient): OsvSource {
   return {
     async queryBatch(queries, ctx): Promise<SourceResult> {
-      // The Pipeline batches; the slice keeps the request within OSV_BATCH_SIZE
-      // even if a caller does not (a length mismatch is then failed by the Mapper).
+      if (queries.length > OSV_BATCH_SIZE) {
+        // The caller batches; an oversized batch is a programming error, reported as a failed unit.
+        return { kind: "failed", reason: "http-error", status: null, headers: null };
+      }
       const request: HttpRequest = {
         source: "osv",
         method: "POST",
         url: `${OSV_BASE_URL}/v1/querybatch`,
         headers: { "content-type": "application/json" },
-        body: serializeBatch(queries.slice(0, OSV_BATCH_SIZE)),
+        body: serializeBatch(queries),
         auth: "none",
         notFound: "failed",
         cache: {
