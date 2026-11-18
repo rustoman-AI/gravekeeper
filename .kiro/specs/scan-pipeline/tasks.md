@@ -165,7 +165,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/mapping/deps-dev.test.ts` and `tests/support/arbitraries/shapes/ef-1.ts`, `ef-2.ts`, `ef-3.ts` (valid bodies in the shapes verified on 2026-11-17): field cases per Endpoint_Fact_Map row, host other than Web_Host is absent, batch response with a missing, extra or reordered entry, uppercase `system`.
     - _Requirements: 8.2, 8.3, 8.4, 8.7, 8.8, 8.9, 8.16, 2.8_
 
-  - [~] 1.37 Write property tests for the deps.dev mappers
+  - [-] 1.37 Write property tests for the deps.dev mappers
     - `tests/pipeline/mapping/deps-dev.property.test.ts`.
     - **Property 18: Release age is the minimum Day_Count over valid timestamps**
     - **Property 19: Batch responses are matched by key, not by position**
@@ -194,7 +194,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/mapping/severity.test.ts`: score 0.0 ends with null, label forms (`moderate`, `Moderate`, `LOW`), label wins over `severity[]`, invalid label falls through, `CVSS_V4` entries ignored, `NaN`, `Infinity`, `10.1` and strings rejected as score.
     - _Requirements: 10.5, 10.6, 10.7, 10.14, 9.21_
 
-  - [~] 1.43 Write property tests for severity selection
+  - [x] 1.43 Write property tests for severity selection
     - `tests/pipeline/mapping/severity.property.test.ts`.
     - **Property 23: OSV-only severity rule**
     - **Property 30: Severity does not depend on severity entry order**
@@ -209,7 +209,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/mapping/osv.test.ts` and `tests/support/arbitraries/shapes/ef-5.ts`: length mismatch, empty results, duplicate ids across queries, truncation flag, cap boundary (`cap`, `cap + 1`), invalid entries.
     - _Requirements: 9.2, 9.3, 9.4, 9.11, 9.17, 9.19, 9.20_
 
-  - [-] 1.46 Write the property test for advisory request planning
+  - [x] 1.46 Write the property test for advisory request planning
     - Create `tests/pipeline/mapping/osv.property.test.ts` and `tests/support/arbitraries/advisories.ts` (OSV advisory bodies with aliases, `withdrawn`, informational values, severity forms).
     - **Property 24: Advisory request sets are capped and distinct**
     - **Validates: Requirements 9.18, 9.23**
@@ -218,7 +218,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/mapping/osv-advisory.ts`: `mapOsvAdvisory(body, advisoryScore)` returning `AdvisoryRecord` (`withdrawn`, `informational`, `unmaintained`, `severity` through `severityOf`), `aggregateAdvisories(records, unfetchedIds)` (Alias_Groups of Counted_Advisories plus unfetched ids, `maxSeverity`, `informationalIds` and `unmaintainedIds` of non-withdrawn advisories in ascending order).
     - _Requirements: 9.5, 9.6, 9.7, 9.8, 9.9, 9.12, 9.13, 9.14, 10.17_
 
-  - [~] 1.48 Write unit tests for the OSV advisory mapper
+  - [x] 1.48 Write unit tests for the OSV advisory mapper
     - Append to `tests/pipeline/mapping/osv.test.ts` with `tests/support/arbitraries/shapes/ef-6.ts`: withdrawn excluded, informational excluded, alias merge (including transitive and one-sided links), unfetched ids counted, `maxSeverity` from fetched advisories only, a withdrawn informational advisory gets no id in `informationalIds`.
     - _Requirements: 9.5, 9.6, 9.7, 9.8, 9.9, 9.12, 9.14_
 
@@ -243,7 +243,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/mapping/github-repos.test.ts` with `tests/support/arbitraries/shapes/ef-17.ts` and `ef-19.ts`: query text and variables for one and `GRAPHQL_BATCH_SIZE` aliases, a `NOT_FOUND` alias with HTTP 200, a foreign error type, missing `defaultBranchRef`, invalid `committedDate`, batch boundary.
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.9, 11.12, 11.14_
 
-  - [~] 1.53 Write property tests for the GraphQL mappers
+  - [x] 1.53 Write property tests for the GraphQL mappers
     - `tests/pipeline/mapping/github.property.test.ts`.
     - **Property 33: archived and daysSinceLastCommit are independent**
     - **Property 34: GraphQL batching covers each source repository once**
@@ -265,7 +265,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/mapping/github-resolve.test.ts` with `tests/support/arbitraries/shapes/ef-12.ts` and `ef-13.ts`: private repository, missing or empty `default_branch`, `default_branch` of `BRANCH_MAX_LENGTH` and `BRANCH_MAX_LENGTH + 1`, `full_name` without `/`, with two `/`, empty parts, mixed case kept, SHA of 39, 40 and 41 characters, non-hex characters, non-object bodies.
     - _Requirements: 3.2, 3.3, 3.6, 3.9, 3.10, 3.12_
 
-  - [-] 1.58 Write the property test for repository and branch responses
+  - [x] 1.58 Write the property test for repository and branch responses
     - `tests/pipeline/mapping/github-resolve.property.test.ts` over `arbJson` for both responses.
     - **Property 6: Repository and branch responses give a commit or a typed error**
     - **Validates: Requirements 3.11**
@@ -278,7 +278,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/mapping/maintainers.test.ts` with `tests/support/arbitraries/shapes/ef-20.ts`, `ef-21.ts`, `ef-22.ts`: duplicate names, empty list is 0, invalid-only list is null, mixed users and teams set the lower bound, scope order examples for crates.
     - _Requirements: 12.1, 12.3, 12.4, 12.5, 12.14, 12.15_
 
-  - [-] 1.61 Write property tests for the maintainer mappers
+  - [x] 1.61 Write property tests for the maintainer mappers
     - `tests/pipeline/mapping/maintainers.property.test.ts`.
     - **Property 35: Maintainer count is the number of distinct valid entries**
     - **Property 36: Lower-bound note appears exactly for mixed owner lists**
@@ -293,7 +293,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/mapping/discovery.test.ts` with `tests/support/arbitraries/shapes/ef-14.ts`: skip directories are not counted as limited, depth `DISCOVERY_MAX_DEPTH` and `+ 1`, count `DISCOVERY_MAX_MANIFESTS` and `+ 1`, `truncated` true, non-string `path` or `type` ignored, size `null` for a non-integer, `invalid-tree` forms.
     - _Requirements: 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.11, 4.12_
 
-  - [-] 1.64 Write property tests for manifest discovery
+  - [x] 1.64 Write property tests for manifest discovery
     - `tests/pipeline/mapping/discovery.property.test.ts` and `tests/support/arbitraries/trees.ts` (skip directories, deep paths, duplicates, hostile entries).
     - **Property 7: Discovery_Result invariants**
     - **Property 8: Discovery does not depend on tree entry order**
@@ -313,7 +313,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 10: Manifest selection invariants**
     - **Validates: Requirements 5.13**
 
-  - [~] 1.68 Implement `assembleFacts`
+  - [x] 1.68 Implement `assembleFacts`
     - Create `pipeline/mapping/assemble.ts`: `assembleFacts(raw, asOf)` returning exactly the seven fact keys and the target notes. `deprecated` from deps.dev for the Selected_Version, filled from `mapNpmLatest` for npm with basis `default`, set `true` by `unmaintainedIds` for `cargo`; `maintainerCount` only from the maintainer mapper of the ecosystem; notes for `package-not-found`, `informational-advisory-excluded`, `unmaintained-advisory`, `advisory-details-incomplete`, `osv-pagination-ignored`, `maintainers-lower-bound` and selection notes.
     - _Requirements: 13.4, 13.11, 13.12, 13.13, 13.14, 8.4, 8.5, 8.6, 9.6, 9.9, 9.11, 9.22, 12.4_
 
