@@ -19,6 +19,10 @@ describe("repo configuration", () => {
     expect(norm).toContain(".env*");
   });
 
+  it(".gitignore lists the TypeScript build info file", () => {
+    expect(ignoreLines).toContain("tsconfig.tsbuildinfo");
+  });
+
   it(".gitignore does not contain .kiro", () => {
     expect(read(".gitignore")).not.toContain(".kiro");
   });
