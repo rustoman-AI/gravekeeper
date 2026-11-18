@@ -3,9 +3,9 @@
     "hooks":  [
                   {
                       "name":  "Run related tests on save",
-                      "description":  "After saving a .ts file under core/ or tests/core/, run the Vitest files related to it (a test file runs itself) and report failures.",
+                      "description":  "After saving a .ts file under core/, pipeline/, tests/core/, tests/pipeline/, tests/adapters/, tests/app/ or tests/architecture/, run the Vitest files related to it (a test file runs itself) and report failures.",
                       "trigger":  "PostFileSave",
-                      "matcher":  "(^|[\\\\/])(core|tests[\\\\/]core)[\\\\/].+\\.ts$",
+                      "matcher":  "(^|[\\\\/])(core|pipeline|tests[\\\\/](core|pipeline|adapters|app|architecture))[\\\\/].+\\.ts$",
                       "timeout":  180,
                       "action":  {
                                      "type":  "command",

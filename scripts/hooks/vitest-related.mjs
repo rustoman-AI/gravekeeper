@@ -4,7 +4,7 @@
 import { readSavedFile, runNode } from './common.mjs';
 
 const rel = await readSavedFile();
-if (!rel || !/^(core|tests\/core)\/.+\.ts$/.test(rel)) process.exit(0);
+if (!rel || !/^(core|pipeline|tests\/(core|pipeline|adapters|app|architecture))\/.+\.ts$/.test(rel)) process.exit(0);
 
 const vitest = 'node_modules/vitest/vitest.mjs';
 const isTest = /\.test\.ts$/.test(rel);

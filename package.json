@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "check:core": "tsx scripts/check-core-purity.ts",
-    "prebuild": "npm run check:core",
+    "check:architecture": "tsx scripts/check-architecture.ts",
+    "check": "npm run check:core && npm run check:architecture",
+    "prebuild": "npm run check",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

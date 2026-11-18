@@ -1,0 +1,16 @@
+{
+    "version":  "v1",
+    "hooks":  [
+                  {
+                      "name":  "Architecture check on save",
+                      "description":  "After saving a .ts or .tsx file under pipeline/, adapters/, app/ or core/, run npm run check:architecture (layer imports, forbidden APIs, file names, token rules).",
+                      "trigger":  "PostFileSave",
+                      "matcher":  "(^|[\\\\/])(?\u003c!tests[\\\\/])(pipeline|adapters|app|core)[\\\\/].+\\.tsx?$",
+                      "timeout":  60,
+                      "action":  {
+                                     "type":  "command",
+                                     "command":  "node scripts/hooks/check-architecture-on-save.mjs"
+                                 }
+                  }
+              ]
+}

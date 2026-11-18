@@ -20,4 +20,5 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run check:core
+      - run: npm run check:architecture
       - run: npx vitest --run

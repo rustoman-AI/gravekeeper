@@ -29,7 +29,7 @@ The scan pipeline turns one public GitHub repository URL into one typed `Scan_Re
 | D10 | Tests of orchestrator behaviour use the real HTTP client with a scripted `fetch` and a fake clock and timer. Tests of orchestration logic above the client use scripted Source_Ports. | Retry, timeout and deadline properties (P42 to P49) need the real attempt loop. |
 | D11 | The Scan_Cache key is `(CACHE_KEY_VERSION, Web_Host, canonical owner, canonical repo, branch, defaultBranch, Commit_SHA, sorted manifest paths)`. Canonical spelling comes from the REST `full_name` and is never lowercased. A hit returns the stored Scan_Result unchanged. There is no "patch repo on hit" step. The repository and branch requests run on every scan, hit or miss. | R19.5, R19.6, R3.13, R18.1, OQ33. The stored `repo` object equals the `repo` object of a fresh scan, so a hit equals a fresh scan (P62, P68). |
 | D12 | Cache entry compaction lives in `pipeline/ports/l2-entries.ts`, a pure file that adapters may import (R22.9 allows `/pipeline/ports` and `constants.ts`). It exports `compactOsvAdvisory`, `compactDepsDevAdvisory` and `compactCratesOwners`, each taking a body text and returning a smaller JSON text of the same shape. The Mappers read compact text and full text with the same result (P71). | `adapters` may not import `pipeline/mapping`, and the `CachingHttpClient` has to compact before it writes (R19.27). |
-| D13 | Fixture bodies are recorded byte-exact and are never trimmed. The three fixture repositories are chosen by measured size so that each Fixture_Set is at most `FIXTURE_SET_MAX_BYTES` (Fixture Recording and Replay, "The three fixture repositories"). The recorder refuses to write an oversized set. | R23.16. A trimmed body would no longer be what the upstream sent, and the measured sets fit without it. PyPI project documents of popular packages are 0.2 to 6 MB, which rules out most popular Python repositories as fixtures (OQ-D11). |
+| D13 | Fixture bodies are recorded byte-exact and are never trimmed. The three fixture repositories are chosen by measured size so that each Fixture_Set is at most `FIXTURE_SET_MAX_BYTES` (Fixture Recording and Replay, "The three fixture repositories"). The recorder refuses to write an oversized set. | R23.16. A trimmed body would no longer be what the upstream sent, and the measured sets fit without it. The earlier measurements used PyPI project documents (0.2 to 9 MB each); EF-22 now reads the per-version document, so this limit applies mainly to the recursive tree (OQ-D11, closed). |
 
 ### Research summary and sources
 
@@ -148,7 +148,7 @@ Forbidden edges, enforced by the architecture test: `core` to anything; `mapping
 
 ### Scan sequence
 
-The diagram follows data dependencies. The two registry lookups with no prerequisite (npm, crates.io, PyPI) start together with the deps.dev package requests.
+The diagram follows data dependencies. The two registry lookups with no prerequisite (npm, crates.io) start together with the deps.dev package requests. The PyPI request needs the Selected_Version (R12.5, EF-22), so it runs after the deps.dev package lookup and the version choice, together with the source-repository and vulnerability-id requests.
 
 ```mermaid
 sequenceDiagram
@@ -174,13 +174,15 @@ sequenceDiagram
   par package documents
     P->>D: GET package per target
   and maintainers and npm deprecation
-    P->>N: latest, owners, json per target
+    P->>N: npm latest, crates owners per target
   end
   P->>P: selectVersion per target
   par source repository links
     P->>D: POST versionbatch, fallback to single version documents
   and vulnerability ids
     P->>O: POST querybatch
+  and PyPI maintainers, only with a Selected_Version
+    P->>N: GET pypi/{name}/{Selected_Version}/json per pypi target
   end
   par advisory details
     P->>O: GET vulns id
@@ -206,8 +208,8 @@ sequenceDiagram
 | S2 selection and Scan_Cache lookup | S1 | none (tree body from S1) | none | `deadline-exceeded` until selection is known |
 | S3 manifest fetch and parse | S2 | raw text per manifest (EF-15), one at a time | github 1, no budget gate | rest become `manifest-fetch-failed` with reason `deadline` |
 | S4 targets and cap | S3 | none | none | none |
-| S5 package documents and registries | S4 | deps.dev package (EF-1), npm latest (EF-20), crates owners (EF-21), PyPI json (EF-22) | depsdev 8, npm 8, pypi 8, cratesio 1 plus `CRATESIO_MIN_INTERVAL_MS` spacing. Owners are requested in the order of R12.14 (scope `runtime`, `build`, `dev`, `optional`, `peer`, then name), and an unexpired owners entry in L1 or L2 is answered without a request (R12.13) | `deadline` units, facts null. An owners lookup cut by the deadline makes `cratesio` `partial` (R17.4) and the Scan_Result cacheable for `PARTIAL_SCAN_TTL_SECONDS` when it is the only non-`ok` source (R19.22) |
-| S6 version choice, source repos, vulnerability ids | S5 | deps.dev versionbatch or version documents (EF-3, EF-2), OSV querybatch (EF-5) | depsdev 8, osv 4 | same |
+| S5 package documents and registries | S4 | deps.dev package (EF-1), npm latest (EF-20), crates owners (EF-21) | depsdev 8, npm 8, cratesio 1 plus `CRATESIO_MIN_INTERVAL_MS` spacing. Owners are requested in the order of R12.14 (scope `runtime`, `build`, `dev`, `optional`, `peer`, then name), and an unexpired owners entry in L1 or L2 is answered without a request (R12.13) | `deadline` units, facts null. An owners lookup cut by the deadline makes `cratesio` `partial` (R17.4) and the Scan_Result cacheable for `PARTIAL_SCAN_TTL_SECONDS` when it is the only non-`ok` source (R19.22) |
+| S6 version choice, source repos, vulnerability ids, PyPI maintainers | S5 | deps.dev versionbatch or version documents (EF-3, EF-2), OSV querybatch (EF-5), PyPI per-version document (EF-22, only for a pypi target with a Selected_Version; none otherwise, no Work_Unit, R12.16) | depsdev 8, osv 4, pypi 8 | same |
 | S7 advisories | S6 (ids from querybatch) | OSV detail (EF-6), deps.dev advisory (EF-25), same id set (OQ28) | osv 4, depsdev 8 | same |
 | S8 repository facts | S6 (source repos), token | GraphQL batches (EF-17) | github 1, budget gate | same, or `token-missing`, `budget` |
 | S9 assemble | S5 to S8 settled | none | none | in-memory only (R16.12) |
@@ -423,8 +425,9 @@ export interface CratesIoSource {
   getOwners(name: string, ctx: RequestContext): Promise<SourceResult>;
 }
 export interface PypiSource {
-  /** EF-22. GET https://pypi.org/pypi/{name}/json. 404 is absent. */
-  getProject(name: string, ctx: RequestContext): Promise<SourceResult>;
+  /** EF-22. GET https://pypi.org/pypi/{name}/{version}/json, `version` = the Selected_Version (R12.5).
+   *  404 is absent. The orchestrator calls it only when the Selected_Version is set (R12.16). */
+  getProject(name: string, version: string, ctx: RequestContext): Promise<SourceResult>;
 }
 ```
 
@@ -567,11 +570,11 @@ export type Fetched<T> =
 | `aggregateAdvisories` | `(records: readonly AdvisoryRecord[], unfetchedIds: readonly string[]) => VulnerabilityFacts` | EF-8, EF-9, EF-10 | R9.5 to R9.9, R9.12 to R9.14 |
 | `buildRepositoriesQuery` | `(batch: readonly GraphqlAlias[]) => { query: string; variables: Record<string, string> }` | EF-17, EF-18 | R11.1 |
 | `planGraphqlBatches` | `(repos: readonly SourceRepo[], batchSize: number) => readonly GraphqlBatch[]` | EF-17 | R11.1, R11.2, R11.14 |
-| `mapGraphqlRepos` | `(body: unknown, batch: GraphqlBatch, asOf: string) => readonly GraphqlRepoResult[]` | EF-17, EF-19 | R11.3 to R11.6, R11.9, R11.12 |
+| `mapGraphqlRepos` | `(body: unknown, batch: GraphqlBatch, asOf: string) => readonly GraphqlRepoResult[]` | EF-17, EF-19 | R11.3 to R11.6, R11.9, R11.12, R11.15 |
 | `readGraphqlRateLimit` | `(body: unknown) => { remaining: number \| null; resetAt: IsoInstant \| null }` | EF-18 | R14.2, R14.4 |
 | `readRestRateLimit` | `(headers: SourceHeaders) => { remaining: number \| null; resetAt: IsoInstant \| null }` | EF-16 | R14.2, R14.4, R3.7 |
 | `mapCratesOwners` | `(body: unknown) => { maintainerCount: number \| null; lowerBound: boolean }` | EF-21 | R12.3, R12.4 |
-| `mapPypiOwnership` | `(body: unknown) => { maintainerCount: number \| null }` | EF-22 | R12.5 |
+| `mapPypiOwnership` | `(body: unknown) => { maintainerCount: number \| null }` | EF-22 | R12.5. Input is the per-version document `{ info, last_serial, ownership, urls, vulnerabilities }`; the mapper reads only `ownership` (shape unchanged: `organization` string or null, `roles[]` of `role` `Owner` or `Maintainer` and `user`). |
 | `orderCratesLookups` | `(targets: readonly { name: string; scopes: readonly Scope[] }[]) => readonly string[]` | EF-21 | R12.14, R12.15 |
 | `readRepository` | `(body: unknown, requestedBranch: string \| null) => Result<{ owner: string; repo: string; defaultBranch: string \| null; private: boolean }, 'invalid'>` | EF-12 | R3.2, R3.3, R3.9, R3.10, R3.12. `owner` and `repo` are the two parts of `full_name` split at its one `/`, in GitHub's spelling, never lowercased. A `full_name` that is missing, not a string or not of the form `<owner>/<repo>` is `invalid` for a non-private repository. |
 | `readCommitSha` | `(body: unknown) => string \| null` | EF-13 | R3.6, R3.10 |
@@ -641,7 +644,19 @@ export interface AssembledFacts {
 }
 ```
 
-How the Mappers compose for `deprecated` (R8.4, R8.6, R9.6, R13.4): `mapDepsDevPackage` gives the deps.dev value for the Selected_Version. For `npm` with basis `default` and a null deps.dev value, `mapNpmLatest(...).deprecated` fills it. For `cargo`, `unmaintainedIds.length > 0` sets it to `true`, overriding `false` and `null`. `maintainerCount` comes only from the maintainer mapper of the ecosystem.
+How the Mappers compose for `deprecated` (R8.4, R8.6, R9.6, R13.4): `mapDepsDevPackage` gives the deps.dev value for the Selected_Version. For `npm` with basis `default` and a null deps.dev value, `mapNpmLatest(...).deprecated` fills it. For `cargo`, `unmaintainedIds.length > 0` sets it to `true`, overriding `false` and `null`. `maintainerCount` comes only from the maintainer mapper of the ecosystem. For `pypi`, `RawTargetInputs.maintainers` is the per-version document of the Selected_Version (EF-22). When the Selected_Version is null the orchestrator sends no request and passes `{ state: 'absent' }` with no Work_Unit, so `maintainerCount` is null (R12.16).
+
+**GraphQL mapper: attribution of errors (R11.5, R11.9, R11.15).** `mapGraphqlRepos` builds the alias set from the `GraphqlBatch` it was given and attributes `errors[]` to aliases only through `errors[].path[0]` when that value is one of those alias names. An error with no `path`, a `path` that is not an array, an empty `path`, or a first element that names no alias of the batch is unattributable and is ignored for attribution. The outcome of each alias then follows `data.rN` and its own errors:
+
+| `data.rN` | Own errors (attributed through `path[0]`) | Result |
+|---|---|---|
+| object | none, or any unattributable errors | `ok`, facts from the object |
+| null or missing | `NOT_FOUND` (R11.5) | `not-found` (counts `ok`, facts null) |
+| null or missing | a non-`NOT_FOUND` type (R11.9) | `failed` |
+| null or missing | none (including when only unattributable errors exist) | `failed` |
+| object | a non-`NOT_FOUND` error of its own | `failed` for that alias (R11.9) |
+
+The last row keeps R11.9 unchanged: only unattributable errors are ignored. A body with no `data` object and no per-alias `NOT_FOUND` stays whole-request `failed` (R11.12). Property P75 states the rule.
 
 `severityOf` order (R10.5):
 
@@ -969,7 +984,7 @@ What it records: exactly the requests that a real scan of each repository sends.
 | OSV querybatch and vulnerability detail | EF-5, EF-6 | yes |
 | deps.dev advisory | EF-25 | yes |
 | GraphQL repositories | EF-17, EF-18 | yes |
-| npm latest, crates.io owners, PyPI json | EF-20, EF-21, EF-22 | yes |
+| npm latest, crates.io owners, PyPI per-version json (`/pypi/{name}/{version}/json`) | EF-20, EF-21, EF-22 | yes |
 
 ### Recorded response and allow-list
 
@@ -1018,7 +1033,7 @@ GHSA-w2j9-qh3j-4h63 was found with `gh api 'advisories?per_page=100&type=reviewe
 
 ### The three fixture repositories
 
-Selection method (run 2026-11-18 UTC from this workspace, PowerShell `Invoke-WebRequest` for every upstream request, and `gh api graphql -F query=@<file>` for the archived checks of the Python repository; the token was held in a process variable and was never printed or stored): the manifest was fetched at the default branch, every dependency name was queried against deps.dev (`GET /v3/systems/{system}/packages/{name}`) for `isDeprecated` of the entry with `isDefault` or of the pinned entry, the version document (through `versionbatch`) gave `relatedProjects[].SOURCE_REPO`, and the source repository was checked for `isArchived` through GraphQL. The size of a candidate Fixture_Set was measured by sending every request that the scan sends and counting the bytes of every response body (`RawContentStream.Length`): repository, branch, tree, raw manifest, deps.dev package documents, deps.dev `versionbatch`, OSV `querybatch`, OSV and deps.dev advisory requests, GraphQL, and the registry document (npm `latest`, crates.io owners, PyPI `json`).
+Selection method (run 2026-11-18 UTC from this workspace, PowerShell `Invoke-WebRequest` for every upstream request, and `gh api graphql -F query=@<file>` for the archived checks of the Python repository; the token was held in a process variable and was never printed or stored): the manifest was fetched at the default branch, every dependency name was queried against deps.dev (`GET /v3/systems/{system}/packages/{name}`) for `isDeprecated` of the entry with `isDefault` or of the pinned entry, the version document (through `versionbatch`) gave `relatedProjects[].SOURCE_REPO`, and the source repository was checked for `isArchived` through GraphQL. The size of a candidate Fixture_Set was measured by sending every request that the scan sends and counting the bytes of every response body (`RawContentStream.Length`): repository, branch, tree, raw manifest, deps.dev package documents, deps.dev `versionbatch`, OSV `querybatch`, OSV and deps.dev advisory requests, GraphQL, and the registry document (npm `latest`, crates.io owners, PyPI project `json`; the scan now sends the per-version PyPI document instead, see the size note below).
 
 | Kind | Repository | Manifest | Dependency that satisfies R23.2 | Check |
 |---|---|---|---|---|
@@ -1037,7 +1052,9 @@ Measured sizes, 2026-11-18 UTC. "Raw" is the sum of the response body bytes. "St
 
 Breakdown of the raw bytes. `request/request`: GitHub repository, branch, tree and `package.json` 42,368 (tree 29,789); deps.dev package documents 40 × 432,699 in total (largest `browserify` 81,829); npm `latest` 40 × 138,465 in total; `versionbatch` 50,416; OSV `querybatch` 133 (no advisory ids for the default versions); GraphQL 10,298. `revmic/canopy`: GitHub 26,990 (tree 18,464); deps.dev package documents 55,692; PyPI `json` documents 423,891 (largest `Werkzeug` 155,517, `Flask` 88,766, `Jinja2` 78,076); `versionbatch` 6,538; OSV `querybatch` 3,566; OSV advisory details 52 × 128,760 in total; deps.dev advisories 13,647; GraphQL 795. `ajeetdsouza/zoxide`: GitHub 32,597 (tree 19,729); deps.dev package documents 286,221 (largest `clap` 76,806, `serde` 52,635); crates.io owners 6,646; `versionbatch` 18,470; OSV advisory detail 1,322; GraphQL 3,364.
 
-Why `home-assistant/core` is rejected. The recursive tree response is 8,922,443 bytes (35,013 entries, `truncated` false), 8.5 times `FIXTURE_SET_MAX_BYTES` and 1.8 times `MAX_RESPONSE_BYTES` (5,000,000), so a scan of that repository ends with `upstream-unavailable` at the tree request (R15.2, R3.7) and cannot be recorded at all. The other measured numbers were: repository 6,712 bytes, branch 5,024 bytes, root `requirements.txt` 1,323 bytes with 61 requirement lines. A 30-target sample (the first 30 names in ascending order, well under `SCAN_MAX_DEPENDENCIES`) had 67 responses, 25,289,409 raw bytes, of which the PyPI documents were 16,052,529 (`aiohttp` 9,472,099, `cryptography` 3,283,477) and the deps.dev package documents 245,050. Extrapolating the non-tree part to 61 targets gives about 36 MB, so the set would be about 45 MB. Even with every PyPI document cut to `ownership`, the tree alone is over the limit. This is also a product limit, see OQ-D11 and RK12.
+PyPI document size note (2026-11-18, OQ-D11 closed). The PyPI figures in the table and in the breakdown above, and in the rejected-candidate list below, were measured with the whole-project document `GET /pypi/{name}/json`. EF-22 now reads the per-version document `GET /pypi/{name}/{Selected_Version}/json`, which is much smaller (live HTTP check: `sqlalchemy` 2.0.36 58,684 bytes, `aiohttp` 3.9.5 133,257, `Flask-Script` 0.6.6 2,642). The `revmic/canopy` set therefore shrinks, and the candidate repositories rejected for the size of their PyPI project documents may fit. These sets were not re-measured: the recorder (R23.16) re-measures the real directory and refuses an oversized set. `home-assistant/core` stays rejected because of its tree response.
+
+Why `home-assistant/core` is rejected. The recursive tree response is 8,922,443 bytes (35,013 entries, `truncated` false), 8.5 times `FIXTURE_SET_MAX_BYTES` and 1.8 times `MAX_RESPONSE_BYTES` (5,000,000), so a scan of that repository ends with `upstream-unavailable` at the tree request (R15.2, R3.7) and cannot be recorded at all. The other measured numbers were: repository 6,712 bytes, branch 5,024 bytes, root `requirements.txt` 1,323 bytes with 61 requirement lines. A 30-target sample (the first 30 names in ascending order, well under `SCAN_MAX_DEPENDENCIES`) had 67 responses, 25,289,409 raw bytes, of which the PyPI documents were 16,052,529 (`aiohttp` 9,472,099, `cryptography` 3,283,477) and the deps.dev package documents 245,050. Extrapolating the non-tree part to 61 targets gives about 36 MB, so the set would be about 45 MB. Even with every PyPI document cut to `ownership`, the tree alone is over the limit. This is also a product limit, see OQ-D12 and RK12.
 
 Other Python candidates measured the same way and rejected: `miguelgrinberg/microblog` (54 pinned targets, 113 advisory ids, PyPI documents 24.3 MB, no archived dependency, 28 MB), `RameshAditya/scoper` (28 targets, 183 advisory ids, 21 MB, qualifies through `python-levenshtein` 0.12.0 `isDeprecated` and archived `fuzzywuzzy`), `captbaritone/urlmeme` (6 targets, 4.1 MB, `Pillow` PyPI document 3.3 MB), `realpython/flask-by-example` (27 targets, 13.5 MB), `Aneureka/push-to-kindle` (9 targets, 56 advisory ids, about 1.3 MB: 0.87 MB of PyPI documents measured plus 0.46 MB of the other responses), `Miserlou/Zappa` (30 targets, 61 advisory ids, 1.8 MB even when the PyPI documents are not counted, source repository of `cfn-flip` archived). Candidates that fit are small repositories with few dependencies of small PyPI documents: `openlab-aux/lsmsd-frickelclient` (3 targets, 242 KB) and `grnet/icaas` (6 targets, 374 KB) also qualify through the archived `Flask-Script`. `revmic/canopy` was chosen because it is the only one that also covers pinned versions (basis `pinned`), advisory details (EF-6, EF-25, 52 ids) and a renamed source repository (R23.12 case 4), and it still fits without trimming.
 
@@ -1189,9 +1206,11 @@ Merging notes: the totality, typed-output and no-mutation criteria of every Mapp
 
 **Validates: Requirements 1.17**
 
-### Property 5: GitHub configuration derivation is total and does not echo input
+### Property 5: GitHub configuration derivation is total and uses fixed error messages
 
-*For any* pair of strings used as `GITHUB_API_URL` and `GITHUB_GRAPHQL_URL`, including empty, unparsable and non-`https` values, `readGithubConfig` returns either a configuration whose Web_Host is a lowercase host name without scheme, port, path or user information, or an `internal-error` whose message contains neither input string, and does not throw.
+*For any* pair of strings used as `GITHUB_API_URL` and `GITHUB_GRAPHQL_URL`, including empty, unparsable and non-`https` values, `readGithubConfig` returns either a configuration whose Web_Host is a lowercase host name without scheme, port, path or user information, or an `internal-error` whose message is one of the fixed configuration error messages and does not depend on the input values, and does not throw. The fixed set has three members: `GITHUB_API_URL is not a supported GitHub API URL.`, `GITHUB_GRAPHQL_URL is not a supported GitHub GraphQL URL.` (scheme or parse failure) and `GITHUB_GRAPHQL_URL must have the same host as GITHUB_API_URL.` (host mismatch). The test checks that the message is a member of this set. It does not check that the message lacks the input strings, because a short input (one character) is a substring of any fixed message.
+
+Counterexample that caused this wording (fast-check seed -914370393): `GITHUB_API_URL` = `"http://a.aa"` and `GITHUB_GRAPHQL_URL` = `" "`. The one-character input `" "` is a substring of every fixed message, so the earlier "contains neither input string" check failed on a correct implementation.
 
 **Validates: Requirements 2.10**
 
@@ -1608,6 +1627,13 @@ This property supports the Runtime Cache tier (OQ-D1, enabled by default) and ex
 *For any* set of `cargo` Lookup_Targets with generated scopes and any permutation of the input order, `orderCratesLookups` and the cratesio Adapter issue the owners lookups in the order of the first scope of each crate (`runtime`, `build`, `dev`, `optional`, `peer`), then ascending name in Unicode code point order, and a crate whose owners entry is unexpired in L1 or L2 is answered from the cache without sending a request.
 
 **Validates: Requirements 12.15**
+
+### Property 75: Unattributable GraphQL errors do not change alias outcomes
+
+*For any* GraphQL response body and any list of unattributable errors added to it (errors with no `path`, or with a `path` whose first element names no alias of the batch), `mapGraphqlRepos` maps every alias that has a `data.rN` object to `ok` with the same `archived` and `daysSinceLastCommit` as for the body without those errors, and maps every alias that has no `data.rN` object and no `NOT_FOUND` error of its own to `failed`.
+
+**Validates: Requirements 11.16**
+
 ### Traceability: PBT criterion to property
 
 | Requirement | Criterion to property |
@@ -1622,7 +1648,7 @@ This property supports the Runtime Cache tier (OQ-D1, enabled by default) and ex
 | 8 | 11 to P16, 12 to P17, 13 to P18, 16 to P19 |
 | 9 | 12 to P20, 13 to P21, 14 to P22, 15 to P23, 16 to P16, 18 to P24 and P25, 19 to P16, 22 to P26, 23 to P24 |
 | 10 | 8 to P16, 9 to P27, 10 to P28, 12 to P29, 13 to P30, 15 to P31, 16 to P23, 17 to P32 |
-| 11 | 10 to P16, 11 to P33, 14 to P34 |
+| 11 | 10 to P16, 11 to P33, 14 to P34, 16 to P75 |
 | 12 | 8 to P16, 9 to P17, 11 to P35, 12 to P36, 15 to P74 |
 | 13 | 10 to P16, 11 to P37, 12 to P17, 13 to P38, 15 to P16, 16 to P39 |
 | 14 | 9 to P40, 10 to P41 |
@@ -1722,7 +1748,7 @@ tests/
     mapping/osv.test.ts, osv.property.test.ts                                 P20 to P26
     mapping/cvss.test.ts, cvss.property.test.ts                               P27 to P30
     mapping/severity.property.test.ts                                         P31, P32
-    mapping/github.property.test.ts                                           P33, P34
+    mapping/github.property.test.ts                                           P33, P34, P75
     mapping/maintainers.property.test.ts                                      P35, P36, P74 (orderCratesLookups)
     mapping/mappers.property.test.ts           registry-driven                P16, P17
     mapping/assemble.property.test.ts                                         P37, P38
@@ -1799,6 +1825,15 @@ The 12 stubbed cases of R23.12 are named after the requirement and live in `run-
 | OQ-D3 | `v3alpha/versionbatch` stability. | Keep it, with the single-request fallback and one `batch-fallback` note, plus a live contract test gated by `GRAVEKEEPER_LIVE_TESTS=1`. | R8.8, R23.17, OQ15, Testing Strategy |
 | OQ-D6 | New constants and one environment variable. | Every constant is now in the Constants table of the requirements, and so is the variable. The design uses no other `UPPER_SNAKE` constant, and a test checks it. | Data Models |
 | (route) | `maxDuration`. | `ROUTE_MAX_DURATION_SECONDS` = 30, confirmed. | R21.16, D9 |
+| OQ-D11 | PyPI project documents against `MAX_RESPONSE_BYTES` (closed 2026-11-18). | EF-22 reads the per-version document `GET https://pypi.org/pypi/{name}/{Selected_Version}/json`. An unset Selected_Version sends no request and counts no Work_Unit. 404 gives null and the Work_Unit is `ok`. The request runs after the deps.dev package lookup. | EF-22, R12.5, R12.16, `PypiSource.getProject(name, version, ctx)`, Stage table S6, Scan sequence |
+
+### Resolved decisions (2026-11-18)
+
+1. **Fixed configuration error messages (R2.10, P5).** The property checks that an `internal-error` message is a member of the fixed set of three messages (`GITHUB_API_URL is not a supported GitHub API URL.`, `GITHUB_GRAPHQL_URL is not a supported GitHub GraphQL URL.`, `GITHUB_GRAPHQL_URL must have the same host as GITHUB_API_URL.`, taken from `pipeline/config/github-config.ts`). The earlier "contains neither input string" check was wrong: counterexample from fast-check seed -914370393, `GITHUB_API_URL` `"http://a.aa"` and `GITHUB_GRAPHQL_URL` `" "`. A one-character input is a substring of any fixed message.
+2. **PyPI maintainers (OQ-D11).** Per-version endpoint `GET https://pypi.org/pypi/{name}/{Selected_Version}/json` (EF-22, live HTTP check 2026-11-18). See the closed table above.
+3. **Scan_Cache key with `branch` and `defaultBranch` (D11, R19.5): accepted.**
+4. **Day_Count for a date after `asOf`.** R6.4 gives 0 (clamped), not null. The text of `tasks.md` task 1.29 says a date after `asOf` gives null. That text is outdated on this point, and the requirement is authoritative.
+5. **Unattributable GraphQL errors (R11.15, R11.16, P75).** Errors with no `path`, or with a `path` whose first element names no alias of the batch, are ignored for attribution. Aliases with a data object stay `ok`. Aliases with no data object and no `NOT_FOUND` error of their own become `failed`.
 
 ### Design open questions (for the user)
 
@@ -1814,7 +1849,7 @@ The 12 stubbed cases of R23.12 are named after the requirement and live in `run-
 
 **OQ-D10. One L2 entry or two per advisory id.** The 8 KB rounding makes a 199-byte OSV entry and a 20-byte deps.dev entry cost one write unit each, so the advisory entries are the largest part of the write budget (the table of the Cache Design section: 390 of 395 write units of the advisory-heavy profile). One combined entry per advisory id (OSV compact text plus the deps.dev score) would halve those units, but the two requests finish at different times, so the write would wait for the slower one or be done twice, and R19.27 describes two entries. Recommendation: keep two entries until the Observability numbers of the first deployments show that the write budget is the limit, then change R19.27.
 
-**OQ-D11. PyPI project documents against `MAX_RESPONSE_BYTES`.** EF-22 reads `GET /pypi/{name}/json`, which holds every release. Measured 2026-11-18: `sqlalchemy` 6,063,658 bytes, `pymongo` 5,902,175, `aiohttp` 9,472,099, `cryptography` 3,283,477, `numpy` 3,785,289. Three of these (`sqlalchemy`, `pymongo`, `aiohttp`) are over `MAX_RESPONSE_BYTES` (5,000,000), so the PyPI Work_Unit is `failed` with `http-error` (R15.2), `maintainerCount` is null, the `pypi` status is `partial`, and a scan of any repository that depends on such a package is never stored in the Scan_Cache (R19.7). The release document `GET /pypi/{name}/{version}/json` carries the same `ownership` member and is 58,684 bytes (`sqlalchemy` 2.0.36), 85,920 (`pymongo` 4.10.1) and 99,728 (`numpy` 2.1.3). Using it needs the Selected_Version, so the PyPI request would follow the deps.dev package request, and EF-22, R12.5 and R23.13 change. It would also make popular Python repositories usable as fixtures. Recommendation: switch EF-22 to the release document. Decision needed from the requirements owner. The design keeps EF-22 as written.
+**OQ-D11. PyPI project documents against `MAX_RESPONSE_BYTES`. Closed 2026-11-18 (see the closed table above).** The whole-project document `GET /pypi/{name}/json` was over `MAX_RESPONSE_BYTES` for `sqlalchemy` (6,063,658 bytes), `pymongo` (5,902,175) and `aiohttp` (9,472,099). The requirements owner chose the per-version document `GET /pypi/{name}/{Selected_Version}/json` for EF-22. R12.5, R12.16 and R23.13 are updated, the PyPI request runs after the deps.dev package lookup (S6), and `PypiSource.getProject(name, version, ctx)` takes the version.
 
 **OQ-D12. Repositories with a very large tree.** The recursive tree of `home-assistant/core` is 8,922,443 bytes, above `MAX_RESPONSE_BYTES`, so a scan of it ends with `upstream-unavailable` (`details.source` `github`) although GitHub is available. Alternatives: a non-recursive tree request for the root directory (enough for the default selection of Root_Manifests, but not for the `manifests` option of R5.5 and not for discovery of nested manifests), or a clearer error code for this case. Recommendation: accept the limit for now and decide after the first live use; it needs a requirements change either way.
 
@@ -1845,5 +1880,5 @@ All five are closed in the requirements, and the design applies each decision in
 | RK9 | **Real I/O under injected timers.** `AbortSignal.any` and real `fetch` use real timers for network I/O, while the injected timer drives timeouts. A real `fetch` that never answers is aborted by the injected timer, which in production is a real timer. | `createSystemTimer` is the only production timer. Tests use scripted fetch on the fake timer. |
 | RK10 | **Version drift of Next.js.** The route relies on 16.4.6 behaviour (`maxDuration`, `after`, no `runtime` export with Cache Components). | The route text test pins these facts. Re-read the docs on upgrade (AGENTS.md). |
 | RK11 | **L2 latency on the scan path.** An L2 `get` on a miss, and while L2 is paused or slow, can cost up to `L2_OPERATION_TIMEOUT_MS` (300 ms) per operation before the request goes out. Advisory lookups run in parallel and the crates.io lookups are spaced 1000 ms apart, so most of this overlaps, but the Scan_Cache lookup after the tree request and the first lookup of each stage wait for it. Whether an L2 miss counts as a read unit is not stated in the documentation, so the read budget uses the conservative assumption. | The bound is small compared with `SCAN_DEADLINE_MS`. No retry on L2 errors. `GRAVEKEEPER_RUNTIME_CACHE=off` removes the cost. Check the Observability read counts after deployment. |
-| RK12 | **Response size limits against real repositories.** Two limits follow from measured sizes: a PyPI project document can exceed `MAX_RESPONSE_BYTES` (OQ-D11), and so can a recursive tree (`home-assistant/core`, 8,922,443 bytes, OQ-D12). | The failures are contained (null `maintainerCount`, `partial`, or `upstream-unavailable`), but both are visible to users of popular repositories. Decide OQ-D11 and OQ-D12 with the requirements owner. |
+| RK12 | **Response size limits against real repositories.** One limit follows from measured sizes: a recursive tree can exceed `MAX_RESPONSE_BYTES` (`home-assistant/core`, 8,922,443 bytes, OQ-D12). The PyPI part is resolved: EF-22 reads the per-version document (OQ-D11, closed), 2,642 to 133,257 bytes in the live check. | The tree failure is contained (`upstream-unavailable`) but visible to users of very large repositories. Decide OQ-D12 with the requirements owner. |
 Sources: the Next.js files under `node_modules/next/dist/docs/` named in the Overview, [Runtime Cache](https://vercel.com/docs/caching/runtime-cache), [Data Cache is moving to Runtime Cache](https://vercel.com/changelog/data-cache-is-moving-to-runtime-cache), [Vercel Functions limits](https://vercel.com/docs/functions/limitations), [Optimize Runtime Cache on Vercel](https://vercel.com/kb/guide/optimize-runtime-cache-reads-on-vercel) (8 KB billing units, rounded up per operation). The sizes in the Cache-budget estimate and in the fixture tables were measured on 2026-11-18 UTC with PowerShell `Invoke-WebRequest`, `gh api graphql` and a `tsx` run of the core `classify` and `summarize`. Content from the web pages was rephrased for compliance with licensing restrictions.
