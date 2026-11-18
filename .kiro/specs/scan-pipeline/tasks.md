@@ -432,11 +432,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/http/http-client.ts`: `createHttpClient(options)` with the Work_Unit loop and the attempt of the design (per-attempt timeout on the injected timer, `AbortSignal.any`, `redirect: 'manual'` with same-origin redirects followed for GET up to `REDIRECT_MAX_HOPS`, `Authorization` recomputed per hop by the authorizer, header allow-list `content-type`, `retry-after`, `x-ratelimit-*`, body size cap, scrubbing before the body is returned, gate `allow` and `observe`, `failed` outcomes carry no body, Retry-After and backoff handling through `retry-policy.ts`). Never throws and never rejects.
     - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7, 15.8, 15.9, 15.10, 15.15, 15.16, 15.17, 15.19, 15.20, 15.21, 16.5, 16.8, 16.9, 20.2, 20.3, 20.4_
 
-  - [~] 3.21 Write unit tests for the HTTP client attempts
+  - [x] 3.21 Write unit tests for the HTTP client attempts
     - `tests/adapters/http-client.test.ts` (scripted fetch, fake runtime): status table (2xx, 404 absent and failed, 429, 5xx, other 4xx), attempt count and backoff times, `Retry-After` honoured and capped, per-attempt and total timeouts, abort at the scan deadline (`deadline`), wait crossing the deadline, slot wait aborted, `fromCache` false, the returned `attempts`.
     - _Requirements: 15.1, 15.4, 15.5, 15.6, 15.7, 15.8, 15.9, 15.10, 15.16, 16.5, 16.8, 16.9_
 
-  - [~] 3.22 Write unit tests for redirects, authorization and scrubbing
+  - [x] 3.22 Write unit tests for redirects, authorization and scrubbing
     - `tests/adapters/http-client-redirect-auth.test.ts`: same-origin redirect followed with the header recomputed, cross-origin redirect refused with no request sent and no header forwarded, missing `Location`, `REDIRECT_MAX_HOPS` hops followed and `+ 1` refused, POST redirect refused, token sent only to the GitHub API and GraphQL hosts, never to registries or the raw host, response bodies and headers that echo the token are scrubbed, oversize body gives `http-error`, header allow-list, gate blocks the next attempt with `budget`.
     - _Requirements: 15.2, 15.17, 15.19, 15.20, 15.21, 20.2, 20.3, 20.4_
 
@@ -480,7 +480,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/sources/github-source.test.ts` (scripted `HttpClient`): exact URL, method, headers and body of every method, `cache` policies, raw host versus blobs endpoint, `hasToken`, branch with `/` and `%` requested unchanged.
     - _Requirements: 2.6, 3.1, 3.4, 3.8, 14.11, 19.4_
 
-  - [~] 3.32 Write the property test for the GitHub budget threshold
+  - [x] 3.32 Write the property test for the GitHub budget threshold
     - `tests/pipeline/scan/github-budget.property.test.ts` with the real HTTP client, the GitHub adapter and generated header and `rateLimit.remaining` sequences (missing, empty, non-integer, negative, 0) on the fake runtime.
     - **Property 40: GitHub budget threshold is never crossed**
     - **Validates: Requirements 14.9**
