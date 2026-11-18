@@ -354,7 +354,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/http/retry-policy.ts`: `backoffDelayMs(attemptsMade, r)`, `parseRetryAfter(value)` (non-negative integer seconds only), `decideAfterAttempt(...)` (the decision table of the design, wait checks in the order deadline, `RETRY_AFTER_MAX_MS`, total timeout, gate) and `resolveRedirect(firstUrl, currentUrl, location, hops, method)` returning `follow` or `refuse`. Pure, no clock or random access.
     - _Requirements: 15.4, 15.5, 15.6, 15.7, 15.8, 15.13, 15.17, 15.19, 15.20, 15.21_
 
-  - [~] 3.2 Write unit tests for the retry policy
+  - [x] 3.2 Write unit tests for the retry policy
     - `tests/adapters/retry-policy.test.ts`: every row of the decision table, `Retry-After` of `0`, an integer at `RETRY_AFTER_MAX_MS` and above, a date-form value ignored, GitHub 403 with and without `Retry-After`, wait crossing the deadline and the total timeout, redirect `follow` and each `refuse` case.
     - _Requirements: 15.4, 15.5, 15.6, 15.7, 15.8, 15.17, 15.19, 15.20_
 
@@ -367,7 +367,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/http/concurrency-limiter.ts`: `createConcurrencyLimiter(limit, minIntervalMs)` returning `ConcurrencyLimiter`; slot waits abortable (`{ acquired: false }`), spacing between starts through the injected `Timer` and `Clock`.
     - _Requirements: 15.3, 15.14, 15.16_
 
-  - [~] 3.5 Write unit tests for the limiter
+  - [x] 3.5 Write unit tests for the limiter
     - `tests/adapters/concurrency-limiter.test.ts`: limit 1 and 4, FIFO start order, abort while waiting, a failing task releases its slot, `minIntervalMs` spacing on the fake runtime.
     - _Requirements: 15.3, 15.14, 15.16_
 
@@ -380,7 +380,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/http/redact.ts`: `scrubSecrets(text, secrets)` replaces every occurrence of a secret and of `Bearer ` plus a secret with `[redacted]`; empty secrets are ignored.
     - _Requirements: 20.4, 20.8, 20.9_
 
-  - [~] 3.8 Write unit tests for scrubbing
+  - [x] 3.8 Write unit tests for scrubbing
     - `tests/adapters/redact.test.ts`: several occurrences, overlapping secrets, case of `Bearer`, regular-expression metacharacters in the secret, no secret set.
     - _Requirements: 20.4, 20.8, 20.9_
 
@@ -388,7 +388,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/http/body-reader.ts`: `readBodyLimited(response, maxBytes, signal)` streams chunks, counts bytes, cancels the reader and discards everything at the first byte over the limit; a body of exactly the limit is accepted; abort stops the read.
     - _Requirements: 15.2_
 
-  - [~] 3.10 Write unit tests for the body reader
+  - [x] 3.10 Write unit tests for the body reader
     - `tests/adapters/body-reader.test.ts`: body of `MAX_RESPONSE_BYTES` accepted, `+ 1` rejected with the reader cancelled, multi-chunk bodies, abort during the read, invalid UTF-8.
     - _Requirements: 15.2_
 
@@ -396,7 +396,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/runtime/system-clock.ts`, `system-timer.ts` (`setTimeout`, `clearTimeout`, abortable `sleep`), `system-random.ts` and `console-logger.ts` (writes only the four `LogEntry` fields). These are the only adapter files allowed to call `Date.now`, `setTimeout` or `Math.random`.
     - _Requirements: 15.10, 20.6_
 
-  - [~] 3.12 Write unit tests for the system runtime adapters
+  - [x] 3.12 Write unit tests for the system runtime adapters
     - `tests/adapters/system-runtime.test.ts` (with Vitest fake timers): `sleep` resolves `'elapsed'` or `'aborted'`, `clearTimeout` cancels, the logger output has exactly the keys `source`, `status`, `durationMs`, `code`.
     - _Requirements: 15.10, 20.6_
 
@@ -404,7 +404,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/runtime/token-reader.ts` (the only file in the repository that contains `process.env.GITHUB_TOKEN`; empty string counts as unset) and `adapters/runtime/env.ts` (`GITHUB_API_URL`, `GITHUB_GRAPHQL_URL`, `GRAVEKEEPER_RUNTIME_CACHE`, `GRAVEKEEPER_USER_AGENT`; `off` is the only value that disables L2).
     - _Requirements: 2.7, 20.1, 20.10, 19.19, 22.17_
 
-  - [~] 3.14 Write unit tests for the token reader and environment reader
+  - [x] 3.14 Write unit tests for the token reader and environment reader
     - `tests/adapters/env.test.ts`: unset and empty token, `GRAVEKEEPER_RUNTIME_CACHE` of `off`, `on`, empty, unset and an arbitrary value, the token never appears in the object returned by `env.ts`, the real tree has exactly one file with `process.env.GITHUB_TOKEN`.
     - _Requirements: 2.7, 20.1, 20.10, 19.19, 22.17_
 
@@ -416,11 +416,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `tests/support/offline-fetch.ts` replacing `globalThis.fetch` with a function that records the call and throws `OfflineFetchError`, plus an `afterEach` that fails the test when a call was recorded; inactive for files under `tests/live` when `GRAVEKEEPER_LIVE_TESTS` is `1`. Add `setupFiles: ['tests/support/offline-fetch.ts']` to `vitest.config.ts`.
     - _Requirements: 23.1_
 
-  - [~] 3.17 Write unit tests for the test support
+  - [x] 3.17 Write unit tests for the test support
     - `tests/support/support.test.ts`: the offline stub throws and the guard fails a test that swallowed the throw (checked through a helper run), `scripted-fetch` records abort instants and honors latency `'never'`, redirect arbitrary produces chains of the stated lengths.
     - _Requirements: 23.1_
 
-  - [~] 3.18 Implement the GitHub authorizer
+  - [x] 3.18 Implement the GitHub authorizer
     - Create `adapters/http/github-authorizer.ts`: `createGithubAuthorizer(readToken, config)` returns `(url: URL) => string | null`, giving `"Bearer " + token` only for scheme `https`, a host (case-insensitive) equal to the host of the API URL or the GraphQL URL, and a set token.
     - _Requirements: 20.2, 20.3, 20.7_
 
@@ -460,7 +460,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/github-budget.ts`: `GithubBudget` implements `AttemptGate`; starts unknown for every scan, `remaining` set only from an integer read through `readRestRateLimit` or `readGraphqlRateLimit`, `allow()` false when `remaining !== null && remaining < GITHUB_BUDGET_THRESHOLD`, keeps the last `resetAt`.
     - _Requirements: 14.2, 14.3, 14.4, 14.6, 14.8, 14.9_
 
-  - [~] 3.27 Write unit tests for GitHub budget tracking
+  - [x] 3.27 Write unit tests for GitHub budget tracking
     - `tests/pipeline/scan/github-budget.test.ts`: unknown at start, integer below, at and above the threshold, non-integer and empty values ignored, a later higher value reopens the gate, `resetAt` kept.
     - _Requirements: 14.2, 14.3, 14.4, 14.6, 14.9_
 
@@ -468,7 +468,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/http/source-result.ts`: `toSourceResult(outcome)` and `toTextResult(outcome)` mapping `ok`, `absent`, `failed` outcomes; a 2xx body that is not JSON gives `unparsable`; headers kept as the allow-list.
     - _Requirements: 15.15, 17.6, 4.11, 3.10_
 
-  - [~] 3.29 Write unit tests for the SourceResult conversion
+  - [x] 3.29 Write unit tests for the SourceResult conversion
     - `tests/adapters/source-result.test.ts`: valid JSON, empty body, truncated JSON, a JSON scalar, `absent`, `failed` with each `AdapterReason`.
     - _Requirements: 15.15, 3.10_
 
