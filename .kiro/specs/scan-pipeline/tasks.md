@@ -529,11 +529,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 5. Orchestrator and deadline model
-  - [~] 5.1 Define the scan types
+  - [x] 5.1 Define the scan types
     - Create `pipeline/scan/types.ts`: `ScanResult`, `ScanNote` and `NoteCode` (no `manifest-selection-capped`), `ScanInput`, `ScanDeps`, `ScanLimits`, `TypedCache`, `ScanProgress`, `LookupTarget`, `Scan_Error` types as in the Data Models section of the design.
     - _Requirements: 18.1, 17.9, 21.5, 21.6_
 
-  - [~] 5.2 Implement the note templates and note builders
+  - [ ] 5.2 Implement the note templates and note builders
     - Create `pipeline/scan/messages.ts` (fixed templates for every note and error message, no raw upstream text) and `pipeline/scan/notes.ts` (builders per `NoteCode`, `source-failed` and `source-partial` with `reasons` unique and in code point order).
     - _Requirements: 17.9, 17.15, 20.5, 21.5_
 
@@ -541,7 +541,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/scan/notes.test.ts`: every code has a fixed message, no template contains `${`, the Web_Host in `invalid-url` comes from configuration, `reasons` ordering and uniqueness.
     - _Requirements: 17.9, 17.15, 20.5, 21.5_
 
-  - [~] 5.4 Implement the work ledger and source statuses
+  - [x] 5.4 Implement the work ledger and source statuses
     - Create `pipeline/scan/ledger.ts` (`WorkLedger.record`, append-only) and `pipeline/scan/source-status.ts` (`computeSourceStatuses`, `buildSourceNotes`; `partial` for any deadline unit or a truncated OSV result, `failed` only when every Applicable_Unit failed for a reason other than `deadline`).
     - _Requirements: 17.1, 17.2, 17.3, 17.4, 17.5, 17.8, 17.9, 17.13, 17.14, 17.15, 17.16_
 
@@ -556,7 +556,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 54: Reason categories are valid and distinct**
     - **Validates: Requirements 17.12, 17.16, 17.14, 17.15**
 
-  - [~] 5.7 Implement Lookup_Target planning and the dependency cap
+  - [x] 5.7 Implement Lookup_Target planning and the dependency cap
     - Create `pipeline/scan/targets.ts`: dedupe registry dependencies into Lookup_Targets by `(ecosystem, name)`, order by `compareCodePoints`, cap at `SCAN_MAX_DEPENDENCIES` with `capped.total` and `capped.skipped`, mark `git` and `path` dependencies as unassessed.
     - _Requirements: 16.1, 16.2, 16.3, 16.4, 16.6, 16.7, 16.10, 13.16_
 
