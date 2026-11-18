@@ -8,7 +8,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
 
 ## Tasks
 
-- [ ] 1. Ports, constants, architecture check and pure mapping
+- [x] 1. Ports, constants, architecture check and pure mapping
   - [x] 1.1 Define the runtime, HTTP and cache port types
     - Create `pipeline/ports/runtime.ts` (`Clock`, `RandomSource`, `TimerHandle`, `Timer`, `LogEntry`, `Logger`, `ConcurrencyLimiter`, `Deferrer`), `pipeline/ports/http.ts` (`SourceName`, `ReasonCategory`, `AdapterReason`, `SourceHeaders`, `AttemptGate`, `L2Kind`, `CachePolicy`, `HttpRequest`, `RequestContext`, `WorkUnitOutcome`, `HttpClient`, and the `GithubConfig` type `{ apiUrl, graphqlUrl, webHost }` so adapters can receive validated configuration without importing `/pipeline/config`) and `pipeline/ports/cache.ts` (`JsonValue`, `CacheEntry`, `L2EntryKind`, `CacheStore`).
     - Ports import only `/core`, other ports files and `pipeline/constants.ts`.
@@ -340,13 +340,13 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/mapping/mapper-registry.test.ts`: fails when an exported Mapper is missing from the registry.
     - _Requirements: 13.10, 13.15_
 
-  - [~] 1.74 Write property tests over the Mapper registry
+  - [x] 1.74 Write property tests over the Mapper registry
     - `tests/pipeline/mapping/mappers.property.test.ts` (registry driven, `arbJson`, shapes of `tests/support/arbitraries/shapes/*`, delete-only mutations at every path of `endpoint-fact-map.ts` for P17).
     - **Property 16: Every Mapper is total, typed and non-mutating**
     - **Property 17: A missing field maps to unknown**
     - **Validates: Requirements 8.11, 9.16, 9.19, 10.8, 11.10, 12.8, 13.10, 13.15, 8.12, 12.9, 13.12**
 
-- [~] 2. Checkpoint - Ports, constants, architecture check and mapping
+- [x] 2. Checkpoint - Ports, constants, architecture check and mapping
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 3. HTTP client and source adapters
