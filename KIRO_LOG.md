@@ -90,3 +90,26 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 - Asked: finish scan-pipeline group 1 (1.37, 1.49-1.50, 1.67, 1.69-1.74) and run the checkpoint with my 4 decisions (P19 option A distinct keys, 9.6 unmaintained note wins, missing alias + own NOT_FOUND -> not-found, default_branch length in code points).
 - Did well: parallel waves with one owner per file, registry-driven P16/P17 over every endpoint-fact-map path, no property weakened. Checkpoint: typecheck, lint, check:core, check:architecture all exit 0; vitest 72 files, 1357 tests pass (3.64 s); tests/pipeline + tests/architecture at FC_NUM_RUNS=1000: 37 files, 660 tests pass (11.83 s).
 - Went wrong: test-side counterexample in P33 (Date.parse accepted "2024-02-30", seed -1816785734), fixed in the test. A sub-agent left FC_NUM_RUNS=3000 set in the shell after a timeout, so "default" runs were really 3000 until noticed. One dispatch failed on a network error and was retried.
+## Session 13
+- Asked: P<n> title prefixes on tests plus docs/property-traceability.md, then run scan-pipeline groups 2-5 continuously.
+- Did well: group 2 ran in parallel waves with a single owner per file, no property was weakened. Checkpoint 4: typecheck, lint, check:core, check:architecture all exit 0; vitest 94 files, 1576 tests pass (4.86 s); tests/adapters + tests/pipeline/scan at FC_NUM_RUNS=1000: 21 files, 212 tests pass (1.50 s).
+- Went wrong: two sub-agent dispatches failed on network errors (ENOTFOUND) and were retried; the PyPI port was still on the old whole-project signature and had to be updated; one P46 test-side assertion was over-strict.
+### Decisions
+- deps-dev untagged permutation test titled P18 (P<n> prefix task).
+- retry-policy: `decideAfterAttempt` takes extra inputs `source`, `notFound`, `gateAllows`; exhausted attempts fail with the last attempt's reason; relative `Location` resolved against the current URL (R15.19 reading); a huge `Retry-After` fails as `deadline` because R15.8 checks the deadline first.
+- Concurrency limiter takes a third `{clock, timer}` parameter.
+- `scrubSecrets`: `Bearer ` prefix matched case-insensitively; longest match first; overlapping distinct secrets may leave a non-secret fragment (R20.8 still holds).
+- Body reader decodes UTF-8 non-fatally (U+FFFD); JSON parsing rejects garbage downstream.
+- Runtime adapters exported as `systemClock`, `systemTimer`, `systemRandom`, `consoleLogger`; logger writes one JSON line per attempt with the four LogEntry fields.
+- `env.ts`: `RuntimeEnv` defined there; `DEFAULT_USER_AGENT='gravekeeper'`; empty `GRAVEKEEPER_USER_AGENT` falls back to the default; only exact `off` disables L2.
+- Offline guard registered in `vitest.config.mts` (the repo's config is .mts, not .ts); guard self-test uses a child vitest run on a fixture.
+- `GithubBudget.observeGraphql(body)` added; the orchestrator must call it for GraphQL bodies.
+- `TextResult = SourceResult<string>`; a JSON scalar body counts as ok.
+- GitHub authorizer compares `URL.host` (host + port) case-insensitively.
+- deps.dev version and versionbatch 404 -> failed; deps.dev and OSV batches over their size limit return failed `http-error` without sending (OSV changed from silent truncation).
+- GitHub manifest 404 -> failed (R3.9); GHES blobs requested with the raw Accept header; GHES without tree-entry SHA -> failed without sending.
+- npm scoped names use plain `encodeURIComponent` (`%40scope%2Fname`) per design.md; live contract test to confirm.
+- PyPI port updated to `getProject(name, version, ctx)` (per-version endpoint); the adapter does not normalize names (parser already does).
+- HTTP client: request headers win over the default User-Agent; body read only for 2xx; caching left to the later CachingHttpClient (`fromCache` false); fetch raced against abort so a hung fetch still settles.
+- Open item for group 3: the GitHub adapter encodes the branch once; the orchestrator must pass the decoded branch name, not the percent-encoded canonical form.
+- Counterexamples: P46 test-side only (assertion required exactly k+1 waits; scripted last step repeats, so further retries schedule more waits; changed to at least k+1; property unchanged).

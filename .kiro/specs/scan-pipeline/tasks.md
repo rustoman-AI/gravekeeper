@@ -349,7 +349,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
 - [x] 2. Checkpoint - Ports, constants, architecture check and mapping
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 3. HTTP client and source adapters
+- [x] 3. HTTP client and source adapters
   - [x] 3.1 Implement the retry policy
     - Create `adapters/http/retry-policy.ts`: `backoffDelayMs(attemptsMade, r)`, `parseRetryAfter(value)` (non-negative integer seconds only), `decideAfterAttempt(...)` (the decision table of the design, wait checks in the order deadline, `RETRY_AFTER_MAX_MS`, total timeout, gate) and `resolveRedirect(firstUrl, currentUrl, location, hops, method)` returning `follow` or `refuse`. Pure, no clock or random access.
     - _Requirements: 15.4, 15.5, 15.6, 15.7, 15.8, 15.13, 15.17, 15.19, 15.20, 15.21_
@@ -440,18 +440,18 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/http-client-redirect-auth.test.ts`: same-origin redirect followed with the header recomputed, cross-origin redirect refused with no request sent and no header forwarded, missing `Location`, `REDIRECT_MAX_HOPS` hops followed and `+ 1` refused, POST redirect refused, token sent only to the GitHub API and GraphQL hosts, never to registries or the raw host, response bodies and headers that echo the token are scrubbed, oversize body gives `http-error`, header allow-list, gate blocks the next attempt with `budget`.
     - _Requirements: 15.2, 15.17, 15.19, 15.20, 15.21, 20.2, 20.3, 20.4_
 
-  - [~] 3.23 Write property tests for attempt counts
+  - [x] 3.23 Write property tests for attempt counts
     - `tests/adapters/http-client.property.test.ts` over generated attempt sequences.
     - **Property 42: Attempts per Work_Unit are bounded**
     - **Property 43: Non-retriable first outcomes get exactly one attempt**
     - **Validates: Requirements 15.11, 15.12**
 
-  - [~] 3.24 Write the property test for waits that cross the deadline
+  - [x] 3.24 Write the property test for waits that cross the deadline
     - Append to `tests/adapters/http-client.property.test.ts`.
     - **Property 46: A wait that would cross the deadline ends the unit**
     - **Validates: Requirements 15.18**
 
-  - [~] 3.25 Write the property test for redirect chains
+  - [x] 3.25 Write the property test for redirect chains
     - Append to `tests/adapters/http-client.property.test.ts` using `tests/support/arbitraries/redirects.ts`.
     - **Property 73: Redirect chains never leave the origin or exceed the hop limit**
     - **Validates: Requirements 15.21**
@@ -525,7 +525,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/sources/pypi-source.test.ts`: URL with a normalized name, 404 `absent`, a body over `MAX_RESPONSE_BYTES` surfaces as `failed` `http-error` through the client.
     - _Requirements: 12.5, 12.7, 15.2_
 
-- [~] 4. Checkpoint - HTTP client and adapters
+- [x] 4. Checkpoint - HTTP client and adapters
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 5. Orchestrator and deadline model
