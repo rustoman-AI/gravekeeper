@@ -22,7 +22,7 @@ function mustParse(input: string, webHost: string): RepoRef {
 describe('URL parser properties', () => {
   // Feature: scan-pipeline, Property 1: Repository reference round trip
   // Validates: Requirements 1.12
-  it('parse(format(ref)) equals ref for every valid Repo_Ref', () => {
+  it('P1 parse(format(ref)) equals ref for every valid Repo_Ref', () => {
     fc.assert(
       fc.property(validRepoRef(), (ref) => {
         const result = parseRepoUrl(formatRepoUrl(ref), ref.host);
@@ -34,7 +34,7 @@ describe('URL parser properties', () => {
 
   // Feature: scan-pipeline, Property 2: URL normalization is idempotent and variant-invariant
   // Validates: Requirements 1.13, 1.15
-  it('normalization is idempotent for every accepted input', () => {
+  it('P2 normalization is idempotent for every accepted input', () => {
     fc.assert(
       fc.property(refWithSpelling(), ({ webHost, spelling }) => {
         const once = formatRepoUrl(mustParse(spelling.input, webHost));
@@ -47,7 +47,7 @@ describe('URL parser properties', () => {
 
   // Feature: scan-pipeline, Property 2: URL normalization is idempotent and variant-invariant
   // Validates: Requirements 1.13, 1.15
-  it('every spelling variant of an accepted input parses to equal Repo_Refs', () => {
+  it('P2 every spelling variant of an accepted input parses to equal Repo_Refs', () => {
     fc.assert(
       fc.property(
         validRepoRef().chain((ref) =>
@@ -70,7 +70,7 @@ describe('URL parser properties', () => {
 describe('URL parser totality and mutation properties', () => {
   // Feature: scan-pipeline, Property 3: URL parsing is total
   // Validates: Requirements 1.14
-  it('returns a Repo_Ref or invalid-url for any string and never throws', () => {
+  it('P3 returns a Repo_Ref or invalid-url for any string and never throws', () => {
     fc.assert(
       fc.property(anyInputString, fc.constantFrom(...WEB_HOSTS), (input, webHost) => {
         const result = parseRepoUrl(input, webHost);
@@ -82,7 +82,7 @@ describe('URL parser totality and mutation properties', () => {
 
   // Feature: scan-pipeline, Property 4: One mutation of an accepted URL is rejected
   // Validates: Requirements 1.17
-  it('rejects an accepted URL after exactly one mutation', () => {
+  it('P4 rejects an accepted URL after exactly one mutation', () => {
     fc.assert(
       fc.property(mutatedUrl(), ({ webHost, original, input }) => {
         if (!parseRepoUrl(original, webHost).ok) return false;

@@ -10,7 +10,7 @@ const HEX40 = /^[0-9a-fA-F]{40}$/;
 describe('github-resolve properties', () => {
   // Feature: scan-pipeline, Property 6: Repository and branch responses give a commit or a typed error
   // Validates: Requirements 3.11
-  it('readRepository never throws and gives a well-formed repository or invalid', () => {
+  it('P6 readRepository never throws and gives a well-formed repository or invalid', () => {
     fc.assert(
       fc.property(arbJson, fc.option(fc.string({ maxLength: 8 }), { nil: null }), (body, requested) => {
         const r = readRepository(body, requested);
@@ -43,7 +43,7 @@ describe('github-resolve properties', () => {
 
   // Feature: scan-pipeline, Property 6: Repository and branch responses give a commit or a typed error
   // Validates: Requirements 3.11
-  it('readCommitSha never throws and gives 40 hexadecimal characters or null', () => {
+  it('P6 readCommitSha never throws and gives 40 hexadecimal characters or null', () => {
     fc.assert(
       fc.property(arbJson, (body) => {
         const sha = readCommitSha(body);
@@ -55,7 +55,7 @@ describe('github-resolve properties', () => {
 
   // Feature: scan-pipeline, Property 6: Repository and branch responses give a commit or a typed error
   // Validates: Requirements 3.11
-  it('readCommitSha accepts exactly 40 hexadecimal characters under commit.sha', () => {
+  it('P6 readCommitSha accepts exactly 40 hexadecimal characters under commit.sha', () => {
     fc.assert(
       fc.property(fc.string({ maxLength: 60 }), (s) => {
         const sha = readCommitSha({ commit: { sha: s } });

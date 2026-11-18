@@ -29,7 +29,7 @@ const arbAsOf: fc.Arbitrary<string> = fc.oneof(
 describe('dayCount properties', () => {
   // Feature: scan-pipeline, Property 11: Day_Count is total, non-negative and deterministic
   // Validates: Requirements 6.6, 6.9
-  it('is null or an integer at least 0, null for an invalid asOf, deterministic, and never throws', () => {
+  it('P11 is null or an integer at least 0, null for an invalid asOf, deterministic, and never throws', () => {
     fc.assert(
       fc.property(fc.oneof(arbJson, arbAsOf), arbAsOf, (date, asOf) => {
         const first = dayCount(date, asOf);
@@ -44,7 +44,7 @@ describe('dayCount properties', () => {
 
   // Feature: scan-pipeline, Property 12: Day_Count is monotonic
   // Validates: Requirements 6.7
-  it('gives the earlier date a Day_Count at least as large as the later date', () => {
+  it('P12 gives the earlier date a Day_Count at least as large as the later date', () => {
     fc.assert(
       fc.property(arbInstantMs, arbInstantMs, arbInstantMs, (a, b, c) => {
         const [x, y, z] = [a, b, c].sort((p, q) => p - q) as [number, number, number];
@@ -60,7 +60,7 @@ describe('dayCount properties', () => {
 
   // Feature: scan-pipeline, Property 13: Day_Count is the exact floor
   // Validates: Requirements 6.10
-  it('returns k for a date k * DAY_MS + r milliseconds before asOf', () => {
+  it('P13 returns k for a date k * DAY_MS + r milliseconds before asOf', () => {
     fc.assert(
       fc.property(
         fc.integer({ min: MIN_MS + (MAX_K + 1) * DAY_MS, max: MAX_MS }),
@@ -74,7 +74,7 @@ describe('dayCount properties', () => {
 
   // Feature: scan-pipeline, Property 11: Day_Count is total, non-negative and deterministic
   // Validates: Requirements 6.4, 6.6
-  it('gives 0 for a date after asOf', () => {
+  it('P11 gives 0 for a date after asOf', () => {
     fc.assert(
       fc.property(arbInstantMs, arbInstantMs, (a, b) => {
         const [asOfMs, dateMs] = a <= b ? [a, b] : [b, a];

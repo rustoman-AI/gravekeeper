@@ -27,7 +27,7 @@ function lower(r: { owner: string; name: string }): string {
 describe('github-repos properties', () => {
   // Feature: scan-pipeline, Property 33: archived and daysSinceLastCommit are independent
   // Validates: Requirements 11.11
-  it('archived and daysSinceLastCommit are null independently of each other', () => {
+  it('P33 archived and daysSinceLastCommit are null independently of each other', () => {
     const arbArchived = fc.oneof(fc.boolean(), arbNonBoolean);
     const arbDate = fc.oneof(
       arbValidDate.map((d) => ({ d, valid: true })),
@@ -53,7 +53,7 @@ describe('github-repos properties', () => {
 
   // Feature: scan-pipeline, Property 34: GraphQL batching covers each source repository once
   // Validates: Requirements 11.14
-  it('batches cover each distinct repository once, in bounded batches with r0.. aliases', () => {
+  it('P34 batches cover each distinct repository once, in bounded batches with r0.. aliases', () => {
     const arbList = fc
       .array(arbRepo, { maxLength: 3 * GRAPHQL_BATCH_SIZE + 5 })
       .chain((repos) => {
@@ -97,7 +97,7 @@ describe('github-repos properties', () => {
 
   // Feature: scan-pipeline, Property 75: Unattributable GraphQL errors do not change alias outcomes
   // Validates: Requirements 11.16
-  it('unattributable errors leave every alias outcome unchanged', () => {
+  it('P75 unattributable errors leave every alias outcome unchanged', () => {
     const arbAlias = fc.oneof(
       fc.record({
         kind: fc.constant('node' as const),

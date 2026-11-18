@@ -16,7 +16,7 @@ const arbInstant = fc.integer({ min: MIN_MS, max: MAX_MS }).map(iso);
 describe('deps.dev mapper properties', () => {
   // Feature: scan-pipeline, Property 18: Release age is the minimum Day_Count over valid timestamps
   // Validates: Requirements 8.13
-  it('daysSinceLastRelease is the minimum Day_Count and is permutation invariant', () => {
+  it('P18 daysSinceLastRelease is the minimum Day_Count and is permutation invariant', () => {
     fc.assert(
       fc.property(
         fc.array(arbInstant, { minLength: 1, maxLength: 12 }),
@@ -35,7 +35,7 @@ describe('deps.dev mapper properties', () => {
     );
   });
 
-  it('daysSinceLastRelease is permutation invariant for any shuffle', () => {
+  it('P18 daysSinceLastRelease is permutation invariant for any shuffle', () => {
     fc.assert(
       fc.property(
         fc
@@ -58,7 +58,7 @@ describe('deps.dev mapper properties', () => {
 
   // Feature: scan-pipeline, Property 19: Batch responses are matched by key, not by position
   // Validates: Requirements 8.16
-  it('batch results do not depend on the order of responses', () => {
+  it('P19 batch results do not depend on the order of responses', () => {
     const arbKey = fc.record({
       system: fc.constantFrom('NPM', 'npm', 'PYPI', 'CARGO'),
       name: fc.constantFrom('a', 'b', 'c'),
