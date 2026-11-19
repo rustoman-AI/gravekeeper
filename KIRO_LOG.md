@@ -140,3 +140,18 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 - Group 4 checkpoint: typecheck, lint (no warnings), check:core, check:architecture all exit 0; vitest 129 files, 2046 tests pass (6.59 s; second run 7.33 s, same totals); tests/adapters + tests/pipeline/scan at FC_NUM_RUNS=1000: 56 files, 682 tests pass (8.23 s).
 - Counterexamples (group 4): none in product code; test-side only: P71 first compared standalone severityOf on id-less OSV bodies (not a fact, since mapOsvAdvisory returns null there); comparison now goes through the record.
 - Known coverage gaps: P72 never reaches an L2 `scan` entry (stub sources don't produce an all-ok scan); P70 is at storeDecision level (runScan level covered by run-scan-cache.test.ts).
+- Group 5 checkpoint: typecheck, lint, check:core, check:architecture, build all exit 0; vitest 149 files (144 passed, 5 skipped), 2280 tests (2257 passed, 23 skipped) (7.20 s; second run 7.10 s, same totals); tests/pipeline + tests/adapters + tests/architecture at FC_NUM_RUNS=1000: 102 files, 1512 tests pass (18.07 s). Live: tests/live with a token, 7 files, 28 tests pass (30.38 s) including EF-17..19 and the 3 smoke scans.
+- `respond(body, asOf)` takes `asOf` so the `Retry-After` header can be computed.
+- The request body reader maps an empty or invalid UTF-8 body to `invalid-json` (R21.3c).
+- `findBranchConflict` is separate from URL parsing; `handleScanRequest` calls it after parsing the URL.
+- `isValidBranchName` is exported from parse-repo-url.ts and used for the body branch (replaced a synthetic-URL check).
+- Composition returns port types only (`scanStore`, not the Scan_Cache); the route builds the Scan_Cache with `createScanCache`. This keeps R22.9 without an exemption.
+- The route builds its deps per request and falls back to the default GitHub config when the environment is invalid, so `handleScanRequest` reports the config error.
+- The live workflow uses `secrets.GITHUB_TOKEN`.
+- The recorder has `--only supplementary`; the supplementary set added `ef2-version-document` and `ef18-rate-limit`, and `ef8` gained GHSA-wq4c-wm6x-jw44, to cover EF-2, EF-6 and EF-18.
+- The EF-22 matcher moved to the per-version URL.
+- Fixtures were recorded with the gh CLI token (user-approved).
+- npm scoped names with plain `encodeURIComponent` were confirmed live (HTTP 200).
+- Live smoke scan request/request: grade B, 40 dependencies, ALIVE 11 / HAUNTED 0 / DEAD 29, 0 unassessed, all six sources ok, notes source-repo-unverified x40, 4251 ms.
+- Live smoke scan revmic/canopy: grade C, 6 dependencies, ALIVE 1 / HAUNTED 3 / DEAD 2, 0 unassessed, all six sources ok, notes source-repo-unverified x3, 3468 ms.
+- Live smoke scan ajeetdsouza/zoxide: grade B, 22 dependencies, ALIVE 17 / HAUNTED 0 / DEAD 3, 0 unassessed, all six sources ok, notes informational-advisory-excluded x1, maintainers-lower-bound x7, source-repo-unverified x17, unmaintained-advisory x1, 21494 ms (crates.io owners requests are spaced about 1 s apart).

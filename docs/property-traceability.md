@@ -1,6 +1,6 @@
-﻿# Property traceability
+# Property traceability
 
-Maps every design property of the `scan-pipeline` and `dependency-graveyard-core` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 1357 tests, all passed.
+Maps every design property of the `scan-pipeline` and `dependency-graveyard-core` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 2257 passed and 23 skipped (the live tests, skipped without `GRAVEKEEPER_LIVE_TESTS`), 144 test files passed and 5 skipped, run twice with the same result. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests).
 
 ## scan-pipeline
 
@@ -44,43 +44,44 @@ Maps every design property of the `scan-pipeline` and `dependency-graveyard-core
 | P36 | 12.12 | `tests/pipeline/mapping/maintainers.property.test.ts` | P36 lowerBound is true iff a valid user and a team are both present | passing |
 | P37 | 13.11 | `tests/pipeline/mapping/assemble.property.test.ts` | P37: Assembled facts have the declared types | passing |
 | P38 | 13.13 | `tests/pipeline/mapping/assemble.property.test.ts` | P38: Assembly is deterministic | passing |
-| P39 | 13.16 | | | not yet implemented |
-| P40 | 14.9 | | | not yet implemented |
-| P41 | 14.10 | | | not yet implemented |
-| P42 | 15.11 | | | not yet implemented |
-| P43 | 15.12 | | | not yet implemented |
-| P44 | 15.13 | | | not yet implemented |
-| P45 | 15.14 | | | not yet implemented |
-| P46 | 15.18 | | | not yet implemented |
-| P47 | 16.6, 16.7, 16.10 | | | not yet implemented |
-| P48 | 16.9 | | | not yet implemented |
-| P49 | 16.13 | | | not yet implemented |
-| P50 | 17.10 | | | not yet implemented |
-| P51 | 17.11 | | | not yet implemented |
-| P52 | 17.12, 17.16 | | | not yet implemented |
-| P53 | 17.14 | | | not yet implemented |
-| P54 | 17.15 | | | not yet implemented |
-| P55 | 18.7 | | | not yet implemented |
-| P56 | 18.8 | | | not yet implemented |
-| P57 | 18.9 | | | not yet implemented |
-| P58 | 18.12 | | | not yet implemented |
-| P59 | 19.11, 19.18 | | | not yet implemented |
-| P60 | 19.12 | | | not yet implemented |
-| P61 | 19.13 | | | not yet implemented |
-| P62 | 19.16 | | | not yet implemented |
-| P63 | 20.8, 20.9 | | | not yet implemented |
-| P64 | 21.12 | | | not yet implemented |
-| P65 | 21.15 | | | not yet implemented |
+| P39 | 13.16 | `tests/pipeline/scan/run-scan.property.test.ts` | P39: unassessed dependencies and shared targets | passing |
+| P40 | 14.9 | `tests/pipeline/scan/github-budget.property.test.ts` | P40: no GitHub request is sent after the first response whose integer budget is below the threshold | passing |
+| P41 | 14.10 | `tests/pipeline/scan/github-budget.property.test.ts` | P41: any budget header sequence gives a Scan_Result or upstream-unavailable for github, and a Scan_Result when no value is below the threshold | passing |
+| P42 | 15.11 | `tests/adapters/http-client.property.test.ts` | P42 attempts per Work_Unit are bounded | passing |
+| P43 | 15.12 | `tests/adapters/http-client.property.test.ts` | P43 non-retriable first outcomes get exactly one attempt | passing |
+| P44 | 15.13 | `tests/adapters/retry-policy.property.test.ts` | P44 backoff delay is within bounds | passing |
+| P45 | 15.14 | `tests/adapters/concurrency-limiter.property.test.ts` | P45: The concurrency limiter respects its limit | passing |
+| P46 | 15.18 | `tests/adapters/http-client.property.test.ts` | P46 a wait that would cross the deadline ends the unit | passing |
+| P47 | 16.6, 16.7, 16.10 | `tests/pipeline/scan/targets.property.test.ts` | P47 the dependency cap partitions the Lookup_Targets (SCAN_MAX_DEPENDENCIES)<br>P47 the dependency cap partitions the Lookup_Targets (small limits) | passing |
+| P48 | 16.9 | `tests/pipeline/scan/deadline.property.test.ts` | P48: every attempt (first or retry) is sent before Scan_Start + SCAN_DEADLINE_MS, whether fetch honors or ignores the signal, and runScan does not throw<br>P48: the scan is exercised past the first stage in at least one generated slow scenario | passing |
+| P49 | 16.13 | `tests/pipeline/scan/deadline.property.test.ts` | P49: with a never-settling scan that ignores the signal, only the margin timer answers, at exactly deadline plus margin<br>P49: with sources that honor or ignore the signal, the response is produced by Scan_Start + SCAN_DEADLINE_MS + SCAN_RESPONSE_MARGIN_MS | passing |
+| P50 | 17.10 | `tests/pipeline/scan/run-scan.property.test.ts` | P50: one failing source never fails the scan | passing |
+| P51 | 17.11 | `tests/pipeline/scan/run-scan.property.test.ts` | P51: facts of failing sources are null | passing |
+| P52 | 17.12, 17.16 | `tests/pipeline/scan/source-status.property.test.ts` | P52: source status and source notes follow the unit outcomes | passing |
+| P53 | 17.14 | `tests/pipeline/scan/source-status.property.test.ts` | P53: OSV truncation makes the source partial | passing |
+| P54 | 17.15 | `tests/pipeline/scan/source-status.property.test.ts` | P54: reason categories are valid and distinct | passing |
+| P55 | 18.7 | `tests/pipeline/scan/run-scan.property.test.ts` | P55: scan results are deterministic | passing |
+| P56 | 18.8 | `tests/pipeline/scan/run-scan.property.test.ts` | P56: the summary is the core summary | passing |
+| P57 | 18.9 | `tests/pipeline/scan/run-scan.property.test.ts` | P57: result lists have matching lengths | passing |
+| P58 | 18.12 | `tests/pipeline/scan/run-scan.property.test.ts` | P58: version fields are consistent | passing |
+| P59 | 19.11, 19.18 | `tests/adapters/memory-cache-store.property.test.ts` | P59 cache entries live exactly for their TTL | passing |
+| P60 | 19.12 | `tests/adapters/memory-cache-store.property.test.ts` | P60 caches never exceed their size limit and evict least recently used first | passing |
+| P61 | 19.13 | `tests/pipeline/scan/cache-keys.property.test.ts` | Property 61: keys differ when any scalar field differs<br>Property 61: keys differ when the path set differs<br>Property 61: keys ignore a token and path order<br>Property 61: owner and repo differing only in letter case give different keys | passing |
+| P62 | 19.16 | `tests/pipeline/scan/cache-replay.property.test.ts` | Property 62: A cached scan repeats the result without upstream traffic | passing |
+| P63 | 20.8, 20.9 | `tests/adapters/token-leak.property.test.ts` | P63: an all-ok scan stores a Scan_Result in L1 and L2, and the stored entry is token-free (not vacuous)<br>P63: neither the token nor "Bearer " + token reaches any Logger line, error message, Scan_Result, Scan_Error, route response or cache key or value | passing |
+| P64 | 21.12 | `tests/pipeline/api/handle-scan-request.property.test.ts` | P64: answers every request with the declared union, status table and headers, and never throws | passing |
+| P65 | 21.15 | `tests/pipeline/api/handle-scan-request.property.test.ts` | P65: uses the body branch, else the URL branch, and rejects unequal pairs without an upstream request | passing |
 | P66 | 22.15 | `tests/architecture/architecture.property.test.ts` | P66 reports a violation on the import line when the target is forbidden<br>P66 reports no import violation when the target is allowed | passing |
-| P67 | 19.11 | | | not yet implemented |
-| P68 | 19.21 | | | not yet implemented |
-| P69 | 19.29 | | | not yet implemented |
-| P70 | 19.30 | | | not yet implemented |
-| P71 | 19.31 | | | not yet implemented |
-| P72 | 19.32 | | | not yet implemented |
-| P73 | 15.21 | | | not yet implemented |
-| P74 | 12.15 | `tests/pipeline/mapping/maintainers.property.test.ts` | P74 orderCratesLookups orders by first scope then code point name, independent of input order | passing |
+| P67 | 19.11 | `tests/adapters/tiered-cache-store.property.test.ts` | P67 unit: a live value written to L2 is returned after an L1 reset | passing |
+| P68 | 19.21 | `tests/pipeline/scan/cache-replay.property.test.ts` | Property 68: A cache hit equals a fresh scan, for every request spelling | passing |
+| P69 | 19.29 | `tests/adapters/tiered-cache-store.property.test.ts` | P69 unit: an all-200 scan reaches L2 (scan cache and HTTP cache) and equals the off result | passing |
+| P70 | 19.30 | `tests/pipeline/scan/scan-cache-store-rule.property.test.ts` | Property 70: A Scan_Result is stored if and only if the store rule holds | passing |
+| P71 | 19.31 | `tests/adapters/l2-entries.property.test.ts` | P71 crates.io owners: Mapper output is equal on compact and full text<br>P71 deps.dev advisory: Mapper output is equal on compact and full text<br>P71 OSV advisory: Mapper output is equal on compact and full text | passing |
+| P72 | 19.32 | `tests/adapters/token-leak.property.test.ts` | P72: no L1 or L2 key or value contains the token or "Bearer " + token, for any token, status, and redirect<br>P72: the stack caches and writes L2 entries while upstream echoes the token (not vacuous) | passing |
+| P73 | 15.21 | `tests/adapters/http-client.property.test.ts` | P73 redirect chains never leave the origin or exceed the hop limit | passing |
+| P74 | 12.15 | `tests/pipeline/mapping/maintainers.property.test.ts`<br>`tests/pipeline/scan/crates-order.property.test.ts` | P74 orderCratesLookups orders by first scope then code point name, independent of input order<br>Property 74: Crates owners are looked up in scope order and cached owners send no request | passing |
 | P75 | 11.16 | `tests/pipeline/mapping/github.property.test.ts` | P75 unattributable errors leave every alias outcome unchanged | passing |
+| P76 | 20.16 | `tests/pipeline/scan/messages.property.test.ts` | P76 Rendered messages are safe | passing |
 
 ## dependency-graveyard-core
 
@@ -135,11 +136,9 @@ Maps every design property of the `scan-pipeline` and `dependency-graveyard-core
 
 ## Properties without a test
 
-### scan-pipeline (34 of 75)
+### scan-pipeline (0 of 76)
 
-P39 to P65 and P67 to P73 have no test yet (not yet implemented):
-
-P39, P40, P41, P42, P43, P44, P45, P46, P47, P48, P49, P50, P51, P52, P53, P54, P55, P56, P57, P58, P59, P60, P61, P62, P63, P64, P65, P67, P68, P69, P70, P71, P72, P73.
+None. All 76 properties (P1 to P76) have at least one passing test.
 
 ### dependency-graveyard-core
 

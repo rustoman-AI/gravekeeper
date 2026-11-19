@@ -938,7 +938,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Verify `.github/workflows/ci.yml` runs, in order, `npm ci`, `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, with no live flag and no token. Add `.github/workflows/live.yml` (`workflow_dispatch` only) that sets `GRAVEKEEPER_LIVE_TESTS=1`, passes `GITHUB_TOKEN` from repository secrets and runs the live tests. Add `tests/ci-config.test.ts` asserting the order of the CI steps and that `ci.yml` never sets `GRAVEKEEPER_LIVE_TESTS`.
     - _Requirements: 22.16, 23.1, 23.8, 23.9_
 
-- [~] 10. Final checkpoint - Route handler, fixtures, live tests and CI
+- [-] 10. Final checkpoint - Route handler, fixtures, live tests and CI
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 ## Notes
