@@ -1,9 +1,16 @@
 // Requirement 21.9, 21.10, 21.11, 21.13, 21.16
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as route from '../../app/api/scan/route';
+import { createFixtureFetch } from '../support/fixture-fetch';
 import { ROUTE_MAX_DURATION_SECONDS, SCAN_DEADLINE_MS, SCAN_RESPONSE_MARGIN_MS } from '../../pipeline/constants';
+
+// `after` throws outside a request scope; run the callback directly.
+vi.mock('next/server', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('next/server')>();
+  return { ...actual, after: (work: () => Promise<unknown>) => void work() };
+});
 
 const ROUTE_PATH = resolve(__dirname, '../../app/api/scan/route.ts');
 const source = readFileSync(ROUTE_PATH, 'utf8');
@@ -88,5 +95,41 @@ describe('scan route non-POST methods (R21.13, R21.9, R21.11)', () => {
     const response = await call('PUT', '{not json');
     expect(response.status).toBe(405);
     expect(response.headers.get('Allow')).toBe('POST');
+  });
+});
+
+describe('scan route smoke scan (R21.1, R21.7, R21.9, R23.2)', () => {
+  const L1_KEYS = [Symbol.for('gravekeeper.l1.upstream-cache'), Symbol.for('gravekeeper.l1.scan-cache')];
+  const clearL1 = (): void => {
+    for (const key of L1_KEYS) delete (globalThis as Record<symbol, unknown>)[key];
+  };
+
+  beforeEach(() => {
+    clearL1();
+    vi.stubEnv('GRAVEKEEPER_RUNTIME_CACHE', 'off');
+    vi.stubEnv('GITHUB_TOKEN', 'dummy-fixture-token');
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+    clearL1();
+  });
+
+  it('answers a recorded repository with 200, ok: true and Cache-Control: no-store', async () => {
+    const fixtures = createFixtureFetch(resolve(__dirname, '../fixtures/request__request'));
+    vi.stubGlobal('fetch', fixtures.fetch);
+    const response = await handlers.POST(
+      new Request('http://localhost/api/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ repoUrl: 'https://github.com/request/request' }),
+      }),
+    );
+    const body = (await response.json()) as { ok: boolean };
+    expect(response.status).toBe(200);
+    expect(body.ok).toBe(true);
+    expect(response.headers.get('Cache-Control')).toBe('no-store');
+    fixtures.assertNoMisses();
   });
 });

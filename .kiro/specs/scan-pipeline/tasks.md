@@ -894,15 +894,15 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - With `GRAVEKEEPER_LIVE_TESTS=1` and the user's `GITHUB_TOKEN` set (ask the user to provide it if it is unset, and do not print or store it), run `npm run fixtures:record` for `request/request` (npm), `revmic/canopy` (Python) and `ajeetdsouza/zoxide` (Rust) and for the supplementary sets `ef8-withdrawn`, `ef10-informational` and `ef19-not-found-alias`. Confirm that each recorded set passes the hygiene and size tests.
     - _Requirements: 23.2, 23.3, 23.4, 23.16_
 
-  - [~] 9.24 Write the fixture coverage test
+  - [-] 9.24 Write the fixture coverage test
     - `tests/pipeline/fixtures-coverage.test.ts`: for every verified row of `endpoint-fact-map.ts` except EF-4 (and except EF-11, EF-23, EF-24 and the Not verified paths of R23.13), at least one recorded response contains every path; a failure reads `EF-<n> <source> missing path <path>`.
     - _Requirements: 23.13_
 
-  - [~] 9.25 Write the fixture scan test
+  - [x] 9.25 Write the fixture scan test
     - `tests/pipeline/fixtures-scan.test.ts`: for each recorded repository run `runScan` twice with empty caches over `CachingHttpClient(FixtureHttpClient)`, real sources and a fake runtime whose clock is `Date.parse(metadata.asOf)`; assert equal results, `ok` true, and at least one dependency with `archived` or `deprecated` true; `assertNoMisses()` in `afterEach`.
     - _Requirements: 23.2, 23.3, 23.4, 23.5_
 
-  - [~] 9.26 Add the route smoke scan
+  - [x] 9.26 Add the route smoke scan
     - Append to `tests/app/scan-route.test.ts`: install `fixture-fetch.ts` and run one scan of a recorded repository through the exported `POST` handler, asserting status 200, `ok: true` and `Cache-Control: no-store`.
     - _Requirements: 21.1, 21.7, 21.9, 23.2_
 
