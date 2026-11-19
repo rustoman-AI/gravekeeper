@@ -794,11 +794,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 72: The token never reaches an L2 key or value**
     - **Validates: Requirements 19.32**
 
-- [-] 8. Checkpoint - Caching
+- [x] 8. Checkpoint - Caching
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 9. Route handler, fixtures, live tests and CI
-  - [~] 9.1 Implement the error union and response builder
+  - [x] 9.1 Implement the error union and response builder
     - Create `pipeline/api/scan-error.ts`: `ScanErrorBody`, `ScanResponseBody`, the code to status mapping (400, 404, 405, 413, 415, 500, 502, 503, 504), `details` omitted when a code defines none, and `respond()` that always sets `Content-Type: application/json` and `Cache-Control: no-store`, adds `Allow: POST` for 405 and `Retry-After: ceil((resetAt - asOf) / 1000)` (at least 1) for 503.
     - _Requirements: 21.5, 21.6, 21.7, 21.9, 21.13, 3.7, 14.5_
 
@@ -806,7 +806,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/api/scan-error.test.ts`: each row of the status table, `Retry-After` rounding and minimum, no `Retry-After` when `resetAt` is not later than `asOf`, `details` omitted not null, headers on every response.
     - _Requirements: 21.5, 21.6, 21.7, 21.9, 21.13_
 
-  - [~] 9.3 Implement the bounded body reader
+  - [x] 9.3 Implement the bounded body reader
     - Create `pipeline/api/read-body.ts`: reads the request stream up to `REQUEST_BODY_MAX_BYTES`, checks the declared `content-length` first, strict UTF-8 decoding.
     - _Requirements: 21.3_
 
@@ -878,7 +878,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/record-fixtures.test.ts`: only allow-listed headers written (a response with `Authorization`, `set-cookie`, `x-request-id` writes none), `assertNoSecrets` rejects the token, `Bearer `, `ghp_`, `gho_`, `ghu_`, `ghs_`, `ghr_`, `github_pat_` and an `Authorization` header, refusal without the flag or token, an oversized set is refused with the five largest files named and nothing written, previous fixtures unchanged after a rejection.
     - _Requirements: 23.6, 23.7, 23.10, 23.16, 20.13_
 
-  - [~] 9.20 Implement fixture replay
+  - [x] 9.20 Implement fixture replay
     - Create `tests/support/fixture-http-client.ts` (`FixtureHttpClient` implements `HttpClient`, key from `requestKey`, `misses`, `assertNoMisses()` failing with `fixture missing for source <name>: <METHOD> <path>` with no query string and no header) and `tests/support/fixture-fetch.ts` (a `fetch` implementation answering from the fixture index).
     - _Requirements: 23.1, 23.3_
 
@@ -906,7 +906,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Append to `tests/app/scan-route.test.ts`: install `fixture-fetch.ts` and run one scan of a recorded repository through the exported `POST` handler, asserting status 200, `ok: true` and `Cache-Control: no-store`.
     - _Requirements: 21.1, 21.7, 21.9, 23.2_
 
-  - [~] 9.27 Implement the live test support
+  - [x] 9.27 Implement the live test support
     - Create `tests/live/live-support.ts`: `LIVE` flag helper (`GRAVEKEEPER_LIVE_TESTS === '1'`), `it.skipIf` wrapper, the token skip with the reason `GITHUB_TOKEN not set` for EF-17, EF-18 and EF-19, a failure formatter that names only row id, source and path, and a path checker that reuses `endpoint-fact-map.ts`.
     - _Requirements: 23.8, 23.9, 23.14, 23.15_
 
@@ -934,7 +934,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/live/live-gating.test.ts`: with the flag unset every live test reports as skipped (not passed) and the offline `fetch` stub records no call; with a token unset the three GraphQL rows are skipped with the stated reason.
     - _Requirements: 23.9, 23.14_
 
-  - [~] 9.34 Wire CI and the manual live workflow
+  - [x] 9.34 Wire CI and the manual live workflow
     - Verify `.github/workflows/ci.yml` runs, in order, `npm ci`, `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, with no live flag and no token. Add `.github/workflows/live.yml` (`workflow_dispatch` only) that sets `GRAVEKEEPER_LIVE_TESTS=1`, passes `GITHUB_TOKEN` from repository secrets and runs the live tests. Add `tests/ci-config.test.ts` asserting the order of the CI steps and that `ci.yml` never sets `GRAVEKEEPER_LIVE_TESTS`.
     - _Requirements: 22.16, 23.1, 23.8, 23.9_
 

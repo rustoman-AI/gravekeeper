@@ -1,0 +1,22 @@
+name: Live
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx vitest --run tests/live
+        env:
+          GRAVEKEEPER_LIVE_TESTS: '1'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
