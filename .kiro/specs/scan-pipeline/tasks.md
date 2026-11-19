@@ -861,11 +861,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Read `node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md`, `03-api-reference/03-file-conventions/route.md`, `.../02-route-segment-config/maxDuration.md`, `.../runtime.md` and `04-functions/after.md` first (AGENTS.md). Create `app/api/scan/route.ts`: `export const maxDuration = 30;` as a number literal, named exports `POST`, `GET`, `HEAD`, `PUT`, `PATCH`, `DELETE`, `OPTIONS` that call one `handle` function, a `Deferrer` backed by `after`, `Response.json(body, { status, headers })` (empty body for `HEAD`). No `runtime`, `dynamic`, `revalidate` or `fetchCache` export. It is the only file outside `/adapters` that imports `adapters`.
     - _Requirements: 21.1, 21.9, 21.10, 21.11, 21.13, 21.16, 22.10_
 
-  - [~] 9.16 Write unit tests for the route
+  - [x] 9.16 Write unit tests for the route
     - `tests/app/scan-route.test.ts`: `route.ts` text checks (`maxDuration` is a number literal equal to `ROUTE_MAX_DURATION_SECONDS`, no `runtime`, `dynamic`, `revalidate`, `fetchCache` exports, seven method exports, no scan logic), each non-POST method answers the JSON 405 with `Allow: POST`, `HEAD` has an empty body with the same status and headers.
     - _Requirements: 21.9, 21.10, 21.11, 21.13, 21.16_
 
-  - [~] 9.17 Write the property test for the token in every sink
+  - [x] 9.17 Write the property test for the token in every sink
     - Append to `tests/adapters/token-leak.property.test.ts`: sinks are every Logger line, every returned or thrown error message, the serialized Scan_Result and Scan_Error, the route response headers and body, and every key and value of the Upstream_Cache, the Scan_Cache and the L2 store; upstream stubs echo request headers in bodies and in GraphQL `errors[].message`, with 4xx, 5xx, timeout, redirect and unparsable answers.
     - **Property 63: The token never reaches a sink**
     - **Validates: Requirements 20.8, 20.9, 20.12**
@@ -874,7 +874,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `scripts/record-fixtures.ts` and `scripts/fixtures/` helpers (`allowHeaders`, `assertNoSecrets`, staging in `tests/fixtures/.recording-<name>/`, size check against `FIXTURE_SET_MAX_BYTES` over every file of the set, replay check of R23.4 before replacing `tests/fixtures/<name>/`), a `RecordingHttpClient` around the production client with empty caches and no L2, the layout of the design (`metadata.json`, `index.json`, `responses/<source>/<hash16>.json`, byte-exact `bodyText`), refusal when `GRAVEKEEPER_LIVE_TESTS` is not `1` or `GITHUB_TOKEN` is unset, and the three supplementary recordings. Add `"fixtures:record": "tsx scripts/record-fixtures.ts"` to `package.json`.
     - _Requirements: 23.2, 23.3, 23.4, 23.6, 23.7, 23.10, 23.16, 20.13_
 
-  - [~] 9.19 Write unit tests for the recorder
+  - [x] 9.19 Write unit tests for the recorder
     - `tests/pipeline/record-fixtures.test.ts`: only allow-listed headers written (a response with `Authorization`, `set-cookie`, `x-request-id` writes none), `assertNoSecrets` rejects the token, `Bearer `, `ghp_`, `gho_`, `ghu_`, `ghs_`, `ghr_`, `github_pat_` and an `Authorization` header, refusal without the flag or token, an oversized set is refused with the five largest files named and nothing written, previous fixtures unchanged after a rejection.
     - _Requirements: 23.6, 23.7, 23.10, 23.16, 20.13_
 
