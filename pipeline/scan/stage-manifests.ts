@@ -57,10 +57,9 @@ export interface ManifestSelection {
 }
 
 function selectionError(
-  error: { code: 'too-many-manifests'; details: { limit: number } } | {
-    code: 'manifest-not-found';
-    details: { path: string };
-  },
+  error:
+    | { code: 'too-many-manifests'; details: { limit: number; candidates: readonly string[] } }
+    | { code: 'manifest-not-found'; details: { path: string; candidates: readonly string[] } },
   webHost: string,
 ): ScanError {
   const message = renderErrorMessage(error.code, error.details, webHost);

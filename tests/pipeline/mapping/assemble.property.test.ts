@@ -273,3 +273,33 @@ describe('assembleFacts properties', () => {
     );
   });
 });
+
+describe('assembleFacts advisories properties', () => {
+  it('P10: Assembled advisories mirror the OSV ids, are deterministic and do not mutate the input', () => {
+    // Feature: scan-accuracy, Property 10: Advisory entries mirror the OSV ids
+    // Validates: Requirements 6.1, 6.9, 6.10
+    fc.assert(
+      fc.property(rawInputs, isoArb, (raw, asOf) => {
+        const before = structuredClone(raw);
+        const first = assembleFacts(raw, asOf);
+        expect(raw).toEqual(before);
+        expect(assembleFacts(raw, asOf)).toEqual(first);
+        expect(Array.isArray(first.advisories)).toBe(true);
+        const query = raw.osv.queryResult;
+        const usable =
+          raw.depsdevPackage.state === 'ok' &&
+          query !== 'unavailable' &&
+          query.kind === 'ids' &&
+          first.selection.selected !== null;
+        if (!usable) {
+          expect(first.advisories).toEqual([]);
+          return;
+        }
+        const wanted = [...new Set([...query.ids, ...raw.osv.unfetchedIds])].sort();
+        expect(first.advisories.map((a) => a.id)).toEqual(wanted);
+        for (const a of first.advisories) expect(a.aliases).not.toContain(a.id);
+      }),
+      cfg(),
+    );
+  });
+});

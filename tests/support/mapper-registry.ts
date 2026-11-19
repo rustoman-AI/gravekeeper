@@ -194,8 +194,15 @@ const isTargetNote: Check = (v) =>
     'range-unresolved',
   )(v.code) &&
   isRecord(v.details);
+const isAdvisoryEntry = shape({
+  id: isString,
+  aliases: arrayOf(isString),
+  severity: nullOr(isSeverity),
+  url: isString,
+});
 const isAssembledFacts = shape({
   facts: isHealthFacts,
+  advisories: arrayOf(isAdvisoryEntry),
   selection: isVersionSelection,
   notes: arrayOf(isTargetNote),
 });
@@ -356,6 +363,11 @@ export const MAPPER_REGISTRY: readonly RegistryEntry[] = [
     })),
     validate: nullOr(isString),
   },
+  helper('advisoryUrl', 'Builds a URL from an advisory id string; not a body mapper (scan-accuracy Property 10).'),
+  helper(
+    'buildAdvisoryEntries',
+    'Builds Advisory_Entry values from OSV ids and mapped records, not from a body (scan-accuracy Property 10).',
+  ),
   // Mappers of a JSON scalar or list read from a manifest (version spec, range).
   {
     kind: 'mapper',

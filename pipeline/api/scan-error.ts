@@ -1,4 +1,5 @@
 // Requirement 21.5, 21.6, 21.7, 21.9, 21.13, 3.7, 14.5
+import { CACHE_STATUS_HEADER } from '../constants';
 import { parseIsoInstant } from '../mapping/day-count';
 import type { IsoInstant } from '../mapping';
 import type { ScanErrorBody, ScanResult } from '../scan/types';
@@ -17,6 +18,8 @@ export interface ApiResponse {
   /** Content-Type, Cache-Control: no-store, and Allow or Retry-After where R21.6 and R21.13 require them. */
   readonly headers: Readonly<Record<string, string>>;
   readonly body: ScanResponseBody;
+  /** Non-null only with status 200. Written as the CACHE_STATUS_HEADER header, never in the body (R21.17). */
+  readonly cache: 'hit' | 'miss' | null;
 }
 
 /** HTTP status of a Scan_Error (R21.6). `asOf` decides 503 versus 502 for `upstream-unavailable`. */
@@ -61,17 +64,21 @@ function retryAfterSeconds(error: ScanErrorBody, asOf: IsoInstant): number | nul
 }
 
 /** The one place that builds an API response (R21.5, R21.6, R21.7, R21.9, R21.13). */
-export function respond(body: ScanResponseBody, asOf: IsoInstant): ApiResponse {
+export function respond(body: ScanResponseBody, asOf: IsoInstant, fromCache = false): ApiResponse {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'Cache-Control': 'no-store',
   };
-  if (body.ok) return { status: 200, headers, body };
+  if (body.ok) {
+    const cache = fromCache ? 'hit' : 'miss';
+    headers[CACHE_STATUS_HEADER] = cache;
+    return { status: 200, headers, body, cache };
+  }
   const status = scanErrorStatus(body.error, asOf);
   if (status === 405) headers['Allow'] = 'POST';
   if (status === 503) {
     const seconds = retryAfterSeconds(body.error, asOf);
     if (seconds !== null) headers['Retry-After'] = String(seconds);
   }
-  return { status, headers, body };
+  return { status, headers, body, cache: null };
 }

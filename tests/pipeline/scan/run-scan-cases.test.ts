@@ -183,7 +183,8 @@ const input = (runtime: FakeRuntime): ScanInput => ({
 async function scanResult(promise: Promise<Awaited<ReturnType<typeof runScan>>>): Promise<ScanResult> {
   const outcome = await promise;
   if (!outcome.ok) throw new Error(`scan failed: ${outcome.error.code}`);
-  return outcome.value;
+  expect(outcome.value.fromCache).toBe(false);
+  return outcome.value.result;
 }
 
 async function runPlain(options: WorldOptions) {

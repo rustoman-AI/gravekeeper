@@ -6,7 +6,7 @@ import type { SourceResult } from '../../../pipeline/ports';
 import { createScanProgress, runScan } from '../../../pipeline/scan/run-scan';
 import type { ScanProgressHandle } from '../../../pipeline/scan/run-scan';
 import { createScanCache } from '../../../pipeline/scan/scan-cache';
-import type { ScanDeps, ScanResult } from '../../../pipeline/scan/types';
+import type { ScanDeps, ScanOutcome, ScanResult } from '../../../pipeline/scan/types';
 import { createFakeRuntime, runUntilSettled } from '../../support/fake-runtime';
 
 const START_MS = 1_000_000;
@@ -171,6 +171,7 @@ interface Harness {
   readonly store: MemoryCacheStore;
   readonly scanCache: ScanDeps['scanCache'];
   scan(world: World, asOf?: string, progress?: ScanProgressHandle): Promise<ScanResult>;
+  scanOutcome(world: World, asOf?: string, progress?: ScanProgressHandle): Promise<ScanOutcome>;
 }
 
 function createHarness(): Harness {
@@ -186,7 +187,10 @@ function createHarness(): Harness {
     },
     store,
     scanCache,
-    async scan(world, asOf = '2024-01-11T00:00:00.000Z', progress) {
+    async scan(world, asOf, progress) {
+      return (await this.scanOutcome(world, asOf, progress)).result;
+    },
+    async scanOutcome(world, asOf = '2024-01-11T00:00:00.000Z', progress) {
       const runtime = createFakeRuntime(state.nowMs);
       const deps: ScanDeps = {
         sources: world.sources,
@@ -228,14 +232,18 @@ describe('runScan Scan_Cache wiring', () => {
   it('a hit sends only the repository, branch and tree requests and equals the first result (R19.6, R3.13)', async () => {
     const harness = createHarness();
     const first = createWorld({ token: true, kind: 'npm' });
-    const firstResult = await harness.scan(first, '2024-01-11T00:00:00.000Z');
+    const firstOutcome = await harness.scanOutcome(first, '2024-01-11T00:00:00.000Z');
+    const firstResult = firstOutcome.result;
+    expect(firstOutcome.fromCache).toBe(false);
     expect(first.calls).toContain('getManifestText');
     expect(Object.values(firstResult.sources)).toEqual(Array(6).fill('ok'));
     expect(harness.store.size()).toBe(1);
 
     const second = createWorld({ token: true, kind: 'npm' });
-    const hit = await harness.scan(second, '2024-02-01T00:00:00.000Z');
+    const hitOutcome = await harness.scanOutcome(second, '2024-02-01T00:00:00.000Z');
+    const hit = hitOutcome.result;
     expect(second.calls).toEqual(DISCOVERY_CALLS);
+    expect(hitOutcome.fromCache).toBe(true);
     expect(hit).toEqual(firstResult);
     expect(hit.asOf).toBe('2024-01-11T00:00:00.000Z');
   });
@@ -289,8 +297,10 @@ describe('runScan Scan_Cache wiring', () => {
 
     harness.nowMs = START_MS + PARTIAL_SCAN_TTL_SECONDS * 1000 - 1;
     const alive = createWorld({ token: true, kind: 'cargo' });
-    const hit = await harness.scan(alive);
+    const hitOutcome = await harness.scanOutcome(alive);
+    const hit = hitOutcome.result;
     expect(alive.calls).toEqual(DISCOVERY_CALLS);
+    expect(hitOutcome.fromCache).toBe(true);
     expect(hit).toEqual(result);
 
     harness.nowMs = START_MS + PARTIAL_SCAN_TTL_SECONDS * 1000;

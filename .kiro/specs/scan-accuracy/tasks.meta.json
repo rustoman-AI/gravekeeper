@@ -628,6 +628,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637865
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062126609
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062271816
       }
     ],
     "5.2 Write unit tests for advisory entries": [
@@ -635,6 +645,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637896
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062280254
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062416526
       }
     ],
     "5.3 Write the property test for advisory entries": [
@@ -642,6 +662,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637932
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062280381
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062417526
       }
     ],
     "5.4 Carry advisories into the Scan_Result and accept the new shape in the cache": [
@@ -649,6 +679,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637974
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062281872
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062419523
       }
     ],
     "5.5 Update the Scan_Result and cache tests": [
@@ -656,6 +696,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060638013
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062507515
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062662088
       }
     ],
     "5.6 Write the scan-level property test for advisories": [
@@ -663,6 +713,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060638058
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062507713
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062663083
       }
     ],
     "5.7 Return a Scan_Outcome from `runScan`": [
@@ -670,6 +730,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060638105
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062127184
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062272313
       }
     ],
     "5.8 Update the tests that call `runScan`": [
@@ -677,6 +747,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060638146
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062282872
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062420523
       }
     ],
     "5.9 Set the cache header on 200 responses": [
@@ -684,6 +764,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060638185
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062283331
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062421525
       }
     ],
     "5.10 Update the route and handler tests": [
@@ -691,6 +781,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060638226
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062508723
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062664590
       }
     ],
     "5.11 Write the property test for the cache header and update the cache-hit test": [
@@ -698,6 +798,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060638262
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062510218
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062665583
       }
     ],
     "5.12 Add the manifest candidates to the two errors": [
@@ -705,6 +815,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060638299
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062430898
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062501435
       }
     ],
     "5.13 Update the unit tests for the two errors": [
@@ -712,6 +832,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060638338
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062510576
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062666587
       }
     ],
     "5.14 Write the property test for the candidates": [
@@ -719,6 +849,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060638375
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062667255
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062776269
       }
     ],
     "6. Checkpoint - Advisories, cache header, candidates": [
@@ -726,6 +866,21 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060638415
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062777086
+      },
+      {
+        "executionId": "7f5622cb-23ef-4064-a46d-234fc81488a2",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795088704184
+      },
+      {
+        "executionId": "7f5622cb-23ef-4064-a46d-234fc81488a2",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795088750500
       }
     ],
     "7.1 Re-record the fixtures": [
@@ -792,6 +947,13 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795061948393
+      }
+    ],
+    "5. Advisory entries, scan outcome with cache header, manifest candidates": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062776300
       }
     ]
   }

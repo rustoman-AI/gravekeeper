@@ -37,7 +37,8 @@ import type { ApiResponse } from '../../pipeline/api/scan-error';
 import type { LogEntry } from '../../pipeline/ports/runtime';
 import { createScanCache } from '../../pipeline/scan/scan-cache';
 import { runScan } from '../../pipeline/scan/run-scan';
-import type { ScanDeps, ScanOutcome } from '../../pipeline/scan/types';
+import type { Result } from '../../core';
+import type { ScanDeps, ScanError, ScanOutcome } from '../../pipeline/scan/types';
 import { createCollectingLogger, createFakeL2, type FakeL2 } from '../support/arbitraries/l2';
 import { createFakeRuntime, runUntilSettled } from '../support/fake-runtime';
 import { cfg } from '../support/fc-config';
@@ -341,7 +342,7 @@ export interface TokenStack {
   /** Messages of errors thrown out of a run (empty when nothing threw). */
   readonly thrown: () => readonly string[];
   /** Runs one scan and settles every deferred L2 write. Returns whether runScan resolved. */
-  readonly scan: () => Promise<{ readonly ok: boolean; readonly outcome: ScanOutcome | null }>;
+  readonly scan: () => Promise<{ readonly ok: boolean; readonly outcome: Result<ScanOutcome, ScanError> | null }>;
   /** Runs one POST through handleScanRequest, then settles every deferred L2 write. */
   readonly route: () => Promise<ApiResponse | null>;
 }
@@ -495,7 +496,7 @@ export function buildTokenStack(s: ScenarioShape, opts: StackOptions = {}): Toke
     logLines: () => collected.lines,
     thrown: () => thrown,
     scan: async () => {
-      let outcome: ScanOutcome | null = null;
+      let outcome: Result<ScanOutcome, ScanError> | null = null;
       try {
         outcome = await runUntilSettled(
           runScan(
@@ -618,7 +619,7 @@ function sinkLeaks(token: string, sinks: readonly Sink[]): string[] {
 
 function sinksOf(
   stack: TokenStack,
-  outcome: ScanOutcome | null,
+  outcome: Result<ScanOutcome, ScanError> | null,
   response: ApiResponse | null,
 ): Sink[] {
   const l2Storage: Capture[] = [...stack.fakeL2.storage.entries()].map(([key, value]) => ({
@@ -698,8 +699,8 @@ describe('P63 The token never reaches a sink', () => {
     const { outcome } = await scanStack.scan();
     expect(outcome?.ok).toBe(true);
     if (outcome?.ok !== true) throw new Error('scan did not succeed');
-    expect(outcome.value.notes.map((n) => n.code)).not.toContain('github-token-missing');
-    expect(outcome.value.sources).toEqual({
+    expect(outcome.value.result.notes.map((n) => n.code)).not.toContain('github-token-missing');
+    expect(outcome.value.result.sources).toEqual({
       github: 'ok',
       depsdev: 'ok',
       osv: 'ok',

@@ -248,6 +248,36 @@ describe('createScanCache', () => {
     expect(isScanResult(makeResult())).toBe(true);
   });
 
+  it('reads back a stored result with advisories and rejects an entry without them', async () => {
+    const { runtime, store } = setup();
+    const cache = createScanCache(store);
+    const entry = {
+      dependency: { name: 'a', rawName: 'a', ecosystem: 'npm', versionSpec: '1.0.0', scope: 'runtime', sourceKind: 'registry' },
+      manifestPath: 'package.json',
+      lookupVersion: '1.0.0',
+      versionBasis: 'pinned',
+      facts: {
+        daysSinceLastRelease: null, daysSinceLastCommit: null, archived: null, deprecated: null,
+        openVulnerabilityCount: null, maxSeverity: null, maintainerCount: null,
+      },
+      advisories: [{ id: 'GHSA-a', aliases: ['CVE-1'], severity: 'HIGH', url: 'https://osv.dev/vulnerability/GHSA-a' }],
+    };
+    const withAdv = { ...makeResult(), dependencies: [entry] } as unknown as ScanResult;
+    const bare = Object.fromEntries(Object.entries(entry).filter(([k]) => k !== 'advisories'));
+    const without = { ...makeResult(), dependencies: [bare] } as unknown as ScanResult;
+    const badEntry = {
+      ...makeResult(),
+      dependencies: [{ ...entry, advisories: [{ id: 'x' }] }],
+    } as unknown as ScanResult;
+    expect(isScanResult(withAdv)).toBe(true);
+    expect(isScanResult(without)).toBe(false);
+    expect(isScanResult(badEntry)).toBe(false);
+    await store.set('with', withAdv as never, 60);
+    await store.set('without', without as never, 60);
+    expect(await runUntilSettled(cache.get('with'), runtime)).toEqual(withAdv);
+    expect(await runUntilSettled(cache.get('without'), runtime)).toBeNull();
+  });
+
   it('treats a store that throws as a miss and a skipped store', async () => {
     const failing: CacheStore = {
       get: () => Promise.reject(new Error('x')),

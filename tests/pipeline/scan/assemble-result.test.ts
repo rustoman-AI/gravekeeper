@@ -203,6 +203,32 @@ describe('assembleResult', () => {
     expect(result.notes.some((n) => n.code === 'package-not-found')).toBe(true);
   });
 
+  it('gives every Dependency of a target the same advisories and [] when not looked up (P57)', () => {
+    const withIds: RawTargetInputs = {
+      ...rawFor('a'),
+      osv: {
+        queryResult: { kind: 'ids', ids: ['GHSA-b', 'GHSA-a', 'GHSA-b'], truncated: false },
+        advisories: new Map(),
+        unfetchedIds: [],
+      },
+    };
+    const m1 = manifest('a/package.json', [dep('a'), dep('g', { sourceKind: 'git' })]);
+    const m2 = manifest('b/package.json', [dep('a', { scope: 'dev' }), dep('missing')]);
+    const raw = new Map<string, RawTargetInputs>([
+      [key('a'), withIds],
+      [key('missing'), { ...rawFor('missing'), depsdevPackage: { state: 'absent' } }],
+    ]);
+    const result = assembleResult(input(snapshot([m1, m2], raw)));
+    const of = (name: string) => result.dependencies.filter((d) => d.dependency.name === name);
+    const forA = of('a');
+    expect(forA).toHaveLength(2);
+    expect(forA[0]?.advisories.map((e) => e.id)).toEqual(['GHSA-a', 'GHSA-b']);
+    expect(forA[1]?.advisories).toEqual(forA[0]?.advisories);
+    expect(of('g')[0]?.advisories).toEqual([]);
+    expect(of('missing')[0]?.advisories).toEqual([]);
+    for (const d of result.dependencies) expect(Array.isArray(d.advisories)).toBe(true);
+  });
+
   it('assembles a target without raw inputs from unavailable inputs', () => {
     const m = manifest('package.json', [dep('a')]);
     const result = assembleResult(input(snapshot([m], new Map())));

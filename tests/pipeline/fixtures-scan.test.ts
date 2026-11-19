@@ -20,7 +20,8 @@ import {
 import { readGithubConfig } from '../../pipeline/config/github-config';
 import { createScanCache } from '../../pipeline/scan/scan-cache';
 import { runScan } from '../../pipeline/scan/run-scan';
-import type { ScanDeps, ScanOutcome } from '../../pipeline/scan/types';
+import type { Result } from '../../core';
+import type { ScanDeps, ScanError, ScanOutcome } from '../../pipeline/scan/types';
 import { FixtureHttpClient } from '../support/fixture-http-client';
 import { createFakeRuntime } from '../support/fake-runtime';
 
@@ -62,7 +63,7 @@ afterEach(() => {
   for (const client of open) client.assertNoMisses();
 });
 
-async function replay(set: RepoFixture): Promise<ScanOutcome> {
+async function replay(set: RepoFixture): Promise<Result<ScanOutcome, ScanError>> {
   const parsed = readGithubConfig({});
   if (!parsed.ok) throw new Error('default GitHub configuration is invalid');
   const config = parsed.value;
@@ -119,7 +120,7 @@ describe('fixture scan replay', () => {
       expect(first.ok).toBe(true);
       expect(second).toEqual(first);
       if (!first.ok) return;
-      const flagged = first.value.dependencies.filter(
+      const flagged = first.value.result.dependencies.filter(
         (d) => d.facts.archived === true || d.facts.deprecated === true,
       );
       expect(flagged.length).toBeGreaterThan(0);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DISCOVERY_MANIFEST_NAMES, SCAN_MAX_MANIFESTS } from '../../../pipeline/constants';
+import { DISCOVERY_MANIFEST_NAMES, DISCOVERY_MAX_MANIFESTS, SCAN_MAX_MANIFESTS } from '../../../pipeline/constants';
 import { selectManifests } from '../../../pipeline/mapping/selection';
 import type { ManifestCandidate, SelectionLimits } from '../../../pipeline/mapping/types';
 
@@ -71,7 +71,7 @@ describe('selectManifests', () => {
     const p = paths(SCAN_MAX_MANIFESTS + 1);
     expect(run([], p, p)).toEqual({
       ok: false,
-      error: { code: 'too-many-manifests', details: { limit: SCAN_MAX_MANIFESTS } },
+      error: { code: 'too-many-manifests', details: { limit: SCAN_MAX_MANIFESTS, candidates: [] } },
     });
   });
 
@@ -89,7 +89,7 @@ describe('selectManifests', () => {
   it('rejects a path missing from the tree', () => {
     expect(run([], ['x/package.json'], [])).toEqual({
       ok: false,
-      error: { code: 'manifest-not-found', details: { path: 'x/package.json' } },
+      error: { code: 'manifest-not-found', details: { path: 'x/package.json', candidates: [] } },
     });
   });
 
@@ -98,12 +98,31 @@ describe('selectManifests', () => {
     const caseR = run([], ['Package.json'], tree);
     expect(!caseR.ok && caseR.error).toEqual({
       code: 'manifest-not-found',
-      details: { path: 'Package.json' },
+      details: { path: 'Package.json', candidates: [] },
     });
     const segR = run([], ['a/package.json.bak'], tree);
     expect(!segR.ok && segR.error.code).toBe('manifest-not-found');
   });
 
+  it('carries the candidates in discovery order in both errors (R8.1, R8.2)', () => {
+    const c = ['b/package.json', 'package.json', 'a/Cargo.toml'];
+    const tooMany = run(c, paths(SCAN_MAX_MANIFESTS + 1), c);
+    expect(!tooMany.ok && tooMany.error).toEqual({
+      code: 'too-many-manifests',
+      details: { limit: SCAN_MAX_MANIFESTS, candidates: c },
+    });
+    const missing = run(c, ['x/package.json'], c);
+    expect(!missing.ok && missing.error).toEqual({
+      code: 'manifest-not-found',
+      details: { path: 'x/package.json', candidates: c },
+    });
+  });
+
+  it('caps the candidates at DISCOVERY_MAX_MANIFESTS (R8.3)', () => {
+    const c = Array.from({ length: DISCOVERY_MAX_MANIFESTS + 5 }, (_, i) => `d${i}/package.json`);
+    const r = run(c, ['x/package.json'], c);
+    expect(!r.ok && r.error.details).toMatchObject({ candidates: c.slice(0, DISCOVERY_MAX_MANIFESTS) });
+  });
   it('accepts a listed path inside node_modules', () => {
     const p = 'node_modules/foo/package.json';
     const r = run([], [p], [p]);

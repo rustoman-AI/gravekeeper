@@ -132,9 +132,18 @@ export interface TargetNote {
   readonly details: { readonly [key: string]: unknown };
 }
 
+export interface AdvisoryEntry {
+  readonly id: string;
+  readonly aliases: readonly string[];
+  readonly severity: Severity | null;
+  readonly url: string;
+}
+
 export interface AssembledFacts {
   /** Exactly the seven keys (R13.4). */
   readonly facts: RawHealthFacts;
+  /** One entry per distinct OSV id (scan-accuracy R6). */
+  readonly advisories: readonly AdvisoryEntry[];
   readonly selection: VersionSelection;
   readonly notes: readonly TargetNote[];
 }
@@ -173,5 +182,11 @@ export interface SelectionResult {
 }
 
 export type SelectionError =
-  | { readonly code: 'too-many-manifests'; readonly details: { readonly limit: number } }
-  | { readonly code: 'manifest-not-found'; readonly details: { readonly path: string } };
+  | {
+      readonly code: 'too-many-manifests';
+      readonly details: { readonly limit: number; readonly candidates: readonly string[] };
+    }
+  | {
+      readonly code: 'manifest-not-found';
+      readonly details: { readonly path: string; readonly candidates: readonly string[] };
+    };

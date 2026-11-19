@@ -8,7 +8,7 @@ import type { SourceResult } from '../../../pipeline/ports';
 import { runScan } from '../../../pipeline/scan/run-scan';
 import type { ScanProgressHandle } from '../../../pipeline/scan/run-scan';
 import { createScanCache } from '../../../pipeline/scan/scan-cache';
-import type { ScanDeps, ScanResult } from '../../../pipeline/scan/types';
+import type { ScanDeps, ScanOutcome, ScanResult } from '../../../pipeline/scan/types';
 import { parseRepoUrl } from '../../../pipeline/url/parse-repo-url';
 import type { RepoRef } from '../../../pipeline/url/parse-repo-url';
 import { cfg } from '../../support/fc-config';
@@ -175,6 +175,7 @@ interface Harness {
   readonly store: MemoryCacheStore;
   readonly scanCache: ScanDeps['scanCache'];
   scan(world: World, asOf?: string, progress?: ScanProgressHandle, repo?: RepoRef): Promise<ScanResult>;
+  scanOutcome(world: World, asOf?: string, progress?: ScanProgressHandle, repo?: RepoRef): Promise<ScanOutcome>;
 }
 
 function createHarness(): Harness {
@@ -190,7 +191,10 @@ function createHarness(): Harness {
     },
     store,
     scanCache,
-    async scan(world, asOf = '2024-01-11T00:00:00.000Z', progress, repo = DEFAULT_REPO) {
+    async scan(world, asOf, progress, repo) {
+      return (await this.scanOutcome(world, asOf, progress, repo)).result;
+    },
+    async scanOutcome(world, asOf = '2024-01-11T00:00:00.000Z', progress, repo = DEFAULT_REPO) {
       const runtime = createFakeRuntime(state.nowMs);
       const deps: ScanDeps = {
         sources: world.sources,
@@ -283,10 +287,21 @@ describe('Scan_Cache hit properties', () => {
         await harness.scan(createWorld({ token: true, kind: 'npm' }), FIRST_AS_OF, undefined, first);
 
         const hitWorld = createWorld({ token: true, kind: 'npm' });
-        const hit = await harness.scan(hitWorld, SECOND_AS_OF, undefined, second);
+        const hitOutcome = await harness.scanOutcome(hitWorld, SECOND_AS_OF, undefined, second);
+        const hit = hitOutcome.result;
         expect(hitWorld.calls).toEqual(DISCOVERY_CALLS);
 
-        const fresh = await createHarness().scan(createWorld({ token: true, kind: 'npm' }), FIRST_AS_OF, undefined, second);
+        const freshOutcome = await createHarness().scanOutcome(
+          createWorld({ token: true, kind: 'npm' }),
+          FIRST_AS_OF,
+          undefined,
+          second,
+        );
+        const fresh = freshOutcome.result;
+        expect(hitOutcome.fromCache).toBe(true);
+        expect(freshOutcome.fromCache).toBe(false);
+        expect(JSON.stringify(hit)).toBe(JSON.stringify(fresh));
+        expect(JSON.stringify(hit)).not.toContain('fromCache');
         expect(hit).toEqual(fresh);
         expect(hit.asOf).toBe(FIRST_AS_OF);
         expect(hit.repo.owner).toBe('Owner');

@@ -29,13 +29,13 @@ const invalidUrl: ScanErrorBody = {
 };
 const tooMany: ScanErrorBody = {
   code: 'too-many-manifests',
-  message: renderErrorMessage('too-many-manifests', { limit: 5 }, HOST),
-  details: { limit: 5 },
+  message: renderErrorMessage('too-many-manifests', { limit: 5, candidates: ['a/package.json'] }, HOST),
+  details: { limit: 5, candidates: ['a/package.json'] },
 };
 const manifestNotFound: ScanErrorBody = {
   code: 'manifest-not-found',
-  message: renderErrorMessage('manifest-not-found', { path: 'a/package.json' }, HOST),
-  details: { path: 'a/package.json' },
+  message: renderErrorMessage('manifest-not-found', { path: 'a/package.json', candidates: ['b/package.json'] }, HOST),
+  details: { path: 'a/package.json', candidates: ['b/package.json'] },
 };
 const repoNotFound: ScanErrorBody = {
   code: 'repo-not-found',
@@ -160,7 +160,8 @@ describe('response shape (R21.5, R21.7, R21.9)', () => {
     const body = { ok: true } as unknown as Parameters<typeof respond>[0];
     const response = respond(body, asOf);
     expect(response.status).toBe(200);
-    expect(response.headers).toEqual({ 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    expect(response.headers).toEqual({ 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Gravekeeper-Cache': 'miss' });
+    expect(response.cache).toBe('miss');
     expect(response.body).toBe(body);
   });
 });

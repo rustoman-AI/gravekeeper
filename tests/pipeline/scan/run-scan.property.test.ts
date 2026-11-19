@@ -8,7 +8,8 @@ import type { ManifestFormat, RawHealthFacts } from '../../../core';
 import { REQUEST_TIMEOUT_MS } from '../../../pipeline/constants';
 import type { SourceName, SourceResult } from '../../../pipeline/ports';
 import { runScan } from '../../../pipeline/scan/run-scan';
-import type { ScanDeps, ScanInput, ScanOutcome, ScanResult } from '../../../pipeline/scan/types';
+import type { Result } from '../../../core';
+import type { ScanDeps, ScanError, ScanInput, ScanOutcome, ScanResult } from '../../../pipeline/scan/types';
 import { arbJson } from '../../support/arbitraries/json';
 import { scriptStep } from '../../support/arbitraries/scripts';
 import { createFakeRuntime } from '../../support/fake-runtime';
@@ -383,7 +384,7 @@ function withJitter(sources: ScanDeps['sources'], jitter: readonly number[]): Sc
 }
 
 /** Runs the real `runScan` over the scripted ports. Everything settles in microtasks, no timer fires. */
-function scanWorld(world: World, options: RunOptions = {}): Promise<ScanOutcome> {
+function scanWorld(world: World, options: RunOptions = {}): Promise<Result<ScanOutcome, ScanError>> {
   const runtime = createFakeRuntime(START_MS);
   const deps: ScanDeps = {
     sources: ((s) => (options.jitter === undefined ? s : withJitter(s, options.jitter)))(
@@ -407,9 +408,10 @@ function scanWorld(world: World, options: RunOptions = {}): Promise<ScanOutcome>
   return runScan(input, deps);
 }
 
-function resultOf(outcome: ScanOutcome): ScanResult {
+function resultOf(outcome: Result<ScanOutcome, ScanError>): ScanResult {
   if (!outcome.ok) throw new Error(`scan failed: ${JSON.stringify(outcome.error)}`);
-  return outcome.value;
+  expect(outcome.value.fromCache).toBe(false);
+  return outcome.value.result;
 }
 
 const keyOf = (d: ScanResult['dependencies'][number]): string => `${d.dependency.ecosystem}:${d.dependency.name}`;
@@ -504,7 +506,7 @@ describe('runScan properties', () => {
         async (repository, branch, requestedBranch) => {
           const outcome = await scanWorld(emptyWorld, { discovery: { repository, branch }, branch: requestedBranch });
           if (outcome.ok) {
-            expect(outcome.value.repo.commitSha).toMatch(/^[0-9a-fA-F]{40}$/);
+            expect(outcome.value.result.repo.commitSha).toMatch(/^[0-9a-fA-F]{40}$/);
           } else {
             expect(TYPED_ERRORS).toContain(outcome.error.code);
           }
@@ -703,6 +705,19 @@ describe('runScan result shape properties', () => {
           const expected = parsedDependencyCount(world);
           expect(result.dependencies).toHaveLength(expected);
           expect(result.assessed).toHaveLength(expected);
+          // Every entry has an advisories list, [] when the target is not looked up.
+          const byTarget = new Map<string, unknown>();
+          for (const entry of result.dependencies) {
+            const id = keyOf(entry);
+            expect([id, Array.isArray(entry.advisories)]).toEqual([id, true]);
+            if (entry.dependency.sourceKind !== 'registry' || entry.lookupVersion === null) {
+              expect([id, entry.advisories]).toEqual([id, []]);
+              continue;
+            }
+            const seen = byTarget.get(id);
+            if (seen === undefined) byTarget.set(id, entry.advisories);
+            else expect([id, seen]).toEqual([id, entry.advisories]);
+          }
         },
       ),
       cfg(),
@@ -724,6 +739,7 @@ describe('runScan result shape properties', () => {
           for (const entry of result.dependencies) {
             const id = keyOf(entry);
             const { lookupVersion, versionBasis } = entry;
+            expect([id, [null, 'pinned', 'resolved', 'default'].includes(versionBasis)]).toEqual([id, true]);
             expect([id, lookupVersion === null]).toEqual([id, versionBasis === null]);
             // A git or path spec under a registry name is not a Lookup_Target: it is never looked up.
             if (entry.dependency.sourceKind !== 'registry') {

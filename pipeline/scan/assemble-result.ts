@@ -138,6 +138,7 @@ function toScanNote(note: TargetNote): ScanNote {
 
 interface TargetOutcome {
   readonly facts: RawHealthFacts;
+  readonly advisories: AssembledFacts['advisories'];
   readonly selection: AssembledFacts['selection'];
   readonly notes: readonly ScanNote[];
 }
@@ -149,11 +150,12 @@ function assembleTarget(raw: RawTargetInputs, asOf: string): TargetOutcome {
       const assembled = assembleFacts(raw, asOf);
       return {
         facts: assembled.facts,
+        advisories: assembled.advisories,
         selection: assembled.selection,
         notes: assembled.notes.map(toScanNote),
       };
     },
-    (): TargetOutcome => ({ facts: NULL_FACTS(), selection: NO_SELECTION, notes: [] }),
+    (): TargetOutcome => ({ facts: NULL_FACTS(), advisories: [], selection: NO_SELECTION, notes: [] }),
   );
 }
 
@@ -208,6 +210,7 @@ export function assembleResult(input: AssembleInput): ScanResult {
           lookupVersion: null,
           versionBasis: null,
           facts: NULL_FACTS(),
+          advisories: [],
         });
         assessed.push({ dependency, classification: null });
         continue;
@@ -220,6 +223,7 @@ export function assembleResult(input: AssembleInput): ScanResult {
         lookupVersion: both ? selected : null,
         versionBasis: both ? basis : null,
         facts: outcome.facts,
+        advisories: outcome.advisories,
       });
       assessed.push({ dependency, classification: classified.get(key) ?? null });
     }

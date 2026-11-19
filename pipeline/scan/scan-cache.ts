@@ -76,6 +76,21 @@ const isIso = (v: unknown): boolean =>
 const allOf = (v: unknown, test: (item: unknown) => boolean): boolean =>
   isArr(v) && v.every(test);
 
+function isAdvisory(v: unknown): boolean {
+  return (
+    isRec(v) &&
+    hasKeys(v, ['id', 'aliases', 'severity', 'url']) &&
+    isStr(v.id) &&
+    isStrArr(v.aliases) &&
+    (v.severity === null ||
+      v.severity === 'LOW' ||
+      v.severity === 'MEDIUM' ||
+      v.severity === 'HIGH' ||
+      v.severity === 'CRITICAL') &&
+    isStr(v.url)
+  );
+}
+
 function isDependency(v: unknown): boolean {
   return (
     isRec(v) &&
@@ -207,6 +222,7 @@ export function isScanResult(value: unknown): value is ScanResult {
         isStr(d.manifestPath) &&
         (d.lookupVersion === null || isStr(d.lookupVersion)) &&
         (d.versionBasis === null || d.versionBasis === 'pinned' || d.versionBasis === 'resolved' || d.versionBasis === 'default') &&
+        allOf(d.advisories, isAdvisory) &&
         isRec(d.facts) &&
         hasKeys(d.facts, [
           'daysSinceLastRelease', 'daysSinceLastCommit', 'archived', 'deprecated',

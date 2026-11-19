@@ -14,7 +14,8 @@ import type {
   SourceResult,
 } from '../../../pipeline/ports';
 import { createScanProgress, runScan } from '../../../pipeline/scan/run-scan';
-import type { ScanDeps, ScanOutcome, ScanResult } from '../../../pipeline/scan/types';
+import type { Result } from '../../../core';
+import type { ScanDeps, ScanError, ScanOutcome, ScanResult } from '../../../pipeline/scan/types';
 import { createFakeRuntime, runUntilSettled } from '../../support/fake-runtime';
 import type { FakeRuntime } from '../../support/fake-runtime';
 import { createScriptedFetch } from '../../support/scripted-fetch';
@@ -205,9 +206,10 @@ async function scan(world: World, extra: Partial<ScanDeps> = {}): Promise<ScanRe
   return expectOk(outcome);
 }
 
-function expectOk(outcome: ScanOutcome): ScanResult {
+function expectOk(outcome: Result<ScanOutcome, ScanError>): ScanResult {
   if (!outcome.ok) throw new Error(`scan failed: ${outcome.error.code}`);
-  return outcome.value;
+  expect(outcome.value.fromCache).toBe(false);
+  return outcome.value.result;
 }
 
 const factsOf = (result: ScanResult, name: string) => {

@@ -4,7 +4,9 @@ import { mapDepsDevPackage } from './deps-dev';
 import { mapCratesOwners, mapNpmLatest, mapPypiOwnership } from './maintainers';
 import { aggregateAdvisories, mapOsvAdvisory } from './osv-advisory';
 import { mapDepsDevAdvisory } from './severity';
+import { buildAdvisoryEntries } from './advisories';
 import type {
+  AdvisoryEntry,
   AdvisoryRecord,
   AssembledFacts,
   Fetched,
@@ -44,6 +46,7 @@ export function assembleFacts(raw: RawTargetInputs, asOf: string): AssembledFact
   let daysSinceLastCommit: number | null = null;
   let maintainerCount: number | null = null;
   let selection: VersionSelection = NO_SELECTION;
+  let advisories: readonly AdvisoryEntry[] = [];
 
   const packageFound = raw.depsdevPackage.state === 'ok';
 
@@ -94,6 +97,7 @@ export function assembleFacts(raw: RawTargetInputs, asOf: string): AssembledFact
   const query = raw.osv.queryResult;
   if (packageFound && query !== 'unavailable' && query.kind === 'ids') {
     const records: AdvisoryRecord[] = [];
+    const recordsById = new Map<string, AdvisoryRecord>();
     const unfetched = new Set<string>(raw.osv.unfetchedIds);
     const wanted = new Set<string>([...query.ids, ...raw.osv.unfetchedIds]);
     for (const id of wanted) {
@@ -106,8 +110,12 @@ export function assembleFacts(raw: RawTargetInputs, asOf: string): AssembledFact
       const score = mapDepsDevAdvisory(bodyOf(entry.depsdev));
       const record = mapOsvAdvisory(osvBody, score);
       if (record === null) unfetched.add(id);
-      else records.push(record);
+      else {
+        records.push(record);
+        recordsById.set(id, record);
+      }
     }
+    if (selection.selected !== null) advisories = buildAdvisoryEntries([...wanted], recordsById);
     const unfetchedIds = sorted(unfetched);
     const vulnerability = aggregateAdvisories(records, unfetchedIds);
     openVulnerabilityCount = vulnerability.openVulnerabilityCount;
@@ -150,5 +158,5 @@ export function assembleFacts(raw: RawTargetInputs, asOf: string): AssembledFact
     maxSeverity,
     maintainerCount,
   };
-  return { facts, selection, notes };
+  return { facts, advisories, selection, notes };
 }

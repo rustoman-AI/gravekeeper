@@ -163,7 +163,7 @@ describe('runManifestStage', () => {
       error: {
         code: 'too-many-manifests',
         message: renderErrorMessage('too-many-manifests', { limit: 3 }, WEB_HOST),
-        details: { limit: 3 },
+        details: { limit: 3, candidates: ['package.json'] },
       },
     });
     expect(s.getManifestText).not.toHaveBeenCalled();
@@ -177,12 +177,20 @@ describe('runManifestStage', () => {
       error: {
         code: 'manifest-not-found',
         message: renderErrorMessage('manifest-not-found', { path: 'x/package.json' }, WEB_HOST),
-        details: { path: 'x/package.json' },
+        details: { path: 'x/package.json', candidates: ['package.json'] },
       },
     });
     expect(s.getManifestText).not.toHaveBeenCalled();
   });
 
+  it('returns an empty candidates list for an empty tree (R8.3)', async () => {
+    const s = setup(discovered([]), ['x/package.json']);
+    const result = await s.run();
+    expect(result).toMatchObject({
+      ok: false,
+      error: { code: 'manifest-not-found', details: { path: 'x/package.json', candidates: [] } },
+    });
+  });
   it('returns manifest-not-found for a tree path that is not a manifest name (R5.5)', async () => {
     const s = setup(discovered([{ path: 'package.json' }, { path: 'README.md' }]), ['README.md']);
     const result = await s.run();

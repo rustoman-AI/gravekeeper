@@ -292,8 +292,66 @@ describe('assembleFacts: OSV edge cases', () => {
   });
 
   it('skips OSV entirely when the package is not found', () => {
-    const { facts } = assembleFacts(inputs({ depsdevPackage: { state: 'absent' } }), AS_OF);
+    const { facts, advisories: list } = assembleFacts(inputs({ depsdevPackage: { state: 'absent' } }), AS_OF);
     expect(facts.openVulnerabilityCount).toBeNull();
+    expect(list).toEqual([]);
+  });
+});
+
+describe('assembleFacts: advisories field (R6)', () => {
+  const url = (id: string) => `https://osv.dev/vulnerability/${id}`;
+
+  it('lists fetched and unfetched ids ascending, with aliases and severity for fetched ones', () => {
+    const { advisories: list } = assembleFacts(
+      inputs({
+        osv: {
+          queryResult: { kind: 'ids', ids: ['GHSA-2', 'GHSA-1', 'GHSA-1', 'GHSA-3'], truncated: false },
+          advisories: advisories({
+            'GHSA-1': osvBody('GHSA-1', { aliases: ['CVE-1', 'GHSA-1'], database_specific: { severity: 'HIGH' } }),
+          }),
+          unfetchedIds: ['GHSA-3'],
+        },
+      }),
+      AS_OF,
+    );
+    expect(list).toEqual([
+      { id: 'GHSA-1', aliases: ['CVE-1'], severity: 'HIGH', url: url('GHSA-1') },
+      { id: 'GHSA-2', aliases: [], severity: null, url: url('GHSA-2') },
+      { id: 'GHSA-3', aliases: [], severity: null, url: url('GHSA-3') },
+    ]);
+  });
+  it('lists withdrawn and informational advisories while the count excludes them', () => {
+    const { facts, advisories: list } = assembleFacts(
+      cargo(
+        idsOsv(['R-1', 'R-2', 'R-3'], {
+          'R-1': osvBody('R-1', { withdrawn: '2023-01-01T00:00:00Z' }),
+          'R-2': unmaintainedAdvisory('R-2'),
+          'R-3': osvBody('R-3'),
+        }),
+      ),
+      AS_OF,
+    );
+    expect(facts.openVulnerabilityCount).toBe(1);
+    expect(list.map((e) => e.id)).toEqual(['R-1', 'R-2', 'R-3']);
+  });
+  it('lists both ids of an alias group while counting one vulnerability', () => {
+    const { facts, advisories: list } = assembleFacts(
+      inputs({
+        osv: idsOsv(['A', 'B'], {
+          A: osvBody('A', { aliases: ['B'] }),
+          B: osvBody('B', { aliases: ['A'] }),
+        }),
+      }),
+      AS_OF,
+    );
+    expect(facts.openVulnerabilityCount).toBe(1);
+    expect(list).toHaveLength(2);
+  });
+  it('is empty when the result has no ids, OSV is unavailable, or nothing is selected', () => {
+    expect(assembleFacts(inputs({ osv: idsOsv([], {}) }), AS_OF).advisories).toEqual([]);
+    const base = inputs();
+    expect(assembleFacts(inputs({ osv: { ...base.osv, queryResult: 'unavailable' } }), AS_OF).advisories).toEqual([]);
+    expect(assembleFacts(inputs({ depsdevPackage: ok({ versions: [] }) }), AS_OF).advisories).toEqual([]);
   });
 });
 

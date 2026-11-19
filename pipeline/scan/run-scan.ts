@@ -3,6 +3,7 @@
 // progress handle for the margin fallback. Scan_Cache lookup and store are wired in task 7.20.
 import { DISCOVERY_MANIFEST_NAMES, DISCOVERY_MAX_DEPTH, DISCOVERY_MAX_MANIFESTS, DISCOVERY_SKIP_DIRS, SCAN_DEADLINE_MS } from '../constants';
 import { err, ok } from '../internal/result';
+import type { Result } from '../internal/result';
 import { guard } from '../internal/safe';
 import type { Fetched, RawTargetInputs } from '../mapping';
 import type { RequestContext, SourceResult } from '../ports';
@@ -70,15 +71,15 @@ const internalError = (webHost: string): ScanError => ({
  * Runs one scan. Never rejects: a thrown exception becomes `internal-error` (R21.8).
  * The deadline timer runs on the injected Timer and is cleared when the scan settles.
  */
-export function runScan(input: ScanInput, deps: ScanDeps): Promise<ScanOutcome> {
-  const failure = (): ScanOutcome => err(internalError(deps.config.webHost));
+export function runScan(input: ScanInput, deps: ScanDeps): Promise<Result<ScanOutcome, ScanError>> {
+  const failure = (): Result<ScanOutcome, ScanError> => err(internalError(deps.config.webHost));
   return guard(
     () => scan(input, deps).catch(failure),
     () => Promise.resolve(failure()),
   );
 }
 
-async function scan(input: ScanInput, deps: ScanDeps): Promise<ScanOutcome> {
+async function scan(input: ScanInput, deps: ScanDeps): Promise<Result<ScanOutcome, ScanError>> {
   const { sources, timer, config, limits } = deps;
   const webHost = config.webHost;
   const deadlineMs = deps.deadlineMs ?? SCAN_DEADLINE_MS;
@@ -156,7 +157,7 @@ async function scan(input: ScanInput, deps: ScanDeps): Promise<ScanOutcome> {
       manifestPaths: selection.value.selected,
     });
     const cached = await deps.scanCache.get(cacheKey, signal).catch(() => null);
-    if (cached !== null) return ok(cached);
+    if (cached !== null) return ok({ result: cached, fromCache: true });
 
     // Mutable view of what the stages have produced so far, republished after every stage.
     let manifests: readonly AssemblyManifest[] = [];
@@ -297,7 +298,7 @@ async function scan(input: ScanInput, deps: ScanDeps): Promise<ScanOutcome> {
       );
       if (decision.store) await deps.scanCache.set(cacheKey, result, decision.ttlSeconds).catch(() => undefined);
     }
-    return ok(result);
+    return ok({ result, fromCache: false });
   } finally {
     timer.clearTimeout(timerHandle);
   }

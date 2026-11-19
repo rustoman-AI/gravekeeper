@@ -1,4 +1,4 @@
-﻿// Feature: scan-pipeline, Property 64: The route always answers with the declared union
+// Feature: scan-pipeline, Property 64: The route always answers with the declared union
 // Requirement 21.12 (with 21.3, 21.5, 21.6, 21.9, 21.13)
 import * as fc from 'fast-check';
 import { describe, it } from 'vitest';
@@ -6,7 +6,7 @@ import { handleScanRequest } from '../../../pipeline/api/handle-scan-request';
 import type { ApiDeps, RawScanRequest } from '../../../pipeline/api/handle-scan-request';
 import type { ApiResponse } from '../../../pipeline/api/scan-error';
 import { isValidBranchName } from '../../../pipeline/url/parse-repo-url';
-import { REQUEST_BODY_MAX_BYTES } from '../../../pipeline/constants';
+import { CACHE_STATUS_HEADER, REQUEST_BODY_MAX_BYTES } from '../../../pipeline/constants';
 import type { SourceResult } from '../../../pipeline/ports';
 import type { ScanDeps } from '../../../pipeline/scan/types';
 import { createFakeRuntime, runUntilSettled } from '../../support/fake-runtime';
@@ -268,6 +268,7 @@ const SOURCES = ['github', 'depsdev', 'osv', 'npm', 'cratesio', 'pypi'];
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
+const isStringArray = (v: unknown): v is string[] => Array.isArray(v) && v.every((x) => typeof x === 'string');
 const keysOf = (v: Record<string, unknown>): string[] => Object.keys(v).sort();
 
 /** Returns a description of the first violation of R21.12, or null. */
@@ -280,8 +281,12 @@ function violation(response: ApiResponse): string | null {
   if (headers['Allow'] !== undefined && headers['Allow'] !== 'POST') return 'Allow is not POST';
   if (headers['Retry-After'] !== undefined && status !== 503) return 'Retry-After on a non-503 status';
   if (status === 503 && !/^[1-9]\d*$/.test(headers['Retry-After'] ?? '')) return '503 without a valid Retry-After';
-  const allowedHeaders = ['Content-Type', 'Cache-Control', 'Allow', 'Retry-After'];
+  const allowedHeaders = ['Content-Type', 'Cache-Control', 'Allow', 'Retry-After', CACHE_STATUS_HEADER];
   if (Object.keys(headers).some((h) => !allowedHeaders.includes(h))) return 'unexpected header';
+  const cacheHeader = headers[CACHE_STATUS_HEADER];
+  if ((cacheHeader !== undefined) !== (status === 200)) return 'cache header is present iff status is 200';
+  if (cacheHeader !== undefined && cacheHeader !== 'hit' && cacheHeader !== 'miss') return 'cache header is neither hit nor miss';
+  if (response.cache !== (cacheHeader ?? null)) return 'cache field differs from the cache header';
 
   const raw: unknown = body;
   if (!isRecord(raw)) return 'body is not an object';
@@ -328,10 +333,10 @@ function violation(response: ApiResponse): string | null {
       }
       return status === 400 ? null : 'invalid-url status';
     case 'too-many-manifests':
-      if (!hasDetails || !onlyKeys(['limit']) || typeof d['limit'] !== 'number') return 'too-many-manifests details';
+      if (!hasDetails || !onlyKeys(['limit', 'candidates']) || typeof d['limit'] !== 'number' || !isStringArray(d['candidates'])) return 'too-many-manifests details';
       return status === 400 ? null : 'too-many-manifests status';
     case 'manifest-not-found':
-      if (!hasDetails || !onlyKeys(['path']) || typeof d['path'] !== 'string') return 'manifest-not-found details';
+      if (!hasDetails || !onlyKeys(['path', 'candidates']) || typeof d['path'] !== 'string' || !isStringArray(d['candidates'])) return 'manifest-not-found details';
       return status === 404 ? null : 'manifest-not-found status';
     case 'branch-not-found':
       if (!hasDetails || !onlyKeys(['branch']) || typeof d['branch'] !== 'string') return 'branch-not-found details';
@@ -393,7 +398,7 @@ describe('handleScanRequest properties', () => {
 
 // Feature: scan-pipeline, Property 65: Branch from the body and the URL
 // Requirement 21.15
-const BRANCH_ATOMS = ['a', 'b', 'Z', '0', '-', '_', '.', '/', '%', '%41', '#', '?', '@', '{', 'Ã©', 'æ—¥', 'ðŸ˜€', 'ÃŸ'];
+const BRANCH_ATOMS = ['a', 'b', 'Z', '0', '-', '_', '.', '/', '%', '%41', '#', '?', '@', '{', 'é', '日', '😀', 'ß'];
 const arbBranchName: fc.Arbitrary<string> = fc
   .array(fc.constantFrom(...BRANCH_ATOMS), { minLength: 1, maxLength: 10 })
   .map((parts) => parts.join(''))

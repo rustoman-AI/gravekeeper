@@ -1,3 +1,4 @@
+export { advisoryUrl, buildAdvisoryEntries } from './advisories';
 export { assembleFacts } from './assemble';
 export { cvssSeverity, cvssV3BaseScore, severityFromScore } from './cvss';
 export { mapDepsDevPackage, mapDepsDevVersion, mapDepsDevVersionBatch } from './deps-dev';
@@ -19,6 +20,7 @@ export type { RateLimitReading } from './rate-limit';
 export { selectManifests } from './selection';
 export { mapDepsDevAdvisory, severityOf } from './severity';
 export type {
+  AdvisoryEntry,
   AdvisoryRecord,
   AssembledFacts,
   BatchEntry,

@@ -65,7 +65,7 @@ async function replayCheck(stagingDir: string, repo: RepoSpec, asOf: string): Pr
   const first = client.misses[0];
   if (first !== undefined) return `replay missed a request (source ${first.source}, ${first.method})`;
   if (!outcome.ok) return `replay scan failed with ${outcome.error.code}`;
-  const flagged = outcome.value.dependencies.some(
+  const flagged = outcome.value.result.dependencies.some(
     (d) => d.facts.archived === true || d.facts.deprecated === true,
   );
   return flagged ? null : 'replay scan has no dependency with archived or deprecated true (R23.4)';
@@ -98,7 +98,7 @@ async function recordRepo(spec: RepoSpec, token: string | null): Promise<string 
     if (stack.recorder.failures > 0) {
       return `${label}: ${stack.recorder.failures} request(s) failed while recording; the set would be incomplete`;
     }
-    const result = outcome.value;
+    const result = outcome.value.result;
     const metadata: FixtureMetadata = {
       kind: spec.kind,
       canonicalRepoUrl: `https://${result.repo.host}/${result.repo.owner}/${result.repo.repo}`,

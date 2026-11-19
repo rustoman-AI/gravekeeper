@@ -10,10 +10,12 @@ import { readGithubConfig } from '../config/github-config';
 import type { GithubEnv } from '../config/github-config';
 import type { IsoInstant } from '../mapping';
 import type { GithubConfig } from '../ports';
+import { err, ok } from '../internal/result';
+import type { Result } from '../internal/result';
 import { assemblePartial } from '../scan/assemble-result';
 import { renderErrorMessage } from '../scan/messages';
 import { createScanProgress, runScan } from '../scan/run-scan';
-import type { ScanDeps, ScanErrorBody, ScanInput, ScanOutcome } from '../scan/types';
+import type { ScanDeps, ScanErrorBody, ScanInput, ScanOutcome, ScanResult } from '../scan/types';
 import { isValidBranchName, parseRepoUrl } from '../url/parse-repo-url';
 import { readRequestBody } from './read-body';
 import { respond } from './scan-error';
@@ -45,8 +47,11 @@ const internalError = (): ScanErrorBody => ({
   message: renderErrorMessage('internal-error', undefined, ''),
 });
 
-const outcomeResponse = (outcome: ScanOutcome, asOf: IsoInstant): ApiResponse =>
-  outcome.ok ? respond({ ...outcome.value }, asOf) : fail(outcome.error, asOf);
+/** The margin path assembles from partial progress, which is never a cache hit. */
+const partialOutcome = (partial: Result<ScanResult, ScanErrorBody>): Result<ScanOutcome, ScanErrorBody> =>
+  partial.ok ? ok({ result: partial.value, fromCache: false }) : err(partial.error);
+const outcomeResponse = (outcome: Result<ScanOutcome, ScanErrorBody>, asOf: IsoInstant): ApiResponse =>
+  outcome.ok ? respond({ ...outcome.value.result }, asOf, outcome.value.fromCache) : fail(outcome.error, asOf);
 
 export async function handleScanRequest(request: RawScanRequest, deps: ApiDeps): Promise<ApiResponse> {
   try {
@@ -163,7 +168,7 @@ async function handle(request: RawScanRequest, deps: ApiDeps): Promise<ApiRespon
 
   if (winner.kind === 'margin') {
     progress.close();
-    return outcomeResponse(assemblePartial(progress, { asOf, repo: input.repo }), asOf);
+    return outcomeResponse(partialOutcome(assemblePartial(progress, { asOf, repo: input.repo })), asOf);
   }
   if (winner.outcome === null) return fail(internalError(), asOf);
   return outcomeResponse(winner.outcome, asOf);

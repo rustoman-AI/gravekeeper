@@ -131,55 +131,55 @@ This spec changes `/core`, which the tasks of `scan-pipeline` and `dependency-gr
 - [x] 4. Checkpoint - Version resolution
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 5. Advisory entries, scan outcome with cache header, manifest candidates
-  - [~] 5.1 Implement advisory entries and add them to the assembled facts
+- [x] 5. Advisory entries, scan outcome with cache header, manifest candidates
+  - [x] 5.1 Implement advisory entries and add them to the assembled facts
     - Create `pipeline/mapping/advisories.ts` with `advisoryUrl(id)` (`ADVISORY_URL_PREFIX` plus the id with every UTF-8 byte outside `A-Za-z0-9._:-` percent-encoded, a lone surrogate encoded as `%EF%BF%BD`, never throws) and `buildAdvisoryEntries(ids, records)` (distinct non-empty string ids sorted by `compareCodePoints`; with a record: sorted distinct aliases other than the id and the record severity; without: `aliases` empty and `severity` null). Add `AdvisoryEntry` to `pipeline/mapping/types.ts`, add `advisories` to `AssembledFacts`, build it in `pipeline/mapping/assemble.ts` from the same query ids and advisory records as the counts (empty when the Selected_Version is unset, the query result is unusable or has no ids), export from `pipeline/mapping/index.ts`, and register the new exports in `tests/support/mapper-registry.ts`.
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9_
-  - [~] 5.2 Write unit tests for advisory entries
+  - [x] 5.2 Write unit tests for advisory entries
     - Create `tests/pipeline/mapping/advisories.test.ts` (normal ids give `https://osv.dev/vulnerability/GHSA-xxxx`, an id with `:` keeps it, ids with `/`, `?`, `#`, `%`, spaces and non-ASCII are encoded, a lone surrogate, duplicates and empty strings dropped, unfetched ids, aliases exclude the id, a withdrawn and an informational advisory are listed while `openVulnerabilityCount` excludes them) and update `tests/pipeline/mapping/assemble.test.ts` for the `advisories` field.
     - _Requirements: 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.11_
-  - [~] 5.3 Write the property test for advisory entries
+  - [x] 5.3 Write the property test for advisory entries
     - `tests/pipeline/mapping/advisories.property.test.ts`, and update `tests/pipeline/mapping/assemble.property.test.ts` so that the assembled output includes `advisories`, stays deterministic (pipeline P38) and non-mutating.
     - **Property 10: Advisory entries mirror the OSV ids**
     - **Validates: Requirements 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.13, 6.14, 6.15**
-  - [~] 5.4 Carry advisories into the Scan_Result and accept the new shape in the cache
+  - [x] 5.4 Carry advisories into the Scan_Result and accept the new shape in the cache
     - In `pipeline/scan/types.ts` and `pipeline/scan/assemble-result.ts` add `advisories` to `ScanDependency` (equal list for every Dependency of a Lookup_Target, `[]` for git, path and capped entries), allow `versionBasis` `resolved`, and update `isScanResult` in `pipeline/scan/scan-cache.ts` to validate `advisories` (array of `{ id, aliases, severity, url }`) and `versionBasis` in `pinned`, `resolved`, `default` or null. Keep the Scan_Result JSON-serializable.
     - _Requirements: 6.1, 6.9, 6.10, 6.12, 10.2_
-  - [~] 5.5 Update the Scan_Result and cache tests
+  - [x] 5.5 Update the Scan_Result and cache tests
     - Update `tests/pipeline/scan/assemble-result.test.ts` and the scan-cache tests (a stored result with `advisories` is read back; an entry without `advisories` is rejected by `isScanResult`), and `tests/pipeline/scan/run-scan.property.test.ts` for pipeline P57 (every entry has an `advisories` list, `[]` when not looked up) and P58 (`versionBasis` in `pinned`, `resolved`, `default` or null; equal `lookupVersion`, `versionBasis` and `advisories` per Lookup_Target).
     - _Requirements: 6.1, 6.9, 6.10, 6.12, 10.2, 10.5_
-  - [~] 5.6 Write the scan-level property test for advisories
+  - [x] 5.6 Write the scan-level property test for advisories
     - `tests/pipeline/scan/advisories.property.test.ts`: scripted sources with generated OSV results, detail outcomes (ok, 404, failed, deadline, cap) and targets with and without a Selected_Version; the Scan_Result `advisories` length equals the distinct OSV id count and entries of one target are equal.
     - **Property 10: Advisory entries mirror the OSV ids**
     - **Validates: Requirements 6.2, 6.5, 6.9, 6.10, 6.13, 6.15**
-  - [~] 5.7 Return a Scan_Outcome from `runScan`
+  - [x] 5.7 Return a Scan_Outcome from `runScan`
     - In `pipeline/scan/run-scan.ts` return `ok({ result, fromCache })` with `fromCache` true only on the Scan_Cache hit branch and false for a fresh scan and for the margin path; store only `result` in the Scan_Cache; export `ScanOutcome` from `pipeline/scan/types.ts` and `pipeline/index.ts`. Adjust every internal caller (`pipeline/api/handle-scan-request.ts` compiles against the new type, the cache header itself is task 5.9).
     - _Requirements: 7.1, 7.2_
-  - [~] 5.8 Update the tests that call `runScan`
+  - [x] 5.8 Update the tests that call `runScan`
     - Update every test that calls `runScan` or reads its result (find them with a search for `runScan(`): `tests/pipeline/scan/run-scan.test.ts`, `run-scan-cases.test.ts`, `run-scan-cache.test.ts`, `run-scan.property.test.ts`, the deadline, token-leak and scripted-source tests, and the fixture helpers. Assert `fromCache` false for a fresh scan, true for a hit, and the unchanged `result`.
     - _Requirements: 7.1, 7.2, 10.5_
-  - [~] 5.9 Set the cache header on 200 responses
+  - [x] 5.9 Set the cache header on 200 responses
     - In `pipeline/api/handle-scan-request.ts` add `cache: 'hit' | 'miss' | null` to `ApiResponse` (non-null only for status 200: `hit` when `fromCache` is true, otherwise `miss`), and make `respond()` write `[CACHE_STATUS_HEADER]` only when it is non-null, keeping `Cache-Control: no-store` on every response. In `app/api/scan/route.ts` copy `ApiResponse.headers` unchanged (read `node_modules/next/dist/docs/` first) and add no scan logic.
     - _Requirements: 7.3, 7.4, 7.5, 7.6_
-  - [~] 5.10 Update the route and handler tests
+  - [x] 5.10 Update the route and handler tests
     - Update `tests/pipeline/api/handle-scan-request.test.ts` (header `miss` on a fresh 200, `hit` on a cached 200, no header on 400, 404, 405, 413, 415, 500, 502, 503 and 504), `tests/pipeline/api/handle-scan-request.property.test.ts` for pipeline P64 (cache header iff status 200 with value `hit` or `miss`, the `details` allow-list gains `candidates`, `Cache-Control: no-store` kept) and `tests/app/scan-route.test.ts` (`route.ts` copies headers and holds no cache logic).
     - _Requirements: 7.3, 7.4, 7.5, 7.6, 8.5, 10.5_
-  - [~] 5.11 Write the property test for the cache header and update the cache-hit test
+  - [x] 5.11 Write the property test for the cache header and update the cache-hit test
     - Create `tests/pipeline/api/cache-header.property.test.ts` and update `tests/pipeline/scan/cache-replay.property.test.ts` (pipeline P68: the body of a hit equals the body of a fresh scan at the cached `asOf` as JSON text for every spelling variant, the body has no `fromCache` text, and the outcome flag differs).
     - **Property 11: The cache header is present on 200 only and never changes the body**
     - **Validates: Requirements 7.1, 7.2, 7.3, 7.4, 7.7, 7.8**
-  - [~] 5.12 Add the manifest candidates to the two errors
+  - [x] 5.12 Add the manifest candidates to the two errors
     - In `pipeline/mapping/selection.ts` return `candidates` (the Discovery_Result paths in discovery order, at most `DISCOVERY_MAX_MANIFESTS`) in the errors `too-many-manifests` and `manifest-not-found`, pass them through `pipeline/scan/stage-manifests.ts`, and write them as `details.candidates` in `pipeline/api/scan-error.ts` (the type `ScanErrorBody` gains the field). Messages stay unchanged and never render `candidates`.
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
-  - [~] 5.13 Update the unit tests for the two errors
+  - [x] 5.13 Update the unit tests for the two errors
     - Update `tests/pipeline/scan/stage-manifests.test.ts` and the selection tests in `tests/pipeline/mapping/` (`too-many-manifests` carries `limit` and `candidates`, `manifest-not-found` carries `path` and `candidates`, an empty tree gives `[]`, 50 or more candidates are capped at `DISCOVERY_MAX_MANIFESTS`, the message text is unchanged).
     - _Requirements: 8.1, 8.2, 8.3, 8.4_
-  - [~] 5.14 Write the property test for the candidates
+  - [x] 5.14 Write the property test for the candidates
     - `tests/pipeline/scan/candidates.property.test.ts`.
     - **Property 9: Candidates equal the discovered manifest paths**
     - **Validates: Requirements 8.1, 8.2, 8.3, 8.6**
 
-- [~] 6. Checkpoint - Advisories, cache header, candidates
+- [x] 6. Checkpoint - Advisories, cache header, candidates
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 7. Fixtures, traceability and live report

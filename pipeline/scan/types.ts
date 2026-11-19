@@ -7,8 +7,7 @@ import type {
   RawHealthFacts,
   RepoSummary,
 } from '@/core';
-import type { Result } from '../internal/result';
-import type { DiscoveryResult, IsoInstant } from '../mapping';
+import type { AdvisoryEntry, DiscoveryResult, IsoInstant } from '../mapping';
 import type {
   Clock,
   GithubConfig,
@@ -69,6 +68,8 @@ export interface ScanDependency {
   readonly versionBasis: 'pinned' | 'resolved' | 'default' | null;
   /** Exactly seven keys, null when unknown. */
   readonly facts: RawHealthFacts;
+  /** Open advisories of the Lookup_Target; equal for every Dependency of it, `[]` when not looked up. */
+  readonly advisories: readonly AdvisoryEntry[];
 }
 
 export interface ScanManifestEntry {
@@ -215,12 +216,12 @@ export type ScanErrorBody =
   | {
       readonly code: 'too-many-manifests';
       readonly message: string;
-      readonly details: { readonly limit: number };
+      readonly details: { readonly limit: number; readonly candidates: readonly string[] };
     }
   | {
       readonly code: 'manifest-not-found';
       readonly message: string;
-      readonly details: { readonly path: string };
+      readonly details: { readonly path: string; readonly candidates: readonly string[] };
     }
   | { readonly code: 'repo-not-found'; readonly message: string }
   | {
@@ -238,4 +239,8 @@ export type ScanErrorBody =
 
 export type ScanError = ScanErrorBody;
 
-export type ScanOutcome = Result<ScanResult, ScanError>;
+/** Scan_Outcome: the success value of `runScan`. `fromCache` is true only for a Scan_Cache hit (scan-accuracy R7.1). */
+export interface ScanOutcome {
+  readonly result: ScanResult;
+  readonly fromCache: boolean;
+}
