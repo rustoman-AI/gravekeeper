@@ -23,8 +23,14 @@ export function serializeManifest(
 ): Result<string, SerializeError>;
 export function classify(facts: unknown): Classification;
 export function summarize(items: readonly AssessedDependency[]): RepoSummary;
+// Pure helpers for consumers (the UI) so no consumer re-implements the merge rules (changed by scan-accuracy):
+export function uniquePackages(items: readonly AssessedDependency[]): UniquePackage[]; // grouping by Package_Key + Merged_Classification, exactly what summarize uses
+export function mergeClassifications(list: readonly Classification[]): MergedClassification; // criterion 12.22 order
+export function compareClassifications(a: Classification, b: Classification): number;       // criterion 12.22 total order
 export * from './model';       // types, CONSTANTS, CORE_ALLOWED_PACKAGES, SCOPE_ORDER
 ```
+
+`uniquePackages` is the grouping-and-merging step of `summarize` (groupAssessed plus mergeClassifications) extracted into a named function so that `summarize` and the UI share one implementation. `summarize` is changed to call it; its results do not change (changed by scan-accuracy). `mergeClassifications` and `compareClassifications` are existing functions in `summarizer/merge.ts` that become public (changed by scan-accuracy).
 
 `parseManifest` takes `text: unknown` and `classify` takes `facts: unknown` on purpose. Callers in `/adapters` hand over data that crossed a trust boundary, and the requirements (4.3, 6.4, 6.6) demand graceful handling of wrongly typed values. The strictly typed `HealthFacts` interface documents the shape callers should produce; it is not trusted at runtime.
 
@@ -404,15 +410,15 @@ Reading is `typeof input === 'object' && input !== null && Object.hasOwn(input, 
 // Requirement 7.1
 export const isVulnerable = (f: NormalizedFacts): boolean => f.openVulnerabilityCount !== null && f.openVulnerabilityCount >= 1;
 
-// Requirement 8.3 (release-based abandonment; unknown commit counts as stale)
+// Requirement 8.3 (release-based abandonment; unknown commit counts as no recent activity) (changed by scan-accuracy: COMMIT_ABANDONMENT_DAYS replaces STALE_DAYS)
 export const isReleaseAbandoned = (f: NormalizedFacts): boolean =>
   f.daysSinceLastRelease !== null && f.daysSinceLastRelease >= ABANDONMENT_DAYS &&
-  (f.daysSinceLastCommit === null || f.daysSinceLastCommit >= STALE_DAYS);
+  (f.daysSinceLastCommit === null || f.daysSinceLastCommit >= COMMIT_ABANDONMENT_DAYS);
 
 // Requirement 8.4
 export const isDormant = (f: NormalizedFacts): boolean =>
   f.daysSinceLastRelease !== null && f.daysSinceLastRelease >= ABANDONMENT_DAYS &&
-  f.daysSinceLastCommit !== null && f.daysSinceLastCommit < STALE_DAYS;
+  f.daysSinceLastCommit !== null && f.daysSinceLastCommit < COMMIT_ABANDONMENT_DAYS;
 
 // Requirements 8.1, 8.2, 8.3
 export const isAbandoned = (f: NormalizedFacts): boolean => f.archived === true || f.deprecated === true || isReleaseAbandoned(f);
@@ -422,17 +428,17 @@ export const isStaleRelease = (f: NormalizedFacts): boolean =>
   f.daysSinceLastRelease !== null && f.daysSinceLastRelease >= STALE_DAYS && f.daysSinceLastRelease < ABANDONMENT_DAYS;
 ```
 
-`isReleaseAbandoned` and `isDormant` are mutually exclusive by construction (the commit condition is `>= STALE_DAYS or unknown` versus `valid and < STALE_DAYS`). `maintainerCount` is not an input to any predicate, which makes Property 17 true structurally.
+`isReleaseAbandoned` and `isDormant` are mutually exclusive by construction (the commit condition is `>= COMMIT_ABANDONMENT_DAYS or unknown` versus `valid and < COMMIT_ABANDONMENT_DAYS`) (changed by scan-accuracy). `maintainerCount` is not an input to any predicate, which makes Property 17 true structurally.
 
 **Rule pipeline (`classifier/pipeline.ts`).** A rule is `{ ruleId: RuleId; evaluate(f: NormalizedFacts): Reason | null }`. The list is declared once, in ascending `ruleId` order. Each rule file has the requirement comment directly above the exported rule:
 
 | # | Rule module | Requirement | Fires when | Reason `facts` |
 |---|---|---|---|---|
-| 1 | `unknown-facts.ts` | 6.3 | `unknownFields.length > 0` | none; message lists the unknown field names |
+| 1 | `unknown-facts.ts` | 6.3 | the reportable list is non-empty: `unknownFields` without `maxSeverity` when `openVulnerabilityCount === 0` (a Valid_Fact equal to 0) | none; message lists the reportable field names with the singular or plural text of criterion 6.3 (singular `This health fact is unknown and adds no risk points: <name>.`, plural `These health facts are unknown and add no risk points: <a, b and c>.`) (changed by scan-accuracy) |
 | 2 | `vulnerability.ts` | 7.2, 7.3 | `isVulnerable` | `openVulnerabilityCount`, `maxSeverity` (assumed `DEFAULT_SEVERITY` if unknown, message says "assumed") |
 | 3 | `archived.ts` | 8.1 | `archived === true` | `archived` |
 | 4 | `deprecated.ts` | 8.2 | `deprecated === true` | `deprecated` |
-| 5 | `release-abandoned.ts` | 8.3 | `isReleaseAbandoned` | `daysSinceLastRelease`, `daysSinceLastCommit` (null means unknown and assumed stale) |
+| 5 | `release-abandoned.ts` | 8.3 | `isReleaseAbandoned` | `daysSinceLastRelease`, `daysSinceLastCommit` (null means unknown and assumed to show no recent activity; the message names `COMMIT_ABANDONMENT_DAYS` instead of `STALE_DAYS`) (changed by scan-accuracy) |
 | 6 | `release-dormant.ts` | 8.4 | `isDormant` | `daysSinceLastRelease`, `daysSinceLastCommit` |
 | 7 | `release-stale.ts` | 10.6 | `isStaleRelease` | `daysSinceLastRelease` as a whole number of days |
 | 8 | `no-maintainers.ts` | 10.7 | `maintainerCount === 0` | `maintainerCount` |
@@ -440,7 +446,7 @@ export const isStaleRelease = (f: NormalizedFacts): boolean =>
 
 After evaluation the pipeline sorts by `(requirement, criterion)` compared as integers (criterion 11.5; a defensive sort, the declaration order already satisfies it). If the list is empty it appends the `11.2` Reason: empty `facts`, message "No risk signals were found." (11.2). Because `11.2` is added only when no other Reason exists, and `6.3` fires whenever any fact is unknown, `11.2` appears only when every fact is valid and no rule fired. The maximum Reason count is 8 (rules 1, 2, 3, 4, one of 5/6/7, one of 8/9), within the 1 to 20 bound (11.1).
 
-Messages are single sentences built from templates such as `"daysSinceLastRelease is 800, at least ABANDONMENT_DAYS (730), and daysSinceLastCommit is 400, at least STALE_DAYS (365), so the package looks abandoned."`. Numbers are formatted with `String(n)`. A unit test builds the longest possible message (the `6.3` reason listing all seven fields, and `8.3` with 22-character numbers) and asserts the length is at most 200.
+Messages are single sentences built from templates such as `"daysSinceLastRelease is 800, at least ABANDONMENT_DAYS (730), and daysSinceLastCommit is 800, at least COMMIT_ABANDONMENT_DAYS (730), so the package looks abandoned."` (changed by scan-accuracy). Numbers are formatted with `String(n)`. A unit test builds the longest possible message (the `6.3` reason listing all seven fields, and `8.3` with 22-character numbers) and asserts the length is at most 200.
 
 **Status (`classifier/status.ts`, Requirement 9):**
 
@@ -506,6 +512,7 @@ export function summarize(items: readonly AssessedDependency[]): RepoSummary {
 }
 ```
 
+0. **Public helpers (changed by scan-accuracy)**: steps 1 to 3 below are exposed as `uniquePackages(items)` in `summarizer/unique-packages.ts` (`groupAssessed` plus `mergeClassifications` per group), and `core/index.ts` re-exports `uniquePackages`, `mergeClassifications` and `compareClassifications` (criteria 13.12, 13.13). `summarizeUnguarded` calls `uniquePackages` instead of grouping inline, so the UI and the Summarizer share one implementation. The functions are total (wrapped by `guard` like `summarize`) and pure.
 1. **Group** (`group.ts`, 12.1): iterate the input once and fill a `Map<string, Group>` keyed by the Package_Key `JSON.stringify([ecosystem, name, sourceKind])`. `scope` and `versionSpec` are not in the key, so the same package in `runtime` and `dev` joins one group. Each `Group` holds `{ name, ecosystem, sourceKind, scopeSet: Set<Scope>, classifications: Classification[] }`. For each entry the scope is added to `scopeSet`, and a non-null classification is appended to `classifications`. Maps and sets are used, so `__proto__` names are safe.
 2. **Finish each group into a Unique_Package**: `scopes = SCOPE_ORDER.filter((s) => scopeSet.has(s))` (sorted in Scope_Order, no repeats, non-empty for well-typed input) and `classification = mergeClassifications(classifications)`, which is null for an empty list.
 3. **Merge** (`merge.ts`, Merged_Classification): pick the minimum of `classifications` under `compareClassifications`: `score` descending; then status precedence `HAUNTED`, `DEAD`, `ALIVE`; then `classificationTieKey` ascending; then `canonicalKey` ascending. `classificationTieKey(c)` is the tuple of the three flags `vulnerable`, `abandoned`, `dormant` (false before true) followed by the string `c.reasons.map((r) => r.ruleId).join(',')` compared by code point. The result does not depend on input order whenever the comparator is a total order on the group's distinct classifications. The Classification_Tie_Key alone is not total: two classifications with the same score, status, flags and `ruleId` list can differ in Reason text (for example `8.3` with 800 and with 900 days). The final `canonicalKey(c)`, the Classification_Canonical_Key, makes the order total (criterion 12.22). It is the canonical JSON of the whole Classification: no insignificant whitespace, keys of every object sorted in code point order at every depth, array order (such as `reasons`) kept. Equal keys mean deeply equal Classifications, so the choice is independent of input order (12.10). `internal/deep-equal-key.ts` implements it with a recursive writer that sorts keys by `compareCodePoints` and emits strings through `JSON.stringify`.
@@ -664,7 +671,8 @@ Field names match `requirements.md` exactly. `total` counts Unique_Packages, not
 // core/model/constants.ts
 export const CONSTANTS = {
   ABANDONMENT_DAYS: 730,
-  STALE_DAYS: 365,
+  COMMIT_ABANDONMENT_DAYS: 730, // changed by scan-accuracy: commit-age threshold of rules 8.3 and 8.4
+  STALE_DAYS: 365,               // changed by scan-accuracy: used by rule 10.6 only
   SEVERITY_POINTS: { LOW: 10, MEDIUM: 20, HIGH: 35, CRITICAL: 50 },
   DEFAULT_SEVERITY: 'MEDIUM',
   VULN_COUNT_POINTS_EACH: 2,
@@ -691,7 +699,7 @@ export const CONSTANTS = {
 } as const satisfies ConstantsShape;
 
 export const {
-  ABANDONMENT_DAYS, STALE_DAYS, SEVERITY_POINTS, DEFAULT_SEVERITY, /* ... every key ... */
+  ABANDONMENT_DAYS, COMMIT_ABANDONMENT_DAYS, STALE_DAYS, SEVERITY_POINTS, DEFAULT_SEVERITY, /* ... every key ... */
 } = CONSTANTS;
 
 export const SEVERITIES = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] as const satisfies readonly Severity[];
@@ -820,19 +828,19 @@ Reflection (redundancy removed):
 
 ### Property 14: Unknown facts are reported exactly once (extra)
 
-*For any* raw facts value, let `U` be the set of fields that are Unknown_Facts according to the oracle (null, missing, wrong type, NaN, infinite, negative, or non-integer for count fields). If `U` is non-empty, the Reasons contain exactly one Reason with `ruleId` `6.3` whose listed field names are exactly `U`, each once. If `U` is empty, there is no `6.3` Reason. If `U` contains all seven fields, the result is status `ALIVE`, score 0 and exactly that one Reason.
+*For any* raw facts value, let `U` be the set of fields that are Unknown_Facts according to the oracle (null, missing, wrong type, NaN, infinite, negative, or non-integer for count fields), and let `V` be `U` without `maxSeverity` when `openVulnerabilityCount` is a Valid_Fact equal to 0. If `V` is non-empty, the Reasons contain exactly one Reason with `ruleId` `6.3` whose listed field names are exactly `V`, each once, in field order, and whose `message` equals the singular text of criterion 6.3 when `V` has one element and the plural text when `V` has two or more. If `V` is empty, there is no `6.3` Reason. If `U` contains all seven fields, the result is status `ALIVE`, score 0 and exactly that one Reason. (changed by scan-accuracy)
 
-**Validates: Requirements 6.3, 6.5, 6.6**
+**Validates: Requirements 6.3, 6.5, 6.6** (changed by scan-accuracy)
 
 ### Property 15: Abandoned flag matches its definition
 
-*For any* raw facts value, `abandoned` is true if and only if `archived` is true, or `deprecated` is true, or `daysSinceLastRelease` is a Valid_Fact at least `ABANDONMENT_DAYS` and `daysSinceLastCommit` is either a Valid_Fact at least `STALE_DAYS` or an Unknown_Fact.
+*For any* raw facts value, `abandoned` is true if and only if `archived` is true, or `deprecated` is true, or `daysSinceLastRelease` is a Valid_Fact at least `ABANDONMENT_DAYS` and `daysSinceLastCommit` is either a Valid_Fact at least `COMMIT_ABANDONMENT_DAYS` or an Unknown_Fact. (changed by scan-accuracy)
 
 **Validates: Requirements 8.10**
 
 ### Property 16: Dormant flag matches its definition
 
-*For any* raw facts value, `dormant` is true if and only if `daysSinceLastRelease` is a Valid_Fact at least `ABANDONMENT_DAYS` and `daysSinceLastCommit` is a Valid_Fact less than `STALE_DAYS`; and whenever `dormant` is true there is no Reason with `ruleId` `8.3`.
+*For any* raw facts value, `dormant` is true if and only if `daysSinceLastRelease` is a Valid_Fact at least `ABANDONMENT_DAYS` and `daysSinceLastCommit` is a Valid_Fact less than `COMMIT_ABANDONMENT_DAYS`; and whenever `dormant` is true there is no Reason with `ruleId` `8.3`.
 
 **Validates: Requirements 8.11**
 
@@ -880,7 +888,7 @@ Reflection (redundancy removed):
 
 ### Property 24: Unknown severity scores like MEDIUM
 
-*For any* facts value in which `maxSeverity` is an Unknown_Fact (null, missing, wrong type or an unrecognized string such as `"critical"`), including the cases `openVulnerabilityCount` equal to 0, unknown, or at least 1, `classify` returns the same `status`, the same `score`, the same flags and the same sequence of Reason `ruleId` values, after removing the `6.3` and `11.2` entries from both sequences, as for the same facts with `maxSeverity` set to `DEFAULT_SEVERITY` (`MEDIUM`). Only the text and `facts` of the `7.2` Reason and the presence of the `6.3` and `11.2` Reasons may differ. (Counterexample that led to this: all facts known and healthy except `maxSeverity: null` gives only `6.3`, while `MEDIUM` gives only `11.2`; user decision in session 7.)
+*For any* facts value in which `maxSeverity` is an Unknown_Fact (null, missing, wrong type or an unrecognized string such as `"critical"`), including the cases `openVulnerabilityCount` equal to 0, unknown, or at least 1, `classify` returns the same `status`, the same `score`, the same flags and the same sequence of Reason `ruleId` values, after removing the `6.3` and `11.2` entries from both sequences, as for the same facts with `maxSeverity` set to `DEFAULT_SEVERITY` (`MEDIUM`). Only the text and `facts` of the `7.2` Reason and the presence of the `6.3` and `11.2` Reasons may differ. When `openVulnerabilityCount` is 0 the `6.3` Reason no longer lists `maxSeverity` (criterion 6.3), so the oracle computes the expected `6.3` presence with the reportable set `V` of Property 14 (changed by scan-accuracy). (Counterexample that led to this: all facts known and healthy except `maxSeverity: null` gives only `6.3`, while `MEDIUM` gives only `11.2`; user decision in session 7.)
 
 **Validates: Requirements 10.24, 7.3**
 
@@ -1016,6 +1024,12 @@ Reflection (redundancy removed):
 
 **Validates: Requirements 12.24, 12.15**
 
+### Property 47: Exported merge functions agree with the Summarizer (changed by scan-accuracy)
+
+*For any* list of Assessed_Dependencies, `uniquePackages(items).length` equals `summarize(items).total`, and the Merged_Classification of each Unique_Package equals the one the Summarizer ranks for it. *For any* non-empty list of Classifications, `mergeClassifications(list)` is a member of the list and no other member is smaller under `compareClassifications`.
+
+**Validates: Requirements 13.12, 13.13**
+
 **Traceability: criterion to property**
 
 | Criterion | Tag | Property |
@@ -1060,6 +1074,7 @@ Reflection (redundancy removed):
 | 12.20 | [PBT] | Property 40 |
 | 12.21 | [PBT] | Property 41 |
 | 12.23 | [PBT] | Property 45 |
+| 13.13 | [PBT] | Property 47 (changed by scan-accuracy) |
 | 12.24 | [PBT] | Property 46 |
 | 4.11 | [PBT] | Property 8 |
 | 13.7 | [PBT] | Property 43 |
@@ -1269,7 +1284,7 @@ Per-ecosystem spec generators produce only values consistent with `sourceKind`: 
 ### Generator strategy: facts
 
 ```ts
-const dayBoundaries = [0, 1, STALE_DAYS - 1, STALE_DAYS, STALE_DAYS + 1, ABANDONMENT_DAYS - 1, ABANDONMENT_DAYS, ABANDONMENT_DAYS + 1, 3650] as const;
+const dayBoundaries = [0, 1, STALE_DAYS - 1, STALE_DAYS, STALE_DAYS + 1, ABANDONMENT_DAYS - 1, ABANDONMENT_DAYS, ABANDONMENT_DAYS + 1, COMMIT_ABANDONMENT_DAYS - 1, COMMIT_ABANDONMENT_DAYS, COMMIT_ABANDONMENT_DAYS + 1, 3650] as const; // COMMIT_ABANDONMENT_DAYS entries added by scan-accuracy
 const arbValidDays = fc.oneof(
   { weight: 5, arbitrary: fc.constantFrom(...dayBoundaries) },
   { weight: 3, arbitrary: fc.integer({ min: 0, max: 5000 }) },
@@ -1298,7 +1313,7 @@ export const arbValidFacts = /* same record but only valid values or null (no wr
 | `arbVulnIncrement` | base with a Valid_Fact `openVulnerabilityCount` (boundary-biased: 0, 1, 2, 3, 4), second = count + 1 | 22 |
 | `arbSeverityRaise` | base with a known `maxSeverity`, second = a strictly higher known Severity (choose index pair `i < j` in `SEVERITIES`, so no `fc.pre`) | 23 |
 | `arbUnknownSeverityPair` | base facts (count biased to 0, 1, 2, null, 7) and a bad severity drawn from `null`, missing, `'critical'`, `'SEVERE'`, `''`, numbers, objects; second = same facts with `maxSeverity: 'MEDIUM'`. The oracle removes `6.3` from both `ruleId` sequences before comparing | 24 |
-| `arbReleasePair` | base facts plus `d1 <= d2` from `arbValidDays`, with a 40 percent weight on pairs that straddle `STALE_DAYS` or `ABANDONMENT_DAYS`; `daysSinceLastCommit` biased to `STALE_DAYS - 1`, `STALE_DAYS`, null | 25 |
+| `arbReleasePair` | base facts plus `d1 <= d2` from `arbValidDays`, with a 40 percent weight on pairs that straddle `STALE_DAYS` or `ABANDONMENT_DAYS`; `daysSinceLastCommit` biased to `COMMIT_ABANDONMENT_DAYS - 1`, `COMMIT_ABANDONMENT_DAYS`, null (changed by scan-accuracy) | 25 |
 | `arbFlagRaise` | base with `archived` or `deprecated` false, second = true | 26 |
 | `arbAbandonmentRaise` | two variants of `(archived, deprecated, release, commit)` over the same other fields, filtered by the oracle so first is not abandoned and second is | 27 |
 | `arbHauntedAndAbandoned` | constructive: count integer from 1 up, optional severity, plus one of: `archived = true`, `deprecated = true`, or release at least 730 with commit at least 365 or null; other fields random. A helper `removeVulnerability(f)` and `removeAbandonment(f)` implement the definitions of criterion 10.18 | 28 |
@@ -1334,9 +1349,9 @@ Unit tests cover what properties do not pin down well:
 | Boundary | Examples and generator bias |
 |---|---|
 | `daysSinceLastRelease` | `ABANDONMENT_DAYS - 1` (no 8.3, no 8.4, but 10.6), `ABANDONMENT_DAYS` (8.3 or 8.4), `STALE_DAYS - 1`, `STALE_DAYS` (10.6 begins), 0, `-0`, fractional, `NaN`, `Infinity`, negative |
-| `daysSinceLastCommit` at release at least 730 | `STALE_DAYS - 1` gives 8.4 and no 8.3, `STALE_DAYS` gives 8.3 and no 8.4, null gives 8.3 with "assumed stale", 0 gives 8.4 |
+| `daysSinceLastCommit` at release at least 730 | `COMMIT_ABANDONMENT_DAYS - 1` gives 8.4 and no 8.3, `COMMIT_ABANDONMENT_DAYS` gives 8.3 and no 8.4, `STALE_DAYS` (365) gives 8.4, null gives 8.3 with "assumed" wording, 0 gives 8.4 (changed by scan-accuracy) |
 | `openVulnerabilityCount` | 0, 1, 2, 3 (extra points just below cap), 4 (cap reached), 7, 100, `-1`, `0.5`, `NaN`, `Infinity`, null |
-| `maxSeverity` | each Severity, null with count at least 1 (assumed `MEDIUM`, Reason says "assumed"), invalid string, ignored when count is 0 |
+| `maxSeverity` | each Severity, null with count at least 1 (assumed `MEDIUM`, Reason says "assumed"), invalid string, ignored when count is 0 and then never listed in `6.3` (changed by scan-accuracy) |
 | `maintainerCount` | 0, 1, 2, null, `-1`, `1.5` |
 | Component caps | archived plus deprecated plus release 8.3 (subtotal 75 capped to 30); CRITICAL with 7 vulnerabilities (55); worst case total 100 |
 | Grades | scores 0, 19, 20, 39, 40, 59, 60, 79, 80, 100 through `grade(score)`, `averageScore` and `maxScore` on both sides of each threshold, and `grade(maxScore)` with `averageScore` on the other side of the threshold (the average never changes the grade) |

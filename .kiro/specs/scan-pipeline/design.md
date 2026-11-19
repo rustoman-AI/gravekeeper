@@ -30,6 +30,7 @@ The scan pipeline turns one public GitHub repository URL into one typed `Scan_Re
 | D11 | The Scan_Cache key is `(CACHE_KEY_VERSION, Web_Host, canonical owner, canonical repo, branch, defaultBranch, Commit_SHA, sorted manifest paths)`. Canonical spelling comes from the REST `full_name` and is never lowercased. A hit returns the stored Scan_Result unchanged. There is no "patch repo on hit" step. The repository and branch requests run on every scan, hit or miss. | R19.5, R19.6, R3.13, R18.1, OQ33. The stored `repo` object equals the `repo` object of a fresh scan, so a hit equals a fresh scan (P62, P68). |
 | D12 | Cache entry compaction lives in `pipeline/ports/l2-entries.ts`, a pure file that adapters may import (R22.9 allows `/pipeline/ports` and `constants.ts`). It exports `compactOsvAdvisory`, `compactDepsDevAdvisory` and `compactCratesOwners`, each taking a body text and returning a smaller JSON text of the same shape. The Mappers read compact text and full text with the same result (P71). | `adapters` may not import `pipeline/mapping`, and the `CachingHttpClient` has to compact before it writes (R19.27). |
 | D13 | Fixture bodies are recorded byte-exact and are never trimmed. The three fixture repositories are chosen by measured size so that each Fixture_Set is at most `FIXTURE_SET_MAX_BYTES` (Fixture Recording and Replay, "The three fixture repositories"). The recorder refuses to write an oversized set. | R23.16. A trimmed body would no longer be what the upstream sent, and the measured sets fit without it. The earlier measurements used PyPI project documents (0.2 to 9 MB each); EF-22 now reads the per-version document, so this limit applies mainly to the recursive tree (OQ-D11, closed). |
+| D14 | Version choice has three outcomes: `pinned`, `resolved`, `default`. `chooseVersion` (new, `pipeline/mapping/version-choose.ts`) takes the ecosystem, every `versionSpec` of the target and the deps.dev version list. It calls `exactPin` and `selectVersion` for pins, and `resolveRange` for Declared_Ranges. `readDepsDevVersions` supplies the list, so no request is added. | scan-accuracy R3, pipeline R7.14 to R7.23. Range resolution reuses the version list of EF-1. (changed by scan-accuracy) | | D15 | `semver` 7.8.6 and `@renovatebot/pep440` 5.0.1 are pinned exactly and imported by exactly two wrapper files, `range-semver.ts` and `range-pep440.ts`, which catch every exception. The architecture rule `range-package-not-allowed` enforces this. Evidence and the choice of 5.0.1 over 6.0.0 are in the design of scan-accuracy. | R22.18, R13.1 (changed by scan-accuracy) | | D16 | `runScan` returns `Result<ScanOutcome, ScanError>` with `ScanOutcome = { result: ScanResult; fromCache: boolean }`. Only `result` is cached and serialized. `ApiResponse` carries `cache: 'hit' \| 'miss' \| null`, and `respond()` writes the header named by `CACHE_STATUS_HEADER` when the status is 200 and `cache` is not null. | R19.33, R21.17. The body never contains the flag, so P68 holds (changed by scan-accuracy). | | D17 | `advisories` is built in `assembleFacts` from the same OSV result and advisory records that produce the counts (`buildAdvisoryEntries`), so the list and `openVulnerabilityCount` cannot read different data. | R18.13 to R18.15 (changed by scan-accuracy) |
 
 ### Research summary and sources
 
@@ -176,7 +177,7 @@ sequenceDiagram
   and maintainers and npm deprecation
     P->>N: npm latest, crates owners per target
   end
-  P->>P: selectVersion per target
+  P->>P: chooseVersion per target (pin, range or default)
   par source repository links
     P->>D: POST versionbatch, fallback to single version documents
   and vulnerability ids
@@ -553,7 +554,12 @@ export type Fetched<T> =
 | `parseIsoInstant` | `(value: unknown) => number \| null` (epoch ms) | EF-1, EF-17 | R6.3, R6.5 |
 | `dayCount` | `(date: unknown, asOf: string) => number \| null` | EF-1, EF-17 | R6.3 to R6.5, R6.8 |
 | `exactPin` | `(versionSpec: unknown, ecosystem: unknown) => string \| null` | none | R7.1 to R7.3, R7.10 |
-| `selectVersion` | `(pins: readonly string[], versions: readonly string[], defaultVersion: string \| null) => VersionSelection` | EF-1 | R7.4 to R7.8, R7.11 to R7.13 |
+| `selectVersion` | `(pins: readonly string[], versions: readonly string[], defaultVersion: string \| null) => VersionSelection` | EF-1 | R7.4 to R7.8, R7.11, R7.12. Handles pins only; `chooseVersion` calls it |
+| `chooseVersion` | `(ecosystem: unknown, specs: readonly unknown[], versions: readonly string[], defaultVersion: string \| null) => VersionSelection` | EF-1 | R7.6, R7.7, R7.13 to R7.20 (changed by scan-accuracy). Splits `specs` into Exact_Pins (`exactPin`) and Declared_Ranges (trimmed, non-empty, not a pin). One distinct pin or several: `selectVersion`. None: no Declared_Range gives the default version; otherwise `resolveRange` and, when it returns `unresolved`, the default version plus the `range-unresolved` note |
+| `resolveRange` | `(ecosystem: Ecosystem, ranges: readonly string[], versions: readonly string[]) => { kind: 'resolved'; version: string } \| { kind: 'unresolved' }` | EF-1 | R7.14 to R7.17, R7.21 to R7.23 (changed by scan-accuracy). Builds Version_Candidates (valid, non-prerelease), parses every range (`RANGE_MAX_LENGTH` check first), returns the highest candidate that satisfies all ranges, first listed wins a tie |
+| `cargoToSemverRange` | `(requirement: string) => string \| null` | none | scan-accuracy R4 (changed by scan-accuracy). Table in `range-cargo.ts` (design of scan-accuracy). Pure string work, no package |
+| `buildAdvisoryEntries` | `(ids: readonly string[], records: ReadonlyMap<string, AdvisoryRecord>) => readonly AdvisoryEntry[]` | EF-5, EF-6 | R18.13, R18.14 (changed by scan-accuracy). One entry per distinct id, sorted by code point, `url` from `advisoryUrl` |
+| `advisoryUrl` | `(id: string) => string` | none | R18.13 (changed by scan-accuracy). `ADVISORY_URL_PREFIX` plus the id with every UTF-8 byte outside `A-Za-z0-9._:-` percent-encoded |
 | `readDepsDevVersions` | `(body: unknown) => { defaultVersion: string \| null; versions: readonly string[] }` | EF-1 | R7.6, R8.4 |
 | `mapDepsDevPackage` | `(body: unknown, selectedVersion: string \| null, asOf: string) => { daysSinceLastRelease: number \| null; deprecated: boolean \| null; defaultVersion: string \| null; versions: readonly string[] }` | EF-1 | R8.2 to R8.4 |
 | `mapNpmLatest` | `(body: unknown) => { maintainerCount: number \| null; deprecated: boolean \| null }` | EF-20 | R12.1, R8.6 |
@@ -585,13 +591,14 @@ export type Fetched<T> =
 Supporting types (all in `pipeline/mapping/types.ts`):
 
 ```ts
-export type VersionBasis = 'pinned' | 'default';
+export type VersionBasis = 'pinned' | 'resolved' | 'default';   // 'resolved' added by scan-accuracy
 export interface VersionSelection {
   readonly selected: string | null;
   readonly basis: VersionBasis | null;
   readonly notes: readonly ({ code: 'pin-not-found'; pinned: string }
                           | { code: 'no-default-version' }
-                          | { code: 'conflicting-pins'; pins: readonly string[] })[];
+                          | { code: 'conflicting-pins'; pins: readonly string[] }
+                          | { code: 'range-unresolved'; ranges: readonly string[] })[];   // added by scan-accuracy
 }
 export type BatchEntry = { readonly found: false } | { readonly found: true; readonly sourceRepo: SourceRepo | null };
 export type OsvQueryResult =
@@ -635,8 +642,15 @@ export interface RawTargetInputs {
   readonly repository: Fetched<GraphqlRepoResult> | 'no-source-repo';
   readonly webHost: string;
 }
+export interface AdvisoryEntry {                           // added by scan-accuracy (R18.13)
+  readonly id: string;
+  readonly aliases: readonly string[];                 // distinct string aliases other than id, ascending; [] when not fetched
+  readonly severity: Severity | null;                  // null when not fetched or unknown
+  readonly url: string;                                // ADVISORY_URL_PREFIX + percent-encoded id
+}
 export interface AssembledFacts {
   readonly facts: RawHealthFacts;                            // exactly the seven keys (R13.4)
+  readonly advisories: readonly AdvisoryEntry[];             // one per distinct OSV id, sorted (R18.13), added by scan-accuracy
   readonly selection: VersionSelection;
   readonly notes: readonly TargetNote[];                     // package-not-found, informational-advisory-excluded,
                                                              // unmaintained-advisory, advisory-details-incomplete,
@@ -698,7 +712,8 @@ export interface ScanDeps {
   readonly deadlineMs?: number;                    // default SCAN_DEADLINE_MS. Set only by the recorder and by tests.
 }
 
-export function runScan(input: ScanInput, deps: ScanDeps): Promise<Result<ScanResult, ScanError>>;
+export interface ScanOutcome { readonly result: ScanResult; readonly fromCache: boolean }   // fromCache true only for a Scan_Cache hit (R19.33); never serialized into the body
+export function runScan(input: ScanInput, deps: ScanDeps): Promise<Result<ScanOutcome, ScanError>>;   // changed by scan-accuracy: was Result<ScanResult, ScanError>
 ```
 
 `runScan` is wrapped in a `guard` that converts a thrown exception into `internal-error` (R21.8). Internals:
@@ -727,6 +742,7 @@ export interface ApiResponse {
   readonly status: 200 | 400 | 404 | 405 | 413 | 415 | 500 | 502 | 503 | 504;
   readonly headers: Readonly<Record<string, string>>;   // Content-Type, Cache-Control: no-store, Allow, Retry-After
   readonly body: ScanResponseBody;                      // { ok: true, ...ScanResult } | { ok: false, error: ScanErrorBody }
+  readonly cache: 'hit' | 'miss' | null;                // non-null only with status 200; written as the CACHE_STATUS_HEADER header (R21.17), never in the body. Added by scan-accuracy
 }
 export interface ApiDeps extends Omit<ScanDeps, 'config' | 'limits' | 'progress'> {
   readonly readEnv: () => RuntimeEnv;    // GITHUB_API_URL, GITHUB_GRAPHQL_URL (strings or undefined)
@@ -734,7 +750,7 @@ export interface ApiDeps extends Omit<ScanDeps, 'config' | 'limits' | 'progress'
 export function handleScanRequest(request: RawScanRequest, deps: ApiDeps): Promise<ApiResponse>;
 ```
 
-Order inside `handleScanRequest` (R21.3, R21.13, R21.14): method check (405, body untouched) then media type (415), then bounded body read (413), then UTF-8 and JSON parse (400), then the field checks of R21.2 in the order of R21.3(d) to (h), then config (a), URL (b), branch (c), branch conflict (d), then the single clock reading that gives `startedAtMs` and `asOf`, then the scan with the margin race (see Deadline and Cancellation Model). Every response, error or not, goes through one `respond()` function that sets `Content-Type: application/json` and `Cache-Control: no-store` and builds `Retry-After` and `Allow`.
+Order inside `handleScanRequest` (R21.3, R21.13, R21.14): method check (405, body untouched) then media type (415), then bounded body read (413), then UTF-8 and JSON parse (400), then the field checks of R21.2 in the order of R21.3(d) to (h), then config (a), URL (b), branch (c), branch conflict (d), then the single clock reading that gives `startedAtMs` and `asOf`, then the scan with the margin race (see Deadline and Cancellation Model). Every response, error or not, goes through one `respond()` function that sets `Content-Type: application/json` and `Cache-Control: no-store` and builds `Retry-After` and `Allow`. When the status is 200, `respond()` also sets the header named by `CACHE_STATUS_HEADER` to `hit` or `miss` from `ApiResponse.cache` (a Scan_Cache hit gives `hit`; a fresh scan and a margin-path result give `miss`); on any other status the header is not set (R21.17; changed by scan-accuracy). `route.ts` copies `ApiResponse.headers` unchanged, so it needs no cache logic.
 
 ### Route handler (`app/api/scan/route.ts`)
 
@@ -1079,7 +1095,8 @@ Notes and caveats:
 | `L2_OPERATION_TIMEOUT_MS` | 300 | bound on one L2 `get` or `set` (R19.24, R19.25) |
 | `L2_MAX_SCAN_BYTES` | 1000000 | largest serialized Scan_Result written to L2 (Runtime Cache item limit is 2 MB) |
 | `L2_MAX_BODY_BYTES` | 262144 | largest serialized advisory or owners entry written to L2 |
-| `CACHE_KEY_VERSION` | 1 | prefix `gravekeeper:v1` of every L2 key and first field of the Scan_Cache key |
+| `CACHE_KEY_VERSION` | 2 | prefix `gravekeeper:v2` of every L2 key and first field of the Scan_Cache key (changed by scan-accuracy: was 1) |
+| `RANGE_MAX_LENGTH`, `ADVISORY_URL_PREFIX`, `CACHE_STATUS_HEADER` | 256, `https://osv.dev/vulnerability/`, `X-Gravekeeper-Cache` | range length bound (R7.17), advisory links (R18.13), cache header (R21.17); new, changed by scan-accuracy |
 | `RESPONSE_HEADER_ALLOWLIST` | `content-type`, `retry-after`, `x-ratelimit-` prefix | headers the HTTP client exposes (R23.7) |
 | `ROUTE_MAX_DURATION_SECONDS` | 30 | `maxDuration` of `route.ts` (R21.16) |
 | `FIXTURE_SET_MAX_BYTES` | 1048576 | size limit of one Fixture_Set (R23.16) |
@@ -1098,7 +1115,8 @@ export type NoteCode =
   | 'manifest-fetch-failed' | 'pin-not-found' | 'no-default-version' | 'conflicting-pins' | 'package-not-found'
   | 'batch-fallback' | 'source-repo-unverified' | 'informational-advisory-excluded' | 'advisory-details-incomplete'
   | 'osv-pagination-ignored' | 'github-token-missing' | 'github-budget-low' | 'maintainers-lower-bound'
-  | 'dependency-cap-exceeded' | 'scan-deadline-reached' | 'source-partial' | 'source-failed' | 'unmaintained-advisory';
+  | 'dependency-cap-exceeded' | 'scan-deadline-reached' | 'source-partial' | 'source-failed' | 'unmaintained-advisory'
+  | 'range-unresolved';   // added by scan-accuracy
 
 export interface ScanNote {
   readonly code: NoteCode;
@@ -1112,8 +1130,9 @@ export interface ScanDependency {
   readonly dependency: Dependency;
   readonly manifestPath: string;
   readonly lookupVersion: string | null;
-  readonly versionBasis: 'pinned' | 'default' | null;
+  readonly versionBasis: 'pinned' | 'resolved' | 'default' | null;   // 'resolved' added by scan-accuracy
   readonly facts: RawHealthFacts;                              // exactly seven keys, null when unknown
+  readonly advisories: readonly AdvisoryEntry[];               // added by scan-accuracy (R18.13); [] when not looked up
 }
 
 export interface ScanResult {
@@ -1173,6 +1192,13 @@ export interface LookupTarget {
 ```
 
 Targets are built from registry Dependencies of the fetched and parsed manifests, deduplicated by `(ecosystem, name)`, sorted by `(ecosystem, name)` in code point order, and cut to `limits.maxDependencies` (R16.1 to R16.4).
+
+### Notes added by scan-accuracy
+
+- **Version resolution** (R7.14 to R7.23). `chooseVersion` replaces the direct call of `selectVersion` in stage S6. The version list comes from the deps.dev package document that S5 already fetched, so no request is added and the stage table is unchanged. `resolveRange` is the only code that imports `semver` and `@renovatebot/pep440` (through two wrapper files). The evidence for both packages, the Cargo mapping table and the decision for several `versionSpec` values per target are in `.kiro/specs/scan-accuracy/design.md`.
+- **Fixtures.** The fixture requests for version-specific documents (deps.dev version document, OSV query, PyPI per-version document) depend on the Selected_Version. A resolved version differs from the earlier default version for ranged dependencies, so the Fixture_Sets of the three repositories are re-recorded by the recorder (task 7.1 of scan-accuracy). The coverage test (R23.13) and the scan tests (R23.4, R23.5) keep their rules.
+- **Cache budget.** Each `dependencies` entry now carries `advisories`. A Scan_Result larger than `L2_MAX_SCAN_BYTES` is kept in L1 only (R19.28), as before. `CACHE_KEY_VERSION` is 2, so no earlier L1 or L2 entry is read.
+- **Core changes.** The classifier criteria 6.3, 8.3 and 8.4 and the exports `uniquePackages`, `mergeClassifications` and `compareClassifications` change in `/core` through the spec `scan-accuracy`. The Mappers and the orchestrator call `classify` and `summarize` unchanged.
 
 ---
 
@@ -1262,15 +1288,15 @@ Counterexample that caused this wording (fast-check seed -914370393): `GITHUB_AP
 
 **Validates: Requirements 6.9**
 
-### Property 14: Version_Selector accepts only exact pins
+### Property 14: Version_Selector accepts only exact pins (changed by scan-accuracy)
 
-*For any* string, null, whitespace-only or non-string `versionSpec` and any ecosystem, `exactPin` returns null or the `<v>` of R7.1 without its operator, returns non-null only for the patterns of R7.1 and R7.2, and does not throw.
+*For any* string, null, whitespace-only or non-string `versionSpec` and any ecosystem, `exactPin` returns null or the `<v>` of R7.1 without its operator, returns non-null only for the patterns of R7.1 and R7.2, and does not throw. Unchanged in behaviour: every other non-empty `versionSpec` is a Declared_Range for `chooseVersion` (P15, and Properties 3 to 5 of scan-accuracy).
 
 **Validates: Requirements 7.10**
 
-### Property 15: Version selection does not depend on spec order
+### Property 15: Version selection does not depend on spec order (changed by scan-accuracy)
 
-*For any* list of `versionSpec` values of one Lookup_Target and any permutation of it, `selectVersion` returns the same Selected_Version, Version_Basis and notes.
+*For any* list of `versionSpec` values of one Lookup_Target (exact pins, ranges, empty strings and arbitrary strings of each ecosystem) and any permutation of it, `chooseVersion` returns the same Selected_Version, Version_Basis (`pinned`, `resolved` or `default`) and notes.
 
 **Validates: Requirements 7.13**
 
@@ -1520,15 +1546,15 @@ Counterexample that caused this wording (fast-check seed -914370393): `GITHUB_AP
 
 **Validates: Requirements 18.8**
 
-### Property 57: Result lists have matching lengths
+### Property 57: Result lists have matching lengths (changed by scan-accuracy)
 
-*For any* dependency list, `assessed` and `dependencies` each have the same length as the parsed Dependencies of the fetched and parsed manifests.
+*For any* dependency list, `assessed` and `dependencies` each have the same length as the parsed Dependencies of the fetched and parsed manifests, and every `dependencies` entry has an `advisories` list (empty when the Dependency is not looked up).
 
 **Validates: Requirements 18.9**
 
-### Property 58: Version fields are consistent
+### Property 58: Version fields are consistent (changed by scan-accuracy)
 
-*For any* Scan_Result, every `dependencies` entry has `lookupVersion` and `versionBasis` both null or both non-null, and entries of one Lookup_Target have equal `lookupVersion` and `versionBasis`.
+*For any* Scan_Result, every `dependencies` entry has `lookupVersion` and `versionBasis` both null or both non-null, `versionBasis` is `pinned`, `resolved`, `default` or null, and entries of one Lookup_Target have equal `lookupVersion`, `versionBasis` and `advisories`.
 
 **Validates: Requirements 18.12**
 
@@ -1562,9 +1588,9 @@ Counterexample that caused this wording (fast-check seed -914370393): `GITHUB_AP
 
 **Validates: Requirements 20.8, 20.9**
 
-### Property 64: The route always answers with the declared union
+### Property 64: The route always answers with the declared union (changed by scan-accuracy)
 
-*For any* request (any method, any `Content-Type` value, any body bytes including arbitrary JSON, arbitrary strings and bodies around `REQUEST_BODY_MAX_BYTES`), `handleScanRequest` returns a body that matches `{ ok: true, ...ScanResult }` or `{ ok: false, error }`, a status in {200, 400, 404, 405, 413, 415, 500, 502, 503, 504}, a status that matches the error code, only the `details` fields allowed for that code, and `Cache-Control: no-store`, and does not throw.
+*For any* request (any method, any `Content-Type` value, any body bytes including arbitrary JSON, arbitrary strings and bodies around `REQUEST_BODY_MAX_BYTES`), `handleScanRequest` returns a body that matches `{ ok: true, ...ScanResult }` or `{ ok: false, error }`, a status in {200, 400, 404, 405, 413, 415, 500, 502, 503, 504}, a status that matches the error code, only the `details` fields allowed for that code (including `candidates` for `too-many-manifests` and `manifest-not-found`), `Cache-Control: no-store`, and the cache header (`CACHE_STATUS_HEADER`, value `hit` or `miss`) if and only if the status is 200, and does not throw.
 
 **Validates: Requirements 21.12**
 
@@ -1586,9 +1612,9 @@ This property supports the Runtime Cache tier (OQ-D1, enabled by default) and ex
 
 **Validates: Requirements 19.11**
 
-### Property 68: A cache hit equals a fresh scan, for every request spelling
+### Property 68: A cache hit equals a fresh scan, for every request spelling (changed by scan-accuracy)
 
-*For any* request spelling variant of one repository (letter case of owner and repo, with and without `.git`, with and without `www.`, `http://`, `https://` and no scheme, with and without a trailing slash) that resolves, through the repository and branch responses, to the same canonical repository, the same selected branch and the same Commit_SHA, the Scan_Result returned from a Scan_Cache hit equals, as the full result including `asOf`, the Scan_Result of a fresh scan with empty caches that is run at the cached `asOf`, and its `repo.owner` and `repo.repo` equal the two parts of the `full_name` of the repository response and are never the spelling of the request.
+*For any* request spelling variant of one repository (letter case of owner and repo, with and without `.git`, with and without `www.`, `http://`, `https://` and no scheme, with and without a trailing slash) that resolves, through the repository and branch responses, to the same canonical repository, the same selected branch and the same Commit_SHA, the Scan_Result returned from a Scan_Cache hit equals, as the full result including `asOf`, the Scan_Result of a fresh scan with empty caches that is run at the cached `asOf`, and its `repo.owner` and `repo.repo` equal the two parts of the `full_name` of the repository response and are never the spelling of the request. The comparison is made on the body (the `fromCache` flag of the Scan_Outcome and the cache header are outside the body), so the body of a hit and of a fresh scan are equal as JSON text.
 
 **Validates: Requirements 19.21**
 
@@ -1650,7 +1676,7 @@ This property supports the Runtime Cache tier (OQ-D1, enabled by default) and ex
 | 4 | 9 to P7, 10 to P8, 12 to P9, 13 to P7 |
 | 5 | 13 to P10 |
 | 6 | 6 to P11, 7 to P12, 9 to P13, 10 to P11 |
-| 7 | 10 to P14, 13 to P15 |
+| 7 | 10 to P14, 13 to P15, 21 to scan-accuracy P3, 22 to scan-accuracy P4, 23 to scan-accuracy P7 (changed by scan-accuracy) |
 | 8 | 11 to P16, 12 to P17, 13 to P18, 16 to P19 |
 | 9 | 12 to P20, 13 to P21, 14 to P22, 15 to P23, 16 to P16, 18 to P24 and P25, 19 to P16, 22 to P26, 23 to P24 |
 | 10 | 8 to P16, 9 to P27, 10 to P28, 12 to P29, 13 to P30, 15 to P31, 16 to P23, 17 to P32 |
@@ -1661,10 +1687,10 @@ This property supports the Runtime Cache tier (OQ-D1, enabled by default) and ex
 | 15 | 11 to P42, 12 to P43, 13 to P44, 14 to P45, 18 to P46, 21 to P73 |
 | 16 | 6 to P47, 7 to P47, 9 to P48, 10 to P47, 13 to P49 |
 | 17 | 10 to P50, 11 to P51, 12 to P52, 14 to P53, 15 to P54, 16 to P52 |
-| 18 | 7 to P55, 8 to P56, 9 to P57, 12 to P58 |
-| 19 | 11 to P59 and P67, 12 to P60, 13 to P61, 16 to P62, 18 to P59, 21 to P68, 29 to P69, 30 to P70, 31 to P71, 32 to P72 |
+| 18 | 7 to P55, 8 to P56, 9 to P57, 12 to P58, 15 to scan-accuracy P10 (changed by scan-accuracy) |
+| 19 | 11 to P59 and P67, 12 to P60, 13 to P61, 16 to P62, 18 to P59, 21 to P68 (the body only, see scan-accuracy P11), 29 to P69, 30 to P70, 31 to P71, 32 to P72 |
 | 20 | 8 to P63, 9 to P63, 16 to P76 |
-| 21 | 12 to P64, 15 to P65 |
+| 21 | 12 to P64, 15 to P65, 17 to scan-accuracy P11 (changed by scan-accuracy) |
 | 22 | 15 to P66 |
 
 The user-emphasised properties map as: mapping never throws on arbitrary JSON (P16), day counts null or integer at least 0 (P11), missing field gives unknown (P17), one failing source never fails the pipeline (P50), dependency cap never exceeded (P47), GitHub budget threshold never crossed (P40), same inputs and asOf give the same result (P55, P38), token never appears in any output, log or cache (P63), no result later than `SCAN_DEADLINE_MS + SCAN_RESPONSE_MARGIN_MS` under any simulated latency (P49), unmaintained advisory gives deprecated (P26), a valid deps.dev `cvss3Score` wins the severity (P31), a cache hit equals a fresh scan for every request spelling (P68), L2 failures never change a result (P69).
@@ -1682,8 +1708,8 @@ export type ScanErrorBody =
                          | 'branch-conflict' | 'body-too-large' | 'unsupported-media-type' | 'method-not-allowed';
                  field?: 'body' | 'repoUrl' | 'branch' | 'manifests' } }
   | { code: 'invalid-url'; message: string; details: { part: 'url' | 'host' | 'path' | 'owner' | 'repository' | 'branch' } }
-  | { code: 'too-many-manifests'; message: string; details: { limit: number } }
-  | { code: 'manifest-not-found'; message: string; details: { path: string } }
+  | { code: 'too-many-manifests'; message: string; details: { limit: number; candidates: readonly string[] } }   // candidates added by scan-accuracy
+  | { code: 'manifest-not-found'; message: string; details: { path: string; candidates: readonly string[] } }   // candidates added by scan-accuracy
   | { code: 'repo-not-found'; message: string }
   | { code: 'branch-not-found'; message: string; details: { branch: string } }
   | { code: 'upstream-unavailable'; message: string; details: { source: SourceName; resetAt?: IsoInstant } }
@@ -1702,15 +1728,15 @@ export type ScanResponseBody = ({ ok: true } & Omit<ScanResult, 'ok'>) | { ok: f
 | `invalid-request`, reason `body-too-large` | 413 | | R21.3(b), declared or read size |
 | `invalid-request`, other reasons | 400 | | R21.3(c) to (h), R21.4 |
 | `invalid-url` | 400 | | URL_Parser, branch check |
-| `too-many-manifests` | 400 | | R5.4 |
-| `manifest-not-found` | 404 | | R5.5 |
+| `too-many-manifests` | 400 | | R5.4 (`details.limit`, `details.candidates`; changed by scan-accuracy) |
+| `manifest-not-found` | 404 | | R5.5 (`details.path`, `details.candidates`; changed by scan-accuracy) |
 | `repo-not-found`, `branch-not-found` | 404 | | R3.2, R3.5. `branch-not-found` carries `details.branch`, the selected branch name |
 | `upstream-unavailable` with `resetAt` later than asOf | 503 | `Retry-After: ceil((resetAt - asOf) / 1000)`, at least 1 | R3.7, R14.5, R21.6 |
 | `upstream-unavailable` otherwise | 502 | | R3.6, R3.7, R3.9, R3.10, R4.11 |
 | `deadline-exceeded` | 504 | | R16.11 |
 | `internal-error` | 500 | | config errors (R2.4, R2.9, R20.11), unexpected exceptions (R21.8) |
 
-Every response, including every error, carries `Content-Type: application/json` and `Cache-Control: no-store`. Precedence when several apply: config error before `invalid-url` (R2.11, R21.14), and R1.16 for URL parts.
+Every response, including every error, carries `Content-Type: application/json` and `Cache-Control: no-store`. A response with status 200 also carries the cache header (`hit` or `miss`, R21.17); no other response carries it (changed by scan-accuracy). Precedence when several apply: config error before `invalid-url` (R2.11, R21.14), and R1.16 for URL parts.
 
 ### Failure containment
 
@@ -1731,7 +1757,7 @@ The response never contains raw upstream text, an exception message, a stack, a 
 
 ### User-facing messages (R20.14 to R20.16)
 
-`pipeline/scan/messages.ts` holds the message table of the requirements section "User-facing messages": one row per Scan_Note code, per error code, per `invalid-url` part, per `invalid-request` reason and per `internal-error` configuration message. It exports `renderNoteMessage(code, details)` and `renderErrorMessage(code, details, webHost)`, which look up the row and replace each `{key}` with the value of that exact `details` key (lists joined by a comma and a space in stored order). The `host` row takes the Web_Host from validated configuration. Every note and error is built through these two functions and no other code writes a `message`. The three configuration messages are exported from `pipeline/config/config-messages.ts`, which both `messages.ts` and `github-config.ts` import, so the table and `readGithubConfig` cannot differ (P5 keeps checking the fixed set). The architecture rules allow `scan` to import `config`. Tests: `tests/pipeline/scan/notes.test.ts` checks completeness (every NoteCode, error code, part and reason has exactly one row, every placeholder names a key that its code carries, no row has an em dash) and `tests/pipeline/scan/messages.property.test.ts` checks P76. Both belong to task 5.3.
+`pipeline/scan/messages.ts` holds the message table of the requirements section "User-facing messages": one row per Scan_Note code, per error code, per `invalid-url` part, per `invalid-request` reason and per `internal-error` configuration message. The row `range-unresolved` interpolates only `{name}`; `details.ranges` (raw manifest text) and `details.candidates` are never rendered (changed by scan-accuracy). It exports `renderNoteMessage(code, details)` and `renderErrorMessage(code, details, webHost)`, which look up the row and replace each `{key}` with the value of that exact `details` key (lists joined by a comma and a space in stored order). The `host` row takes the Web_Host from validated configuration. Every note and error is built through these two functions and no other code writes a `message`. The three configuration messages are exported from `pipeline/config/config-messages.ts`, which both `messages.ts` and `github-config.ts` import, so the table and `readGithubConfig` cannot differ (P5 keeps checking the fixed set). The architecture rules allow `scan` to import `config`. Tests: `tests/pipeline/scan/notes.test.ts` checks completeness (every NoteCode, error code, part and reason has exactly one row, every placeholder names a key that its code carries, no row has an em dash) and `tests/pipeline/scan/messages.property.test.ts` checks P76. Both belong to task 5.3.
 
 ---
 
@@ -1753,7 +1779,10 @@ tests/
     url/parse-repo-url.test.ts, parse-repo-url.property.test.ts              P1 to P4
     config/github-config.test.ts, github-config.property.test.ts            P5
     mapping/day-count.property.test.ts                                        P11 to P13
-    mapping/version-select.property.test.ts                                   P14, P15
+    mapping/version-select.property.test.ts                                   P14, P15 (P15 now drives chooseVersion)
+    mapping/range-resolve.test.ts, range-resolve.property.test.ts             scan-accuracy P3 to P8 (npm, cargo, pypi; added by scan-accuracy)
+    mapping/range-cargo.test.ts, range-cargo.property.test.ts                 scan-accuracy P6 (the Cargo mapping table, one example per row)
+    mapping/advisories.test.ts, advisories.property.test.ts                   scan-accuracy P10
     mapping/deps-dev.test.ts, deps-dev.property.test.ts                       P18, P19
     mapping/osv.test.ts, osv.property.test.ts                                 P20 to P26
     mapping/cvss.test.ts, cvss.property.test.ts                               P27 to P30
