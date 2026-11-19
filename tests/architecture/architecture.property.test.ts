@@ -15,6 +15,7 @@ const IMPORT_RULES = new Set<string>([
   'adapters-import-not-allowed',
   'layer-imports-adapters',
   'ports-import-not-allowed',
+  'range-package-not-allowed',
 ]);
 
 type Target =
@@ -25,6 +26,8 @@ type Target =
 interface Layer {
   name: string;
   roots: string[];
+  /** When set, the layer is exactly these files (no generated sub-path or name). */
+  files?: string[];
   allowed: Target[];
   forbidden: Target[];
 }
@@ -35,6 +38,12 @@ const PACKAGES: Target[] = ['zod', 'react', '@scope/pkg', 'lodash/get'].map((nam
   kind: 'package',
   name,
 }));
+
+const rangePackages = (...names: string[]): Target[] =>
+  names.map((name) => ({ kind: 'package', name }));
+const SEMVER_PKGS = rangePackages('semver', 'semver/functions/gt', 'semver/classes/range');
+const PEP_PKGS = rangePackages('@renovatebot/pep440', '@renovatebot/pep440/lib/specifier');
+const RANGE_PKGS: Target[] = [...SEMVER_PKGS, ...PEP_PKGS];
 
 // The layer rules of R22.2, R22.4, R22.9, R22.10 and R22.11, written independently of the checker.
 const LAYERS: Layer[] = [
@@ -52,6 +61,7 @@ const LAYERS: Layer[] = [
       dir('app'),
       dir('components'),
       ...PACKAGES,
+      ...RANGE_PKGS,
     ],
   },
   {
@@ -65,6 +75,7 @@ const LAYERS: Layer[] = [
       dir('adapters'),
       dir('app'),
       dir('components'),
+      ...RANGE_PKGS,
     ],
   },
   {
@@ -78,6 +89,7 @@ const LAYERS: Layer[] = [
       dir('pipeline/ports-extra'),
       dir('app'),
       dir('components'),
+      ...RANGE_PKGS,
     ],
   },
   {
@@ -91,6 +103,7 @@ const LAYERS: Layer[] = [
       dir('app'),
       dir('components'),
       ...PACKAGES,
+      ...RANGE_PKGS,
     ],
   },
   {
@@ -104,21 +117,39 @@ const LAYERS: Layer[] = [
       CONSTANTS,
       ...PACKAGES,
     ],
-    forbidden: [dir('adapters')],
+    forbidden: [dir('adapters'), ...RANGE_PKGS],
   },
   {
     name: 'app',
     roots: ['app'],
     allowed: [dir('core'), dir('pipeline'), dir('components'), dir('app'), ...PACKAGES],
-    forbidden: [dir('adapters')],
+    forbidden: [dir('adapters'), ...RANGE_PKGS],
   },
   {
     name: 'components',
     roots: ['components'],
     allowed: [dir('core'), dir('pipeline'), dir('components'), dir('app'), ...PACKAGES],
-    forbidden: [dir('adapters')],
+    forbidden: [dir('adapters'), ...RANGE_PKGS],
   },
 ];
+
+// The two allowed pairs (scan-accuracy R5.3): each wrapper file may import only its own package.
+LAYERS.push(
+  {
+    name: 'wrapper-semver',
+    roots: [],
+    files: ['pipeline/mapping/range-semver.ts'],
+    allowed: [dir('core'), dir('pipeline/mapping'), CONSTANTS, ...SEMVER_PKGS],
+    forbidden: [...PEP_PKGS, ...PACKAGES, dir('pipeline/http'), dir('adapters')],
+  },
+  {
+    name: 'wrapper-pep440',
+    roots: [],
+    files: ['pipeline/mapping/range-pep440.ts'],
+    allowed: [dir('core'), dir('pipeline/mapping'), CONSTANTS, ...PEP_PKGS],
+    forbidden: [...SEMVER_PKGS, ...PACKAGES, dir('pipeline/http'), dir('adapters')],
+  },
+);
 
 const SCAN_ROUTE = 'app/api/scan/route.ts';
 
@@ -126,7 +157,9 @@ const arbSegment = fc.stringMatching(/^[a-z][a-z0-9]{0,5}(-[a-z0-9]{1,4})?$/);
 const arbSubPath = fc.array(arbSegment, { minLength: 0, maxLength: 2 });
 
 const arbFilePath = (layer: Layer): fc.Arbitrary<string> =>
-  fc
+  layer.files
+    ? fc.constantFrom(...layer.files)
+    : fc
     .record({
       root: fc.constantFrom(...layer.roots),
       sub: arbSubPath,

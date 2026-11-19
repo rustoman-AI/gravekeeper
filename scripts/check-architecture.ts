@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { checkArchitecture, type SourceFileInput } from './architecture/check';
+import { checkArchitecture, checkRangePackageVersions, type SourceFileInput } from './architecture/check';
 
 // Requirement 22.16
 
@@ -33,6 +33,10 @@ function main(): number {
   }
 
   const violations = checkArchitecture(files);
+  const packageJson = path.join(root, 'package.json');
+  if (fs.existsSync(packageJson)) {
+    violations.push(...checkRangePackageVersions(fs.readFileSync(packageJson, 'utf8')));
+  }
   for (const v of violations) {
     console.error(`${v.file}:${v.line} ${v.rule} violates the architecture rule ${v.rule}`);
   }

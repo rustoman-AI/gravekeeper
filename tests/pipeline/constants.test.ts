@@ -93,6 +93,9 @@ const TABLE_NAMES: readonly string[] = [
   'CVSS_RANGES',
   'TOKEN_TEST_MIN_LENGTH',
   'FIXTURE_MIN_REPOS',
+  'RANGE_MAX_LENGTH',
+  'ADVISORY_URL_PREFIX',
+  'CACHE_STATUS_HEADER',
 ];
 
 describe('constant consistency rules', () => {
@@ -193,8 +196,13 @@ describe('constant consistency rules', () => {
     expect(num('SCAN_MAX_MANIFESTS')).toBeGreaterThanOrEqual(names('DISCOVERY_MANIFEST_NAMES').length);
   });
 
-  it('CACHE_KEY_VERSION is a positive integer', () => {
+  it('CACHE_KEY_VERSION is a positive integer greater than 1', () => {
     expect(isPositiveInteger(num('CACHE_KEY_VERSION'))).toBe(true);
+    expect(num('CACHE_KEY_VERSION')).toBeGreaterThan(1);
+  });
+
+  it('RANGE_MAX_LENGTH is a positive integer', () => {
+    expect(isPositiveInteger(num('RANGE_MAX_LENGTH'))).toBe(true);
   });
 
   it('FIXTURE_SET_MAX_BYTES is a positive integer', () => {

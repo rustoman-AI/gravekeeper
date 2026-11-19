@@ -49,7 +49,8 @@ export type NoteCode =
   | 'scan-deadline-reached'
   | 'source-partial'
   | 'source-failed'
-  | 'unmaintained-advisory';
+  | 'unmaintained-advisory'
+  | 'range-unresolved';
 
 export interface ScanNote {
   readonly code: NoteCode;

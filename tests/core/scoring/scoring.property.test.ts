@@ -70,7 +70,7 @@ describe('scoring properties', () => {
     );
   });
 
-  // Feature: dependency-graveyard-core, Property 25: Larger release age never lowers the score
+  // Feature: dependency-graveyard-core, Property 25: Larger release age never lowers the score (changed by scan-accuracy: straddle pairs include COMMIT_ABANDONMENT_DAYS)
   // Validates: Requirements 10.13, 10.20
   it('Property 25: a larger daysSinceLastRelease never lowers the score', () => {
     fc.assert(
@@ -93,7 +93,7 @@ describe('scoring properties', () => {
     );
   });
 
-  // Feature: dependency-graveyard-core, Property 27: Becoming abandoned never lowers the score
+  // Feature: dependency-graveyard-core, Property 27: Becoming abandoned never lowers the score (changed by scan-accuracy: commit threshold)
   // Validates: Requirements 10.19
   it('Property 27: becoming abandoned never lowers the score', () => {
     fc.assert(

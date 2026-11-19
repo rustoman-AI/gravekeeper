@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { CONSTANTS as C, SEVERITIES } from '../../../core/model/constants';
+import { COMMIT_ABANDONMENT_DAYS, CONSTANTS as C, SEVERITIES } from '../../../core/model/constants';
 
 describe('constants table values', () => {
   it('matches the requirements table exactly', () => {
     expect(C.ABANDONMENT_DAYS).toBe(730);
     expect(C.STALE_DAYS).toBe(365);
+    expect(C.COMMIT_ABANDONMENT_DAYS).toBe(730);
     expect(C.SEVERITY_POINTS).toEqual({ LOW: 10, MEDIUM: 20, HIGH: 35, CRITICAL: 50 });
     expect(C.DEFAULT_SEVERITY).toBe('MEDIUM');
     expect(C.VULN_COUNT_POINTS_EACH).toBe(2);
@@ -32,6 +33,15 @@ describe('constants table values', () => {
   });
 });
 
+describe('COMMIT_ABANDONMENT_DAYS', () => {
+  it('is a named export and a positive integer at least STALE_DAYS', () => {
+    expect(COMMIT_ABANDONMENT_DAYS).toBe(730);
+    expect(C.COMMIT_ABANDONMENT_DAYS).toBe(COMMIT_ABANDONMENT_DAYS);
+    expect(Number.isInteger(COMMIT_ABANDONMENT_DAYS)).toBe(true);
+    expect(COMMIT_ABANDONMENT_DAYS).toBeGreaterThan(0);
+    expect(COMMIT_ABANDONMENT_DAYS).toBeGreaterThanOrEqual(C.STALE_DAYS);
+  });
+});
 describe('constant consistency rules (criterion 10.21)', () => {
   it('component caps sum to 100', () => {
     expect(C.VULNERABILITY_POINTS_CAP + C.ABANDONMENT_POINTS_CAP + C.MAINTAINER_POINTS_CAP).toBe(100);

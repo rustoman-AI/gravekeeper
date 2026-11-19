@@ -7,6 +7,8 @@ import { isInsideDir, toPosix, type ResolvedSpecifier } from './resolve';
 export type RuleId =
   | 'mapping-import-not-allowed'
   | 'mapping-forbidden-api'
+  | 'range-package-not-allowed'
+  | 'range-package-version-exact'
   | 'core-imports-upper-layer'
   | 'adapters-import-not-allowed'
   | 'layer-imports-adapters'
@@ -32,7 +34,7 @@ interface RuleBase {
 export interface ImportRule extends RuleBase {
   kind: 'import';
   appliesTo: (filePath: string) => boolean;
-  forbids: (resolved: ResolvedSpecifier) => boolean;
+  forbids: (resolved: ResolvedSpecifier, filePath: string) => boolean;
 }
 
 /** Reports every use of a listed API, and every import of a listed package. */
@@ -65,6 +67,15 @@ export const SOURCE_PORT_NAMES: readonly string[] = [
   'CratesIoSource',
   'PypiSource',
 ];
+
+/** Range packages and the one file allowed to import each (scan-accuracy Requirement 5.3). */
+export const RANGE_PACKAGE_WRAPPERS: Readonly<Record<string, string>> = {
+  semver: 'pipeline/mapping/range-semver.ts',
+  '@renovatebot/pep440': 'pipeline/mapping/range-pep440.ts',
+};
+
+/** A package.json version that is a range, not an exact version. */
+export const RANGE_VERSION_PATTERN = /^[~^<>=*]|(^|\.)[xX](\.|$)/;
 
 export const TOKEN_TEXT = 'process.env.GITHUB_TOKEN';
 export const SCAN_ROUTE_FILE = 'app/api/scan/route.ts';
@@ -170,12 +181,29 @@ export const LAYER_RULES: readonly LayerRule[] = [
     message:
       'pipeline/mapping may import only core, pipeline/mapping and pipeline/constants.ts, and no package',
     appliesTo: (f) => isInsideDir(f, 'pipeline/mapping'),
-    forbids: (r) =>
-      r.kind === 'package' ||
-      !(
+    forbids: (r, f) =>
+      (r.kind === 'package' && RANGE_PACKAGE_WRAPPERS[r.name] !== toPosix(f)) ||
+      (r.kind === 'project' && !(
         inAny(r.path, ['core', 'pipeline/mapping']) ||
         isConstantsFile(r.path)
-      ),
+      )),
+  },
+  {
+    kind: 'import',
+    id: 'range-package-not-allowed',
+    requirement: '5.3',
+    message: 'semver and @renovatebot/pep440 may be imported only by their wrapper file in pipeline/mapping',
+    appliesTo: () => true,
+    forbids: (r, f) =>
+      r.kind === 'package' &&
+      Object.prototype.hasOwnProperty.call(RANGE_PACKAGE_WRAPPERS, r.name) &&
+      RANGE_PACKAGE_WRAPPERS[r.name] !== toPosix(f),
+  },
+  {
+    kind: 'project',
+    id: 'range-package-version-exact',
+    requirement: '5.4',
+    message: 'semver and @renovatebot/pep440 must be pinned to an exact version in package.json',
   },
   {
     kind: 'api',

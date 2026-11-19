@@ -70,7 +70,8 @@ describe('abandonmentPoints (10.3-10.6, 10.17, 10.23)', () => {
   });
 
   it('release abandonment (8.3) is 20', () => {
-    expect(abandonmentPoints(facts({ daysSinceLastRelease: 730, daysSinceLastCommit: 365 }))).toBe(20);
+    expect(abandonmentPoints(facts({ daysSinceLastRelease: 730, daysSinceLastCommit: 730 }))).toBe(20);
+    expect(abandonmentPoints(facts({ daysSinceLastRelease: 730, daysSinceLastCommit: 729 }))).toBe(10);
     expect(abandonmentPoints(facts({ daysSinceLastRelease: 730 }))).toBe(20);
   });
 

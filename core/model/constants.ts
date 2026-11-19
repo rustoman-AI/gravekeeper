@@ -4,6 +4,7 @@ import type { Scope, Severity } from './types';
 interface ConstantsShape {
   readonly ABANDONMENT_DAYS: number;
   readonly STALE_DAYS: number;
+  readonly COMMIT_ABANDONMENT_DAYS: number;
   readonly SEVERITY_POINTS: Readonly<Record<Severity, number>>;
   readonly DEFAULT_SEVERITY: Severity;
   readonly VULN_COUNT_POINTS_EACH: number;
@@ -32,6 +33,7 @@ interface ConstantsShape {
 export const CONSTANTS = {
   ABANDONMENT_DAYS: 730,
   STALE_DAYS: 365,
+  COMMIT_ABANDONMENT_DAYS: 730,
   SEVERITY_POINTS: { LOW: 10, MEDIUM: 20, HIGH: 35, CRITICAL: 50 },
   DEFAULT_SEVERITY: 'MEDIUM',
   VULN_COUNT_POINTS_EACH: 2,
@@ -60,6 +62,7 @@ export const CONSTANTS = {
 export const {
   ABANDONMENT_DAYS,
   STALE_DAYS,
+  COMMIT_ABANDONMENT_DAYS,
   SEVERITY_POINTS,
   DEFAULT_SEVERITY,
   VULN_COUNT_POINTS_EACH,

@@ -7,7 +7,7 @@ import { scoreComponents } from '../../../core/scoring';
 import { arbAnyFactsInput, arbRawFacts, arbValidFacts } from '../../support/arbitraries/facts';
 import { arbHauntedAndAbandoned, arbMaintainerChange, arbNoRisk, arbUnknownSeverityPair, removeAbandonment, removeVulnerability } from '../../support/arbitraries/facts-metamorphic';
 import { cfg } from '../../support/fc-config';
-import { FACT_FIELDS, oracleAbandoned, oracleDormant, oracleFlags, oracleUnknownFields, oracleVulnerable } from '../../support/oracles/facts-oracle';
+import { FACT_FIELDS, oracleAbandoned, oracleDormant, oracleFlags, oracleReportableUnknownFields, oracleUnknownFactsMessage, oracleUnknownFields, oracleVulnerable } from '../../support/oracles/facts-oracle';
 
 const proxyThatThrows = (): unknown =>
   new Proxy(
@@ -74,21 +74,24 @@ describe('classify properties', () => {
   });
 
   // Feature: dependency-graveyard-core, Property 14: Unknown facts are reported exactly once
-  it('Property 14: 6.3 Reason is present iff unknown fields exist and lists each exactly once', () => {
+  // (changed by scan-accuracy: the reportable set replaces the unknown set, exact singular and plural text)
+  it('Property 14: 6.3 Reason is present iff reportable unknown fields exist and lists each exactly once', () => {
     // **Validates: Requirements 6.3, 6.5, 6.6**
     fc.assert(
       fc.property(arbAnyFactsInput, (input) => {
         const unknown = oracleUnknownFields(input);
+        const reportable = oracleReportableUnknownFields(input);
         const c = classify(input);
         const r63 = c.reasons.filter((r) => r.ruleId === '6.3');
-        if (unknown.length === 0) {
+        if (reportable.length === 0) {
           expect(r63).toHaveLength(0);
           return;
         }
         expect(r63).toHaveLength(1);
         const message = r63[0]!.message;
+        expect(message).toBe(oracleUnknownFactsMessage(reportable));
         for (const field of FACT_FIELDS) {
-          expect(countOccurrences(message, field)).toBe(unknown.includes(field) ? 1 : 0);
+          expect(countOccurrences(message, field)).toBe(reportable.includes(field) ? 1 : 0);
         }
         if (unknown.length === FACT_FIELDS.length) {
           expect(c.status).toBe('ALIVE');
@@ -100,10 +103,9 @@ describe('classify properties', () => {
     );
   });
 });
-
 describe('classify flag properties', () => {
-  // Feature: dependency-graveyard-core, Property 15: Abandoned flag matches its definition
-  it('Property 15: abandoned equals archived, deprecated or the 8.3 release condition', () => {
+  // Feature: dependency-graveyard-core, Property 15: Abandoned flag matches its definition (changed by scan-accuracy: commit threshold)
+  it('Property 15: abandoned equals archived, deprecated or the 8.3 release condition with the commit threshold', () => {
     // **Validates: Requirements 8.10**
     fc.assert(
       fc.property(fc.oneof(arbAnyFactsInput, arbRawFacts), (input) => {
@@ -113,12 +115,14 @@ describe('classify flag properties', () => {
     );
   });
 
-  // Feature: dependency-graveyard-core, Property 16: Dormant flag matches its definition
-  it('Property 16: dormant equals the 8.4 definition', () => {
+  // Feature: dependency-graveyard-core, Property 16: Dormant flag matches its definition (changed by scan-accuracy: commit threshold)
+  it('Property 16: dormant equals the 8.4 definition and never co-occurs with an 8.3 Reason', () => {
     // **Validates: Requirements 8.11**
     fc.assert(
       fc.property(fc.oneof(arbAnyFactsInput, arbRawFacts), (input) => {
-        expect(classify(input).dormant).toBe(oracleDormant(input));
+        const c = classify(input);
+        expect(c.dormant).toBe(oracleDormant(input));
+        if (c.dormant) expect(c.reasons.some((r) => r.ruleId === '8.3')).toBe(false);
       }),
       cfg(),
     );
@@ -202,7 +206,7 @@ describe('classify status, determinism and score properties', () => {
 });
 
 describe('classify unknown severity, combination and no-risk properties', () => {
-  // Feature: dependency-graveyard-core, Property 24: Unknown severity scores like MEDIUM
+  // Feature: dependency-graveyard-core, Property 24: Unknown severity scores like MEDIUM (changed by scan-accuracy: 6.3 uses the reportable set)
   it('Property 24: unknown maxSeverity classifies like MEDIUM apart from the 6.3 and 11.2 Reasons', () => {
     // **Validates: Requirements 10.24, 7.3**
     // Reasons are compared after removing the 6.3 (unknown fields) and 11.2 (severity) entries from both sides.
@@ -215,6 +219,7 @@ describe('classify unknown severity, combination and no-risk properties', () => 
       expect({ v: u.vulnerable, a: u.abandoned, d: u.dormant }).toEqual({ v: k.vulnerable, a: k.abandoned, d: k.dormant });
       const ids = (c: typeof u) => c.reasons.map((r) => r.ruleId).filter((id) => id !== '6.3' && id !== '11.2');
       expect(ids(u)).toEqual(ids(k));
+      expect(u.reasons.some((r) => r.ruleId === '6.3')).toBe(oracleReportableUnknownFields(unknown).length > 0);
     };
     const base = { daysSinceLastRelease: 0, daysSinceLastCommit: 0, archived: false, deprecated: false, maintainerCount: 100, openVulnerabilityCount: 0 };
     const shrunk = { unknown: { ...base, maxSeverity: null }, known: { ...base, maxSeverity: 'MEDIUM' } };
@@ -233,9 +238,10 @@ describe('classify unknown severity, combination and no-risk properties', () => 
     expect(u.status).toBe(k.status);
     expect(u.score).toBe(k.score);
     expect(ids(u)).toEqual(ids(k));
+    expect(u.reasons.some((r) => r.ruleId === '6.3')).toBe(false);
   });
 
-  // Feature: dependency-graveyard-core, Property 28: Combined haunted and abandoned strictly exceeds either alone
+  // Feature: dependency-graveyard-core, Property 28: Combined haunted and abandoned strictly exceeds either alone (changed by scan-accuracy: removeAbandonment sets commit age 0)
   it('Property 28: haunted and abandoned scores strictly above either alone', () => {
     // **Validates: Requirements 10.18**
     fc.assert(
@@ -254,7 +260,7 @@ describe('classify unknown severity, combination and no-risk properties', () => 
     );
   });
 
-  // Feature: dependency-graveyard-core, Property 29: No risk signals means ALIVE
+  // Feature: dependency-graveyard-core, Property 29: No risk signals means ALIVE (changed by scan-accuracy: dormant needs a commit below the threshold)
   it('Property 29: no vulnerability and no 8.1 to 8.3 criterion gives ALIVE', () => {
     // **Validates: Requirements 10.15**
     fc.assert(

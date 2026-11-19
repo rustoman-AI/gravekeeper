@@ -15,6 +15,11 @@ export const DAY_BOUNDARIES: readonly number[] = [
   ABANDONMENT_DAYS - 1,
   ABANDONMENT_DAYS,
   ABANDONMENT_DAYS + 1,
+  364,
+  365,
+  729,
+  730,
+  731,
   3650,
 ];
 
@@ -102,6 +107,12 @@ export const arbDaysFact: fc.Arbitrary<unknown> = fc.oneof(
   { weight: 1, arbitrary: arbWrongType },
 );
 
+/** Commit age fact biased to the commit threshold boundaries (364, 365, 729, 730) and null (scan-accuracy 1.8). */
+export const arbCommitDaysFact: fc.Arbitrary<unknown> = fc.oneof(
+  { weight: 3, arbitrary: fc.constantFrom<unknown>(364, 365, 729, 730, null) },
+  { weight: 7, arbitrary: arbDaysFact },
+);
+
 export const arbCountFact: fc.Arbitrary<unknown> = fc.oneof(
   { weight: 8, arbitrary: arbValidCount },
   { weight: 1, arbitrary: fc.constant(null) },
@@ -124,7 +135,7 @@ export const arbSeverityFact: fc.Arbitrary<unknown> = fc.oneof(
 
 export const arbRawFactByField: { readonly [F in HealthFactField]: fc.Arbitrary<unknown> } = {
   daysSinceLastRelease: arbDaysFact,
-  daysSinceLastCommit: arbDaysFact,
+  daysSinceLastCommit: arbCommitDaysFact,
   archived: arbBoolFact,
   deprecated: arbBoolFact,
   openVulnerabilityCount: arbCountFact,

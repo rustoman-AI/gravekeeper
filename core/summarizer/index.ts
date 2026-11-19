@@ -9,20 +9,13 @@ import type {
   UniquePackage,
 } from '../model';
 import { repoGrade } from './grade';
-import { groupAssessed } from './group';
-import { mergeClassifications } from './merge';
 import { sortRanked, sortUnassessed } from './order';
 import { partitionPackages } from './partition';
+import { uniquePackagesUnguarded } from './unique-packages';
 
 function summarizeList(entries: readonly AssessedDependency[]): RepoSummary {
-  // Requirement 12.1: one Unique_Package per Package_Key, classifications merged by the 12.22 order.
-  const packages: UniquePackage[] = groupAssessed(entries).map((g) => ({
-    name: g.name,
-    ecosystem: g.ecosystem,
-    sourceKind: g.sourceKind,
-    scopes: g.scopes,
-    classification: mergeClassifications(g.classifications),
-  }));
+  // Requirement 12.1
+  const packages: UniquePackage[] = uniquePackagesUnguarded(entries);
   // Requirements 12.2, 12.14
   const { assessed, unassessedItems } = partitionPackages(packages);
 
@@ -76,3 +69,6 @@ export function summarize(entries: readonly AssessedDependency[]): RepoSummary {
     emptySummary,
   );
 }
+
+export { uniquePackages } from './unique-packages';
+export { mergeClassifications, compareClassifications } from './merge';

@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import {
   checkArchitecture,
+  checkRangePackageVersions,
   type SourceFileInput,
   type Violation,
 } from '../../scripts/architecture/check';
@@ -213,6 +214,83 @@ describe('architecture checker: one snippet per rule', () => {
       f('adapters/runtime/system-clock.ts', 'export const t = () => Date.now();\n'),
     ]);
     expect(find(exempt, 'adapters-forbidden-time-api')).toEqual([]);
+  });
+});
+
+describe('architecture checker: range packages', () => {
+  // Requirement 5.3
+  it('range-package-not-allowed outside the wrapper files', () => {
+    for (const path of ['pipeline/mapping/version-select.ts', 'pipeline/scan/x.ts', 'adapters/x.ts']) {
+      expectRule([f(path, "import semver from 'semver';\n")], 'range-package-not-allowed', path, 1);
+    }
+    expectRule(
+      [f('pipeline/scan/x.ts', "\nimport { gt } from 'semver/functions/gt';\n")],
+      'range-package-not-allowed',
+      'pipeline/scan/x.ts',
+      2,
+    );
+    expectRule(
+      [f('adapters/x.ts', "import { a } from '@renovatebot/pep440';\n")],
+      'range-package-not-allowed',
+      'adapters/x.ts',
+      1,
+    );
+  });
+
+  it('the wrapper files report nothing', () => {
+    expect(
+      checkArchitecture([
+        f('pipeline/mapping/range-semver.ts', "import { parse } from 'semver';\nimport { gt } from 'semver/functions/gt';\n"),
+        f('pipeline/mapping/range-pep440.ts', "import { parse } from '@renovatebot/pep440';\n"),
+      ]),
+    ).toEqual([]);
+  });
+
+  it('a wrapper may not import the other range package', () => {
+    const v = checkArchitecture([
+      f('pipeline/mapping/range-semver.ts', "import { parse } from '@renovatebot/pep440';\n"),
+    ]);
+    expect(v).toContainEqual({
+      file: 'pipeline/mapping/range-semver.ts',
+      line: 1,
+      rule: 'range-package-not-allowed',
+    });
+  });
+
+  it('any other package in pipeline/mapping is still mapping-import-not-allowed', () => {
+    expectRule(
+      [f('pipeline/mapping/range-semver.ts', "import z from 'zod';\n")],
+      'mapping-import-not-allowed',
+      'pipeline/mapping/range-semver.ts',
+      1,
+    );
+    expectRule(
+      [f('pipeline/mapping/a.ts', "import z from 'zod';\n")],
+      'mapping-import-not-allowed',
+      'pipeline/mapping/a.ts',
+      1,
+    );
+  });
+
+  // Requirement 5.4
+  it('range-package-version-exact', () => {
+    const text = '{\n  "dependencies": {\n    "semver": "^7.8.6"\n  }\n}\n';
+    expect(checkRangePackageVersions(text)).toEqual([
+      { file: 'package.json', line: 3, rule: 'range-package-version-exact' },
+    ]);
+    expect(
+      checkRangePackageVersions('{"dependencies":{"@renovatebot/pep440":"~5.0.1"}}'),
+    ).toHaveLength(1);
+  });
+
+  it('accepts exact versions, absent packages and unparsable JSON', () => {
+    expect(
+      checkRangePackageVersions(
+        '{"dependencies":{"semver":"7.8.6","@renovatebot/pep440":"5.0.1","zod":"^3.0.0"}}',
+      ),
+    ).toEqual([]);
+    expect(checkRangePackageVersions('{}')).toEqual([]);
+    expect(checkRangePackageVersions('not json')).toEqual([]);
   });
 });
 

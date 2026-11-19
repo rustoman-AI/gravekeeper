@@ -9,7 +9,7 @@ import { releaseDormantRule } from '../../../core/classifier/rules/release-dorma
 import { releaseStaleRule } from '../../../core/classifier/rules/release-stale';
 import { noMaintainersRule } from '../../../core/classifier/rules/no-maintainers';
 import { singleMaintainerRule } from '../../../core/classifier/rules/single-maintainer';
-import { ABANDONMENT_DAYS, DEFAULT_SEVERITY, STALE_DAYS } from '../../../core/model/constants';
+import { ABANDONMENT_DAYS, COMMIT_ABANDONMENT_DAYS, DEFAULT_SEVERITY, STALE_DAYS } from '../../../core/model/constants';
 
 const validAll = {
   daysSinceLastRelease: 10,
@@ -46,6 +46,11 @@ describe('rule 6.3 unknown facts', () => {
       const raw: Record<string, unknown> = { ...validAll };
       delete raw[field];
       const reason = run(raw).unknown;
+      // scan-accuracy 2.8: maxSeverity is not reportable when the open count is a valid 0.
+      if (field === 'maxSeverity') {
+        expect(reason).toBeNull();
+        continue;
+      }
       expect(reason).not.toBeNull();
       expect(reason!.message).toContain(field);
       for (const other of HEALTH_FACT_FIELDS) {
@@ -129,14 +134,15 @@ describe('rules 8.1 to 8.4 abandonment', () => {
     const reasons = evalAbandon({
       ...validAll,
       daysSinceLastRelease: ABANDONMENT_DAYS + 5,
-      daysSinceLastCommit: STALE_DAYS + 5,
+      daysSinceLastCommit: COMMIT_ABANDONMENT_DAYS + 5,
     });
     expect(reasons.map((r) => r.ruleId)).toEqual(['8.3']);
     const m = reasons[0].message;
     expect(m).toContain('daysSinceLastRelease');
     expect(m).toContain(String(ABANDONMENT_DAYS + 5));
     expect(m).toContain('daysSinceLastCommit');
-    expect(m).toContain(String(STALE_DAYS + 5));
+    expect(m).toContain(String(COMMIT_ABANDONMENT_DAYS + 5));
+    expect(m).toContain('COMMIT_ABANDONMENT_DAYS (730)');
     expect(m).not.toContain('assumed');
     expectOneSentence(m);
   });
@@ -162,7 +168,7 @@ describe('rules 8.1 to 8.4 abandonment', () => {
       archived: true,
       deprecated: true,
       daysSinceLastRelease: ABANDONMENT_DAYS,
-      daysSinceLastCommit: STALE_DAYS,
+      daysSinceLastCommit: COMMIT_ABANDONMENT_DAYS,
     });
     expect(reasons.map((r) => r.ruleId)).toEqual(['8.1', '8.2', '8.3']);
     const dormant = evalAbandon({
@@ -185,7 +191,7 @@ describe('rules 8.1 to 8.4 abandonment', () => {
   });
 
   it('release at ABANDONMENT_DAYS - 1 gives neither 8.3 nor 8.4', () => {
-    for (const commit of [0, STALE_DAYS - 1, STALE_DAYS, STALE_DAYS + 100]) {
+    for (const commit of [0, STALE_DAYS - 1, STALE_DAYS, COMMIT_ABANDONMENT_DAYS - 1, COMMIT_ABANDONMENT_DAYS, COMMIT_ABANDONMENT_DAYS + 100]) {
       expect(
         ids({ ...validAll, daysSinceLastRelease: ABANDONMENT_DAYS - 1, daysSinceLastCommit: commit }),
       ).toEqual([]);
@@ -195,26 +201,41 @@ describe('rules 8.1 to 8.4 abandonment', () => {
     expect(ids(raw)).toEqual([]);
   });
 
-  it('commit at STALE_DAYS - 1 gives 8.4 only', () => {
-    expect(
-      ids({ ...validAll, daysSinceLastRelease: ABANDONMENT_DAYS, daysSinceLastCommit: STALE_DAYS - 1 }),
-    ).toEqual(['8.4']);
+  it('release 730 with commit 364, 365 and 729 gives 8.4 and no 8.3', () => {
+    for (const commit of [STALE_DAYS - 1, STALE_DAYS, COMMIT_ABANDONMENT_DAYS - 1]) {
+      expect(
+        ids({ ...validAll, daysSinceLastRelease: ABANDONMENT_DAYS, daysSinceLastCommit: commit }),
+      ).toEqual(['8.4']);
+    }
   });
-
-  it('commit at STALE_DAYS gives 8.3 only', () => {
+  it('release 730 with commit 730 gives 8.3 and no 8.4', () => {
     expect(
-      ids({ ...validAll, daysSinceLastRelease: ABANDONMENT_DAYS, daysSinceLastCommit: STALE_DAYS }),
+      ids({ ...validAll, daysSinceLastRelease: ABANDONMENT_DAYS, daysSinceLastCommit: COMMIT_ABANDONMENT_DAYS }),
     ).toEqual(['8.3']);
   });
-
-  it('unknown commit gives 8.3 with assumed-stale wording', () => {
+  it('8.3 text names COMMIT_ABANDONMENT_DAYS (730) for a known commit age', () => {
+    const reasons = evalAbandon({
+      ...validAll,
+      daysSinceLastRelease: ABANDONMENT_DAYS,
+      daysSinceLastCommit: COMMIT_ABANDONMENT_DAYS,
+    });
+    expect(reasons[0].message).toContain('COMMIT_ABANDONMENT_DAYS (730)');
+  });
+  it('release 729 gives neither 8.3 nor 8.4 for commit 364, 365, 729, 730 and null', () => {
+    for (const commit of [364, 365, 729, 730]) {
+      expect(
+        ids({ ...validAll, daysSinceLastRelease: ABANDONMENT_DAYS - 1, daysSinceLastCommit: commit }),
+      ).toEqual([]);
+    }
+  });
+  it('unknown commit gives 8.3 naming COMMIT_ABANDONMENT_DAYS (730)', () => {
     const raw: Record<string, unknown> = { ...validAll, daysSinceLastRelease: ABANDONMENT_DAYS };
     delete raw.daysSinceLastCommit;
     const reasons = evalAbandon(raw);
     expect(reasons.map((r) => r.ruleId)).toEqual(['8.3']);
     expect(reasons[0].message).toContain('daysSinceLastCommit');
     expect(reasons[0].message).toContain('unknown');
-    expect(reasons[0].message).toContain('assumed stale');
+    expect(reasons[0].message).toContain('COMMIT_ABANDONMENT_DAYS (730)');
     expectOneSentence(reasons[0].message);
   });
 

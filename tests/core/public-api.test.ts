@@ -30,6 +30,7 @@ const EXPECTED_RUNTIME_EXPORTS: string[] = [
   'ABANDONMENT_DAYS',
   'ABANDONMENT_POINTS_CAP',
   'ARCHIVED_POINTS',
+  'COMMIT_ABANDONMENT_DAYS',
   'CONSTANTS',
   'CORE_ALLOWED_PACKAGES',
   'DEFAULT_SEVERITY',
@@ -54,9 +55,12 @@ const EXPECTED_RUNTIME_EXPORTS: string[] = [
   'VULN_COUNT_POINTS_EACH',
   'WORST_LIST_SIZE',
   'classify',
+  'compareClassifications',
+  'mergeClassifications',
   'parseManifest',
   'serializeManifest',
   'summarize',
+  'uniquePackages',
 ];
 
 describe('core public entry point', () => {
@@ -148,6 +152,13 @@ describe('core public functions', () => {
   it('summarize(entries: readonly AssessedDependency[]): RepoSummary', () => {
     expectTypeOf(summarize).parameters.toEqualTypeOf<[entries: readonly AssessedDep[]]>();
     expectTypeOf(summarize).returns.toEqualTypeOf<RepoSummary>();
+  });
+
+  it('uniquePackages, mergeClassifications and compareClassifications have the expected signatures', () => {
+    expectTypeOf(core.uniquePackages).parameters.toEqualTypeOf<[items: readonly AssessedDep[]]>();
+    expectTypeOf(core.uniquePackages).returns.toEqualTypeOf<UniquePackage[]>();
+    expectTypeOf(core.mergeClassifications).returns.toEqualTypeOf<Classification | null>();
+    expectTypeOf(core.compareClassifications).returns.toEqualTypeOf<number>();
   });
 
   it('has exactly the expected runtime exports', () => {

@@ -61,6 +61,8 @@ export const NOTE_MESSAGES: { readonly [C in NoteCode]: string } = {
   'source-failed': 'A source did not answer. Facts that depend on it are unknown.',
   'unmaintained-advisory':
     '{name} has a RustSec advisory ({ids}) saying it is unmaintained, so it is treated as deprecated.',
+  'range-unresolved':
+    'The version range declared for {name} could not be matched to a published release, so the latest release was checked instead.',
 };
 
 /** One row per `invalid-url` part. */

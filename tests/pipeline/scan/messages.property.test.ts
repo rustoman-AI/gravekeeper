@@ -5,6 +5,7 @@ import {
   INVALID_REQUEST_MESSAGES,
   INVALID_URL_MESSAGES,
   NOTE_CODES,
+  NOTE_MESSAGES,
   renderErrorMessage,
   renderNoteMessage,
 } from '../../../pipeline/scan/messages';
@@ -52,6 +53,29 @@ function flatten(v: unknown): string[] {
 }
 
 describe('scan messages', () => {
+  it('P8 The unresolved-range message contains no range text', () => {
+    // Feature: scan-accuracy, Property 8: The unresolved-range message contains no range text
+    // Validates: Requirements 11.3, 11.5
+    const hostile = fc.oneof(
+      rawInput,
+      fc.constantFrom('>=1 \u2014 <2', '{name}', '{ranges}', 'GET /v1/pkg?x=1 HTTP/1.1', '^1.2.3 || {name}'),
+      fc.array(fc.constantFrom('\u2014', '{', '}', 'name', ' ', '^', '1', 'x'), { minLength: 3, maxLength: 12 }).map((a) => a.join('')),
+    );
+    fc.assert(
+      fc.property(word, fc.array(hostile, { minLength: 1, maxLength: 4 }), (name, ranges) => {
+        const message = renderNoteMessage('range-unresolved', { ecosystem: 'npm', name, ranges });
+        const expected = NOTE_MESSAGES['range-unresolved'].replace('{name}', name);
+        if (message !== expected) throw new Error('message differs: ' + message);
+        if (message.includes(EM_DASH)) throw new Error('em dash in message');
+        for (const r of ranges) {
+          if (expected.includes(r)) continue;
+          if (message.includes(r)) throw new Error('range text in message: ' + r);
+        }
+      }),
+      cfg(),
+    );
+  });
+
   it('P76 Rendered messages are safe', () => {
     // Feature: scan-pipeline, Property 76: Rendered messages are safe
     // Validates: Requirements 20.16
@@ -59,7 +83,7 @@ describe('scan messages', () => {
       fc.property(values, token, rawInput, webHost, (vals, tok, raw, host) => {
         const interpolated = [...Object.values(vals).flatMap(flatten), host];
         // Untrusted extras: they are never placeholder keys, so they must never be rendered.
-        const extras = { raw, token: tok, message: raw, field: raw, url: raw, resetAt: tok };
+        const extras = { ranges: [raw, EM_DASH + tok], raw, token: tok, message: raw, field: raw, url: raw, resetAt: tok };
         const rendered: string[] = [];
         for (const code of NOTE_CODES) {
           rendered.push(renderNoteMessage(code, { ...vals, ...extras }));

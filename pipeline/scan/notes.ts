@@ -2,6 +2,7 @@
 // One builder per Scan_Note code. Every message comes from `renderNoteMessage`; `details` keys
 // are exactly those of the Scan_Note codes table.
 import type { Ecosystem } from '@/core';
+import { RANGE_MAX_LENGTH } from '../constants';
 import type { JsonValue } from '../ports/cache';
 import { renderNoteMessage } from './messages';
 import type { SourceNoteData } from './source-status';
@@ -91,6 +92,16 @@ export const unmaintainedAdvisoryNote = (
 ): ScanNote =>
   note('unmaintained-advisory', { ...target(ecosystem, name), ids: byCodePoint(unique(ids)) });
 
+/** `ranges`: each cut to `RANGE_MAX_LENGTH` code points, then distinct and ascending by code point. */
+export const rangeUnresolvedNote = (
+  ecosystem: Ecosystem,
+  name: string,
+  ranges: readonly string[],
+): ScanNote =>
+  note('range-unresolved', {
+    ...target(ecosystem, name),
+    ranges: byCodePoint(unique(ranges.map((r) => Array.from(r).slice(0, RANGE_MAX_LENGTH).join('')))),
+  });
 /**
  * `source-partial` or `source-failed` from the data of `source-status.ts` (R17.9).
  * `reasons` is unique and in code point order. This is the `makeNote` argument of `buildSourceNotes`.

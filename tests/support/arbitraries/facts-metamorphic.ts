@@ -1,8 +1,8 @@
-﻿// Metamorphic fact arbitraries: a base raw facts value plus one controlled edit (design: Generator strategy: facts).
+// Metamorphic fact arbitraries: a base raw facts value plus one controlled edit (design: Generator strategy: facts).
 // Each arbitrary builds the edit directly, so no `fc.pre` is needed. Later score and classify properties extend this file.
 import * as fc from 'fast-check';
 import type { RawHealthFacts, Severity } from '../../../core/model';
-import { ABANDONMENT_DAYS, DEFAULT_SEVERITY, SEVERITIES, STALE_DAYS } from '../../../core/model';
+import { ABANDONMENT_DAYS, COMMIT_ABANDONMENT_DAYS, DEFAULT_SEVERITY, SEVERITIES, STALE_DAYS } from '../../../core/model';
 import { oracleAbandoned, oracleReleaseAbandoned } from '../oracles/facts-oracle';
 import { arbBadNumber, arbDaysFact, arbRawFactByField, arbRawFacts, arbValidCount, arbValidDays, arbValidSeverity, arbWrongTypeNonBoolean } from './facts';
 
@@ -51,7 +51,7 @@ const arbDayPair: fc.Arbitrary<readonly [number, number]> = fc.oneof(
     weight: 4,
     arbitrary: fc
       .tuple(
-        fc.constantFrom(STALE_DAYS, ABANDONMENT_DAYS),
+        fc.constantFrom(STALE_DAYS, ABANDONMENT_DAYS, COMMIT_ABANDONMENT_DAYS),
         fc.constantFrom(0, 1, 2, 30, 400),
         fc.constantFrom(0, 1, 2, 30, 400),
       )
@@ -68,6 +68,7 @@ const arbDayPair: fc.Arbitrary<readonly [number, number]> = fc.oneof(
 const arbCommitBiased: fc.Arbitrary<unknown> = fc.oneof(
   { weight: 2, arbitrary: fc.constant(STALE_DAYS - 1) },
   { weight: 2, arbitrary: fc.constant(STALE_DAYS) },
+  { weight: 2, arbitrary: fc.constantFrom(364, 365, 729, 730, 731) },
   { weight: 2, arbitrary: fc.constant(null) },
   { weight: 3, arbitrary: arbDaysFact },
 );
@@ -179,7 +180,7 @@ export const arbUnknownSeverityPair: fc.Arbitrary<UnknownSeverityPair> = fc
 /** Same facts with no open vulnerability (`openVulnerabilityCount = 0`). */
 export const removeVulnerability = (f: RawHealthFacts): RawHealthFacts => ({ ...f, openVulnerabilityCount: 0 });
 
-/** Same facts with abandonment removed: archived and deprecated false, commit age 0 when 8.3 holds. */
+/** Same facts with abandonment removed: archived and deprecated false, commit age 0 when 8.3 holds (changed by scan-accuracy: 0 is below COMMIT_ABANDONMENT_DAYS). */
 export const removeAbandonment = (f: RawHealthFacts): RawHealthFacts => ({
   ...f,
   archived: false,
@@ -191,18 +192,18 @@ const arbAnyAges = fc.record({
   daysSinceLastRelease: fc.oneof(arbDaysFact, arbValidDays),
   daysSinceLastCommit: fc.oneof(arbDaysFact, arbValidDays),
 });
-/** Dormant-eligible ages: release >= ABANDONMENT_DAYS and commit < STALE_DAYS. */
+/** Dormant-eligible ages: release >= ABANDONMENT_DAYS and commit < COMMIT_ABANDONMENT_DAYS. */
 const arbDormantAges = fc.record({
   daysSinceLastRelease: fc.constantFrom(ABANDONMENT_DAYS, ABANDONMENT_DAYS + 1, 3650, 5000),
-  daysSinceLastCommit: fc.constantFrom(0, 1, STALE_DAYS - 1),
+  daysSinceLastCommit: fc.constantFrom(0, 1, STALE_DAYS - 1, COMMIT_ABANDONMENT_DAYS - 1),
 });
-/** Ages satisfying criterion 8.3: release >= ABANDONMENT_DAYS and commit unknown or >= STALE_DAYS. */
+/** Ages satisfying criterion 8.3: release >= ABANDONMENT_DAYS and commit unknown or >= COMMIT_ABANDONMENT_DAYS. */
 const arbRelease83Ages = (unknownCommit: boolean) =>
   fc.record({
     daysSinceLastRelease: fc.oneof(fc.constantFrom(ABANDONMENT_DAYS, ABANDONMENT_DAYS + 1, 3650), fc.integer({ min: ABANDONMENT_DAYS, max: 5000 })),
     daysSinceLastCommit: unknownCommit
       ? arbUnknownDays
-      : fc.oneof(fc.constantFrom(STALE_DAYS, STALE_DAYS + 1, 3650), fc.integer({ min: STALE_DAYS, max: 5000 })),
+      : fc.oneof(fc.constantFrom(COMMIT_ABANDONMENT_DAYS, COMMIT_ABANDONMENT_DAYS + 1, 3650), fc.integer({ min: COMMIT_ABANDONMENT_DAYS, max: 5000 })),
   });
 const arbNotAbandonedFlag: fc.Arbitrary<unknown> = fc.oneof(fc.constant(false), arbUnknownBool);
 

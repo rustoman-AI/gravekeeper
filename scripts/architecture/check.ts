@@ -3,6 +3,8 @@ import { findForbiddenApi } from './globals';
 import { extractImports, type ImportRef } from './imports';
 import {
   LAYER_RULES,
+  RANGE_PACKAGE_WRAPPERS,
+  RANGE_VERSION_PATTERN,
   SOURCE_PORT_NAMES,
   TOKEN_TEXT,
   exportedInterfaceNames,
@@ -80,7 +82,7 @@ function importViolations(
     }
     const resolved = resolveSpecifier(file, ref.specifier);
     for (const rule of LAYER_RULES) {
-      if (rule.kind === 'import' && rule.appliesTo(file) && rule.forbids(resolved)) {
+      if (rule.kind === 'import' && rule.appliesTo(file) && rule.forbids(resolved, file)) {
         out.push({ file, line: ref.line, rule: rule.id });
       } else if (rule.kind === 'api' && rule.appliesTo(file) && resolved.kind === 'package') {
         const name = resolved.name.replace(/^node:/, '').split('/')[0];
@@ -148,6 +150,34 @@ function checkPortsInterfaces(files: readonly SourceFileInput[], out: Violation[
   for (const name of SOURCE_PORT_NAMES) {
     if (!exported.has(name)) out.push({ file: anchor.path, line: 1, rule: 'ports-missing-interface' });
   }
+}
+
+/**
+ * Reports range packages declared with a range instead of an exact version.
+ * Absent packages and unparsable JSON give no violation. Pure; the CLI reads the file.
+ */
+export function checkRangePackageVersions(packageJsonText: string, file = 'package.json'): Violation[] {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(packageJsonText);
+  } catch {
+    return [];
+  }
+  if (typeof parsed !== 'object' || parsed === null) return [];
+  const out: Violation[] = [];
+  const lines = packageJsonText.split('\n');
+  for (const section of ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies']) {
+    const deps = (parsed as Record<string, unknown>)[section];
+    if (typeof deps !== 'object' || deps === null) continue;
+    for (const name of Object.keys(RANGE_PACKAGE_WRAPPERS)) {
+      if (!Object.prototype.hasOwnProperty.call(deps, name)) continue;
+      const version = (deps as Record<string, unknown>)[name];
+      if (typeof version !== 'string' || !RANGE_VERSION_PATTERN.test(version.trim())) continue;
+      const index = lines.findIndex((l) => l.includes(`\"${name}\"`));
+      out.push({ file, line: index < 0 ? 1 : index + 1, rule: 'range-package-version-exact' });
+    }
+  }
+  return out;
 }
 
 function compareViolations(a: Violation, b: Violation): number {

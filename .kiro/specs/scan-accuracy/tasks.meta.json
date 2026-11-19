@@ -6,6 +6,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636293
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060655308
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060751649
       }
     ],
     "1.2 Write unit tests for the constant and the release rules": [
@@ -13,6 +23,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636352
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060843236
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060941745
       }
     ],
     "1.3 Update the facts oracle and the facts arbitraries": [
@@ -20,6 +40,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636394
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060843349
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060942323
       }
     ],
     "1.4 Update the existing classifier and scoring property tests": [
@@ -27,6 +57,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636433
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061053653
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061158279
       }
     ],
     "1.5 Write the property test for the commit threshold": [
@@ -34,6 +74,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636475
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061053755
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061158448
       }
     ],
     "1.6 Change the unknown-facts rule": [
@@ -41,6 +91,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636534
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060655430
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060752353
       }
     ],
     "1.7 Write unit tests for the unknown-facts rule and update the old assertions": [
@@ -48,6 +108,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636580
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061054390
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061159404
       }
     ],
     "1.8 Write the property test for the unknown-facts Reason": [
@@ -55,6 +125,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636620
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061055887
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061160905
       }
     ],
     "1.9 Extract and export the merge functions": [
@@ -62,6 +142,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636673
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060655558
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060753358
       }
     ],
     "1.10 Write unit tests for the exported merge functions": [
@@ -69,6 +159,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636710
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060843620
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060943822
       }
     ],
     "1.11 Write the property test for the exported merge functions": [
@@ -76,6 +176,26 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636745
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061166247
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061271370
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061334204
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061364764
       }
     ],
     "2. Checkpoint - Core": [
@@ -83,6 +203,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636782
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061273596
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061410395
       }
     ],
     "3.1 Install and pin the range libraries": [
@@ -90,6 +220,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636819
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060656088
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060754353
       }
     ],
     "3.2 Write the package pin test": [
@@ -97,6 +237,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636855
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060950168
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061043697
       }
     ],
     "3.3 Add the architecture rules for the range packages": [
@@ -104,6 +254,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636890
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060656494
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060755352
       }
     ],
     "3.4 Write the architecture tests for the range packages": [
@@ -111,6 +271,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636925
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060951161
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061044682
       }
     ],
     "3.5 Add the new pipeline constants and bump the cache key version": [
@@ -118,6 +288,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060636962
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060760505
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060834221
       }
     ],
     "3.6 Update the constants tests": [
@@ -125,6 +305,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637001
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060952657
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061046180
       }
     ],
     "3.7 Implement the two range wrappers": [
@@ -132,6 +322,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637037
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060844075
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060944328
       }
     ],
     "3.8 Write unit tests for the wrappers": [
@@ -139,6 +339,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637072
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061167099
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061272113
       }
     ],
     "3.9 Implement the Cargo range mapper": [
@@ -146,6 +356,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637109
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060760775
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060834553
       }
     ],
     "3.10 Write unit tests for the Cargo range mapper": [
@@ -153,6 +373,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637146
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060953055
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061046685
       }
     ],
     "3.11 Implement `resolveRange`": [
@@ -160,6 +390,282 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637211
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061056323
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061161905
       }
     ],
-    
+    "3.12 Write unit tests for `resolveRange`": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637258
+      }
+    ],
+    "3.13 Write the property tests for resolution": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637328
+      }
+    ],
+    "3.14 Write the property test for the Cargo mapping": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637368
+      }
+    ],
+    "3.15 Implement `chooseVersion` and the new selection types": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637409
+      }
+    ],
+    "3.16 Write unit tests for `chooseVersion`": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637449
+      }
+    ],
+    "3.17 Write the property tests for version choice": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637490
+      }
+    ],
+    "3.18 Add the `range-unresolved` note and message row": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637527
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060844980
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060945830
+      }
+    ],
+    "3.19 Update the notes and messages tests": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637564
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061168183
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061273117
+      }
+    ],
+    "3.20 Wire `chooseVersion` into the version stage": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637607
+      }
+    ],
+    "3.21 Update the version-selection tests": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637647
+      }
+    ],
+    "3.22 Update the mapper registry": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637688
+      }
+    ],
+    "3.23 Update the version stage and assembly tests": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637785
+      }
+    ],
+    "4. Checkpoint - Version resolution": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637829
+      }
+    ],
+    "5.1 Implement advisory entries and add them to the assembled facts": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637865
+      }
+    ],
+    "5.2 Write unit tests for advisory entries": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637896
+      }
+    ],
+    "5.3 Write the property test for advisory entries": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637932
+      }
+    ],
+    "5.4 Carry advisories into the Scan_Result and accept the new shape in the cache": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060637974
+      }
+    ],
+    "5.5 Update the Scan_Result and cache tests": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638013
+      }
+    ],
+    "5.6 Write the scan-level property test for advisories": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638058
+      }
+    ],
+    "5.7 Return a Scan_Outcome from `runScan`": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638105
+      }
+    ],
+    "5.8 Update the tests that call `runScan`": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638146
+      }
+    ],
+    "5.9 Set the cache header on 200 responses": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638185
+      }
+    ],
+    "5.10 Update the route and handler tests": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638226
+      }
+    ],
+    "5.11 Write the property test for the cache header and update the cache-hit test": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638262
+      }
+    ],
+    "5.12 Add the manifest candidates to the two errors": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638299
+      }
+    ],
+    "5.13 Update the unit tests for the two errors": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638338
+      }
+    ],
+    "5.14 Write the property test for the candidates": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638375
+      }
+    ],
+    "6. Checkpoint - Advisories, cache header, candidates": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638415
+      }
+    ],
+    "7.1 Re-record the fixtures": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638453
+      }
+    ],
+    "7.2 Update the fixture tests": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638489
+      }
+    ],
+    "7.3 Update the traceability document": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638526
+      }
+    ],
+    "7.4 Write the live report script": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638563
+      }
+    ],
+    "7.5 Run the live report": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638599
+      }
+    ],
+    "8. Final checkpoint - Fixtures, traceability and live report": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795060638637
+      }
+    ],
+    "1. Core: commit threshold, unknown-facts Reason, exported merge functions": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061271409
+      }
+    ]
+  }
+}

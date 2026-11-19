@@ -1,9 +1,9 @@
 // Independent oracle for Health_Facts properties (design: Generator strategy: facts).
 // Valid_Fact, Unknown_Fact, vulnerable, abandoned and dormant are re-implemented here from the glossary
-// and criteria 6.2, 6.6, 7.1, 8.1 to 8.4, so a bug in core/facts cannot hide itself. Only constants and
+// and criteria 6.2, 6.3, 6.6, 7.1, 8.1 to 8.4, so a bug in core/facts cannot hide itself. Only constants and
 // types are imported from core; no production predicate or normalizer is called.
 import type { HealthFactField } from '../../../core/model';
-import { ABANDONMENT_DAYS, STALE_DAYS } from '../../../core/model';
+import { ABANDONMENT_DAYS, COMMIT_ABANDONMENT_DAYS, STALE_DAYS } from '../../../core/model';
 
 /** All Health_Facts field names, in the canonical order of the glossary. */
 export const FACT_FIELDS: readonly HealthFactField[] = [
@@ -64,18 +64,37 @@ function validNumber(input: unknown, field: HealthFactField): number | null {
   return typeof v === 'number' ? v : null;
 }
 
+/**
+ * Reportable Unknown_Facts (scan-accuracy 2.1, 2.8): the Unknown_Facts of criterion 6.3 without `maxSeverity`
+ * when `openVulnerabilityCount` is a Valid_Fact equal to 0 (no open vulnerability, so no severity can exist).
+ */
+export function oracleReportableUnknownFields(input: unknown): HealthFactField[] {
+  const noOpenVulnerability = validNumber(input, 'openVulnerabilityCount') === 0;
+  return oracleUnknownFields(input).filter((f) => !(f === 'maxSeverity' && noOpenVulnerability));
+}
+
+/**
+ * Exact 6.3 message for a reportable name list (scan-accuracy 2.2, 2.3, 2.9), written without core's `sentence`
+ * or `listNames`. Returns `null` for an empty list. One name is singular, two use "a and b", more use "a, b and c".
+ */
+export function oracleUnknownFactsMessage(names: readonly string[]): string | null {
+  if (names.length === 0) return null;
+  if (names.length === 1) return `This health fact is unknown and adds no risk points: ${names[0]}.`;
+  const head = names.slice(0, names.length - 1).join(', ');
+  return `These health facts are unknown and add no risk points: ${head} and ${names[names.length - 1]}.`;
+}
 /** Criterion 7.1: `openVulnerabilityCount` is a Valid_Fact integer >= 1. */
 export function oracleVulnerable(input: unknown): boolean {
   const n = validNumber(input, 'openVulnerabilityCount');
   return n !== null && n >= 1;
 }
 
-/** Criterion 8.3 condition: release is a Valid_Fact >= ABANDONMENT_DAYS and commit is Valid_Fact >= STALE_DAYS or Unknown_Fact. */
+/** Criterion 8.3 condition: release is a Valid_Fact >= ABANDONMENT_DAYS and commit is Valid_Fact >= COMMIT_ABANDONMENT_DAYS or Unknown_Fact. */
 export function oracleReleaseAbandoned(input: unknown): boolean {
   const release = validNumber(input, 'daysSinceLastRelease');
   if (release === null || release < ABANDONMENT_DAYS) return false;
   const commit = validNumber(input, 'daysSinceLastCommit');
-  return commit === null || commit >= STALE_DAYS;
+  return commit === null || commit >= COMMIT_ABANDONMENT_DAYS;
 }
 
 /** Glossary "Abandoned": archived, deprecated, or the 8.3 condition. `maintainerCount` has no influence. */
@@ -87,11 +106,11 @@ export function oracleAbandoned(input: unknown): boolean {
   );
 }
 
-/** Glossary "Dormant" (criterion 8.4): release Valid_Fact >= ABANDONMENT_DAYS and commit Valid_Fact < STALE_DAYS. */
+/** Glossary "Dormant" (criterion 8.4): release Valid_Fact >= ABANDONMENT_DAYS and commit Valid_Fact < COMMIT_ABANDONMENT_DAYS. */
 export function oracleDormant(input: unknown): boolean {
   const release = validNumber(input, 'daysSinceLastRelease');
   const commit = validNumber(input, 'daysSinceLastCommit');
-  return release !== null && release >= ABANDONMENT_DAYS && commit !== null && commit < STALE_DAYS;
+  return release !== null && release >= ABANDONMENT_DAYS && commit !== null && commit < COMMIT_ABANDONMENT_DAYS;
 }
 
 /** Criterion 10.6 condition: release is a Valid_Fact in [STALE_DAYS, ABANDONMENT_DAYS). */

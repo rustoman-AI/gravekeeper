@@ -78,7 +78,7 @@ export const PARTIAL_SCAN_TTL_SECONDS = 600;
 export const L2_OPERATION_TIMEOUT_MS = 300;
 export const L2_MAX_SCAN_BYTES = 1000000;
 export const L2_MAX_BODY_BYTES = 262144;
-export const CACHE_KEY_VERSION = 1;
+export const CACHE_KEY_VERSION = 2;
 
 export const REDIRECT_MAX_HOPS = 3;
 
@@ -116,3 +116,8 @@ export const CVSS_RANGES: readonly {
 // Test support
 export const TOKEN_TEST_MIN_LENGTH = 16;
 export const FIXTURE_MIN_REPOS = 3;
+
+// Scan accuracy (scan-accuracy requirements 3.6, 6.7, 7.3, 10.1)
+export const RANGE_MAX_LENGTH = 256;
+export const ADVISORY_URL_PREFIX = "https://osv.dev/vulnerability/";
+export const CACHE_STATUS_HEADER = "X-Gravekeeper-Cache";

@@ -7,7 +7,7 @@ import {
   isStaleRelease,
   isVulnerable,
 } from '../../../core/facts/predicates';
-import { ABANDONMENT_DAYS, STALE_DAYS } from '../../../core/model/constants';
+import { ABANDONMENT_DAYS, COMMIT_ABANDONMENT_DAYS, STALE_DAYS } from '../../../core/model/constants';
 
 const facts = (over: Record<string, unknown> = {}) =>
   normalizeFacts({
@@ -41,8 +41,8 @@ describe('isVulnerable', () => {
   });
 });
 
-describe('release abandonment boundaries (commit stale)', () => {
-  const commit = STALE_DAYS;
+describe('release abandonment boundaries (commit at COMMIT_ABANDONMENT_DAYS)', () => {
+  const commit = COMMIT_ABANDONMENT_DAYS;
   it.each([
     [ABANDONMENT_DAYS - 1, false],
     [ABANDONMENT_DAYS, true],
@@ -63,11 +63,13 @@ describe('release abandonment boundaries (commit stale)', () => {
   });
 });
 
-describe('commit staleness boundaries (old release)', () => {
+describe('commit threshold boundaries (old release)', () => {
   it.each([
     [STALE_DAYS - 1, false, true],
-    [STALE_DAYS, true, false],
-    [STALE_DAYS + 1, true, false],
+    [STALE_DAYS, false, true],
+    [COMMIT_ABANDONMENT_DAYS - 1, false, true],
+    [COMMIT_ABANDONMENT_DAYS, true, false],
+    [COMMIT_ABANDONMENT_DAYS + 1, true, false],
   ])('commit %s days -> abandoned %s, dormant %s', (days, abandoned, dormant) => {
     const f = facts({ daysSinceLastRelease: ABANDONMENT_DAYS, daysSinceLastCommit: days });
     expect(isReleaseAbandoned(f)).toBe(abandoned);

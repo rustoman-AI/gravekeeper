@@ -39,11 +39,13 @@ import {
   osvPaginationIgnoredNote,
   packageNotFoundNote,
   pinNotFoundNote,
+  rangeUnresolvedNote,
   scanDeadlineReachedNote,
   sourceRepoUnverifiedNote,
   treeTruncatedNote,
   unmaintainedAdvisoryNote,
 } from '../../../pipeline/scan/notes';
+import { RANGE_MAX_LENGTH } from '../../../pipeline/constants';
 import { parseRepoUrl } from '../../../pipeline/url/parse-repo-url';
 
 // Requirement 17.9, 17.15, 20.5, 20.14, 20.15, 20.16, 21.5
@@ -66,6 +68,7 @@ const ALLOWED_KEYS: Readonly<Record<string, readonly string[]>> = {
   'dependency-cap-exceeded': ['total', 'limit'],
   'source-partial': ['source'],
   'unmaintained-advisory': ['name', 'ids'],
+  'range-unresolved': ['ecosystem', 'name', 'ranges'],
   'branch-not-found': ['branch'],
   'too-many-manifests': ['limit'],
   'manifest-not-found': ['path'],
@@ -304,6 +307,7 @@ describe('note builders', () => {
       dependencyCapExceededNote({ limit: 5, total: 9 }),
       scanDeadlineReachedNote(),
       unmaintainedAdvisoryNote('cargo', 'foo', ['RUSTSEC-1']),
+      rangeUnresolvedNote('npm', 'foo', ['^1', '^1']),
       makeSourceNote({
         source: 'osv',
         status: 'partial',
@@ -336,6 +340,22 @@ describe('note builders', () => {
     expect(n.message).toBe(
       'x is pinned to different versions in different manifests (a, b). The latest release was checked instead.',
     );
+  });
+
+  it('range-unresolved: only {name} is a placeholder, ranges is stored but never rendered', () => {
+    expect(placeholdersOf(NOTE_MESSAGES['range-unresolved'])).toEqual(['name']);
+    const n = rangeUnresolvedNote('npm', 'foo', ['>=2 \u2014 {name}', '^1', '^1', '>=2 \u2014 {name}']);
+    expect(n.details).toEqual({ ecosystem: 'npm', name: 'foo', ranges: ['>=2 \u2014 {name}', '^1'] });
+    expect(n.message).toBe(NOTE_MESSAGES['range-unresolved'].replace('{name}', 'foo'));
+    expect(n.message).not.toContain('^1');
+    expect(n.message).not.toContain(EM_DASH);
+  });
+
+  it('range-unresolved: ranges are cut to RANGE_MAX_LENGTH code points, distinct, ascending', () => {
+    const long = '\u{1F600}'.repeat(RANGE_MAX_LENGTH + 5);
+    const cut = '\u{1F600}'.repeat(RANGE_MAX_LENGTH);
+    const n = rangeUnresolvedNote('npm', 'foo', ['b', long, 'a', long]);
+    expect(n.details).toEqual({ ecosystem: 'npm', name: 'foo', ranges: ['a', 'b', cut] });
   });
 
   it('omits resetAt from github-budget-low details when not observed', () => {

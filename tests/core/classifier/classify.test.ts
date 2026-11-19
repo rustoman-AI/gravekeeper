@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { classify, CONSTANTS } from '../../../core';
 
-const { ABANDONMENT_DAYS, STALE_DAYS } = CONSTANTS;
+const { ABANDONMENT_DAYS, COMMIT_ABANDONMENT_DAYS, STALE_DAYS } = CONSTANTS;
 
 const base = {
   daysSinceLastRelease: 10,
@@ -48,7 +48,7 @@ describe('classify: status precedence (9.1 to 9.4)', () => {
   });
 
   it('dormant stays ALIVE', () => {
-    const c = classify(withFacts({ daysSinceLastRelease: ABANDONMENT_DAYS, daysSinceLastCommit: STALE_DAYS - 1 }));
+    const c = classify(withFacts({ daysSinceLastRelease: ABANDONMENT_DAYS, daysSinceLastCommit: COMMIT_ABANDONMENT_DAYS - 1 }));
     expect(c.status).toBe('ALIVE');
     expect(c.dormant).toBe(true);
     expect(c.abandoned).toBe(false);
@@ -239,16 +239,16 @@ describe('classify: boundary table', () => {
     expect(c.score).toBe(0);
   });
 
-  it('release >= 730 with commit STALE_DAYS - 1 is dormant (8.4, not 8.3)', () => {
-    const c = rel(ABANDONMENT_DAYS, STALE_DAYS - 1);
+  it('release >= 730 with commit COMMIT_ABANDONMENT_DAYS - 1 is dormant (8.4, not 8.3)', () => {
+    const c = rel(ABANDONMENT_DAYS, COMMIT_ABANDONMENT_DAYS - 1);
     expect(ids(c)).toEqual(['8.4']);
     expect(c.dormant).toBe(true);
     expect(c.abandoned).toBe(false);
     expect(c.score).toBe(10);
   });
 
-  it('release >= 730 with commit STALE_DAYS is abandoned (8.3, not 8.4)', () => {
-    const c = rel(ABANDONMENT_DAYS, STALE_DAYS);
+  it('release >= 730 with commit COMMIT_ABANDONMENT_DAYS is abandoned (8.3, not 8.4)', () => {
+    const c = rel(ABANDONMENT_DAYS, COMMIT_ABANDONMENT_DAYS);
     expect(ids(c)).toContain('8.3');
     expect(ids(c)).not.toContain('8.4');
     expect(c.abandoned).toBe(true);
@@ -309,7 +309,7 @@ describe('classify: boundary table', () => {
 
   it('archived, deprecated and release abandonment are capped at 30 together', () => {
     const c = classify(
-      withFacts({ archived: true, deprecated: true, daysSinceLastRelease: ABANDONMENT_DAYS, daysSinceLastCommit: STALE_DAYS }),
+      withFacts({ archived: true, deprecated: true, daysSinceLastRelease: ABANDONMENT_DAYS, daysSinceLastCommit: COMMIT_ABANDONMENT_DAYS }),
     );
     expect(ids(c)).toEqual(['8.1', '8.2', '8.3']);
     expect(c.score).toBe(30);
