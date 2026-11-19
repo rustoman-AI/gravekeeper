@@ -2,9 +2,9 @@
 
 ## Overview
 
-The graveyard UI turns one `POST /api/scan` response into an interactive moonlit graveyard. A visitor pastes a public GitHub repository URL or picks a featured repository. The browser sends the request, shows an honest scanning screen, and then shows tombstones (buried DEAD packages), overgrown graves (forgotten DEAD packages), ghosts (HAUNTED), lanterns (ALIVE) and unmarked graves (not assessed), with a header, an accessible table, a detail panel, "Caretaker's notes" and themed error screens. This design implements `.kiro/specs/graveyard-ui/requirements.md` (Requirements 1 to 21, DI-1 to DI-31, DG-1 to DG-20, Open questions 1 to 13, all answered). Section references such as "R7.15" mean Requirement 7, criterion 15.
+The graveyard UI turns one `POST /api/scan` response into an interactive moonlit graveyard. A visitor pastes a public GitHub repository URL or picks a featured repository. The browser sends the request, shows an honest scanning screen, and then shows tombstones (buried DEAD packages), overgrown graves (forgotten DEAD packages), ghosts (HAUNTED), restless ghosts (HAUNTED packages that are also archived or deprecated, drawn as a ghost over its own tombstone), lanterns (ALIVE) and unmarked graves (not assessed), with a header, an accessible table, a detail panel, "Caretaker's notes" and themed error screens. This design implements `.kiro/specs/graveyard-ui/requirements.md` (Requirements 1 to 22, DI-1 to DI-31, DG-1 to DG-21, Open questions 1 to 16, all answered and accepted). Section references such as "R7.15" mean Requirement 7, criterion 15.
 
-The UI is a consumer of `/core`, `/pipeline` and `/adapters`, which stay unchanged. It reads the Scan_Result as extended by `.kiro/specs/scan-accuracy`: `ScanDependency.advisories`, `versionBasis` `resolved`, the `X-Gravekeeper-Cache` header, `details.candidates` in two errors, the note code `range-unresolved`, and the core exports `uniquePackages`, `mergeClassifications` and `compareClassifications`.
+The UI is a consumer of `/core`, `/pipeline` and `/adapters`, which stay unchanged except for one additive field, `AdvisoryEntry.excluded` (D12, "Pipeline change: advisory exclusion kind", Requirement 22), implemented by one explicit pipeline task with tests. It reads the Scan_Result as extended by `.kiro/specs/scan-accuracy`: `ScanDependency.advisories`, `versionBasis` `resolved`, the `X-Gravekeeper-Cache` header, `details.candidates` in two errors, the note code `range-unresolved`, and the core exports `uniquePackages`, `mergeClassifications` and `compareClassifications`.
 
 ### Design principles
 
@@ -26,7 +26,9 @@ The UI is a consumer of `/core`, `/pipeline` and `/adapters`, which stay unchang
 | D4 | The Scene is a container of `<button>` elements placed by CSS custom properties, each with an inline `<svg><use href></svg>` that points into one sprite sheet. There is no per-plot React state, no per-plot handler and no SVG filter. | Native buttons give role, name, Enter and Space, focus ring and Testing Library queries for free. 300 plots cost about 1,200 DOM nodes (R17.1). |
 | D5 | The Detail_Panel is a custom modal (`role="dialog"`, `aria-modal="true"`, `inert` on the page behind it, a small focus-trap hook) and not the native `<dialog>` element. | R10.1 states the ARIA attributes and the trap. jsdom (the Vitest DOM environment of the Next.js Vitest guide) is believed not to implement `showModal` (to be re-checked at task time, RK6), and a native dialog would then need a polyfill in every component test. A custom modal avoids the question. |
 | D6 | The Scan_Client lives in `/client` (browser I/O, framework-free). Hooks live in `/components/hooks`. The View_Model has no I/O. | `structure.md` has no home for browser I/O. A new `/client` directory gets its own architecture rule (see Architecture check). |
-| D7 | Fonts: **Pirata One** (gothic display, OFL, weight 400) and **Atkinson Hyperlegible** (readable sans, OFL, weights 400 and 700), both through `next/font/google`. The starter's Geist fonts are removed. | R15.3 and `ui-design.md` (one display face, one readable sans, OFL, `next/font`). Both names exist in `node_modules/next/dist/compiled/@next/font/dist/google/font-data.json` of the installed Next.js (checked). `adjustFontFallback` defaults to `true` for Google fonts (guide `font.md`), which limits layout shift (R17.6). |
+| D7 | Fonts: **IM Fell English SC** (display, OFL 1.1, weight 400, `latin` subset, import name `IM_Fell_English_SC`) and **Atkinson Hyperlegible** (readable sans, OFL 1.1, weights 400 and 700, `latin`, import name `Atkinson_Hyperlegible`), both through `next/font/google`. Pirata One is not used. The starter's Geist fonts are removed. | R15.3 and `ui-design.md` (one display face, one readable sans, OFL, `next/font`). The user replaced Pirata One by IM Fell English SC in the final revision. Both names exist in `node_modules/next/dist/compiled/@next/font/dist/google/font-data.json` of the installed Next.js 16.4.6 and the licence of IM Fell English SC is verified (section "Font licence evidence"). `adjustFontFallback` defaults to `true` for Google fonts (guide `font.md`), which limits layout shift (R17.6). The font has one weight, so headings must not use `font-weight` above 400 (a synthesised bold would be applied otherwise). |
+| D12 | Advisory groups need the new pipeline field `AdvisoryEntry.excluded: 'withdrawn' \| 'informational' \| null`. The view-model derives informational entries from the note ids when the field is absent, and shows the rest of such a result under "Not classified". | R10.16, R22, DG-21. No Scan_Result field says which entries are withdrawn (checked in `pipeline/mapping`), so a derivation is impossible for withdrawn entries. The field is the smallest addition (one value per entry, from the `AdvisoryRecord` that `assembleFacts` already holds). The scan cache can still hold results from before the change, hence the absent-field fallback. |
+| D13 | Restless ghost is a sixth `PlotKind` with status word "haunted, buried". Its kind is a pure function of the merged status and the ruleId set (`plotKindOf`), next to `graveTypeOf`. It counts in H and not in B. It has no Grave_Type and no Resurrect_Slot. | User decision (R7.20, R5.2). Keeping the Grave_Type `null` for every HAUNTED package preserves B + F = DEAD and the merged status stays the single source of "haunted" counts. |
 | D8 | The Content-Security-Policy is set once in `next.config.ts` `headers()` in the "Without Nonces" form of the CSP guide. | Open question 9. A nonce needs dynamic rendering of every page and SRI is experimental (guide `content-security-policy.md`). |
 | D9 | Code splitting uses `next/dynamic` inside client components for `DetailPanel`, `ListView` and `ManifestPicker`. | Guide `lazy-loading.md`: automatic splitting is not supported when a Server Component imports a Client Component, so the dynamic imports sit in `GraveyardApp` and `ResultsPage`, which are client components (R17.7). |
 | D10 | Property tests and component tests share one typed `ScanResult` builder and one fast-check arbitrary (`tests/support/ui/`). The arbitrary builds the result through the real core (`classify`, `summarize`) so that summaries are consistent. | R19.2 and R19.5. A hand-written summary could drift from core and hide a real mismatch. |
@@ -58,6 +60,18 @@ Live checks (2026-11-19, PowerShell `Invoke-WebRequest`):
 
 Repository facts checked: `.next/server/app/index.html` and `page_client-reference-manifest.js` exist after a build (used by the bundle check), `next.config.ts` has `cacheComponents: true` and `partialPrefetching: true`, `vitest.config.mts` includes only `tests/**/*.test.ts` in a `node` environment, `scripts/architecture/rules.ts` holds the layer rules, and `tests/support/arbitraries/` has core arbitraries that the UI arbitrary reuses.
 
+### Font licence evidence (D7, R15.3)
+
+Checked on 2026-11-19, before the font was added to any file:
+
+1. **Availability in the installed Next.js.** `node_modules/next/dist/compiled/@next/font/dist/google/font-data.json` (Next.js 16.4.6) has the key `"IM Fell English SC"` with `weights: ["400"]`, `styles: ["normal"]`, `subsets: ["latin"]`. It has `"Atkinson Hyperlegible"` with weights 400 and 700, styles normal and italic, subsets `latin` and `latin-ext`. `next/font/google` therefore accepts `IM_Fell_English_SC({ subsets: ['latin'], weight: '400' })`. The file also lists the other nine IM Fell families, so the SC variant is the only one with the small-capitals form that was asked for.
+2. **Licence metadata of the Google Fonts repository.** `https://raw.githubusercontent.com/google/fonts/main/ofl/imfellenglishsc/METADATA.pb` states `name: "IM Fell English SC"`, `designer: "Igino Marini"`, `license: "OFL"`, `category: "SERIF"`, `date_added: "2010-05-17"`, one font file of weight 400 and the copyright line "(c) 2007 Igino Marini ... With Reserved Font Name IM FELL English SC". The font sits in the `ofl/` directory of the repository, which holds only OFL fonts.
+3. **Licence text.** `https://raw.githubusercontent.com/google/fonts/main/ofl/imfellenglishsc/OFL.txt` begins "Copyright (c) 2010, Igino Marini" and "This Font Software is licensed under the SIL Open Font License, Version 1.1", followed by the full licence text. The licence permits use, bundling and redistribution with software, free of charge, and requires that each redistributed copy carries the copyright notice and the licence text (condition 2). It forbids selling the font by itself and forbids using the Reserved Font Name for a Modified Version (condition 3).
+4. **Consequences for this repository.** (a) `next/font/google` downloads the font files at build time and serves them from the same origin without modification, so the Reserved Font Name restriction (Modified Versions only) does not apply. (b) Condition 2 asks for the notice and the licence text to accompany redistributed copies. The design therefore adds a small committed file `docs/font-licences.md` (task 9.1) that names the two fonts, their designers (Igino Marini for IM Fell English SC, the Braille Institute of America and Applied Design Works for Atkinson Hyperlegible, whose `METADATA.pb` at `https://raw.githubusercontent.com/google/fonts/main/ofl/atkinsonhyperlegible/METADATA.pb` also states `license: "OFL"` and the copyright "Copyright 2020 Braille Institute of America, Inc.", checked the same day), the licence name and the two source URLs, and a footer link or text "Fonts: SIL Open Font License 1.1" on the landing page that points to that file's content in the repository. (c) The CSP value `font-src 'self'` stays correct because the files are self-hosted.
+5. **Steering wording.** `ui-design.md` says "one gothic display face". IM Fell English SC is a 17th-century old-style face, not blackletter. The user chose it, so task 9.1 changes that one sentence of `ui-design.md` to "one period display face". No other steering sentence changes.
+
+Pirata One is removed from the design and from the layout test list (`tests/ui/layout.test.ts` allows exactly `IM_Fell_English_SC` and `Atkinson_Hyperlegible`).
+
 ---
 
 ## Architecture
@@ -66,7 +80,7 @@ Repository facts checked: `.next/server/app/index.html` and `page_client-referen
 
 ```
 app/
-  layout.tsx                    root layout: next/font (Pirata One, Atkinson Hyperlegible), metadata, lang="en", SiteHeader, main, SiteFooter
+  layout.tsx                    root layout: next/font (IM Fell English SC, Atkinson Hyperlegible), metadata, lang="en", SiteHeader, main, SiteFooter
   page.tsx                      sync Server Component: <Suspense fallback={<GateFallback/>}><GraveyardApp/></Suspense>
   globals.css                   Tailwind import, design tokens (@theme), fog and motion CSS, reduced-motion rules
   api/scan/route.ts             unchanged
@@ -76,7 +90,8 @@ view-model/                     PURE. No React, no next/*, no DOM, no clock, no 
   types.ts                      all view-model types (see Data Models)
   parse-response.ts             parseScanResponse, parseRetryAfter, parseCacheStatus
   narrow.ts                     narrowFacts, narrowAdvisories, narrowVersionBasis (total)
-  grave-type.ts                 graveTypeOf
+  grave-type.ts                 graveTypeOf, plotKindOf, statusWordOf
+  advisory-groups.ts            buildAdvisoryGroups (R10.16)
   reasons.ts                    REASON_PRIORITY, strongestReason, shortForm, epitaphOf, statusWordOf
   glow.ts                       glowOf, maxSeverityOf
   package-rows.ts               buildPackageRows (calls core uniquePackages), scene order comparator
@@ -99,7 +114,7 @@ components/                     React. One component per file, PascalCase names,
   scanning-screen.tsx, stage-list.tsx
   results-page.tsx, results-header.tsx, grade-line.tsx, view-toggle.tsx, cache-note.tsx
   scene.tsx, scene-plot.tsx, scene-sprites.tsx, scene-tooltip.tsx, fog-layer.tsx
-  list-view.tsx (lazy), detail-panel.tsx (lazy), resurrect-slot.tsx, manifest-picker.tsx (lazy)
+  list-view.tsx (lazy), detail-panel.tsx (lazy), advisory-groups.tsx, resurrect-slot.tsx, manifest-picker.tsx (lazy)
   caretakers-notes.tsx, note-group-section.tsx, source-status-list.tsx, cap-banner.tsx, empty-graveyard.tsx
   error-screen.tsx, retry-button.tsx, back-to-gate.tsx
   site-header.tsx, site-footer.tsx, skip-link.tsx, external-link.tsx
@@ -334,7 +349,7 @@ Components import view-model values only through `view-model/index.ts` and never
 | S2 | Scanning (four stages) | `/?repo=...` while a request is in flight | `ScanningScreen`, `StageList` | `scanning-stage1-<viewport>.png` to `scanning-stage4-<viewport>.png` |
 | S3 | Results, Scene view | `/?repo=...` with `view` absent or `scene` | `ResultsPage`, `ResultsHeader`, `Scene`, `CaretakersNotes` | `results-scene-<fixture>-<viewport>.png` for `request`, `canopy`, `zoxide` |
 | S4 | Results, List view | `view=list` | `ListView` (lazy) | `results-list-<fixture>-<viewport>.png` |
-| S5 | Detail panel | modal over S3 or S4 | `DetailPanel`, `ResurrectSlot` | `detail-tombstone-`, `detail-overgrown-`, `detail-ghost-`, `detail-lantern-`, `detail-unmarked-<viewport>.png` |
+| S5 | Detail panel | modal over S3 or S4 | `DetailPanel`, `ResurrectSlot` | `detail-tombstone-`, `detail-overgrown-`, `detail-ghost-`, `detail-restless-`, `detail-lantern-`, `detail-unmarked-<viewport>.png` |
 | S6 | Caretaker's notes | section of S3 and S4 | `CaretakersNotes`, `SourceStatusList`, `CapBanner` | `notes-<fixture>-<viewport>.png`, `notes-degraded-<viewport>.png` (synthetic partial and failed sources) |
 | S7 | Empty graveyard | `no-manifests` note or no manifests | `EmptyGraveyard` | `results-empty-<viewport>.png` |
 | S8 | Manifest picker | `no-root-manifest` note | `ManifestPicker` | `picker-results-<viewport>.png` |
@@ -357,7 +372,7 @@ The Scene is one `div` (`role="group"`, `aria-label` "Graveyard scene, N package
 
 1. `FogLayer`: two `div` elements with a large CSS gradient background, `aria-hidden="true"`, animated with `transform` and `opacity` only.
 2. Plots: one `<button>` per Plot, `position: absolute; left: 0; top: 0; transform: translate(var(--x), var(--y))`, with `--x`, `--y`, `--w`, `--h` and `--glow` set as inline custom properties. Each button holds `<svg aria-hidden="true"><use href="#plot-<kind>" /></svg>` and one `<span>` label. The visible label is the name cut to `EPITAPH_MAX_CHARS`. The full text is in `aria-label` (R7.6) and in the tooltip.
-3. `SceneSprites`: one hidden-by-size `<svg width="0" height="0" aria-hidden="true">` with a `<symbol>` per kind (`plot-tombstone`, `plot-overgrown`, `plot-ghost`, `plot-lantern`, `plot-unmarked`) and flat variants (`plot-<kind>-flat`) for the simplified form. Glow is a radial-gradient fill inside the symbol and the glow level scales its opacity through `--glow`. No SVG filter and no blur is used.
+3. `SceneSprites`: one hidden-by-size `<svg width="0" height="0" aria-hidden="true">` with a `<symbol>` per kind (`plot-tombstone`, `plot-overgrown`, `plot-ghost`, `plot-restless` (the tombstone shape with the ghost shape drifting over it, built from the same two sub-shapes through nested `<use>` so that the art is drawn once), `plot-lantern`, `plot-unmarked`) and flat variants (`plot-<kind>-flat`) for the simplified form. Glow is a radial-gradient fill inside the symbol and the glow level scales its opacity through `--glow`. No SVG filter and no blur is used.
 
 How the Scene stays smooth with `SCENE_MAX_PLOTS` (300) plots:
 
@@ -365,7 +380,7 @@ How the Scene stays smooth with `SCENE_MAX_PLOTS` (300) plots:
 2. **One memoised model per result.** `useMemo` keys: `buildPackageRows(result)` on the result object, `buildSceneModel(rows, columns)` on `[rows, columns]`. The `plots` array and each `PlotModel` keep their identity between renders.
 3. **No per-plot state or handler.** `ScenePlot` is `React.memo` with the `PlotModel` as its only prop. Click, hover, focus and key events use one delegated handler on the container that reads `data-index` from `event.target.closest('[data-index]')`. The tooltip is one `SceneTooltip` that holds the hovered index in one state variable. Roving `tabindex` is moved by setting the attribute on two DOM nodes through a ref, so a focus move re-renders nothing. Opening and closing the Detail_Panel changes state in `GraveyardApp` only, and the memoised Scene receives the same props (R17.5).
 4. **Cheap nodes.** Each plot is four nodes (button, svg, use, span). The sprite sheet exists once. There are no filters, no masks and no per-plot gradients.
-5. **CSS-only motion, compositor properties only.** Fog drift, ghost drift and the pulse of ghosts and lanterns are CSS keyframes on `transform` and `opacity` (R17.4). Each animation has a delay from the plot's hash so that plots do not move in step. `@media (prefers-reduced-motion: reduce)` in `globals.css` sets `animation: none` and `transition: none` on the Scene and the fog, and the static glow strength still follows `--glow` (R8.7). `useReducedMotion` is used only for the Scanning screen's text variant.
+5. **CSS-only motion, compositor properties only.** Fog drift, ghost drift and the pulse of ghosts, restless ghosts and lanterns are CSS keyframes on `transform` and `opacity` (R17.4). Each animation has a delay from the plot's hash so that plots do not move in step. `@media (prefers-reduced-motion: reduce)` in `globals.css` sets `animation: none` and `transition: none` on the Scene and the fog, and the static glow strength still follows `--glow` (R8.7). `useReducedMotion` is used only for the Scanning screen's text variant.
 6. **Simplified form above 300 plots.** When `plots.length > SCENE_MAX_PLOTS`, the container gets `data-simplified="true"`. The CSS then uses the `-flat` symbols, drops animation and drops the label shadow (R8.9). Every plot is still rendered, so the table, keyboard and counts are unchanged.
 7. **Reserved space.** The container's `width` and `height` come from the model. Its height is `sceneHeight(n, columns)`, so no plot arrival moves other content (R17.3). The column count comes from `useContainerWidth`, which measures in a layout effect before the first paint of the results, and the results mount only after the fetch, so there is no server markup to mismatch.
 8. **Code split.** The List view, the Detail panel and the picker are separate chunks and are not loaded for the first view of the Results_Page (R17.7).
@@ -433,8 +448,10 @@ import type { ScanErrorBody, ScanResult } from '../pipeline';
 /** JSON.stringify([ecosystem, name, sourceKind]), the same encoding core uses for Package_Key. */
 export type PackageKeyString = string;
 export type GraveType = 'buried' | 'forgotten';
-export type PlotKind = 'tombstone' | 'overgrown' | 'ghost' | 'lantern' | 'unmarked';
-export type StatusWord = 'dead, buried' | 'dead, forgotten' | 'haunted' | 'alive' | 'not assessed';
+export type PlotKind = 'tombstone' | 'overgrown' | 'ghost' | 'restless' | 'lantern' | 'unmarked';
+/** One word per PlotKind, one to one (R7.6). */
+export type StatusWord =
+  | 'dead, buried' | 'dead, forgotten' | 'haunted' | 'haunted, buried' | 'alive' | 'not assessed';
 export type UnassessedCause = 'git' | 'path' | 'cap-skipped' | 'no-health-data';
 export type VersionBasis = 'pinned' | 'resolved' | 'default' | null;
 export type CacheStatus = 'hit' | 'miss' | 'unknown';
@@ -443,7 +460,17 @@ export type ViewName = 'scene' | 'list';
 export type SourceName = keyof ScanResult['sources'];
 export type SourceStatusWord = 'ok' | 'partial' | 'failed';
 export type ClientFailureKind = 'network-failure' | 'timeout' | 'malformed-response';
+/** The API entry. After Requirement 22 it has `excluded`; a result cached earlier may lack it. */
 export type AdvisoryEntry = ScanResult['dependencies'][number]['advisories'][number];
+/** Parsed classification of one advisory (R14.5, DG-21). */
+export type AdvisoryExclusion = 'counted' | 'informational' | 'withdrawn' | 'unknown';
+export interface ParsedAdvisory {
+  readonly id: string;
+  readonly aliases: readonly string[];
+  readonly severity: Severity | null;
+  readonly url: string;
+  readonly exclusion: AdvisoryExclusion;
+}
 
 // ---- response boundary (R14) ------------------------------------------------------------------
 /** Same shape as the Fetch API Headers.get, so a Headers instance satisfies it. */
@@ -460,9 +487,10 @@ export interface NarrowedFacts {
   readonly maintainerCount: number | null;
 }
 export type ParsedDependency =
-  Omit<ScanResult['dependencies'][number], 'facts' | 'versionBasis'> & {
+  Omit<ScanResult['dependencies'][number], 'facts' | 'versionBasis' | 'advisories'> & {
     readonly facts: NarrowedFacts;
     readonly versionBasis: VersionBasis;
+    readonly advisories: readonly ParsedAdvisory[];
   };
 export interface ParsedScanResult extends Omit<ScanResult, 'dependencies'> {
   readonly dependencies: readonly ParsedDependency[];
@@ -511,12 +539,12 @@ export interface PackageRow {
   /** Name, then the epitaph (R7.5, R7.19). */
   readonly epitaph: string;
   readonly unassessedCause: UnassessedCause | null;
-  /** Non-null only for a ghost (R7.7). */
+  /** Non-null only for a ghost or a restless ghost (R7.7). */
   readonly glow: GlowLevel | null;
   readonly facts: NarrowedFacts;
   readonly lookupVersion: string | null;
   readonly versionBasis: VersionBasis;
-  readonly advisories: readonly AdvisoryEntry[];
+  readonly advisories: readonly ParsedAdvisory[];
   /** `<name>, <ecosystem>, <status word>, <short reason or cause>` (R7.6). */
   readonly accessibleLabel: string;
 }
@@ -583,11 +611,15 @@ export interface HeadlineModel {
   readonly n: number;
   /** summary.assessed */
   readonly m: number;
-  /** DEAD packages with grave type 'buried'. */
+  /** DEAD packages with grave type 'buried'. A restless ghost is never counted here. */
   readonly buried: number;
   /** DEAD packages with grave type 'forgotten'. */
   readonly forgotten: number;
-  /** "N of M dependencies are in the graveyard (B buried, F forgotten)" */
+  /** summary.counts.HAUNTED: ghosts and restless ghosts. */
+  readonly haunted: number;
+  /** Built by `headlineText(n, m, buried, forgotten, haunted)` (R5.2), for example
+   *  "31 of 40 dependencies are in the graveyard: 26 buried, 5 haunted." or
+   *  "0 of 6 dependencies are in the graveyard." */
   readonly text: string;
 }
 export interface HeaderModel {
@@ -639,14 +671,21 @@ export interface DetailModel {
   readonly manifestPaths: readonly string[];
   readonly rawName: string | null;
   readonly notes: readonly { readonly group: string; readonly message: string }[];
-  readonly advisories: readonly {
-    readonly id: string;
-    readonly aliases: readonly string[];
-    readonly severityText: string;      // "HIGH" or "severity unknown"
-    readonly href: string | null;       // null when the url fails the pattern (R21.3)
+  /** Labelled Advisory_Groups in this order, empty groups omitted, except "counted" when openVulnerabilityCount > 0 (R10.16). */
+  readonly advisoryGroups: readonly {
+    readonly exclusion: AdvisoryExclusion;
+    readonly heading: string;           // "Counted as open", "Informational, not counted", "Withdrawn, not counted", "Not classified"
+    readonly countText: string;         // "<k> listed", plus "<openVulnerabilityCount> counted" for the counted group
+    readonly explanation: string | null; // alias sentence, "not part of the <n> open vulnerabilities", or the "does not say which are withdrawn" sentence
+    readonly entries: readonly {
+      readonly id: string;
+      readonly aliases: readonly string[];
+      readonly severityText: string;    // "HIGH" or "severity unknown"
+      readonly href: string | null;     // null when the url fails the pattern (R21.3)
+    }[];
   }[];
-  /** "<openVulnerabilityCount> open, <advisories.length> listed", or the no-list sentence (R10.16, R10.17). */
-  readonly advisoryCountText: string | null;
+  /** "No advisory list is available for this version" when the list is empty and openVulnerabilityCount > 0 (R10.17), else null. */
+  readonly advisoryEmptyText: string | null;
   readonly links: {
     readonly registry: string | null;
     readonly sourceRepo: string | null;
@@ -721,11 +760,11 @@ export type StageState = { readonly id: 1 | 2 | 3 | 4; readonly label: string; r
 1. `groups = uniquePackages(result.assessed)`. This is the core export of scan-accuracy Requirement 9. It returns one `UniquePackage` per Package_Key in first-seen order, with `classification` already merged by `mergeClassifications`. The view-model neither groups nor compares classifications itself.
 2. Index `result.dependencies` by `JSON.stringify([ecosystem, name, sourceKind])` into arrays of entries in API order (the array index matches `assessed`, pipeline R18, criterion 3).
 3. For each group: `entries` = its dependency entries. `facts`, `lookupVersion`, `versionBasis` and `advisories` come from the first entry (they are equal for every entry of one Lookup_Target, pipeline R18, criterion 12). `manifestPaths` is the sorted distinct `manifestPath` values, `versionSpecs` the distinct `versionSpec` values in API order, `scopes` comes from the group.
-4. `kind`, `graveType`, `statusWord`: `classification === null` gives `unmarked`; otherwise the status gives `ghost`, `lantern`, or, for DEAD, `graveTypeOf` gives `tombstone` (buried) or `overgrown` (forgotten).
+4. `kind`, `graveType`, `statusWord`: `plotKindOf(classification)` (next section). It gives `unmarked` for `null`, `lantern` for ALIVE, `ghost` or `restless` for HAUNTED, and `tombstone` (buried) or `overgrown` (forgotten) for DEAD. `graveType` comes from `graveTypeOf` and is `null` for every kind except `tombstone` and `overgrown`. `statusWord` is the one-to-one word of the kind: "dead, buried", "dead, forgotten", "haunted", "haunted, buried", "alive", "not assessed". The epitaph of a `restless` row appends ", also archived", ", also deprecated" or ", also archived and deprecated" to the `7.2` short form (R7.20).
 5. `unassessedCause` (DG-10): `git` or `path` from `sourceKind`; for a registry package without classification, `cap-skipped` when `(ecosystem, name)` is in `result.capped.skipped`, otherwise `no-health-data`.
-6. `glow` for a ghost: the highest non-null `severity` over `advisories` of all entries, then, if none, the highest `facts.maxSeverity` over all entries, then `DEFAULT_SEVERITY` (`MEDIUM`). The mapping is `GLOW_LEVELS` (R7.7).
+6. `glow` for a ghost or a restless ghost: the highest non-null `severity` over `advisories` of all entries, then, if none, the highest `facts.maxSeverity` over all entries, then `DEFAULT_SEVERITY` (`MEDIUM`). The mapping is `GLOW_LEVELS` (R7.7).
 7. `strongestReason`: the first entry of `REASON_PRIORITY` whose `ruleId` occurs in `classification.reasons`; when none occurs (a ruleId outside the closed set), `reasons[0]`; `null` without a classification.
-8. Sort by the scene order of R7.9: status rank (`ghost` 0, `tombstone` and `overgrown` 1, `lantern` 2, `unmarked` 3), then score descending (`null` last), then ecosystem, then name, compared by Unicode code point (`compareCodePoints` re-implemented in `view-model/internal`, parity-tested with `core/internal/compare`).
+8. Sort by the scene order of R7.9: status rank (`ghost` and `restless` 0, `tombstone` and `overgrown` 1, `lantern` 2, `unmarked` 3), then score descending (`null` last), then ecosystem, then name, compared by Unicode code point (`compareCodePoints` re-implemented in `view-model/internal`, parity-tested with `core/internal/compare`).
 
 Step 8 is a presentation order of classifications that are already chosen. It is not a merge (R6.8).
 
@@ -739,7 +778,59 @@ export function graveTypeOf(c: Classification | null): GraveType | null {
 }
 ```
 
+The plot kind adds the restless ghost (R7.20, D13). Both functions read only the status and the set of ruleIds:
+
+```ts
+export function plotKindOf(c: Classification | null): PlotKind {
+  if (c === null) return 'unmarked';
+  if (c.status === 'ALIVE') return 'lantern';
+  const ids = new Set(c.reasons.map((r) => r.ruleId));
+  if (c.status === 'HAUNTED') return ids.has('8.1') || ids.has('8.2') ? 'restless' : 'ghost';  // 8.3 alone stays a ghost
+  return graveTypeOf(c) === 'buried' ? 'tombstone' : 'overgrown';                                // DEAD
+}
+```
+
+`statusWordOf(kind)` is a total map of the six kinds. A restless ghost has no Grave_Type, so it is in neither B nor F, and it is in H because `summary.counts.HAUNTED` counts it. The headline text is one pure function:
+
+```ts
+export function headlineText(n: number, m: number, b: number, f: number, h: number): string {
+  const parts = [[b, 'buried'], [f, 'forgotten'], [h, 'haunted']]
+    .filter(([count]) => (count as number) > 0)
+    .map(([count, word]) => `${count} ${word}`);
+  return `${n} of ${m} dependencies are in the graveyard${parts.length > 0 ? `: ${parts.join(', ')}` : ''}.`;
+}
+```
+
+`buildHeaderModel` returns `headline: null` and the "No dependencies could be assessed" sentence when `m` is 0, and calls `headlineText(b + f + h, m, b, f, h)` otherwise, with `b` and `f` counted from the rows and `h` read from `summary.counts.HAUNTED`. The property P5 compares the result with an independent oracle in the test (`string template per case`, not the same function).
+
 Core guarantees a DEAD classification contains at least one of `8.1`, `8.2`, `8.3` (`abandoned` is exactly `archived`, `deprecated` or release-abandoned, each with its own reason). The fallback `forgotten` for a DEAD value without any of them keeps the function total and keeps `B + F = DEAD`. An unmaintained advisory sets `deprecated` in the pipeline, so core adds `8.2` and the package is `buried`. The Detail_Panel shows the `unmaintained-advisory` note beside the reasons.
+
+### Advisory groups and the data gap (R10.16 to R10.19, R22, DG-21)
+
+**What the data says (checked in the source on 2026-11-19).** `AdvisoryEntry` is `{ id, aliases, severity, url }` (`pipeline/mapping/types.ts`). `buildAdvisoryEntries` (`pipeline/mapping/advisories.ts`) lists one entry per OSV id and drops the record flags. `assembleFacts` (`pipeline/mapping/assemble.ts`) holds an `AdvisoryRecord` with `withdrawn`, `informational` and `unmaintained` for every fetched id. `aggregateAdvisories` (`osv-advisory.ts`) skips withdrawn records first, then excludes informational records from the count, groups the rest by shared ids and aliases, and adds every unfetched id as its own vulnerability. Notes: `informational-advisory-excluded` lists the non-withdrawn informational ids, `unmaintained-advisory` (cargo only) a subset. **No note and no field lists withdrawn ids.**
+
+| Entry kind | Identifiable from the current Scan_Result? | Source |
+|---|---|---|
+| Informational (not withdrawn) | Yes | `details.ids` of the note `informational-advisory-excluded` of the same package |
+| Withdrawn | **No** (data gap) | nowhere |
+| Counted | Only by exclusion of the two kinds above, so withdrawn entries cannot be told from counted ones | |
+
+**Resolution.** One additive field, `excluded: 'withdrawn' | 'informational' | null`, on each entry (R22), set in `buildAdvisoryEntries` from the record: `withdrawn` wins, then `informational`, else `null`; an id without a record gets `null` (it is counted as an unfetched id). It is an explicit pipeline task with tests (tasks 3.1 to 3.4). It changes no count, note or score. The recorded fixtures replay through the changed pipeline, so no re-recording is needed (the fixture sets hold upstream bodies, not Scan_Results). `tests/pipeline/**` expectations that compare an `advisories` entry by deep equality gain the field.
+
+**Fallback for results without the field.** The scan cache (`pipeline/scan/scan-cache`) can hold Scan_Results written before the change. `parseScanResponse` narrows an absent or invalid `excluded` to `unknown` (never to `counted`). `buildAdvisoryGroups` then uses the note ids for informational entries and puts every other `unknown` entry in "Not classified" with the sentence "This scan result does not say which of these advisories are withdrawn". No guess is shown as a fact (R15.7).
+
+```ts
+// view-model/advisory-groups.ts
+export function buildAdvisoryGroups(
+  advisories: readonly ParsedAdvisory[],
+  openVulnerabilityCount: number | null,
+  informationalIdsFromNotes: ReadonlySet<string>,
+): readonly AdvisoryGroupModel[];
+```
+
+Steps: (1) effective exclusion of each entry = its `exclusion`, except that an `unknown` entry whose id is in `informationalIdsFromNotes` becomes `informational`; (2) bucket the entries by effective exclusion, keeping the API order inside each bucket; (3) emit the groups in the order counted, informational, withdrawn, unknown, omitting empty groups except `counted` when `openVulnerabilityCount > 0` (then it shows "0 listed" and the no-list sentence logic of R10.17 applies when the whole list is empty); (4) texts: counted heading "Counted as open", count text "<k> listed, <openVulnerabilityCount> counted" and the sentence "Advisories that are aliases of each other count once"; informational "Informational, not counted", withdrawn "Withdrawn, not counted", each with "<k> listed" and "not part of the <openVulnerabilityCount> open vulnerabilities"; unknown "Not classified" with "<k> listed" and the withdrawn sentence. `openVulnerabilityCount` `null` is written "unknown". The number of counted entries is at least `openVulnerabilityCount` for any consistent pipeline result (alias groups only merge, unfetched ids count one each), which is why "<k> listed, <n> counted" never reads as a contradiction.
+
+**Pipeline change: advisory exclusion kind (R22).** Files touched: `pipeline/mapping/types.ts` (type), `pipeline/mapping/advisories.ts` (`buildAdvisoryEntries`), and tests under `tests/pipeline/mapping/` and `tests/pipeline/scan/`. `docs/property-traceability.md` gets the new property row. The scan-accuracy requirements 6.x are not edited. Property P34 covers it.
 
 ### Layout algorithm (R8.1 to R8.3, R8.11, R8.12)
 
@@ -861,7 +952,7 @@ Both read the constant from `view-model/constants.ts` (the script imports it wit
 
 Testing with generated inputs applies to the view-model (pure functions over a large structured input space). It does not apply to React rendering, CSS, the Playwright flows, performance budgets or accessibility scans. Those use example-based tests, as the Testing Strategy states.
 
-**Reflection on redundancy.** The prework found 33 PBT criteria. Each was checked against the others for redundancy:
+**Reflection on redundancy.** The prework found 36 PBT criteria (33 in the first revision, plus the restless-ghost criterion R7.21, the advisory-group criterion R10.19 and the pipeline criterion R22.7). Each was checked against the others for redundancy:
 
 - P4 (header numbers equal the summary) and P5 (B + F = DEAD, N relation, headline text) share one generator but test different functions and different failure modes, so both stay. P5 does not imply P4, because P4 also covers M and the status counts.
 - P13 (`B + F = DEAD` over rows) and P5 (the same fact seen through the Header_Model) test `buildPackageRows` and `buildHeaderModel` separately, so a defect in either is located. Both stay.
@@ -870,7 +961,10 @@ Testing with generated inputs applies to the view-model (pure functions over a l
 - P31 (table and scene agree) is a cross-model consistency property and is not implied by P30 or P14 to P17.
 - P2 and P26 both use the manifest codec, P26 through `buildPickerModel`. P26 additionally checks list order and the selection cap, so it stays.
 
-No property was removed. Each property below has exactly one property-based test.
+- P13 (graves and ghosts partition the packages, including restless ghosts) and P8 (kinds and counts against the summary) overlap on the counts. P8 compares every row with `uniquePackages` and P13 checks the Grave_Type and restless rules on the whole result, so both stay. P12 states the kind function for one classification, P13 the consequence for a whole result.
+- P21 (advisory groups) and P34 (the pipeline field) are separated by the layer: P21 tests the view-model over every mix of `excluded` values including an absent field, P34 tests that the pipeline sets the field correctly. Neither implies the other.
+
+No property was removed. P34 is new. Each property below has exactly one property-based test.
 
 ### Property 1: Canonical URL round trip
 
@@ -896,9 +990,9 @@ No property was removed. Each property below has exactly one property-based test
 
 **Validates: Requirements 5.9**
 
-### Property 5: Buried plus forgotten equals dead, and the headline text matches
+### Property 5: Buried plus forgotten plus haunted equals the headline total, and the headline text matches
 
-*For any* valid Scan_Result, the Header_Model SHALL satisfy B + F = `summary.counts.DEAD`, N = B + F + `summary.counts.HAUNTED`, B and F non-negative integers, and a Headline text equal to "N of M dependencies are in the graveyard (B buried, F forgotten)" filled with exactly those numbers.
+*For any* valid Scan_Result (including results where B, F or H is 0 in every combination, results with N = 0 and results with restless ghosts) with `summary.assessed` above 0, the Header_Model SHALL satisfy B + F = `summary.counts.DEAD`, H = `summary.counts.HAUNTED`, N = B + F + H, B, F and H non-negative integers, restless ghosts counted in H and not in B, and a Headline text equal to the text that an independent oracle builds from N, M, B, F and H: `"<N> of <M> dependencies are in the graveyard"`, then `": "` and the parts `"<B> buried"`, `"<F> forgotten"`, `"<H> haunted"` with count above 0 joined by `", "` when at least one part exists, then `"."`.
 
 **Validates: Requirements 5.10**
 
@@ -916,7 +1010,7 @@ No property was removed. Each property below has exactly one property-based test
 
 ### Property 8: Kinds and counts follow the core merge
 
-*For any* valid Scan_Result, every Package_Row SHALL have the kind given by its status and Grave_Type, its classification SHALL equal that of the same key in `uniquePackages(result.assessed)`, the number of tombstones plus overgrown graves SHALL equal `summary.counts.DEAD`, the number of ghosts `summary.counts.HAUNTED`, the number of lanterns `summary.counts.ALIVE`, and the number of unmarked graves `summary.unassessed`.
+*For any* valid Scan_Result, every Package_Row SHALL have the kind given by its status and the ruleId set (`plotKindOf`), its classification SHALL equal that of the same key in `uniquePackages(result.assessed)`, the number of tombstones plus overgrown graves SHALL equal `summary.counts.DEAD`, the number of ghosts plus restless ghosts `summary.counts.HAUNTED`, the number of lanterns `summary.counts.ALIVE`, and the number of unmarked graves `summary.unassessed`.
 
 **Validates: Requirements 7.2, 7.11**
 
@@ -928,7 +1022,7 @@ No property was removed. Each property below has exactly one property-based test
 
 ### Property 10: Accessible labels
 
-*For any* valid Scan_Result, every Package_Row accessible label SHALL be non-empty, SHALL contain the package name and the status word, and SHALL be unique in the result or differ from every equal label only after the ecosystem.
+*For any* valid Scan_Result, every Package_Row accessible label SHALL be non-empty, SHALL contain the package name and its status word (one of the six words, with "haunted, buried" for a restless ghost, so that a ghost label and a restless ghost label differ), and SHALL be unique in the result or differ from every equal label only after the ecosystem.
 
 **Validates: Requirements 7.6, 7.13**
 
@@ -938,17 +1032,17 @@ No property was removed. Each property below has exactly one property-based test
 
 **Validates: Requirements 7.7, 7.14**
 
-### Property 12: Grave type is a function of status and rule ids
+### Property 12: Grave type and plot kind are functions of status and rule ids
 
-*For any* classification (every status, every subset and every order of ruleIds, including the empty subset), the Grave_Type SHALL be equal for two classifications with the same status and the same set of ruleIds, SHALL be `null` exactly when the status is not DEAD, SHALL be `buried` exactly when the status is DEAD and the set contains `8.1` or `8.2`, and SHALL be `forgotten` for every other DEAD classification.
+*For any* classification or `null` (every status, every subset and every order of ruleIds, including the empty subset), the Grave_Type and the PlotKind SHALL be equal for two classifications with the same status and the same set of ruleIds. The Grave_Type SHALL be `null` exactly when the status is not DEAD, `buried` exactly when the status is DEAD and the set contains `8.1` or `8.2`, and `forgotten` for every other DEAD classification. The PlotKind SHALL be `restless` exactly when the status is HAUNTED and the set contains `8.1` or `8.2`, `ghost` for every other HAUNTED classification, `tombstone` for `buried`, `overgrown` for `forgotten`, `lantern` for ALIVE and `unmarked` for `null`, and `statusWordOf` SHALL map the six kinds to six distinct words.
 
 **Validates: Requirements 7.15, 7.16, 7.17**
 
-### Property 13: Graves partition the dead packages
+### Property 13: Graves partition the dead packages and restless ghosts are haunted
 
-*For any* valid Scan_Result, the number of rows with Grave_Type `buried` plus the number with Grave_Type `forgotten` SHALL equal `summary.counts.DEAD`, and no row of kind ghost, lantern or unmarked SHALL have a Grave_Type, including a ghost whose reasons contain `8.1`, `8.2` or `8.3`.
+*For any* valid Scan_Result, the number of rows with Grave_Type `buried` plus the number with Grave_Type `forgotten` SHALL equal `summary.counts.DEAD`, the number of ghost rows plus restless rows SHALL equal `summary.counts.HAUNTED`, and no row of kind ghost, restless, lantern or unmarked SHALL have a Grave_Type, including a ghost whose reasons contain `8.1`, `8.2` or `8.3`. Every restless row SHALL have status HAUNTED in `uniquePackages(result.assessed)`, a reason with ruleId `8.1` or `8.2`, a non-null Glow_Level and the status word "haunted, buried", and every HAUNTED row with such a reason SHALL be restless.
 
-**Validates: Requirements 7.15, 7.16, 7.18**
+**Validates: Requirements 7.15, 7.16, 7.18, 7.20, 7.21**
 
 ### Property 14: Plots do not overlap
 
@@ -992,11 +1086,11 @@ No property was removed. Each property below has exactly one property-based test
 
 **Validates: Requirements 10.3, 10.15**
 
-### Property 21: Detail lists every advisory once
+### Property 21: Detail lists every advisory once, in its labelled group
 
-*For any* Package_Row with advisories (including hostile ids, aliases and urls), the Detail_Model SHALL list every Advisory_Entry exactly once in the order of the API, with `id` unchanged, and `href` equal to the `url` when the `url` matches the pattern of R21.3 and `null` otherwise.
+*For any* Package_Row with advisories (including hostile ids, aliases and urls, every mix of `excluded` values and an absent `excluded`), the Detail_Model SHALL list every Advisory_Entry in exactly one Advisory_Group, in the order of the API inside the group, with `id` unchanged and `href` equal to the `url` when the `url` matches the pattern of R21.3 and `null` otherwise, and the group sizes SHALL add up to the number of entries. WHEN every entry has an `excluded` value, each entry SHALL be in the group that its value names and there SHALL be no "Not classified" group. WHEN an entry has no `excluded` value, it SHALL be in "Informational, not counted" if its id is named by the `informational-advisory-excluded` note of the package and in "Not classified" otherwise.
 
-**Validates: Requirements 10.16, 10.18**
+**Validates: Requirements 10.16, 10.18, 10.19**
 
 ### Property 22: Every note lands in exactly one group
 
@@ -1070,6 +1164,12 @@ No property was removed. Each property below has exactly one property-based test
 
 **Validates: Requirements 21.3, 21.4, 21.7**
 
+### Property 34: Advisory exclusion kind agrees with the counted vulnerabilities (pipeline)
+
+*For any* set of advisory records (any mix of withdrawn, informational, unmaintained and counted records, with aliases) and any set of unfetched ids, the `excluded` value of each Advisory_Entry SHALL be `'withdrawn'` when its record is withdrawn, `'informational'` when its record is informational and not withdrawn, and `null` otherwise (including an entry without a record). The entries with `excluded` equal to `null` SHALL number at least `openVulnerabilityCount`, the ids of the entries with `excluded` equal to `'informational'` SHALL equal the ids of the note `informational-advisory-excluded` (and no such note exists when there are none), and the list of entries (order, ids, aliases, severities, urls) and every count and note SHALL be identical to the output without the field.
+
+**Validates: Requirements 22.1, 22.2, 22.3, 22.4, 22.5, 22.7**
+
 ---
 
 ## Error Handling
@@ -1084,6 +1184,7 @@ No property was removed. Each property below has exactly one property-based test
 | `advisories` is missing on one dependency | The whole response is `malformed-response`, because the contract (scan-accuracy criterion 6.1) says the field is always present. A present but partly invalid entry is dropped (R14.5). |
 | `versionBasis` has an unknown value | It becomes `null` and the Detail_Panel shows "not looked up". |
 | An unknown note code | It goes to "Other notes" with its plain message (R11.8). |
+| `excluded` is absent or invalid on an advisory entry (a result from the scan cache written before R22) | The entry is kept with exclusion `unknown`. The response is NOT `malformed-response`. Informational ids named by the note go to "Informational, not counted", the rest to "Not classified" with the sentence that the result does not say which are withdrawn (R10.19, DG-21). |
 | A hostile string (name, path, message, advisory id) | Rendered as a React text node only. Link targets pass a pattern check or the link is dropped (R21). |
 | `Retry-After` is absent, zero, negative, non-numeric or above 86400 | `parseRetryAfter` returns `null`. A 503 then uses `RETRY_FALLBACK_COOLDOWN_SECONDS` (R13.5, R14.6). |
 | The user starts a new scan while one runs (Back, Forward, picker) | The effect cleanup aborts the old request. A result that arrives for an aborted request is dropped, because the client returns `aborted` and the reducer ignores outcomes whose `requestKey` is not the current one (R3.8). |
@@ -1107,7 +1208,7 @@ Unit tests, property tests, component tests and end-to-end tests are complementa
 ### Property tests (Vitest and fast-check)
 
 - Library: fast-check 4 (already a dev dependency). No property-based framework is written from scratch.
-- Files: `tests/ui/view-model/<module>.property.test.ts`, one file per view-model module (steering naming rule).
+- Files: `tests/ui/view-model/<module>.property.test.ts`, or `<module>-<topic>.property.test.ts` when a module has several properties, so that every property task writes its own file (steering naming rule). The property test for P34 is `tests/pipeline/mapping/advisory-exclusion.property.test.ts`.
 - Each property is one test with `numRuns` of at least `PBT_MIN_RUNS` (100), taken from the existing `tests/support/fc-config.ts` (`FC_NUM_RUNS` raises it).
 - Each test has the tag comment `// Feature: graveyard-ui, Property <n>: <title>` and a `// Validates: Requirements x.y` line, as in the existing specs, so `docs/property-traceability.md` can list them.
 - Generators (`tests/support/ui/scan-result-arbitrary.ts`) build a `ScanResult` through the real core: facts arbitraries from `tests/support/arbitraries/facts.ts`, `classify` for each entry, `summarize` for the summary. They cover HAUNTED without severity, advisories with and without `aliases` and `severity`, all four Version_Basis values and `null`, DEAD packages with every combination of `8.1`, `8.2`, `8.3`, HAUNTED packages that also carry `8.x` reasons, git and path packages, cap-skipped packages, repeated Package_Keys across scopes and manifests, pypi names with `rawName`, every note code and unknown codes, partial and failed sources, and up to 300 rows (up to 1000 for P14 to P17).
@@ -1120,7 +1221,7 @@ Unit tests, property tests, component tests and end-to-end tests are complementa
 - Recorded fixtures replayed through the view-model (R19.6): for `request__request`, `revmic__canopy`, `ajeetdsouza__zoxide`, N, M, B and F computed independently from `summary` and from the ruleIds of `uniquePackages(result.assessed)`, `B + F === summary.counts.DEAD`, and row counts 40, 6, 20.
 - `tests/ui/tokens.test.ts`: contrast of the declared token pairs (R16.2).
 - `tests/ui/source-rules.test.ts`: no `dangerouslySetInnerHTML` or `innerHTML`, no hex colour in components, no import from `tests/**` in shipped code (the same rules the architecture check enforces, tested on inline snippets).
-- `tests/ui/layout.test.ts`: reads `app/layout.tsx` and asserts exactly one display font and one body font imported from `next/font/google`, both from the OFL list (`Pirata_One`, `Atkinson_Hyperlegible`), `lang="en"`, and `metadata.title` not equal to the starter text (R15.3, R15.8).
+- `tests/ui/layout.test.ts`: reads `app/layout.tsx` and asserts exactly one display font and one body font imported from `next/font/google`, both from the OFL list (`IM_Fell_English_SC`, `Atkinson_Hyperlegible`), `lang="en"`, and `metadata.title` not equal to the starter text (R15.3, R15.8).
 - `tests/ui/csp.test.ts`: loads `next.config.ts` and asserts the header value of R21.6.
 - Architecture rules of the table above, each with a violating snippet and a clean snippet.
 
@@ -1128,7 +1229,7 @@ Unit tests, property tests, component tests and end-to-end tests are complementa
 
 - Files: `tests/ui/components/*.test.tsx` with the docblock `// @vitest-environment jsdom`, or a Vitest project for `tests/ui/components/**` with `environment: 'jsdom'`, whichever works with the installed Vitest 4 at task time. `vitest.config.mts` is extended to include `tests/**/*.test.{ts,tsx}`, add `@vitejs/plugin-react` and `vite-tsconfig-paths` (as in the Next.js Vitest guide), and keep `setupFiles: ['tests/support/offline-fetch.ts']`. `npx vitest --run` runs everything (R19.8).
 - Queries are `getByRole`, `getByLabelText`, `getByText`. No CSS class queries (R19.4). `@testing-library/user-event` drives keyboard and pointer input.
-- Coverage (R19.3): LandingPage (input, button, empty-input message with `aria-describedby` and focus, legend of five entries, featured links as anchors), ScanningScreen (stage states at given elapsed times with fake timers, one live announcement per Stage change, Cancel first in tab order, reduced-motion variant), ResultsHeader (headline text, grave split, grade line, scale disclosure, cache note only for `hit`), Scene (one tab stop, arrow keys, Home and End, Enter and Space open, tooltip on hover and focus, Escape, labels), ListView (sorting, `aria-sort`, "not assessed" and "unknown" cells), DetailPanel (focus moves in, Tab trap, Escape, focus returns, "unknown" text, version lines, advisories list, Resurrect_Slot only for DEAD), CaretakersNotes (groups, "Show all", source symbols, alert lines, cap banner, picker), one test for each of the 9 API error codes and the 3 client failures (heading, plain message present and unchanged, actions, countdown with fake timers), ManifestPicker (limit, disabled button, URL).
+- Coverage (R19.3): LandingPage (input, button, empty-input message with `aria-describedby` and focus, legend of six entries, featured links as anchors), ScanningScreen (stage states at given elapsed times with fake timers, one live announcement per Stage change, Cancel first in tab order, reduced-motion variant), ResultsHeader (headline text, grave split, grade line, scale disclosure, cache note only for `hit`), Scene (one tab stop, arrow keys, Home and End, Enter and Space open, tooltip on hover and focus, Escape, labels), ListView (sorting, `aria-sort`, "not assessed" and "unknown" cells), DetailPanel (focus moves in, Tab trap, Escape, focus returns, "unknown" text, version lines, advisories list, Resurrect_Slot only for DEAD), CaretakersNotes (groups, "Show all", source symbols, alert lines, cap banner, picker), one test for each of the 9 API error codes and the 3 client failures (heading, plain message present and unchanged, actions, countdown with fake timers), ManifestPicker (limit, disabled button, URL).
 - A fake Scan_Client and a fake router are injected through `GraveyardApp` props (default values wire the real ones), which keeps component tests free of module mocking.
 - `scene-render.test.tsx` renders 300 and 301 plots, asserts the node count per plot, `data-simplified`, and that re-rendering with an unchanged `SceneModel` does not re-render `ScenePlot` (render counter through a test-only wrapper, R17.5).
 
@@ -1174,7 +1275,7 @@ No runtime dependency is added. `fast-check`, `vitest`, `tailwindcss`, `typescri
 | 6 | P6. Architecture rules and their tests. |
 | 7 | P7 to P13. Table unit tests. |
 | 8, 9 | P14 to P18. Scene component tests. Playwright render budget. |
-| 10 | P19 to P21. DetailPanel component tests. |
+| 10 | P19 to P21. DetailPanel component tests (advisory groups, restless ghost). |
 | 11 | P22, P23, P26. CaretakersNotes component tests. |
 | 12 | ResurrectSlot component test (DEAD only, inert, markup attributes). |
 | 13 | P24, P25, P26. One component test per error code. Playwright error flows and axe. |
@@ -1183,6 +1284,7 @@ No runtime dependency is added. `fast-check`, `vitest`, `tailwindcss`, `typescri
 | 16 | Token contrast test, keyboard component tests, axe in Playwright. |
 | 17 | Render budget, CLS, JS budget, code-split check in Playwright. |
 | 18 | P30 to P32. ListView component tests. |
+| 22 | P34. Pipeline unit and property tests. |
 | 19, 20 | The suites themselves. |
 | 21 | P33. Source-rule and CSP tests. |
 
@@ -1195,9 +1297,10 @@ No runtime dependency is added. `fast-check`, `vitest`, `tailwindcss`, `typescri
 | RK1 | The npm registry page pattern could not be confirmed by a request (HTTP 403 to scripted clients, 2026-11-19). | The pattern is the canonical npm page form and the visitor opens it in a browser. A wrong link would show a 404 page, not break the app. A Playwright check only asserts the `href`, not the response. |
 | RK2 | The CSP has `'unsafe-inline'` for scripts and styles (Open question 9). | React text rendering plus the `innerHTML` ban (R21.1, rule `no-inner-html`) are the main defence. A later move to nonces or SRI is a change in `next.config.ts` and `layout.tsx` only. |
 | RK3 | No custom error boundary for render exceptions. | The view-model is total, the response is validated, and no requirement asks for a boundary. Adding `app/error.tsx` later is additive. |
-| RK4 | 300 animated plots may cost compositor time. | Only ghosts and lanterns animate, only `transform` and `opacity`, with staggered delays. If frame time suffers on the target laptop, the contingency of "Scene rendering and performance" item 9 and a cap on animated plots apply, with a measurement before and after. |
+| RK4 | 300 animated plots may cost compositor time. | Only ghosts, restless ghosts and lanterns animate, only `transform` and `opacity`, with staggered delays. If frame time suffers on the target laptop, the contingency of "Scene rendering and performance" item 9 and a cap on animated plots apply, with a measurement before and after. |
 | RK5 | The static bundle gate depends on Next.js build internals (`index.html`, `page_client-reference-manifest.js`). | The Playwright measurement is authoritative. A failing static gate after a Next.js upgrade is fixed in one script. |
 | RK6 | jsdom does not implement `HTMLDialogElement.showModal` (to be re-checked against the installed jsdom at task time). | D5 uses a custom modal, so the question does not matter for the tests. |
 | RK7 | The `vitest` `projects` or docblock mechanism for the jsdom environment depends on the installed Vitest 4 API. | The docblock `// @vitest-environment jsdom` is the fallback and needs no configuration API. |
+| RK8 | The pipeline gains the field `excluded` (R22), although this spec is otherwise a consumer. Scan results cached before the change lack the field. | The change is additive and listed as its own group with tests (tasks 3.1 to 3.4). The UI treats an absent field as `unknown` and shows the "Not classified" group, so it works with old and new results (R10.19). The scan-accuracy and scan-pipeline task lists are not edited. |
 
 If a gap in the requirements shows up while the tasks are written, this design can return to the requirements phase. None was found while writing it.
