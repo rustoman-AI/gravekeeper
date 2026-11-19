@@ -797,7 +797,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
 - [x] 8. Checkpoint - Caching
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 9. Route handler, fixtures, live tests and CI
+- [x] 9. Route handler, fixtures, live tests and CI
   - [x] 9.1 Implement the error union and response builder
     - Create `pipeline/api/scan-error.ts`: `ScanErrorBody`, `ScanResponseBody`, the code to status mapping (400, 404, 405, 413, 415, 500, 502, 503, 504), `details` omitted when a code defines none, and `respond()` that always sets `Content-Type: application/json` and `Cache-Control: no-store`, adds `Allow: POST` for 405 and `Retry-After: ceil((resetAt - asOf) / 1000)` (at least 1) for 503.
     - _Requirements: 21.5, 21.6, 21.7, 21.9, 21.13, 3.7, 14.5_
@@ -894,7 +894,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - With `GRAVEKEEPER_LIVE_TESTS=1` and the user's `GITHUB_TOKEN` set (ask the user to provide it if it is unset, and do not print or store it), run `npm run fixtures:record` for `request/request` (npm), `revmic/canopy` (Python) and `ajeetdsouza/zoxide` (Rust) and for the supplementary sets `ef8-withdrawn`, `ef10-informational` and `ef19-not-found-alias`. Confirm that each recorded set passes the hygiene and size tests.
     - _Requirements: 23.2, 23.3, 23.4, 23.16_
 
-  - [-] 9.24 Write the fixture coverage test
+  - [x] 9.24 Write the fixture coverage test
     - `tests/pipeline/fixtures-coverage.test.ts`: for every verified row of `endpoint-fact-map.ts` except EF-4 (and except EF-11, EF-23, EF-24 and the Not verified paths of R23.13), at least one recorded response contains every path; a failure reads `EF-<n> <source> missing path <path>`.
     - _Requirements: 23.13_
 

@@ -28,6 +28,8 @@ function bodyText(result: SourceResult): string {
 
 /** EF-8 withdrawn advisory: OSV detail has `withdrawn`, deps.dev answers 404. */
 const EF8_ID = 'GHSA-w2j9-qh3j-4h63';
+/** EF-6 withdrawn advisory (2023-10-09) carrying every EF-6 path in one response. */
+const EF6_ID = 'GHSA-wq4c-wm6x-jw44';
 /** EF-10 informational advisory: OSV `informational` is `unmaintained`, deps.dev has `cvss3Score`. */
 const EF10_ID = 'RUSTSEC-2020-0036';
 
@@ -41,6 +43,32 @@ export const SUPPLEMENTARY_SPECS: readonly SupplementarySpec[] = [
         throw new Error(`OSV no longer reports "withdrawn" for ${EF8_ID}; pick another withdrawn id`);
       }
       expectKind('deps.dev advisory', await sources.depsdev.getAdvisory(EF8_ID, ctx), 'absent');
+      // EF-6: a withdrawn advisory that also carries aliases, database_specific, affected[] and severity[].
+      const full = await sources.osv.getVulnerability(EF6_ID, ctx);
+      expectKind('OSV vulnerability (EF-6)', full, 'ok');
+      const text = bodyText(full);
+      for (const key of ['"withdrawn"', '"aliases"', '"database_specific"', '"affected"', '"severity"']) {
+        if (!text.includes(key)) throw new Error(`OSV ${EF6_ID} no longer has ${key}`);
+      }
+    },
+  },
+  {
+    name: 'ef2-version-document',
+    async run({ sources }, ctx) {
+      const result = await sources.depsdev.getVersion('npm', 'lodash', '4.17.21', ctx);
+      expectKind('deps.dev version', result, 'ok');
+      if (!bodyText(result).includes('"relatedProjects"')) {
+        throw new Error('deps.dev version document has no relatedProjects');
+      }
+    },
+  },
+  {
+    name: 'ef18-rate-limit',
+    async run({ sources }, ctx, gate) {
+      const query = '{ rateLimit { limit used remaining resetAt cost nodeCount } }';
+      const result = await sources.github.queryRepositories(query, {}, ctx, gate);
+      expectKind('GraphQL rateLimit', result, 'ok');
+      if (!bodyText(result).includes('"nodeCount"')) throw new Error('GraphQL answer has no rateLimit.nodeCount');
     },
   },
   {

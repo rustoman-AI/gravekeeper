@@ -257,7 +257,7 @@ export const ENDPOINT_FACT_MAP: readonly EndpointFactRow[] = [
     source: 'pypi',
     verified: true,
     requiresToken: false,
-    requestMatcher: { method: 'GET', url: /^https:\/\/pypi\.org\/pypi\/[^/?#]+\/json$/ },
+    requestMatcher: { method: 'GET', url: /^https:\/\/pypi\.org\/pypi\/[^/?#]+\/[^/?#]+\/json$/ },
     paths: ['ownership.roles[].role', 'ownership.roles[].user', 'ownership.organization'],
     notVerifiedPaths: ['ownership.organization'],
   },

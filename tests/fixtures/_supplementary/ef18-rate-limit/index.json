@@ -1,0 +1,1 @@
+[{"key":"[\"req\",\"github\",\"POST\",\"https://api.github.com/graphql\",\"{\\\"query\\\":\\\"{ rateLimit { limit used remaining resetAt cost nodeCount } }\\\",\\\"variables\\\":{}}\"]","file":"responses/github/c836b2ea0a97d9d0.json","source":"github","method":"POST","url":"https://api.github.com/graphql"}]

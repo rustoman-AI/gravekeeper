@@ -192,7 +192,9 @@ async function main(): Promise<number> {
     return 1;
   }
   const failures: string[] = [];
-  for (const spec of REPOS) {
+  // `--only supplementary` records just the supplementary sets (repo sets stay untouched).
+  const onlySupplementary = process.argv.slice(2).join(' ').includes('--only supplementary');
+  for (const spec of onlySupplementary ? [] : REPOS) {
     const problem = await recordRepo(spec, token);
     if (problem !== null) failures.push(problem);
   }
