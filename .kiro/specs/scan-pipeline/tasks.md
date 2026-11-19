@@ -802,7 +802,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/api/scan-error.ts`: `ScanErrorBody`, `ScanResponseBody`, the code to status mapping (400, 404, 405, 413, 415, 500, 502, 503, 504), `details` omitted when a code defines none, and `respond()` that always sets `Content-Type: application/json` and `Cache-Control: no-store`, adds `Allow: POST` for 405 and `Retry-After: ceil((resetAt - asOf) / 1000)` (at least 1) for 503.
     - _Requirements: 21.5, 21.6, 21.7, 21.9, 21.13, 3.7, 14.5_
 
-  - [~] 9.2 Write unit tests for the error mapping
+  - [x] 9.2 Write unit tests for the error mapping
     - `tests/pipeline/api/scan-error.test.ts`: each row of the status table, `Retry-After` rounding and minimum, no `Retry-After` when `resetAt` is not later than `asOf`, `details` omitted not null, headers on every response.
     - _Requirements: 21.5, 21.6, 21.7, 21.9, 21.13_
 
@@ -810,11 +810,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/api/read-body.ts`: reads the request stream up to `REQUEST_BODY_MAX_BYTES`, checks the declared `content-length` first, strict UTF-8 decoding.
     - _Requirements: 21.3_
 
-  - [~] 9.4 Write unit tests for the body reader
+  - [x] 9.4 Write unit tests for the body reader
     - `tests/pipeline/api/read-body.test.ts`: body of `REQUEST_BODY_MAX_BYTES` accepted, `+ 1` gives `body-too-large`, declared length over the limit with a short body, invalid UTF-8, empty body, null stream.
     - _Requirements: 21.3_
 
-  - [~] 9.5 Implement request validation
+  - [x] 9.5 Implement request validation
     - Create `pipeline/api/validate-request.ts`: media type check, JSON parse, the field checks of R21.2 in the order of R21.3 (d) to (h) (`repoUrl` string, `branch` string or absent, `manifests` an array of strings of at most the allowed count, unknown fields), branch conflict.
     - _Requirements: 21.2, 21.3, 21.4, 21.15_
 
@@ -882,11 +882,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `tests/support/fixture-http-client.ts` (`FixtureHttpClient` implements `HttpClient`, key from `requestKey`, `misses`, `assertNoMisses()` failing with `fixture missing for source <name>: <METHOD> <path>` with no query string and no header) and `tests/support/fixture-fetch.ts` (a `fetch` implementation answering from the fixture index).
     - _Requirements: 23.1, 23.3_
 
-  - [~] 9.21 Write unit tests for fixture replay
+  - [x] 9.21 Write unit tests for fixture replay
     - `tests/support/fixture-http-client.test.ts`: a recorded request is answered with `ok` or `absent`, an unknown request is a `failed` `http-error` and is reported by `assertNoMisses()` without a query string, `fixture-fetch` answers a recorded URL.
     - _Requirements: 23.1, 23.3_
 
-  - [~] 9.22 Write the fixture hygiene and size tests
+  - [x] 9.22 Write the fixture hygiene and size tests
     - `tests/fixtures/fixtures-hygiene.test.ts` (every file under `tests/fixtures` scanned recursively for the token when set, `Bearer `, token prefixes and `Authorization`) and `tests/fixtures/fixtures-size.test.ts` (every Fixture_Set at most `FIXTURE_SET_MAX_BYTES`, summing all files). Both run in every test run.
     - _Requirements: 23.6, 23.16_
 
@@ -910,7 +910,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `tests/live/live-support.ts`: `LIVE` flag helper (`GRAVEKEEPER_LIVE_TESTS === '1'`), `it.skipIf` wrapper, the token skip with the reason `GITHUB_TOKEN not set` for EF-17, EF-18 and EF-19, a failure formatter that names only row id, source and path, and a path checker that reuses `endpoint-fact-map.ts`.
     - _Requirements: 23.8, 23.9, 23.14, 23.15_
 
-  - [~] 9.28 Write the GitHub live contract tests
+  - [x] 9.28 Write the GitHub live contract tests
     - `tests/live/github.live.test.ts`: one test per verified GitHub row (EF-12 to EF-19) against the real API; EF-17, EF-18 and EF-19 skipped without a token.
     - _Requirements: 23.8, 23.9, 23.14, 23.15_
 
