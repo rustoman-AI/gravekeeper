@@ -613,7 +613,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/stage-advisories.ts`: one plan for the union of ids (`planAdvisoryRequests`), OSV detail and deps.dev advisory requests for the same id set, unfetched ids recorded with reason `truncated`, `advisory-details-incomplete` input for `assembleFacts`.
     - _Requirements: 9.4, 9.9, 9.18, 9.20, 9.23, 17.14_
 
-  - [~] 5.21 Write unit tests for the advisory stage
+  - [x] 5.21 Write unit tests for the advisory stage
     - `tests/pipeline/scan/stage-advisories.test.ts`: both request sets equal and ordered, cap at `OSV_MAX_ADVISORY_DETAILS`, a deps.dev 404 is `ok`, an OSV 404 is a failed unit, shared ids across targets requested once.
     - _Requirements: 9.4, 9.9, 9.18, 9.20, 9.23, 17.6_
 
@@ -621,7 +621,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/stage-repo-facts.ts`: `planGraphqlBatches`, `buildRepositoriesQuery`, one GraphQL request per batch under the `github` limiter with the budget gate; without a token every unit is `token-missing` and one `github-token-missing` note is added; units after a closed gate are `budget`.
     - _Requirements: 11.1, 11.2, 11.7, 11.8, 11.13, 14.3, 14.4, 17.5_
 
-  - [~] 5.23 Write unit tests for the repository facts stage
+  - [x] 5.23 Write unit tests for the repository facts stage
     - `tests/pipeline/scan/stage-repo-facts.test.ts`: no token, no Source_Repo, batch boundary, a `NOT_FOUND` alias is `ok` with null facts, a foreign error type fails the unit, budget stop.
     - _Requirements: 11.1, 11.2, 11.5, 11.7, 11.8, 11.9, 11.13, 14.3, 17.5_
 
@@ -633,7 +633,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/scan/assemble-result.test.ts`: lists have matching lengths, shared targets give equal facts and classifications, unassessed dependencies, the throwing-Mapper guard turns facts all-null, `assemblePartial` with discovery complete and incomplete, `summary` equals `summarize(assessed)`.
     - _Requirements: 13.16, 16.12, 17.7, 18.1, 18.8, 18.9, 18.12_
 
-  - [~] 5.26 Implement `runScan`
+  - [x] 5.26 Implement `runScan`
     - Create `pipeline/scan/run-scan.ts`: the scan controller and the deadline timer on the injected `Timer` (`SCAN_DEADLINE_MS` after Scan_Start, cleared when the scan settles), stages S1 to S9 in the order of the stage table (S7 and S8 concurrent), `guard` converting a thrown exception into `internal-error`, a `ScanProgress` handle fed as stages finish. Scan_Cache lookup and store are wired in task 7.20.
     - _Requirements: 16.1, 16.3, 16.4, 16.5, 16.9, 16.11, 16.12, 18.7, 21.8_
 
