@@ -125,5 +125,25 @@ describe('fixture scan replay', () => {
       );
       expect(flagged.length).toBeGreaterThan(0);
     });
+    it(`${set.name}: versionBasis and advisories are consistent`, async () => {
+      const outcome = await replay(set);
+      expect(outcome.ok).toBe(true);
+      if (!outcome.ok) return;
+      const deps = outcome.value.result.dependencies;
+      const counts: Record<string, number> = {};
+      for (const d of deps) counts[String(d.versionBasis)] = (counts[String(d.versionBasis)] ?? 0) + 1;
+      console.info(`versionBasis ${set.name}: ${JSON.stringify(counts)}`);
+      for (const d of deps) {
+        // lookupVersion and versionBasis are set together.
+        expect(d.lookupVersion === null).toBe(d.versionBasis === null);
+        // A positive open-vulnerability count comes with listed advisories.
+        const open = d.facts.openVulnerabilityCount as number | null;
+        if ((open ?? 0) > 0) expect(d.advisories.length).toBeGreaterThan(0);
+        if (open === null) expect(d.advisories).toEqual([]);
+      }
+      if (set.name === 'request__request') {
+        expect(deps.some((d) => d.versionBasis === 'resolved')).toBe(true);
+      }
+    });
   }
 });

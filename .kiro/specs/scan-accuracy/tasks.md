@@ -182,24 +182,24 @@ This spec changes `/core`, which the tasks of `scan-pipeline` and `dependency-gr
 - [x] 6. Checkpoint - Advisories, cache header, candidates
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 7. Fixtures, traceability and live report
+- [x] 7. Fixtures, traceability and live report
   - [x] 7.1 Re-record the fixtures
     - Run `npm run fixtures:record` for `request/request`, `revmic/canopy` and `ajeetdsouza/zoxide` with `GRAVEKEEPER_LIVE_TESTS=1`. The recorder needs network access and `GITHUB_TOKEN`: ask the orchestrator for the user-approved `gh` CLI token, pass it only through the process environment and never print or store it. The version-specific requests of ranged dependencies change with the Resolved_Version, so the Fixture_Sets under `tests/fixtures/` are replaced. Keep every Fixture_Set at most `FIXTURE_SET_MAX_BYTES` and keep at least one `archived` or `deprecated` fact in each set.
     - _Requirements: 10.3_
-  - [~] 7.2 Update the fixture tests
+  - [x] 7.2 Update the fixture tests
     - Run `tests/pipeline/fixtures-scan.test.ts`, `fixtures-coverage.test.ts`, `tests/fixtures/fixtures-hygiene.test.ts` and `tests/fixtures/fixtures-size.test.ts` against the new recordings and fix expectations that name a version, a request or a count that changed (for example the Resolved_Version of a ranged dependency, the `versionBasis` values, the `advisories` of a dependency with advisories). Rules R23.2 to R23.6, R23.13 and R23.16 stay as they are, and a second scan with empty caches must be deeply equal.
     - _Requirements: 10.3, 10.5_
-  - [~] 7.3 Update the traceability document
+  - [x] 7.3 Update the traceability document
     - Update `docs/property-traceability.md`: add a `scan-accuracy` section with one row per Property 1 to 12 (requirements, test file, test title, status from a full `npx vitest --run`), update the rows of the changed properties (core 14, 15, 16, 24 and the new 47; pipeline P14, P15, P57, P58, P64, P68), update the header counts, and list properties without a test.
     - _Requirements: 10.6, 10.7_
-  - [~] 7.4 Write the live report script
+  - [x] 7.4 Write the live report script
     - Create `scripts/live-report.ts` and the npm script `live:report`. It runs only when `GRAVEKEEPER_LIVE_TESTS` equals `1` and `GITHUB_TOKEN` is set, builds the production stack with a counting `fetch` (requests per Upstream_Source and endpoint pattern, never header or body text), disables the L2_Cache (`GRAVEKEEPER_RUNTIME_CACHE=off`) and starts with empty L1 caches, runs `handleScanRequest` once per repository, runs it a second time to show the `hit` header, and prints and writes Markdown. The token is never printed.
     - _Requirements: 3.12, 7.3, 6.2, 10.3_
-  - [~] 7.5 Run the live report
+  - [x] 7.5 Run the live report
     - Run `npm run live:report` with the user-approved token (ask the orchestrator) and write `docs/scan-accuracy-live-report.md` with (a) the request-by-request table: one row per Upstream_Source and endpoint pattern with the request count for each cold scan, (b) for each of `expressjs/express`, `psf/requests` and `BurntSushi/ripgrep` the cold scan result: HTTP status, `X-Gravekeeper-Cache` value (`miss`, and `hit` for the immediate repeat), duration, dependency count by `versionBasis` (`pinned`, `resolved`, `default`, null), number of `range-unresolved` notes, total advisories and the repo grade and counts of the summary, and (c) a sentence that no request count exceeds the pipeline limits and that no token appears in the file.
     - _Requirements: 3.2, 3.6, 6.2, 7.3, 8.1, 10.3_
 
-- [~] 8. Final checkpoint - Fixtures, traceability and live report
+- [x] 8. Final checkpoint - Fixtures, traceability and live report
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 ## Notes

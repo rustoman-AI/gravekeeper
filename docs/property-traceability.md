@@ -1,6 +1,6 @@
 # Property traceability
 
-Maps every design property of the `scan-pipeline` and `dependency-graveyard-core` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 2257 passed and 23 skipped (the live tests, skipped without `GRAVEKEEPER_LIVE_TESTS`), 144 test files passed and 5 skipped, run twice with the same result. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests).
+Maps every design property of the `scan-pipeline`, `dependency-graveyard-core` and `scan-accuracy` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 2449 passed and 26 skipped (the live tests, skipped without `GRAVEKEEPER_LIVE_TESTS`), 162 test files passed and 6 skipped. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
 
 ## scan-pipeline
 
@@ -100,9 +100,9 @@ Maps every design property of the `scan-pipeline` and `dependency-graveyard-core
 | P11 | 5.10 | `tests/core/serializers/serialize-manifest.property.test.ts` | Property 11: serialize(parse(serialize(list)).dependencies) is byte-identical to serialize(list) | passing |
 | P12 | 5.12, 5.6, 5.4, 5.5 | `tests/core/serializers/serialize-manifest.property.test.ts` | Property 12: permutations give byte-identical text, restricted and deduplicated in Dependency_Order | passing |
 | P13 | 6.4 | `tests/core/classifier/classify.property.test.ts` | Property 13: never throws and always returns a Classification<br>Property 13: never throws for Proxies with throwing traps and exotic values | passing |
-| P14 | 6.3, 6.5, 6.6 | `tests/core/classifier/classify.property.test.ts` | Property 14: 6.3 Reason is present iff unknown fields exist and lists each exactly once | passing |
-| P15 | 8.10 | `tests/core/classifier/classify.property.test.ts` | Property 15: abandoned equals archived, deprecated or the 8.3 release condition | passing |
-| P16 | 8.11 | `tests/core/classifier/classify.property.test.ts` | Property 16: dormant equals the 8.4 definition | passing |
+| P14 | 6.3, 6.5, 6.6 | `tests/core/classifier/classify.property.test.ts` | Property 14: 6.3 Reason is present iff reportable unknown fields exist and lists each exactly once | passing |
+| P15 | 8.10 | `tests/core/classifier/classify.property.test.ts` | Property 15: abandoned equals archived, deprecated or the 8.3 release condition with the commit threshold | passing |
+| P16 | 8.11 | `tests/core/classifier/classify.property.test.ts` | Property 16: dormant equals the 8.4 definition and never co-occurs with an 8.3 Reason | passing |
 | P17 | 8.12 | `tests/core/classifier/classify.property.test.ts` | Property 17: changing maintainerCount leaves abandoned and status unchanged | passing |
 | P18 | 9.5 | `tests/core/classifier/classify.property.test.ts` | Property 18: status is HAUNTED iff vulnerable, DEAD iff not vulnerable and abandoned, else ALIVE | passing |
 | P19 | 9.6 | `tests/core/classifier/classify.property.test.ts` | Property 19: repeated calls return deeply equal results, including Reasons order | passing |
@@ -133,6 +133,24 @@ Maps every design property of the `scan-pipeline` and `dependency-graveyard-core
 | P44 | 2.14, 2.2 | `tests/core/parsers/requirements-txt.property.test.ts` | Property 44: every parsed pypi Dependency has normalize(rawName) === name<br>Property 44: normalize is idempotent and equals the independent oracle<br>Property 44: parsed pypi Dependencies from arbitrary text satisfy normalize(rawName) === name | passing |
 | P45 | 12.23, 12.15 | `tests/core/summarizer/summarize.property.test.ts` | Property 45: grade is not better than grade(score) of any assessed package | passing |
 | P46 | 12.24, 12.15 | `tests/core/summarizer/summarize.property.test.ts` | Property 46: appending an entry never improves the grade | passing |
+| P47 | 9.2, 9.5, 9.6 | `tests/core/summarizer/unique-packages.property.test.ts` | Property 12: uniquePackages length equals summarize total and merged classifications match<br>Property 12: mergeClassifications returns a member that no other member beats | passing |
+
+## scan-accuracy
+
+| Property | Requirement(s) | Test file | Test title | Status |
+| --- | --- | --- | --- | --- |
+| P1 | 1.2, 1.3, 1.5, 1.8 | `tests/core/classifier/commit-threshold.property.test.ts` | P1: abandoned and dormant follow the commit threshold for raw facts<br>P1: abandoned and dormant follow the commit threshold at the boundary day counts | passing |
+| P2 | 2.1, 2.2, 2.3, 2.4, 2.5, 2.8, 2.9 | `tests/core/classifier/unknown-facts.property.test.ts` | Property 2: the 6.3 Reason has the exact text for the reportable unknown fields<br>Property 2: an unknown severity is not reported when the open count is a Valid_Fact 0 | passing |
+| P3 | 3.2, 3.3, 3.4, 3.13, 3.14 | `tests/pipeline/mapping/range-resolve.property.test.ts` | Property 3: The resolved version is listed and satisfies every range > a resolved version is an element of the list and satisfies each range under the library<br>Property 3 > a satisfiable range set over a list containing a stable match always resolves | passing |
+| P4 | 3.2, 3.3, 3.4, 3.13, 3.14 | `tests/pipeline/mapping/range-resolve.property.test.ts` | Property 4: The resolved version is the highest non-prerelease match > equals the independent integer maximum of the listed stable versions (or unresolved when none match)<br>Property 4 > never returns a prerelease even when it is the highest match<br>Property 4 > cargo bare and caret requirements pick the integer maximum below the caret bound | passing |
+| P5 | 3.8, 3.9, 3.15 | `tests/pipeline/mapping/version-choose.property.test.ts` | returns the same selection, basis and notes for any permutation of the specs<br>never resolves a range when at least one Exact_Pin is present | passing |
+| P6 | 4.9, 4.10 | `tests/pipeline/mapping/range-cargo.property.test.ts` | a bare version resolves like the same version with a caret<br>a comma requirement satisfies each comparator alone, is the highest such version, and ignores order | passing |
+| P7 | 3.6, 3.7, 3.16, 4.11 | `tests/pipeline/mapping/version-choose.property.test.ts` | cargoToSemverRange and chooseVersion do not throw for any string<br>an unresolved outcome falls back to the default with exactly one range-unresolved note and sorted, cut ranges | passing |
+| P8 | 11.3, 11.5 | `tests/pipeline/scan/messages.property.test.ts` | P8 The unresolved-range message contains no range text | passing |
+| P9 | 8.1, 8.2, 8.3, 8.6 | `tests/pipeline/scan/candidates.property.test.ts` | P9 too-many-manifests carries exactly the discovered paths, capped, with only limit and candidates<br>P9 manifest-not-found carries exactly the discovered paths, capped, with only path and candidates | passing |
+| P10 | 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.10, 6.13, 6.14, 6.15 | `tests/pipeline/mapping/advisories.property.test.ts`<br>`tests/pipeline/mapping/assemble.property.test.ts`<br>`tests/pipeline/scan/advisories.property.test.ts` | P10: Advisory entries mirror the OSV ids<br>P10: no ids gives an empty list<br>assemble tagged test at line 279 (advisories in the assembled output)<br>P10: Advisory entries mirror the OSV ids (scan level) | passing |
+| P11 | 7.1, 7.2, 7.3, 7.4, 7.7, 7.8 | `tests/pipeline/api/cache-header.property.test.ts` | Property 11: The cache header is present on 200 only and never changes the body | passing |
+| P12 | 9.2, 9.5, 9.6 | `tests/core/summarizer/unique-packages.property.test.ts` | Property 12: uniquePackages length equals summarize total and merged classifications match<br>Property 12: mergeClassifications returns a member that no other member beats | passing |
 
 ## Properties without a test
 
@@ -140,9 +158,13 @@ Maps every design property of the `scan-pipeline` and `dependency-graveyard-core
 
 None. All 76 properties (P1 to P76) have at least one passing test.
 
-### dependency-graveyard-core
+### dependency-graveyard-core (0 of 47)
 
-None. All 46 properties have at least one passing test.
+None. All 47 properties (P1 to P47) have at least one passing test.
+
+### scan-accuracy (0 of 12)
+
+None. All 12 properties (P1 to P12) have at least one passing test.
 
 ## Tag and number mismatches
 
@@ -152,9 +174,13 @@ None. All 46 properties have at least one passing test.
   - scan-pipeline P5: tag says "does not echo input", design says "uses fixed error messages" (`tests/pipeline/config/github-config.property.test.ts:31`).
   - dependency-graveyard-core P21: tag says "Score is the sum of its components (classify level)", design says "Score equals the sum of the components, clamp is a no-op" (`tests/core/classifier/classify.property.test.ts:191`).
   - dependency-graveyard-core P7, P8, P12, P14, P42: the design heading ends in "(extra)", or the tag adds "(parser side)" or "(serializer side)". Wording only.
+- scan-accuracy P3 and P4: `range-resolve.property.test.ts` has no `// Feature: scan-accuracy` tag comment and no `// Validates:` line. It was matched by its `describe` titles "Property 3: ..." and "Property 4: ...". Requirements come from tasks.md task 3.13.
+- scan-accuracy P11: `cache-header.property.test.ts` has the Feature tag but no `// Validates:` line. Requirements come from tasks.md task 5.11.
+- dependency-graveyard-core P47 shares its test with scan-accuracy P12 (one file carries both tags, the titles say "Property 12").
+- Rows changed by scan-accuracy: core P14, P15, P16 (titles updated), P24 (tag updated, titles unchanged) and the new core P47. Pipeline P14, P15, P57, P58, P64 and P68 keep their tests and titles and still pass.
 - Tests matched by tag comment only, because the title has no `P<n>` prefix: scan-pipeline P5, P14, P15, and the dependency-graveyard-core serialize-manifest tests.
 
 ## Notes
 
-- `dependency-graveyard-core/design.md` has 46 properties, not 39. The table has one row per property.
+- `dependency-graveyard-core/design.md` has 47 properties, not 39. The table has one row per property.
 - P16 and P17 are registry-driven: one test per mapper or per removed field in `mappers.property.test.ts`, so the title cell gives a count.

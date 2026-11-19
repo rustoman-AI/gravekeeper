@@ -163,3 +163,22 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 - GET /api/scan: 405 with `Allow: POST`, body `invalid-request`, `details.reason` `method-not-allowed`.
 - POST https://gitlab.com/a/b: 400, `error.code` `invalid-url`, `details.part` `host`, message "Only repositories on github.com are accepted."
 - Env var reaches the function: no `github-token-missing` note in any response.
+
+## Session 15
+- scan-accuracy spec executed in four groups: commit threshold and unknown-facts Reason in core, version resolution from declared ranges, advisory entries with the cache header and manifest candidates, then fixtures, traceability and live report.
+- Final checkpoint (task 8) is green: typecheck, lint, check:core, check:architecture, vitest and build all exit 0.
+- Group checkpoint: typecheck 2.3 s, lint 6.4 s, check:core 0.8 s, check:architecture 1.1 s, build 7.6 s, all exit 0; vitest 168 files (162 passed, 6 skipped), 2475 tests (2449 passed, 26 skipped) in 8.27 s; tests/core + tests/pipeline/mapping + tests/pipeline/scan + tests/pipeline/api at FC_NUM_RUNS=1000: 110 files, 1818 tests pass (21.65 s, 22.9 s wall).
+
+### Decisions
+- PEP 440 library: @renovatebot/pep440 5.0.1 (6.0.0 needs Node >=24.10; CI is Node 22); semver 7.8.6; both pinned exactly, fenced to pipeline/mapping/range-semver.ts / range-pep440.ts by architecture rules range-package-not-allowed and range-package-version-exact.
+- Cargo mapping: bare = caret, comma = AND, wildcards pass through, `||`, hyphen ranges, v-prefix, x-wildcards rejected.
+- range-unresolved note: details {ecosystem, name, ranges}; only {name} rendered; ranges cut to RANGE_MAX_LENGTH (256).
+- 8.3 message for unknown commit shortened to "assumed stale" to fit the 200-char cap.
+- advisories list every distinct OSV id incl. withdrawn/informational (so length can exceed openVulnerabilityCount); aliases exclude the id and empty strings; url percent-encodes outside A-Za-z0-9._:-.
+- X-Gravekeeper-Cache only on 200; margin path is miss; body identical between hit and fresh (P68).
+- candidates in discovery order capped at DISCOVERY_MAX_MANIFESTS; [] for an empty tree.
+- uniquePackages/mergeClassifications/compareClassifications exported from core.
+- CACHE_KEY_VERSION 1 -> 2; fixtures re-recorded once after version resolution (task 7.1 run early because version requests changed).
+- advisoryUrl/buildAdvisoryEntries registered as helpers (not body mappers) in the mapper registry.
+- Process: CI failed once on 1c0da21 (spec-only commit: the messages completeness test parses the spec table, which gained a row before messages.ts did); fixed by 42d7c85. A checkpoint sub-agent timed out (1 h) because FC_NUM_RUNS=1000 was left set in the shared shell; cleared and re-run.
+- Live: psf/requests has no root requirements.txt (no-root-manifest note; pyproject.toml is not a supported format), so it reports 0 dependencies.
