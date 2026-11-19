@@ -51,7 +51,7 @@ This spec changes `/core`, which the tasks of `scan-pipeline` and `dependency-gr
 - [x] 2. Checkpoint - Core
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 3. Version resolution from declared ranges
+- [x] 3. Version resolution from declared ranges
   - [x] 3.1 Install and pin the range libraries
     - Run `npm install --save-exact semver@7.8.6 @renovatebot/pep440@5.0.1` and `npm install --save-dev --save-exact @types/semver@7.8.0`. Check that `package.json` shows no `^` or `~` for the three packages and that `package-lock.json` is updated. Do not install anything else.
     - _Requirements: 5.1, 5.2_
@@ -85,25 +85,25 @@ This spec changes `/core`, which the tasks of `scan-pipeline` and `dependency-gr
   - [x] 3.11 Implement `resolveRange`
     - Create `pipeline/mapping/range-resolve.ts` with `resolveRange(ecosystem, ranges, versions)` as in the design: length check against `RANGE_MAX_LENGTH`, per-ecosystem range compilation (`semverRange`; `cargoToSemverRange` then `semverRange`; `pepRange`), candidate filtering (valid, not Prerelease, distinct), highest satisfying candidate with the first listed winning a tie, `unresolved` otherwise. Total for any input.
     - _Requirements: 3.2, 3.3, 3.4, 3.5, 3.6_
-  - [~] 3.12 Write unit tests for `resolveRange`
+  - [x] 3.12 Write unit tests for `resolveRange`
     - Create `tests/pipeline/mapping/range-resolve.test.ts`: npm `^4.17.0`, `~1.2`, `>=1 <2`, `1.x`, `||`, hyphen range, `*`; cargo bare `1.3.1` (stays in 1.x), `0.0.3`, `>=1.2, <1.5`; pypi `>=1.4,<2`, `~=1.4.0`, `==1.*`, `!=1.4.5,>=1.0`; prereleases and junk strings in the list are never chosen; a PyPI tie (`1.0` and `1.0.0`) keeps the first listed; two ranges intersect; a range longer than `RANGE_MAX_LENGTH`, an unparseable range and a range that matches nothing give `unresolved`.
     - _Requirements: 3.2, 3.3, 3.4, 3.5, 3.6, 4.2_
-  - [~] 3.13 Write the property tests for resolution
+  - [x] 3.13 Write the property tests for resolution
     - `tests/pipeline/mapping/range-resolve.property.test.ts` with generators for version lists (stable, prerelease and junk strings) and satisfiable ranges per ecosystem; the maximum of simple numeric ranges is also computed by an independent integer comparison.
     - **Property 3: The resolved version is listed and satisfies every range**
     - **Property 4: The resolved version is the highest non-prerelease match**
     - **Validates: Requirements 3.2, 3.3, 3.4, 3.13, 3.14**
-  - [~] 3.14 Write the property test for the Cargo mapping
+  - [x] 3.14 Write the property test for the Cargo mapping
     - `tests/pipeline/mapping/range-cargo.property.test.ts`.
     - **Property 6: Cargo mapping is caret by default and an intersection for commas**
     - **Validates: Requirements 4.9, 4.10**
-  - [~] 3.15 Implement `chooseVersion` and the new selection types
+  - [x] 3.15 Implement `chooseVersion` and the new selection types
     - Create `pipeline/mapping/version-choose.ts` with `chooseVersion(ecosystem, specs, versions, defaultVersion)` as in the design (pins first through `exactPin` and `selectVersion`, then Declared_Ranges through `resolveRange`, the default selection plus one `range-unresolved` note on failure, ranges cut to `RANGE_MAX_LENGTH` code points). In `pipeline/mapping/types.ts` set `VersionBasis` to `'pinned' | 'resolved' | 'default'` and add the `range-unresolved` member to `VersionSelection.notes`. Export `chooseVersion`, `resolveRange` and `cargoToSemverRange` from `pipeline/mapping/index.ts`.
     - _Requirements: 3.1, 3.6, 3.7, 3.8, 3.9, 3.11_
-  - [~] 3.16 Write unit tests for `chooseVersion`
+  - [x] 3.16 Write unit tests for `chooseVersion`
     - Create `tests/pipeline/mapping/version-choose.test.ts`: no specs and whitespace specs give the default with no note; one range gives `resolved`; an exact pin plus a range gives `pinned` and no resolution; a pin that is not found gives the default and `pin-not-found`; two distinct pins give `conflicting-pins`; an unresolvable range gives the default plus one `range-unresolved` note with sorted, cut `ranges`; no default version after an unresolved range adds `no-default-version`; an unknown ecosystem is total.
     - _Requirements: 3.1, 3.6, 3.7, 3.8, 3.9, 3.11_
-  - [~] 3.17 Write the property tests for version choice
+  - [x] 3.17 Write the property tests for version choice
     - `tests/pipeline/mapping/version-choose.property.test.ts` with generators that mix exact pins, ranges, empty strings and arbitrary Unicode strings.
     - **Property 5: Version choice does not depend on spec order**
     - **Property 7: Resolution is total and falls back with one note**
@@ -115,20 +115,20 @@ This spec changes `/core`, which the tasks of `scan-pipeline` and `dependency-gr
     - Update `tests/pipeline/scan/notes.test.ts`: `ALLOWED_KEYS` gains `range-unresolved: ['ecosystem', 'name', 'ranges']`; the completeness test that parses the User-facing messages table of `.kiro/specs/scan-pipeline/requirements.md` finds the new row and checks that every code has exactly one row, that the placeholders of the row are keys of its code and that the text has no em dash; a test that `ranges` is never rendered. Update `tests/pipeline/scan/messages.property.test.ts` so its generator also produces `range-unresolved` notes with hostile range text.
     - **Property 8: The unresolved-range message contains no range text**
     - **Validates: Requirements 11.1, 11.2, 11.3, 11.4, 11.5**
-  - [~] 3.20 Wire `chooseVersion` into the version stage
+  - [x] 3.20 Wire `chooseVersion` into the version stage
     - In `pipeline/scan/stage-versions.ts` replace the call of `selectVersion` by `chooseVersion` with `LookupTarget.versionSpecs`, the ecosystem and the deps.dev version list, add the `range-unresolved` note through `rangeUnresolvedNote`, and record `versionBasis` `resolved` where `lookupVersion` and `versionBasis` are assembled. The deps.dev version, OSV query and PyPI per-version requests keep using the Selected_Version. Add no request.
     - _Requirements: 3.2, 3.6, 3.9, 3.10, 3.12, 10.2_
-  - [~] 3.21 Update the version-selection tests
+  - [x] 3.21 Update the version-selection tests
     - Update `tests/pipeline/mapping/version-select.test.ts` and `tests/pipeline/mapping/version-select.property.test.ts`: pipeline P14 (`exactPin`) keeps its assertions and gains the comment that a non-pin string is a Declared_Range; pipeline P15 now drives `chooseVersion` with spec lists that include ranges, empty strings and arbitrary strings.
     - _Requirements: 3.8, 3.15, 10.5_
-  - [~] 3.22 Update the mapper registry
+  - [x] 3.22 Update the mapper registry
     - In `tests/support/mapper-registry.ts` register `chooseVersion`, `resolveRange` and `cargoToSemverRange` with validators of their declared output types, and update `tests/pipeline/mapping/mapper-registry.test.ts` and the totality property (pipeline P16) so every new export of `pipeline/mapping/index.ts` is covered.
     - _Requirements: 3.16, 4.11, 10.5, 5.5_
-  - [~] 3.23 Update the version stage and assembly tests
+  - [x] 3.23 Update the version stage and assembly tests
     - Update `tests/pipeline/scan/stage-versions.test.ts` (a ranged dependency is looked up at the resolved version: the deps.dev version document path, the OSV query version and the PyPI per-version path use it; the `range-unresolved` note and the fallback to the default version; no extra request) and `tests/pipeline/mapping/assemble.test.ts` and `assemble.property.test.ts` (selection notes include `range-unresolved`, `versionBasis` `resolved`, pipeline P37 and P38 still hold).
     - _Requirements: 3.6, 3.10, 3.12, 10.2, 10.5_
 
-- [~] 4. Checkpoint - Version resolution
+- [x] 4. Checkpoint - Version resolution
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 5. Advisory entries, scan outcome with cache header, manifest candidates
@@ -183,7 +183,7 @@ This spec changes `/core`, which the tasks of `scan-pipeline` and `dependency-gr
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 7. Fixtures, traceability and live report
-  - [~] 7.1 Re-record the fixtures
+  - [x] 7.1 Re-record the fixtures
     - Run `npm run fixtures:record` for `request/request`, `revmic/canopy` and `ajeetdsouza/zoxide` with `GRAVEKEEPER_LIVE_TESTS=1`. The recorder needs network access and `GITHUB_TOKEN`: ask the orchestrator for the user-approved `gh` CLI token, pass it only through the process environment and never print or store it. The version-specific requests of ranged dependencies change with the Resolved_Version, so the Fixture_Sets under `tests/fixtures/` are replaced. Keep every Fixture_Set at most `FIXTURE_SET_MAX_BYTES` and keep at least one `archived` or `deprecated` fact in each set.
     - _Requirements: 10.3_
   - [~] 7.2 Update the fixture tests

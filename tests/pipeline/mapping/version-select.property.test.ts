@@ -1,6 +1,7 @@
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { exactPin, selectVersion } from '../../../pipeline/mapping/version-select';
+import { chooseVersion } from '../../../pipeline/mapping/version-choose';
+import { exactPin } from '../../../pipeline/mapping/version-select';
 import { cfg } from '../../support/fc-config';
 
 type Eco = 'npm' | 'pypi' | 'cargo';
@@ -92,6 +93,7 @@ const ecosystemArb: fc.Arbitrary<unknown> = fc.oneof(
 
 // Feature: scan-pipeline, Property 14: Version_Selector accepts only exact pins
 // Validates: Requirements 7.10
+// A string that is not an exact pin is a Declared_Range for chooseVersion (P15), not an error here.
 describe('Property 14: Version_Selector accepts only exact pins', () => {
   it('returns null or the pin of R7.1 and R7.2 without its operator, and never throws', () => {
     fc.assert(
@@ -130,9 +132,18 @@ describe('Property 14: Version_Selector accepts only exact pins', () => {
 
 const POOL = ['1.2.3', '1.2.4', '2.0.0', '0.1.0-beta.1', '3.0.0+build'];
 const poolSpec: fc.Arbitrary<string> = fc
-  .tuple(fc.constantFrom(...POOL), fc.constantFrom('', '=', '==', '===', '^', '>=', '~'), pad)
+  .tuple(fc.constantFrom(...POOL), fc.constantFrom('', '=', '==', '===', '^', '>=', '~', '~=', '<'), pad)
   .map(([v, o, p]) => `${p}${o}${v}${p}`);
-const mixedSpec: fc.Arbitrary<string> = fc.oneof(poolSpec, fc.string({ maxLength: 8 }), fc.constantFrom('*', '', 'latest'));
+const rangeSpec: fc.Arbitrary<string> = fc.constantFrom(
+  '^1.0.0', '~1.2.0', '>=1.2.3 <3', '1.x', '*', '>=2', '<2.0.0', '1.2.3 - 2.0.0', '==1.*', '~=1.2', '>=1.0,<3', '^0.1.0-beta.1',
+);
+const mixedSpec: fc.Arbitrary<unknown> = fc.oneof(
+  poolSpec,
+  rangeSpec,
+  fc.string({ maxLength: 8 }),
+  fc.constantFrom('*', '', ' ', 'latest'),
+  fc.anything(),
+);
 
 // Feature: scan-pipeline, Property 15: Version selection does not depend on spec order
 // Validates: Requirements 7.13
@@ -153,22 +164,18 @@ describe('Property 15: Version selection does not depend on spec order', () => {
               r.specs.map((_, i) => i),
               { minLength: r.specs.length, maxLength: r.specs.length },
             ),
-            versionsPerm: fc.shuffledSubarray(
-              r.versions.map((_, i) => i),
-              { minLength: r.versions.length, maxLength: r.versions.length },
-            ),
           }),
         ),
         ({ r, perm }) => {
-          const pinsOf = (specs: readonly string[]): string[] =>
-            specs.map((s) => exactPin(s, r.eco)).filter((p): p is string => p !== null);
-          const original = selectVersion(pinsOf(r.specs), r.versions, r.defaultVersion);
-          const permuted = selectVersion(
-            pinsOf(perm.map((i) => r.specs[i] as string)),
+          const original = chooseVersion(r.eco, r.specs, r.versions, r.defaultVersion);
+          const permuted = chooseVersion(
+            r.eco,
+            perm.map((i) => r.specs[i]),
             r.versions,
             r.defaultVersion,
           );
           expect(permuted).toEqual(original);
+          expect(['pinned', 'resolved', 'default', null]).toContain(original.basis);
         },
       ),
       cfg(),

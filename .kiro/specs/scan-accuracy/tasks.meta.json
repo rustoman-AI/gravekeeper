@@ -407,6 +407,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637258
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061413880
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061507942
       }
     ],
     "3.13 Write the property tests for resolution": [
@@ -414,6 +424,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637328
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061414884
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061508862
       }
     ],
     "3.14 Write the property test for the Cargo mapping": [
@@ -421,6 +441,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637368
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061415882
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061509865
       }
     ],
     "3.15 Implement `chooseVersion` and the new selection types": [
@@ -428,6 +458,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637409
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061416745
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061511407
       }
     ],
     "3.16 Write unit tests for `chooseVersion`": [
@@ -435,6 +475,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637449
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061516522
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061641166
       }
     ],
     "3.17 Write the property tests for version choice": [
@@ -442,6 +492,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637490
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061517392
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061642266
       }
     ],
     "3.18 Add the `range-unresolved` note and message row": [
@@ -483,6 +543,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637607
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061518402
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061643669
       }
     ],
     "3.21 Update the version-selection tests": [
@@ -490,6 +560,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637647
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061519396
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061644669
       }
     ],
     "3.22 Update the mapper registry": [
@@ -497,6 +577,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637688
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061520083
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061645146
       }
     ],
     "3.23 Update the version stage and assembly tests": [
@@ -504,6 +594,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637785
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061651439
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061948353
       }
     ],
     "4. Checkpoint - Version resolution": [
@@ -511,6 +611,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060637829
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062053857
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062113064
       }
     ],
     "5.1 Implement advisory entries and add them to the assembled facts": [
@@ -623,6 +733,16 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795060638453
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061948500
+      },
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795062053393
       }
     ],
     "7.2 Update the fixture tests": [
@@ -665,6 +785,13 @@
         "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795061271409
+      }
+    ],
+    "3. Version resolution from declared ranges": [
+      {
+        "executionId": "e83dc692-1e8e-4975-80b3-0fdad8a644ae",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795061948393
       }
     ]
   }

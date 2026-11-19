@@ -43,3 +43,6 @@ export type {
   VulnerabilityFacts,
 } from './types';
 export { exactPin, readDepsDevVersions, selectVersion } from './version-select';
+export { chooseVersion } from './version-choose';
+export { resolveRange } from './range-resolve';
+export { cargoToSemverRange } from './range-cargo';

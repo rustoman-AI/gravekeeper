@@ -66,7 +66,7 @@ export interface ScanDependency {
   readonly dependency: Dependency;
   readonly manifestPath: string;
   readonly lookupVersion: string | null;
-  readonly versionBasis: 'pinned' | 'default' | null;
+  readonly versionBasis: 'pinned' | 'resolved' | 'default' | null;
   /** Exactly seven keys, null when unknown. */
   readonly facts: RawHealthFacts;
 }

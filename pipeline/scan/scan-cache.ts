@@ -206,7 +206,7 @@ export function isScanResult(value: unknown): value is ScanResult {
         isDependency(d.dependency) &&
         isStr(d.manifestPath) &&
         (d.lookupVersion === null || isStr(d.lookupVersion)) &&
-        (d.versionBasis === null || d.versionBasis === 'pinned' || d.versionBasis === 'default') &&
+        (d.versionBasis === null || d.versionBasis === 'pinned' || d.versionBasis === 'resolved' || d.versionBasis === 'default') &&
         isRec(d.facts) &&
         hasKeys(d.facts, [
           'daysSinceLastRelease', 'daysSinceLastCommit', 'archived', 'deprecated',

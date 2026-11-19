@@ -23,6 +23,7 @@ describe('exactPin', () => {
     expect(exactPin('==v1.0', 'pypi')).toBeNull();
   });
 
+  // A non-pin string is a Declared_Range for chooseVersion, not an error here.
   it('rejects ranges, wildcards, leading zeros, leading v and spaces', () => {
     for (const spec of ['^1.2.3', '~1.2.3', '>=1.2.3', '1.2.x', '*', '1.2', 'v1.2.3', '01.2.3', '1.2.3 ', '= 1.2.3', '1.2.3 - 2.0.0', '']) {
       const expected = spec === '1.2.3 ' ? '1.2.3' : null;

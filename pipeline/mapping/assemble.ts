@@ -12,7 +12,8 @@ import type {
   TargetNote,
   VersionSelection,
 } from './types';
-import { exactPin, readDepsDevVersions, selectVersion } from './version-select';
+import { chooseVersion } from './version-choose';
+import { readDepsDevVersions } from './version-select';
 
 // Requirement 13.4, 13.11, 13.14, 8.4, 8.5, 8.6, 9.6, 9.9, 9.11, 9.22, 12.4
 
@@ -53,18 +54,13 @@ export function assembleFacts(raw: RawTargetInputs, asOf: string): AssembledFact
   if (raw.depsdevPackage.state === 'ok') {
     const body = raw.depsdevPackage.body;
     const { defaultVersion, versions } = readDepsDevVersions(body);
-    const pins: string[] = [];
-    for (const spec of raw.versionSpecs) {
-      const pin = exactPin(spec, ecosystem);
-      if (pin !== null) pins.push(pin);
-    }
-    selection = selectVersion(pins, versions, defaultVersion);
+    selection = chooseVersion(ecosystem, raw.versionSpecs, versions, defaultVersion);
     for (const note of selection.notes) {
       if (note.code === 'pin-not-found') {
         notes.push({ code: 'pin-not-found', details: { ...base, pinned: note.pinned } });
       } else if (note.code === 'conflicting-pins') {
         notes.push({ code: 'conflicting-pins', details: { ...base, pins: [...note.pins] } });
-      } else {
+      } else if (note.code === 'no-default-version') {
         notes.push({ code: 'no-default-version', details: { ...base } });
       }
     }

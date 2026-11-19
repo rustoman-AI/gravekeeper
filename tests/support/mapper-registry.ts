@@ -1,4 +1,4 @@
-﻿// Requirement 13.10, 13.15
+// Requirement 13.10, 13.15
 // Registry of every runtime export of `pipeline/mapping/index.ts` for the
 // registry-driven property tests (Property 16, Property 17) and for the
 // completeness check that fails when an exported Mapper is not registered.
@@ -31,6 +31,8 @@ const DEPSDEV_REQUESTS = [
   { system: 'pypi', name: 'b', version: '2.0.0' },
   { system: 'cargo', name: 'c', version: '3.0.0' },
 ] as const;
+const ECOSYSTEMS = ['npm', 'pypi', 'cargo'] as const;
+const RANGE_VERSIONS = ['0.9.0', '1.0.0', '1.2.3', '2.0.0-rc.1', '2.1.0'] as const;
 const GRAPHQL_BATCH = {
   aliases: [
     { alias: 'r0', repo: { owner: 'o0', name: 'n0' } },
@@ -157,12 +159,13 @@ const isDepsDevPackageFacts = shape({
 });
 const isVersionSelection = shape({
   selected: nullOr(isString),
-  basis: nullOr(literal('pinned', 'default')),
+  basis: nullOr(literal('pinned', 'resolved', 'default')),
   notes: arrayOf(
     oneOf(
       shape({ code: literal('pin-not-found'), pinned: isString }),
       shape({ code: literal('no-default-version') }),
       shape({ code: literal('conflicting-pins'), pins: arrayOf(isString) }),
+      shape({ code: literal('range-unresolved'), ranges: arrayOf(isString) }),
     ),
   ),
 });
@@ -188,6 +191,7 @@ const isTargetNote: Check = (v) =>
     'pin-not-found',
     'no-default-version',
     'conflicting-pins',
+    'range-unresolved',
   )(v.code) &&
   isRecord(v.details);
 const isAssembledFacts = shape({
@@ -195,6 +199,10 @@ const isAssembledFacts = shape({
   selection: isVersionSelection,
   notes: arrayOf(isTargetNote),
 });
+const isRangeOutcome = oneOf(
+  shape({ kind: literal('resolved'), version: isString }),
+  shape({ kind: literal('unresolved') }),
+);
 const isRepositoryInfo = shape({
   owner: isString,
   repo: isString,
@@ -348,6 +356,66 @@ export const MAPPER_REGISTRY: readonly RegistryEntry[] = [
     })),
     validate: nullOr(isString),
   },
+  // Mappers of a JSON scalar or list read from a manifest (version spec, range).
+  {
+    kind: 'mapper',
+    name: 'chooseVersion',
+    variants: [
+      // The JSON value as a version spec, per ecosystem.
+      ...ECOSYSTEMS.map((ecosystem) => ({
+        label: ecosystem,
+        call: (json: unknown) => mapping.chooseVersion(ecosystem, [json], RANGE_VERSIONS, '1.2.3'),
+      })),
+      // The JSON value as the list of specs (an array is passed as is).
+      ...ECOSYSTEMS.map((ecosystem) => ({
+        label: `${ecosystem}-specs`,
+        call: (json: unknown) =>
+          mapping.chooseVersion(ecosystem, Array.isArray(json) ? json : [json, json], [], null),
+      })),
+      // The JSON value as the ecosystem, with a pin and a range.
+      {
+        label: 'ecosystem',
+        call: (json: unknown) => mapping.chooseVersion(json, ['1.2.3', '^1.0.0'], RANGE_VERSIONS, null),
+      },
+    ],
+    validate: isVersionSelection,
+  },
+  {
+    kind: 'mapper',
+    name: 'resolveRange',
+    variants: [
+      ...ECOSYSTEMS.map((ecosystem) => ({
+        label: ecosystem,
+        call: (json: unknown) =>
+          mapping.resolveRange(ecosystem, [json as string], RANGE_VERSIONS),
+      })),
+      ...ECOSYSTEMS.map((ecosystem) => ({
+        label: `${ecosystem}-ranges`,
+        call: (json: unknown) =>
+          mapping.resolveRange(
+            ecosystem,
+            (Array.isArray(json) ? json : [json]) as readonly string[],
+            RANGE_VERSIONS,
+          ),
+      })),
+      {
+        label: 'ecosystem',
+        call: (json: unknown) =>
+          mapping.resolveRange(json as 'npm', ['^1.0.0'], RANGE_VERSIONS),
+      },
+      {
+        label: 'versions',
+        call: (json: unknown) =>
+          mapping.resolveRange('npm', ['*'], (Array.isArray(json) ? json : [json]) as readonly string[]),
+      },
+    ],
+    validate: isRangeOutcome,
+  },
+  mapper(
+    'cargoToSemverRange',
+    (json) => mapping.cargoToSemverRange(json as string),
+    nullOr(isString),
+  ),
   // Assembler of all mapped sources.
   {
     kind: 'mapper',

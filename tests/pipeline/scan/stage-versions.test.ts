@@ -135,9 +135,20 @@ describe('runVersionStage version basis (R7.4, R7.5)', () => {
     expect(calls.osv[0]).toEqual([{ name: 'a', ecosystem: 'npm', version: '1.0.0' }]);
   });
 
-  it('falls back to the default version without a pin', async () => {
+  it('resolves a range spec against the version list', async () => {
     const { calls, run } = setup();
     const result = await run([target('npm', 'a', '^1.0.0')], {});
+    expect(result.selections.get(targetKey('npm', 'a'))).toMatchObject({
+      selected: '1.0.0',
+      basis: 'resolved',
+    });
+    expect(calls.versionBatch[0]).toEqual([{ system: 'npm', name: 'a', version: '1.0.0' }]);
+  });
+
+  it('falls back to the default version without a spec', async () => {
+    const { calls, run } = setup();
+    const noSpec: LookupTarget = { ecosystem: 'npm', name: 'a', versionSpecs: [] };
+    const result = await run([noSpec], {});
     expect(result.selections.get(targetKey('npm', 'a'))).toMatchObject({
       selected: '2.0.0',
       basis: 'default',
@@ -145,6 +156,14 @@ describe('runVersionStage version basis (R7.4, R7.5)', () => {
     expect(calls.versionBatch[0]).toEqual([{ system: 'npm', name: 'a', version: '2.0.0' }]);
   });
 
+  it('falls back to the default version with a range-unresolved note for an unmatched range', async () => {
+    const { run } = setup();
+    const result = await run([target('npm', 'a', '^3.0.0')], {});
+    const selection = result.selections.get(targetKey('npm', 'a'));
+    expect(selection).toMatchObject({ selected: '2.0.0', basis: 'default' });
+    expect(selection?.notes).toEqual([{ code: 'range-unresolved', ranges: ['^3.0.0'] }]);
+    expect(result.notes.some((n) => n.code === 'range-unresolved')).toBe(true);
+  });
   it('uses the default version when the pin is not in the list', async () => {
     const { run } = setup();
     const result = await run([target('npm', 'a', '9.9.9')], {});

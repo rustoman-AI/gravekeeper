@@ -174,16 +174,18 @@ describe('assembleResult', () => {
     expect(uncapped.capped.skipped).toEqual([]);
   });
 
-  it('sets lookupVersion and versionBasis together (pinned, default, or both null)', () => {
+  it('sets lookupVersion and versionBasis together (pinned, resolved, default, or both null)', () => {
     const m = manifest('package.json', [
       dep('pinned', { versionSpec: '1.0.0' }),
-      dep('dflt'),
+      dep('ranged'),
+      dep('dflt', { versionSpec: '' }),
       dep('missing'),
       dep('nodata'),
     ]);
     const emptyDoc = { versions: [] };
     const raw = new Map<string, RawTargetInputs>([
       [key('pinned'), rawFor('pinned')],
+      [key('ranged'), rawFor('ranged')],
       [key('dflt'), rawFor('dflt')],
       [key('missing'), { ...rawFor('missing'), depsdevPackage: { state: 'absent' } }],
       [key('nodata'), rawFor('nodata', emptyDoc)],
@@ -191,6 +193,7 @@ describe('assembleResult', () => {
     const result = assembleResult(input(snapshot([m], raw)));
     const of = (name: string) => result.dependencies.find((d) => d.dependency.name === name);
     expect(of('pinned')).toMatchObject({ lookupVersion: '1.0.0', versionBasis: 'pinned' });
+    expect(of('ranged')).toMatchObject({ lookupVersion: '1.0.0', versionBasis: 'resolved' });
     expect(of('dflt')).toMatchObject({ lookupVersion: '1.0.0', versionBasis: 'default' });
     expect(of('missing')).toMatchObject({ lookupVersion: null, versionBasis: null });
     expect(of('nodata')).toMatchObject({ lookupVersion: null, versionBasis: null });

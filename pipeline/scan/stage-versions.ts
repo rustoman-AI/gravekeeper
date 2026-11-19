@@ -2,12 +2,11 @@
 import type { Ecosystem } from '@/core';
 import { DEPSDEV_BATCH_SIZE, OSV_BATCH_SIZE } from '../constants';
 import {
-  exactPin,
+  chooseVersion,
   mapDepsDevVersion,
   mapDepsDevVersionBatch,
   mapOsvQueryBatch,
   readDepsDevVersions,
-  selectVersion,
 } from '../mapping';
 import type {
   BatchEntry,
@@ -19,7 +18,7 @@ import type {
 import type { RequestContext, SourceName, SourceResult } from '../ports';
 import type { DepsDevSystem, VersionRequest } from '../ports/depsdev-source';
 import type { OsvEcosystem, OsvQuery } from '../ports/osv-source';
-import { batchFallbackNote, sourceRepoUnverifiedNote } from './notes';
+import { batchFallbackNote, rangeUnresolvedNote, sourceRepoUnverifiedNote } from './notes';
 import { raceAbort } from './run-unit';
 import type { UnitRunner } from './run-unit';
 import { targetKey } from './targets';
@@ -121,6 +120,7 @@ export async function runVersionStage(input: VersionStageInput): Promise<Version
 
   const selections = new Map<string, VersionSelection>();
   const selected: Selected[] = [];
+  const rangeNotes: ScanNote[] = [];
   for (const target of targets) {
     const key = targetKey(target.ecosystem, target.name);
     const pkg = depsdevPackages.get(key);
@@ -133,12 +133,12 @@ export async function runVersionStage(input: VersionStageInput): Promise<Version
       continue;
     }
     const { versions, defaultVersion } = readDepsDevVersions(pkg.body);
-    const pins: string[] = [];
-    for (const spec of target.versionSpecs) {
-      const pin = exactPin(spec, target.ecosystem);
-      if (pin !== null) pins.push(pin);
+    const selection = chooseVersion(target.ecosystem, target.versionSpecs, versions, defaultVersion);
+    for (const n of selection.notes) {
+      if (n.code === 'range-unresolved') {
+        rangeNotes.push(rangeUnresolvedNote(target.ecosystem, target.name, n.ranges));
+      }
     }
-    const selection = selectVersion(pins, versions, defaultVersion);
     selections.set(key, selection);
     if (selection.selected !== null) {
       selected.push({ target, key, version: selection.selected });
@@ -148,7 +148,7 @@ export async function runVersionStage(input: VersionStageInput): Promise<Version
   const sourceRepos = new Map<string, Fetched<SourceRepo | null>>();
   const osv = new Map<string, OsvQueryResult | 'unavailable'>();
   const pypiProjects = new Map<string, Fetched<unknown>>();
-  const notes: ScanNote[] = [];
+  const notes: ScanNote[] = [...rangeNotes];
   let fallbackNoted = false;
 
   /** Runs a batch call without recording; the caller records the outcome it decides on. */

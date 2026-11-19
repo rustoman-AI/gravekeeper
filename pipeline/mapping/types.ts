@@ -16,7 +16,7 @@ export type Fetched<T> =
   | { readonly state: 'absent' } // HTTP 404 meaning "absent"
   | { readonly state: 'unavailable' }; // failed, cancelled, not sent, unparsable
 
-export type VersionBasis = 'pinned' | 'default';
+export type VersionBasis = 'pinned' | 'resolved' | 'default';
 
 export interface VersionSelection {
   readonly selected: string | null;
@@ -25,6 +25,7 @@ export interface VersionSelection {
     | { readonly code: 'pin-not-found'; readonly pinned: string }
     | { readonly code: 'no-default-version' }
     | { readonly code: 'conflicting-pins'; readonly pins: readonly string[] }
+    | { readonly code: 'range-unresolved'; readonly ranges: readonly string[] }
   )[];
 }
 
