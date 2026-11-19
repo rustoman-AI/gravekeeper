@@ -129,3 +129,14 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 - Result assembly: notes sorted by code then canonical details JSON (R18.5); `PartialProgress.snapshot` added in assemble-result.ts and filled by runScan; runtime /core imports are relative because vitest has no `@/` alias.
 - runScan: selection runs twice (selectManifestStage then runManifestStage), pure; Scan_Cache hook point left for 7.20 after S2.
 - Counterexamples (group 3): none in product code; test-side only: P58 harness gitShadow entries (non-registry entries must be null/null; property reading corrected, not weakened) and P57 harness never selected sub/package.json (harness now passes the manifest list; this also made the `sub` extra effective in P39/P55/P56).
+- `@vercel/functions` 3.11.3 installed with an exact pin; `getCache` injected into RuntimeCacheStore (the adapter never imports the package); `name: ''` passed on set.
+- L2 size limit measured on the serialized value, not the envelope (R19.28); envelope validated generically; per-kind shape checks live in the typed layers (isCachedResponse in CachingHttpClient, isScanResult).
+- `CacheEntry.ttlSeconds` added so L2 hits are promoted into L1 with their original storedAtMs and TTL (a partial scan never outlives its L2 entry); entries without ttlSeconds are returned but not promoted.
+- RuntimeCacheStore takes an injectable `sha256Hex` (default Web Crypto); tests inject a microtask-only hash. This fixed a flaky test that failed CI once (commit 2e3e411, 13 failures in runtime-cache-store.test.ts; fixed in 859a11e).
+- Compact L2 encoders return unparsable text unchanged; OSV keeps id, aliases, withdrawn, database_specific.severity, affected[].database_specific.informational, CVSS_V3 severity entries.
+- Scan_Cache: createScanCache relies on TieredCacheStore for the deferred L2 write (no double deferral); a result over L2_MAX_SCAN_BYTES is written with l2Kind null (L1 only); runScan skips storing when the progress handle is closed (margin path).
+- CachingHttpClient: GraphQL stored only when errors are absent/null or all NOT_FOUND; store errors swallowed; the store stamps storedAtMs.
+- MemoryCacheStore maxEntries is a constructor parameter (default CACHE_MAX_ENTRIES).
+- Group 4 checkpoint: typecheck, lint (no warnings), check:core, check:architecture all exit 0; vitest 129 files, 2046 tests pass (6.59 s; second run 7.33 s, same totals); tests/adapters + tests/pipeline/scan at FC_NUM_RUNS=1000: 56 files, 682 tests pass (8.23 s).
+- Counterexamples (group 4): none in product code; test-side only: P71 first compared standalone severityOf on id-less OSV bodies (not a fact, since mapOsvAdvisory returns null there); comparison now goes through the record.
+- Known coverage gaps: P72 never reaches an L2 `scan` entry (stub sources don't produce an all-ok scan); P70 is at storeDecision level (runScan level covered by run-scan-cache.test.ts).

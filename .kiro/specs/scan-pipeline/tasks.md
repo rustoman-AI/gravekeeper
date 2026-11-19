@@ -678,7 +678,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
 - [x] 6. Checkpoint - Orchestrator and deadline model
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 7. Caching
+- [x] 7. Caching
   - [x] 7.1 Implement the in-memory LRU store
     - Create `adapters/cache/memory-cache-store.ts`: `MemoryCacheStore` implements `CacheStore` over an insertion-ordered `Map`, injected `Clock`, expiry when `now < storedAtMs` or `now - storedAtMs >= ttl * 1000`, a hit or `set` makes the key most recent, `set` of a new key at `CACHE_MAX_ENTRIES` evicts the first key, `set` of an existing key evicts nothing, `size()`.
     - _Requirements: 19.1, 19.9, 19.10, 19.11, 19.12_
@@ -779,7 +779,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/scan/crates-order.test.ts`: owners requested in scope order with the caching client in place, an unexpired owners entry in L1 and in L2 sends no request, a 404 marker is read as `absent`, the owners entry outlives the partial Scan_Result (`CRATES_OWNERS_TTL_SECONDS`).
     - _Requirements: 12.13, 12.14, 19.22_
 
-  - [-] 7.24 Write the property test for crates.io lookups
+  - [x] 7.24 Write the property test for crates.io lookups
     - Create `tests/pipeline/scan/crates-order.property.test.ts` using the caching client over the scripted source.
     - **Property 74: Crates owners are looked up in scope order and cached owners send no request** (scan level)
     - **Validates: Requirements 12.15**
@@ -794,7 +794,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 72: The token never reaches an L2 key or value**
     - **Validates: Requirements 19.32**
 
-- [~] 8. Checkpoint - Caching
+- [-] 8. Checkpoint - Caching
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 9. Route handler, fixtures, live tests and CI
