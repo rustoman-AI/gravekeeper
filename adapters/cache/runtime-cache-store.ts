@@ -137,7 +137,8 @@ export class RuntimeCacheStore implements CacheStore {
         ttlSeconds,
         value,
       };
-      const bytes = new TextEncoder().encode(JSON.stringify(envelope)).length;
+      // R19.28: the limit applies to the serialized entry value, not the envelope around it.
+      const bytes = new TextEncoder().encode(JSON.stringify(value)).length;
       if (bytes > maxBytesFor(kind)) return;
       const outcome = await this.bounded(async () => {
         const l2Key = `gravekeeper:v${CACHE_KEY_VERSION}:${kind}:${await sha256Hex(key)}`;

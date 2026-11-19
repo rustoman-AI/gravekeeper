@@ -683,7 +683,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/cache/memory-cache-store.ts`: `MemoryCacheStore` implements `CacheStore` over an insertion-ordered `Map`, injected `Clock`, expiry when `now < storedAtMs` or `now - storedAtMs >= ttl * 1000`, a hit or `set` makes the key most recent, `set` of a new key at `CACHE_MAX_ENTRIES` evicts the first key, `set` of an existing key evicts nothing, `size()`.
     - _Requirements: 19.1, 19.9, 19.10, 19.11, 19.12_
 
-  - [~] 7.2 Write unit tests for the in-memory store
+  - [x] 7.2 Write unit tests for the in-memory store
     - `tests/adapters/memory-cache-store.test.ts`: age `ttl * 1000 - 1` live and `ttl * 1000` expired, clock moving backwards, LRU order, replacing a key restarts the lifetime, `storedAtMs` kept when passed, the Upstream_Cache and Scan_Cache are separate instances.
     - _Requirements: 19.9, 19.10, 19.11, 19.12_
 
@@ -697,7 +697,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Run `npm install @vercel/functions --save-exact` (a plain `<major>.<minor>.<patch>` string in `dependencies`, no `^` or `~`). Create `adapters/cache/runtime-cache-store.ts`: `RuntimeCacheStore` implements `CacheStore` over `getCache()`; keys `gravekeeper:v<CACHE_KEY_VERSION>:<l2Kind>:<sha256 hex of the L1 key>`; value envelope `{ v: 1, storedAtMs, ttlSeconds, value }` with `ttl` and tag `gravekeeper-v1`; envelope validated on read; every `get` and `set` bounded by `L2_OPERATION_TIMEOUT_MS` on the injected timer; a `scan` value over `L2_MAX_SCAN_BYTES` or an advisory or owners value over `L2_MAX_BODY_BYTES` is not written; every failure is a miss or a skipped write with one Logger line `{ source: 'cache', status: null, durationMs, code: 'l2-cache-error' }`.
     - _Requirements: 19.19, 19.20, 19.23, 19.24, 19.25, 19.26, 19.28_
 
-  - [~] 7.5 Write unit tests for the L2 adapter
+  - [x] 7.5 Write unit tests for the L2 adapter
     - `tests/adapters/runtime-cache-store.test.ts` and `tests/support/arbitraries/l2.ts` (a fake `getCache` whose `get` and `set` throw, never settle, answer late, return invalid envelopes or answer normally): key format and prefix, envelope validation, `now < storedAtMs` is a miss, timeout at `L2_OPERATION_TIMEOUT_MS`, paused cache, size limits, one log line per failed operation, `getCache` never called when L2 is off.
     - _Requirements: 19.19, 19.23, 19.24, 19.25, 19.26, 19.28_
 
@@ -705,7 +705,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/ports/l2-entries.ts` (pure, imports nothing but `constants.ts`): `compactOsvAdvisory`, `compactDepsDevAdvisory`, `compactCratesOwners`, each taking a body text and returning compact JSON text of the same shape, preserving the edge cases of the "Compact entries" table (non-object or id-less OSV body becomes `{}`, out-of-range score dropped, owner list with no valid entry keeps one `{ kind: 'other' }`, empty list stays empty).
     - _Requirements: 19.27, 19.31_
 
-  - [~] 7.7 Write unit tests for the compact encoders
+  - [x] 7.7 Write unit tests for the compact encoders
     - `tests/adapters/l2-entries.test.ts`: fixed bodies per kind, the compact text is smaller, Mapper output on compact and full text is equal for each edge case of the table, a Scan_Result has exactly the top-level keys of R18.1.
     - _Requirements: 19.27, 19.31_
 
@@ -714,7 +714,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 71: A compact L2 entry gives the same facts as the full body**
     - **Validates: Requirements 19.31**
 
-  - [~] 7.9 Implement the tiered store
+  - [x] 7.9 Implement the tiered store
     - Create `adapters/cache/tiered-cache-store.ts`: L1 in front of L2; L2 read and written only when the call carries an `l2Kind` and L2 is enabled; an L2 hit is promoted into L1 with its original `storedAtMs`; the L2 write goes to the `Deferrer`; never throws.
     - _Requirements: 19.11, 19.20, 19.23, 19.24, 19.25_
 
@@ -739,7 +739,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/cache-keys.ts`: `scanCacheKey(parts)` returning `canonicalJson(["scan", CACHE_KEY_VERSION, webHost, owner, repo, branch, defaultBranch, commitSha, sortedManifestPaths])` with canonical (GitHub) spelling never lowercased and paths sorted by code point.
     - _Requirements: 19.5, 19.8, 19.13, 19.15_
 
-  - [~] 7.15 Write unit tests for Scan_Cache keys
+  - [x] 7.15 Write unit tests for Scan_Cache keys
     - `tests/pipeline/scan/cache-keys.test.ts`: each field changes the key, owner or repo that differ only in letter case give different keys, path order does not change the key, the token cannot be an input.
     - _Requirements: 19.5, 19.13_
 
