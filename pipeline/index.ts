@@ -21,3 +21,4 @@ export type {
   ScanResult,
   SourceStatus,
 } from './scan/types';
+export { createScanCache } from './scan/scan-cache';

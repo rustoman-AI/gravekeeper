@@ -830,7 +830,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/api/handle-scan-request.test.ts`: validation order, 405 before the body is read, configuration error before `invalid-url`, branch from URL and body, the margin path with a never-settling `runScan` (answers a partial result or `deadline-exceeded` no later than 26.5 s on the fake clock), and case 11 of R23.12 (never-responding upstream through the real HTTP client).
     - _Requirements: 21.3, 21.13, 21.14, 21.15, 16.12, 16.13, 23.12_
 
-  - [~] 9.9 Write the property test for the route union
+  - [x] 9.9 Write the property test for the route union
     - `tests/pipeline/api/handle-scan-request.property.test.ts` over any method, `Content-Type`, body bytes (including bodies around `REQUEST_BODY_MAX_BYTES`).
     - **Property 64: The route always answers with the declared union**
     - **Validates: Requirements 21.12**
@@ -849,7 +849,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/index.ts` exporting `runScan`, `handleScanRequest`, `RawScanRequest`, `ApiResponse` and the public types. No default export.
     - _Requirements: 21.10, 22.8_
 
-  - [~] 9.13 Implement the production composition
+  - [x] 9.13 Implement the production composition
     - Create `adapters/composition.ts`: `createProductionDeps(env, deferrer, config)` builds the system clock, timer, random and logger, the shared `HttpClient` (limiters from `CONCURRENCY_*` and `CRATESIO_MIN_INTERVAL_MS`, authorizer, secrets), the six sources, the caching client, and the two stores (module-scope `globalThis` singletons for L1; `TieredCacheStore` with `RuntimeCacheStore` unless `GRAVEKEEPER_RUNTIME_CACHE` is `off`). It is the only module that reads `process.env`, through `adapters/runtime/env.ts` and `token-reader.ts`.
     - _Requirements: 19.19, 20.1, 22.5, 22.9, 22.17_
 
