@@ -637,15 +637,15 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/run-scan.ts`: the scan controller and the deadline timer on the injected `Timer` (`SCAN_DEADLINE_MS` after Scan_Start, cleared when the scan settles), stages S1 to S9 in the order of the stage table (S7 and S8 concurrent), `guard` converting a thrown exception into `internal-error`, a `ScanProgress` handle fed as stages finish. Scan_Cache lookup and store are wired in task 7.20.
     - _Requirements: 16.1, 16.3, 16.4, 16.5, 16.9, 16.11, 16.12, 18.7, 21.8_
 
-  - [~] 5.27 Write the unit tests for the stubbed scan cases, part 1
+  - [x] 5.27 Write the unit tests for the stubbed scan cases, part 1
     - `tests/pipeline/scan/run-scan.test.ts`: the cases of R23.12 numbered 1 to 6, each named after the requirement it checks.
     - _Requirements: 23.12_
 
-  - [~] 5.28 Write the unit tests for the stubbed scan cases, part 2
+  - [x] 5.28 Write the unit tests for the stubbed scan cases, part 2
     - `tests/pipeline/scan/run-scan-cases.test.ts`: the cases of R23.12 numbered 7 to 10 and 12. Case 11 (the route with a never-responding upstream) is written in task 9.8.
     - _Requirements: 23.12_
 
-  - [~] 5.29 Write property tests for scan resilience
+  - [x] 5.29 Write property tests for scan resilience
     - `tests/pipeline/scan/run-scan.property.test.ts` using scripted sources and `tests/support/arbitraries/scripts.ts`.
     - **Property 6: Repository and branch responses give a commit or a typed error** (orchestrator level)
     - **Property 50: One failing source never fails the scan**
@@ -665,12 +665,12 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 58: Version fields are consistent**
     - **Validates: Requirements 18.9, 18.12**
 
-  - [~] 5.32 Write the property test for budget sequences
+  - [x] 5.32 Write the property test for budget sequences
     - Append to `tests/pipeline/scan/github-budget.property.test.ts`.
     - **Property 41: Budget sequences give a result or a typed error**
     - **Validates: Requirements 14.10**
 
-  - [~] 5.33 Write the property test for the deadline
+  - [x] 5.33 Write the property test for the deadline
     - Create `tests/pipeline/scan/deadline.property.test.ts` with scripted `fetch` steps on the fake runtime (variants: honors the signal, ignores the signal, a never-settling scan is covered in task 9.11).
     - **Property 48: No attempt is sent at or after the deadline**
     - **Validates: Requirements 16.9**

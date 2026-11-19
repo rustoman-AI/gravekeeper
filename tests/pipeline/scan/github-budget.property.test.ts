@@ -5,6 +5,8 @@ import { createHttpClient } from '../../../adapters/http/http-client';
 import { GITHUB_BUDGET_THRESHOLD, SCAN_DEADLINE_MS } from '../../../pipeline/constants';
 import type { GithubConfig, RequestContext, SourceName } from '../../../pipeline/ports/http';
 import { GithubBudget } from '../../../pipeline/scan/github-budget';
+import { runScan } from '../../../pipeline/scan/run-scan';
+import type { ScanDeps } from '../../../pipeline/scan/types';
 import { budgetHeaderSequence } from '../../support/arbitraries/scripts';
 import type { BudgetHeaders } from '../../support/arbitraries/scripts';
 import { createFakeRuntime, runUntilSettled } from '../../support/fake-runtime';
@@ -12,7 +14,7 @@ import { cfg } from '../../support/fc-config';
 import { createScriptedFetch } from '../../support/scripted-fetch';
 import type { ScriptedResponse, Step } from '../../support/scripted-fetch';
 
-// Requirement 14.9
+// Requirement 14.9, 14.10
 
 const CONFIG: GithubConfig = {
   apiUrl: 'https://api.github.com',
@@ -179,6 +181,113 @@ describe('GitHub budget properties', () => {
           throw new Error(`calls ${scripted.calls.length} after lock at ${lockedCallCount}`);
         }
       }),
+      cfg(),
+    );
+  });
+});
+
+// ---- P41: scan level ----
+const TREE_BODY = { tree: [{ path: 'package.json', type: 'blob', size: 40 }], truncated: false };
+const MANIFEST_TEXT = JSON.stringify({ dependencies: { 'left-pad': '1.0.0' } });
+const SHA = 'a'.repeat(40);
+
+/** A source whose every method reports an empty successful response. */
+function emptyOkSource<T extends object>(): T {
+  return new Proxy({} as T, {
+    get: () => () =>
+      Promise.resolve({ kind: 'ok', status: 200, body: {}, headers: {}, fromCache: false }),
+  });
+}
+
+describe('GitHub budget scan properties', () => {
+  // Feature: scan-pipeline, Property 41: Budget sequences give a result or a typed error
+  // Validates: Requirements 14.10
+  it('P41: any budget header sequence gives a Scan_Result or upstream-unavailable for github, and a Scan_Result when no value is below the threshold', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        fc.array(headerValue, { minLength: 6, maxLength: 6 }),
+        async (headerSeq) => {
+          const runtime = createFakeRuntime(1_000_000);
+          let gatedCalls = 0;
+          const scripted = createScriptedFetch((url): Step => {
+            if (url.startsWith('https://raw.githubusercontent.com/')) {
+              return {
+                latencyMs: 0,
+                response: { status: 200, body: { kind: 'text', text: MANIFEST_TEXT } },
+              };
+            }
+            const header = headerSeq[Math.min(gatedCalls, headerSeq.length - 1)];
+            gatedCalls += 1;
+            const headers: [string, string][] = [['content-type', 'application/json']];
+            if (header !== undefined) headers.push(['x-ratelimit-remaining', header]);
+            let body: unknown = { data: { rateLimit: {} } };
+            if (url.includes('/git/trees/')) body = TREE_BODY;
+            else if (url.includes('/branches/')) body = { commit: { sha: SHA } };
+            else if (url.endsWith('/repos/octo/repo')) {
+              body = { full_name: 'octo/repo', default_branch: 'main', private: false };
+            }
+            return {
+              latencyMs: 0,
+              response: { status: 200, headers, body: { kind: 'text', text: JSON.stringify(body) } },
+            };
+          }, runtime);
+
+          const limiters = Object.fromEntries(
+            SOURCES.map((name) => [name, { concurrency: 1, minIntervalMs: 0 }]),
+          ) as Record<SourceName, { concurrency: number; minIntervalMs: number }>;
+          const client = createHttpClient({
+            fetchImpl: scripted.fetch,
+            clock: runtime.clock,
+            timer: runtime.timer,
+            random: runtime.random,
+            logger: { log: () => undefined },
+            limiters,
+            authorizer: () => null,
+            secrets: () => [],
+            userAgent: 'test',
+          });
+          const deps: ScanDeps = {
+            sources: {
+              github: createGithubSource(client, CONFIG, false),
+              depsdev: emptyOkSource(),
+              osv: emptyOkSource(),
+              npm: emptyOkSource(),
+              cratesio: emptyOkSource(),
+              pypi: emptyOkSource(),
+            },
+            clock: runtime.clock,
+            timer: runtime.timer,
+            random: runtime.random,
+            logger: { log: () => undefined },
+            scanCache: { get: () => Promise.resolve(null), set: () => Promise.resolve() },
+            config: CONFIG,
+            limits: { maxManifests: 10, maxDependencies: 300, maxAdvisoryDetails: 500 },
+          };
+          const outcome = await runUntilSettled(
+            runScan(
+              {
+                repo: { host: CONFIG.webHost, owner: 'octo', repo: 'repo', branch: null },
+                manifests: [],
+                asOf: '2024-01-01T00:00:00Z',
+                startedAtMs: runtime.clock(),
+              },
+              deps,
+            ),
+            runtime,
+          );
+
+          // Budget values the first three requests would report, in order.
+          const seen = headerSeq.slice(0, 3).map(integerOfHeader);
+          const anyLow = seen.some((n) => n !== null && n < GITHUB_BUDGET_THRESHOLD);
+
+          if (outcome.ok) return;
+          const error = outcome.error as { code: string; details?: { source?: string } };
+          if (anyLow && error.code === 'upstream-unavailable' && error.details?.source === 'github') return;
+          throw new Error(
+            `${anyLow ? 'untyped' : 'unexpected'} error for headers ${JSON.stringify(headerSeq.slice(0, 3))}: ${JSON.stringify(outcome.error)}`,
+          );
+        },
+      ),
       cfg(),
     );
   });
