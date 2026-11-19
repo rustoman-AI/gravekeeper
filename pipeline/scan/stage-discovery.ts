@@ -125,14 +125,14 @@ export async function runDiscoveryStage(
     const repoResult = repoSent.value;
     if (repoResult.kind === 'absent') return err(scanError('repo-not-found', webHost));
     if (repoResult.kind !== 'ok') return err(unavailable(null)); // unparsable (R3.10)
-    const info = readRepository(repoResult.body, ref.branch);
+    const info = readRepository(repoResult.body);
     if (!info.ok) return err(unavailable(null)); // R3.9, R3.10, R3.12
     if (info.value.private) return err(scanError('repo-not-found', webHost)); // R3.2
 
     const owner = info.value.owner;
     const repo = info.value.repo;
-    const branch = ref.branch ?? (info.value.defaultBranch as string); // R3.3
-    const defaultBranch = info.value.defaultBranch ?? branch;
+    const branch = ref.branch ?? info.value.defaultBranch; // R3.3
+    const defaultBranch = info.value.defaultBranch;
 
     // R3.4: the branch name is passed unchanged; the adapter encodes it once.
     const branchSent = await send('branch', () =>

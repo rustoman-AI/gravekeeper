@@ -1,4 +1,4 @@
-import * as fc from 'fast-check';
+﻿import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { BRANCH_MAX_LENGTH } from '../../../pipeline/constants';
 import { readCommitSha, readRepository } from '../../../pipeline/mapping/github-resolve';
@@ -12,8 +12,8 @@ describe('github-resolve properties', () => {
   // Validates: Requirements 3.11
   it('P6 readRepository never throws and gives a well-formed repository or invalid', () => {
     fc.assert(
-      fc.property(arbJson, fc.option(fc.string({ maxLength: 8 }), { nil: null }), (body, requested) => {
-        const r = readRepository(body, requested);
+      fc.property(arbJson, (body) => {
+        const r = readRepository(body);
         if (r.ok) {
           const v = r.value;
           if (v.private) {
@@ -24,14 +24,10 @@ describe('github-resolve properties', () => {
             expect(v.repo.length).toBeGreaterThan(0);
             expect(v.owner.includes('/')).toBe(false);
             expect(v.repo.includes('/')).toBe(false);
-            if (v.defaultBranch !== null) {
-              // Oracle counts code points (user-approved change from UTF-16 units).
-              const points = Array.from(v.defaultBranch).length;
-              expect(points).toBeGreaterThan(0);
-              expect(points).toBeLessThanOrEqual(BRANCH_MAX_LENGTH);
-            } else {
-              expect(requested).not.toBeNull();
-            }
+            // Oracle counts code points (user-approved change from UTF-16 units).
+            const points = Array.from(v.defaultBranch).length;
+            expect(points).toBeGreaterThan(0);
+            expect(points).toBeLessThanOrEqual(BRANCH_MAX_LENGTH);
           }
         } else {
           expect(r.error).toBe('invalid');

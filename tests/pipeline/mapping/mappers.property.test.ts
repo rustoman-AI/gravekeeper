@@ -1,4 +1,4 @@
-import * as fc from 'fast-check';
+﻿import * as fc from 'fast-check';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   assembleFacts,
@@ -574,8 +574,7 @@ const arbEf12 = fc.tuple(arbName, arbName, arbIso).map(([owner, repo, pushed]): 
   ctx: null,
 }));
 const observeEf12 = (body: unknown): unknown => ({
-  withBranch: readRepository(body, 'main'),
-  noBranch: readRepository(body, null),
+  repository: readRepository(body),
   all: observeAll(body),
 });
 
@@ -816,14 +815,11 @@ const FIELD_CASES: readonly FieldCase[] = [
     },
   }),
   ...fieldCases('EF-12', arbEf12, observeEf12, {
-    full_name: allOf(
-      (_base, after) => expect(at(after, 'withBranch')).toEqual({ ok: false, error: 'invalid' }),
-      (_base, after) => expect(at(after, 'noBranch')).toEqual({ ok: false, error: 'invalid' }),
-    ),
-    default_branch: allOf(
-      nullAt('withBranch', 'value', 'defaultBranch'),
-      (_base, after) => expect(at(after, 'noBranch')).toEqual({ ok: false, error: 'invalid' }),
-    ),
+    full_name: (_base, after) =>
+      expect(at(after, 'repository')).toEqual({ ok: false, error: 'invalid' }),
+    // Requirement 3.9: a missing default_branch is invalid, with or without a requested branch.
+    default_branch: (_base, after) =>
+      expect(at(after, 'repository')).toEqual({ ok: false, error: 'invalid' }),
     // A missing `private` is read as not private (Requirement 3.2): the result does not change.
     private: sameAll,
     visibility: sameAll,

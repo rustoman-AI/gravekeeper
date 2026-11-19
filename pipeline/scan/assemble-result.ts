@@ -1,6 +1,7 @@
 // Requirement 13.5, 13.9, 13.14, 13.16, 16.5, 16.12, 17.7, 18.1, 18.2, 18.8, 18.9, 18.12
 // Result assembly: one code path for the normal ending and for the margin fallback.
-import { classify, summarize } from '@/core';
+// Relative path: the alias `@/` is not resolved at runtime by Vitest, so values come in relatively.
+import { classify, summarize } from '../../core';
 import type { AssessedDependency, Dependency, ManifestFormat, RawHealthFacts } from '@/core';
 import { guard } from '../internal/safe';
 import { err, ok } from '../internal/result';

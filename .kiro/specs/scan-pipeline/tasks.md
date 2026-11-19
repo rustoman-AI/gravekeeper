@@ -581,11 +581,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/stage-discovery.ts`: repository, branch and tree requests in order with the shared `GithubBudget`; canonical owner, repo and branch; errors `repo-not-found`, `branch-not-found`, `upstream-unavailable` (with `resetAt` only when it is an integer instant), `deadline-exceeded`; always sends the repository and branch requests.
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.12, 3.13, 4.1, 4.11, 16.11, 18.1_
 
-  - [~] 5.13 Write unit tests for the discovery stage
+  - [x] 5.13 Write unit tests for the discovery stage
     - `tests/pipeline/scan/stage-discovery.test.ts` (scripted `Source_Ports`): each error with its `details`, 404 of the tree request is `upstream-unavailable`, budget below threshold stops discovery, deadline during discovery gives `deadline-exceeded`, mixed-case `full_name`.
     - _Requirements: 3.2, 3.5, 3.6, 3.7, 3.9, 3.10, 3.12, 3.13, 4.11, 16.11_
 
-  - [~] 5.14 Implement manifest selection, fetch and parse stage
+  - [x] 5.14 Implement manifest selection, fetch and parse stage
     - Create `pipeline/scan/stage-manifests.ts`: discovery result, `selectManifests`, skip by `size` over `MAX_MANIFEST_LENGTH` (`manifest-too-large`), one fetch at a time in ascending path order, `parseManifest` of `/core`, `manifest-fetch-failed` notes, `no-manifests`, `no-root-manifest`, `tree-truncated`; remaining manifests fail with reason `deadline` after the deadline.
     - _Requirements: 4.6, 4.8, 5.1, 5.2, 5.3, 5.4, 5.5, 5.7, 5.8, 5.9, 5.10, 5.11, 5.12_
 
@@ -597,11 +597,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/stage-registries.ts`: deps.dev package documents, npm latest, PyPI json and crates.io owners started together under the source limits; owners requested in the order of `orderCratesLookups`; an unexpired owners entry is answered without a request.
     - _Requirements: 8.1, 12.1, 12.2, 12.5, 12.10, 12.13, 12.14, 16.1_
 
-  - [~] 5.17 Write unit tests for the registry stage
+  - [x] 5.17 Write unit tests for the registry stage
     - `tests/pipeline/scan/stage-registries.test.ts`: request counts per ecosystem, crates order for mixed scopes, a 404 is `absent` and `ok`, an unparsable body is a failed unit, deadline cut of owners lookups.
     - _Requirements: 8.1, 12.1, 12.2, 12.5, 12.7, 12.14, 16.1_
 
-  - [~] 5.18 Implement the version, source repo and vulnerability id stage
+  - [x] 5.18 Implement the version, source repo and vulnerability id stage
     - Create `pipeline/scan/stage-versions.ts`: `selectVersion` per target, deps.dev `versionbatch` with fallback to single version documents and one `batch-fallback` note, OSV `querybatch` in chunks of `OSV_BATCH_SIZE`, targets without a Selected_Version recorded with reason `prerequisite`.
     - _Requirements: 7.4, 7.5, 7.6, 7.11, 8.7, 8.8, 8.9, 9.1, 9.2, 9.3, 17.8_
 
@@ -629,7 +629,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/assemble-result.ts`: per target `guard` around `assembleFacts`, `classify` once per target, `summarize` of `/core`, Source_Statuses, notes (exactly one `scan-deadline-reached` when the deadline was reached), the fields of R18.1 with canonical `repo`; and `assemblePartial(progress, input)` that feeds the same code path from a `ScanProgress`, returning `deadline-exceeded` when discovery is incomplete.
     - _Requirements: 13.5, 13.9, 13.14, 13.16, 16.5, 16.12, 17.7, 18.1, 18.2, 18.8, 18.9, 18.12_
 
-  - [-] 5.25 Write unit tests for result assembly
+  - [x] 5.25 Write unit tests for result assembly
     - `tests/pipeline/scan/assemble-result.test.ts`: lists have matching lengths, shared targets give equal facts and classifications, unassessed dependencies, the throwing-Mapper guard turns facts all-null, `assemblePartial` with discovery complete and incomplete, `summary` equals `summarize(assessed)`.
     - _Requirements: 13.16, 16.12, 17.7, 18.1, 18.8, 18.9, 18.12_
 

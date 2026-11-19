@@ -7,7 +7,7 @@ import type { Result } from './result';
 export interface RepositoryInfo {
   readonly owner: string;
   readonly repo: string;
-  readonly defaultBranch: string | null;
+  readonly defaultBranch: string;
   readonly private: boolean;
 }
 
@@ -29,16 +29,13 @@ function validBranch(value: unknown): value is string {
  * Reads the repository response (EF-12). A private repository gives
  * `private: true` with empty `owner` and `repo` (the caller maps it to
  * `repo-not-found`). Otherwise `owner` and `repo` are the two parts of
- * `full_name` in GitHub's spelling, and `default_branch` must be valid when
- * no branch was requested. Anything else is `invalid`. Never throws.
+ * `full_name` in GitHub's spelling, and `default_branch` must be valid
+ * (a non-empty string of at most BRANCH_MAX_LENGTH code points). Anything else is `invalid`. Never throws.
  */
-export function readRepository(
-  body: unknown,
-  requestedBranch: string | null,
-): Result<RepositoryInfo, 'invalid'> {
+export function readRepository(body: unknown): Result<RepositoryInfo, 'invalid'> {
   if (!isObject(body)) return err('invalid');
   if (readOwn(body, 'private') === true) {
-    return ok({ owner: '', repo: '', defaultBranch: null, private: true });
+    return ok({ owner: '', repo: '', defaultBranch: '', private: true });
   }
   const fullName = readOwn(body, 'full_name');
   if (typeof fullName !== 'string') return err('invalid');
@@ -47,9 +44,8 @@ export function readRepository(
   const [owner, repo] = parts as [string, string];
   if (owner.length === 0 || repo.length === 0) return err('invalid');
   const defaultBranchRaw = readOwn(body, 'default_branch');
-  const defaultBranch = validBranch(defaultBranchRaw) ? defaultBranchRaw : null;
-  if (requestedBranch === null && defaultBranch === null) return err('invalid');
-  return ok({ owner, repo, defaultBranch, private: false });
+  if (!validBranch(defaultBranchRaw)) return err('invalid');
+  return ok({ owner, repo, defaultBranch: defaultBranchRaw, private: false });
 }
 
 /**

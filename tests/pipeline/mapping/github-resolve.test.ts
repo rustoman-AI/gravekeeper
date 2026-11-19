@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+﻿import { describe, expect, it } from 'vitest';
 import { BRANCH_MAX_LENGTH } from '../../../pipeline/constants';
 import { readCommitSha, readRepository } from '../../../pipeline/mapping/github-resolve';
 
@@ -11,35 +11,35 @@ function repo(extra: Record<string, unknown> = {}): Record<string, unknown> {
 describe('readRepository', () => {
   // Validates: Requirements 3.2, 3.3, 3.9, 3.10
   it('reads owner, repo and default branch', () => {
-    expect(readRepository(repo(), null)).toEqual({
+    expect(readRepository(repo())).toEqual({
       ok: true,
       value: { owner: 'Owner', repo: 'Repo', defaultBranch: 'main', private: false },
     });
   });
 
   it('keeps the mixed case of full_name', () => {
-    const r = readRepository(repo({ full_name: 'FaCeBook/ReAcT' }), null);
+    const r = readRepository(repo({ full_name: 'FaCeBook/ReAcT' }));
     expect(r).toMatchObject({ ok: true, value: { owner: 'FaCeBook', repo: 'ReAcT' } });
   });
 
   it('reports a private repository with empty owner and repo', () => {
-    const r = readRepository({ private: true }, null);
+    const r = readRepository({ private: true });
     expect(r).toEqual({
       ok: true,
-      value: { owner: '', repo: '', defaultBranch: null, private: true },
+      value: { owner: '', repo: '', defaultBranch: '', private: true },
     });
   });
 
-  it('reports private even when other fields are invalid or a branch is requested', () => {
-    expect(readRepository({ private: true, full_name: 5 }, 'dev')).toMatchObject({
+  it('reports private even when other fields are invalid ', () => {
+    expect(readRepository({ private: true, full_name: 5 })).toMatchObject({
       ok: true,
       value: { private: true },
     });
   });
 
   it('treats private values other than true as public', () => {
-    expect(readRepository(repo({ private: 'true' }), null).ok).toBe(true);
-    expect(readRepository(repo({ private: 1 }), null)).toMatchObject({
+    expect(readRepository(repo({ private: 'true' })).ok).toBe(true);
+    expect(readRepository(repo({ private: 1 }))).toMatchObject({
       ok: true,
       value: { private: false },
     });
@@ -48,15 +48,15 @@ describe('readRepository', () => {
   describe('default_branch', () => {
     it('accepts a name of BRANCH_MAX_LENGTH', () => {
       const name = 'b'.repeat(BRANCH_MAX_LENGTH);
-      expect(readRepository(repo({ default_branch: name }), null)).toMatchObject({
+      expect(readRepository(repo({ default_branch: name }))).toMatchObject({
         ok: true,
         value: { defaultBranch: name },
       });
     });
 
-    it('rejects a name of BRANCH_MAX_LENGTH + 1 when no branch is requested', () => {
+    it('rejects a name of BRANCH_MAX_LENGTH + 1 ', () => {
       const name = 'b'.repeat(BRANCH_MAX_LENGTH + 1);
-      expect(readRepository(repo({ default_branch: name }), null)).toEqual({
+      expect(readRepository(repo({ default_branch: name }))).toEqual({
         ok: false,
         error: 'invalid',
       });
@@ -68,17 +68,17 @@ describe('readRepository', () => {
       ['null', null],
       ['a number', 5],
       ['an object', {}],
-    ])('is invalid when %s and no branch is requested', (_label, value) => {
+    ])('is invalid when %s', (_label, value) => {
       const body = repo();
       if (value === undefined) delete body.default_branch;
       else body.default_branch = value;
-      expect(readRepository(body, null)).toEqual({ ok: false, error: 'invalid' });
+      expect(readRepository(body)).toEqual({ ok: false, error: 'invalid' });
     });
 
     it('accepts an emoji name of BRANCH_MAX_LENGTH code points', () => {
       const name = '🌿'.repeat(BRANCH_MAX_LENGTH);
       expect(name.length).toBe(2 * BRANCH_MAX_LENGTH);
-      expect(readRepository(repo({ default_branch: name }), null)).toMatchObject({
+      expect(readRepository(repo({ default_branch: name }))).toMatchObject({
         ok: true,
         value: { defaultBranch: name },
       });
@@ -86,21 +86,10 @@ describe('readRepository', () => {
 
     it('rejects an emoji name of BRANCH_MAX_LENGTH + 1 code points', () => {
       const name = '🌿'.repeat(BRANCH_MAX_LENGTH + 1);
-      expect(readRepository(repo({ default_branch: name }), null)).toEqual({
+      expect(readRepository(repo({ default_branch: name }))).toEqual({
         ok: false,
         error: 'invalid',
       });
-    });
-
-    it('gives null instead of an error when a branch is requested', () => {
-      const body = repo({ default_branch: '' });
-      expect(readRepository(body, 'dev')).toMatchObject({
-        ok: true,
-        value: { defaultBranch: null },
-      });
-      expect(
-        readRepository(repo({ default_branch: 'b'.repeat(BRANCH_MAX_LENGTH + 1) }), 'dev'),
-      ).toMatchObject({ ok: true, value: { defaultBranch: null } });
     });
   });
 
@@ -113,7 +102,7 @@ describe('readRepository', () => {
       ['only a slash', '/'],
       ['empty', ''],
     ])('is invalid with %s', (_label, fullName) => {
-      expect(readRepository(repo({ full_name: fullName }), null)).toEqual({
+      expect(readRepository(repo({ full_name: fullName }))).toEqual({
         ok: false,
         error: 'invalid',
       });
@@ -123,24 +112,24 @@ describe('readRepository', () => {
       const body = repo();
       if (value === undefined) delete body.full_name;
       else body.full_name = value;
-      expect(readRepository(body, null)).toEqual({ ok: false, error: 'invalid' });
+      expect(readRepository(body)).toEqual({ ok: false, error: 'invalid' });
     });
   });
 
   // Validates: Requirement 3.10
   it.each([null, undefined, 'x', 5, true, [], [repo()]])('rejects the non-object body %j', (body) => {
-    expect(readRepository(body, null)).toEqual({ ok: false, error: 'invalid' });
+    expect(readRepository(body)).toEqual({ ok: false, error: 'invalid' });
   });
 
   it('ignores inherited properties and does not throw on throwing getters', () => {
     const inherited = Object.create(repo()) as unknown;
-    expect(readRepository(inherited, null)).toEqual({ ok: false, error: 'invalid' });
+    expect(readRepository(inherited)).toEqual({ ok: false, error: 'invalid' });
     const throwing = {
       get full_name(): string {
         throw new Error('boom');
       },
     };
-    expect(() => readRepository(throwing, null)).not.toThrow();
+    expect(() => readRepository(throwing)).not.toThrow();
   });
 });
 

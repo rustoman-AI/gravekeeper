@@ -1,4 +1,4 @@
-// Requirement 13.10, 13.15
+﻿// Requirement 13.10, 13.15
 // Registry of every runtime export of `pipeline/mapping/index.ts` for the
 // registry-driven property tests (Property 16, Property 17) and for the
 // completeness check that fails when an exported Mapper is not registered.
@@ -198,7 +198,7 @@ const isAssembledFacts = shape({
 const isRepositoryInfo = shape({
   owner: isString,
   repo: isString,
-  defaultBranch: nullOr(isString),
+  defaultBranch: isString,
   private: isBoolean,
 });
 
@@ -294,7 +294,7 @@ export const MAPPER_REGISTRY: readonly RegistryEntry[] = [
   ),
   mapper(
     'readRepository',
-    (json) => mapping.readRepository(json, 'main'),
+    (json) => mapping.readRepository(json),
     resultOf(isRepositoryInfo, literal('invalid')),
   ),
   mapper('readCommitSha', (json) => mapping.readCommitSha(json), nullOr(isString)),
