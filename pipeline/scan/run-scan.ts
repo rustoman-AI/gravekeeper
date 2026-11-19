@@ -9,7 +9,9 @@ import type { RequestContext, SourceResult } from '../ports';
 import { assembleResult } from './assemble-result';
 import type { AssemblyManifest, AssemblySnapshot, PartialProgress } from './assemble-result';
 import { GithubBudget } from './github-budget';
+import { scanCacheKey } from './cache-keys';
 import { WorkLedger } from './ledger';
+import { storeDecision } from './scan-cache';
 import { renderErrorMessage } from './messages';
 import { createUnitRunner } from './run-unit';
 import { runAdvisoryStage } from './stage-advisories';
@@ -143,6 +145,19 @@ async function scan(input: ScanInput, deps: ScanDeps): Promise<ScanOutcome> {
     const selection = selectManifestStage(manifestInput);
     if (!selection.ok) return err(selection.error);
 
+    // Scan_Cache lookup (R19.5, R19.6): canonical values only. A live entry is returned unchanged.
+    const cacheKey = scanCacheKey({
+      webHost,
+      owner: found.owner,
+      repo: found.repo,
+      branch: found.branch,
+      defaultBranch: found.defaultBranch,
+      commitSha: found.commitSha,
+      manifestPaths: selection.value.selected,
+    });
+    const cached = await deps.scanCache.get(cacheKey, signal).catch(() => null);
+    if (cached !== null) return ok(cached);
+
     // Mutable view of what the stages have produced so far, republished after every stage.
     let manifests: readonly AssemblyManifest[] = [];
     let plan: TargetPlan = {
@@ -266,14 +281,23 @@ async function scan(input: ScanInput, deps: ScanDeps): Promise<ScanOutcome> {
     publish();
 
     // S9: assemble. In memory only, no I/O (R16.12).
-    return ok(
-      assembleResult({
-        ...snapshot(),
-        asOf: input.asOf,
-        ledger: [...ledger.entries],
-        deadlineReached: signal.aborted,
-      }),
-    );
+    const result = assembleResult({
+      ...snapshot(),
+      asOf: input.asOf,
+      ledger: [...ledger.entries],
+      deadlineReached: signal.aborted,
+    });
+    // Store rule (R19.5, R19.7, R19.22). Once the margin path closed the handle, the response
+    // was assembled from partial progress, so a late full result is not stored (R19.21).
+    if (!(progress?.closed ?? false)) {
+      const decision = storeDecision(
+        result.sources,
+        result.notes,
+        ledger.entries.filter((entry) => entry.source === 'cratesio'),
+      );
+      if (decision.store) await deps.scanCache.set(cacheKey, result, decision.ttlSeconds).catch(() => undefined);
+    }
+    return ok(result);
   } finally {
     timer.clearTimeout(timerHandle);
   }
