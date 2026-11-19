@@ -756,7 +756,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/scan/scan-cache.test.ts`: every row of the rule, a result with `capped.skipped` is stored, a margin-path result is never stored, the partial TTL, an invalid cached value is a miss, a result over `L2_MAX_SCAN_BYTES` stays in L1.
     - _Requirements: 19.5, 19.7, 19.22, 19.30_
 
-  - [~] 7.19 Write the property test for the store rule
+  - [x] 7.19 Write the property test for the store rule
     - `tests/pipeline/scan/scan-cache-store-rule.property.test.ts`.
     - **Property 70: A Scan_Result is stored if and only if the store rule holds**
     - **Validates: Requirements 19.30**
@@ -765,7 +765,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Edit `pipeline/scan/run-scan.ts`: after manifest selection build the key from canonical values, return a live entry unchanged (original `asOf`, `sources`, `notes`, expiry untouched) after the three S1 requests only, and apply `storeDecision` after assembly; a result assembled by the margin path is never stored.
     - _Requirements: 19.5, 19.6, 19.7, 19.21, 19.22, 3.13_
 
-  - [~] 7.21 Write unit tests for the cache wiring
+  - [x] 7.21 Write unit tests for the cache wiring
     - `tests/pipeline/scan/run-scan-cache.test.ts`: a hit sends only the repository, branch and tree requests, a hit equals the first result, a result with `github-token-missing` is not stored, expiry after `SCAN_CACHE_TTL_SECONDS`, a changed Commit_SHA misses, the partial result of a deadline-cut crates.io lookup is stored for `PARTIAL_SCAN_TTL_SECONDS`.
     - _Requirements: 19.5, 19.6, 19.7, 19.22, 3.13_
 
@@ -784,12 +784,12 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 74: Crates owners are looked up in scope order and cached owners send no request** (scan level)
     - **Validates: Requirements 12.15**
 
-  - [~] 7.25 Write the property test for L2 failures
+  - [x] 7.25 Write the property test for L2 failures
     - Append to `tests/adapters/tiered-cache-store.property.test.ts` with full scans over generated L2 failures (throw, timeout, unavailable, paused, invalid envelope), compared with the same scan with `GRAVEKEEPER_RUNTIME_CACHE` equal to `off`.
     - **Property 69: L2 failures never change a result**
     - **Validates: Requirements 19.29**
 
-  - [~] 7.26 Write the property test for tokens in L2
+  - [x] 7.26 Write the property test for tokens in L2
     - Create `tests/adapters/token-leak.property.test.ts` with capturing L1 and L2 stores and upstream stubs that echo the token.
     - **Property 72: The token never reaches an L2 key or value**
     - **Validates: Requirements 19.32**
