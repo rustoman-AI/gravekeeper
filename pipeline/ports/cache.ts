@@ -12,6 +12,8 @@ export type JsonValue =
 export interface CacheEntry {
   readonly value: JsonValue;
   readonly storedAtMs: number;
+  /** Lifetime the entry was stored with, so a promotion into another tier expires at the same instant. */
+  readonly ttlSeconds?: number;
 }
 
 // Requirement 19.20

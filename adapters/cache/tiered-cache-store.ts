@@ -8,11 +8,6 @@ export interface TieredCacheStoreDeps {
   /** `null` when GRAVEKEEPER_RUNTIME_CACHE is off: L2 is never read or written. */
   readonly l2: CacheStore | null;
   readonly deferrer: Deferrer;
-  /**
-   * Lifetime given to L1 when an L2 hit is promoted. A CacheEntry carries no TTL, so the caller
-   * supplies the lifetime of the kind. The promoted entry keeps the original `storedAtMs`.
-   */
-  readonly promotionTtlSeconds: (kind: L2EntryKind) => number;
 }
 
 /**
@@ -40,9 +35,13 @@ export class TieredCacheStore implements CacheStore {
       const entry = await l2.get(key, options);
       if (entry === null) return null;
       try {
-        await this.deps.l1.set(key, entry.value, this.deps.promotionTtlSeconds(kind), {
-          storedAtMs: entry.storedAtMs,
-        });
+        // The promoted entry keeps storedAtMs and ttlSeconds, so it expires when the L2 entry does.
+        // An L2 entry without a lifetime is returned but not promoted.
+        if (entry.ttlSeconds !== undefined) {
+          await this.deps.l1.set(key, entry.value, entry.ttlSeconds, {
+            storedAtMs: entry.storedAtMs,
+          });
+        }
       } catch {
         // Promotion is best effort; the L2 entry is still a hit.
       }

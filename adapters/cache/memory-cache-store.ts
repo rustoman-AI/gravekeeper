@@ -28,7 +28,11 @@ export class MemoryCacheStore implements CacheStore {
     }
     this.entries.delete(key);
     this.entries.set(key, entry);
-    return Promise.resolve({ value: entry.value, storedAtMs: entry.storedAtMs });
+    return Promise.resolve({
+      value: entry.value,
+      storedAtMs: entry.storedAtMs,
+      ttlSeconds: entry.ttlSeconds,
+    });
   }
 
   set(

@@ -26,6 +26,8 @@ export interface RuntimeCacheStoreDeps {
   readonly timer: Timer;
   readonly clock: Clock;
   readonly logger: Logger;
+  /** Hex SHA-256 of the L1 key. Defaults to Web Crypto; tests inject a synchronous-resolving one. */
+  readonly sha256Hex?: (text: string) => Promise<string>;
 }
 
 export const L2_TAG = 'gravekeeper-v1';
@@ -73,7 +75,7 @@ function parseEnvelope(raw: unknown): Envelope | null {
   return { v: 1, storedAtMs: e.storedAtMs, ttlSeconds: e.ttlSeconds, value: e.value };
 }
 
-async function sha256Hex(text: string): Promise<string> {
+async function defaultSha256Hex(text: string): Promise<string> {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('');
 }
@@ -86,6 +88,10 @@ function maxBytesFor(kind: L2EntryKind): number {
 export class RuntimeCacheStore implements CacheStore {
   constructor(private readonly deps: RuntimeCacheStoreDeps) {}
 
+  private hash(text: string): Promise<string> {
+    return (this.deps.sha256Hex ?? defaultSha256Hex)(text);
+  }
+
   async get(
     key: string,
     options?: { readonly signal?: AbortSignal; readonly l2Kind?: L2EntryKind | null },
@@ -97,7 +103,7 @@ export class RuntimeCacheStore implements CacheStore {
     const startedAt = this.deps.clock();
     try {
       const raw = await this.bounded(async () => {
-        const l2Key = `gravekeeper:v${CACHE_KEY_VERSION}:${kind}:${await sha256Hex(key)}`;
+        const l2Key = `gravekeeper:v${CACHE_KEY_VERSION}:${kind}:${await this.hash(key)}`;
         return this.deps.getCache().get(l2Key);
       }, signal);
       if (raw === TIMED_OUT) {
@@ -112,7 +118,11 @@ export class RuntimeCacheStore implements CacheStore {
       }
       const age = this.deps.clock() - envelope.storedAtMs;
       if (age < 0 || age >= envelope.ttlSeconds * 1000) return null;
-      return { value: envelope.value, storedAtMs: envelope.storedAtMs };
+      return {
+        value: envelope.value,
+        storedAtMs: envelope.storedAtMs,
+        ttlSeconds: envelope.ttlSeconds,
+      };
     } catch {
       if (signal?.aborted) return null;
       this.fail(startedAt);
@@ -141,7 +151,7 @@ export class RuntimeCacheStore implements CacheStore {
       const bytes = new TextEncoder().encode(JSON.stringify(value)).length;
       if (bytes > maxBytesFor(kind)) return;
       const outcome = await this.bounded(async () => {
-        const l2Key = `gravekeeper:v${CACHE_KEY_VERSION}:${kind}:${await sha256Hex(key)}`;
+        const l2Key = `gravekeeper:v${CACHE_KEY_VERSION}:${kind}:${await this.hash(key)}`;
         await this.deps
           .getCache()
           .set(l2Key, envelope, { ttl: ttlSeconds, tags: [L2_TAG], name: '' });

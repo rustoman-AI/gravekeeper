@@ -20,7 +20,7 @@ describe('MemoryCacheStore', () => {
     const store = new MemoryCacheStore(c.clock);
     await store.set('k', { a: 1 }, 10);
     c.advance(10_000 - 1);
-    expect(await store.get('k')).toEqual({ value: { a: 1 }, storedAtMs: 1_000_000 });
+    expect(await store.get('k')).toEqual({ value: { a: 1 }, storedAtMs: 1_000_000, ttlSeconds: 10 });
     c.advance(1);
     expect(await store.get('k')).toBeNull();
     expect(store.size()).toBe(0);
@@ -56,7 +56,7 @@ describe('MemoryCacheStore', () => {
     c.advance(9_000);
     await store.set('a', 3, 10);
     c.advance(9_000);
-    expect(await store.get('a')).toEqual({ value: 3, storedAtMs: 1_009_000 });
+    expect(await store.get('a')).toEqual({ value: 3, storedAtMs: 1_009_000, ttlSeconds: 10 });
     expect((await store.get('b'))?.value).toBe(2);
     c.advance(1_000);
     expect(await store.get('a')).toBeNull();
@@ -66,7 +66,7 @@ describe('MemoryCacheStore', () => {
     const c = makeClock();
     const store = new MemoryCacheStore(c.clock);
     await store.set('k', 'v', 10, { storedAtMs: 1_000_000 - 9_000 });
-    expect(await store.get('k')).toEqual({ value: 'v', storedAtMs: 991_000 });
+    expect(await store.get('k')).toEqual({ value: 'v', storedAtMs: 991_000, ttlSeconds: 10 });
     c.advance(1_000);
     expect(await store.get('k')).toBeNull();
   });

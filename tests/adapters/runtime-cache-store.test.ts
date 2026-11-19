@@ -21,6 +21,7 @@ import { createFakeRuntime, runUntilSettled } from '../support/fake-runtime';
 
 const START = 1_000_000;
 const sha = (text: string): string => createHash('sha256').update(text).digest('hex');
+const sha256Hex = (text: string): Promise<string> => Promise.resolve(sha(text));
 
 function setup(modes: readonly L2Mode[] = [L2_OK]) {
   const runtime = createFakeRuntime(START);
@@ -28,6 +29,7 @@ function setup(modes: readonly L2Mode[] = [L2_OK]) {
   const { logger, lines } = createCollectingLogger();
   const store = new RuntimeCacheStore({
     getCache: l2.getCache,
+    sha256Hex,
     timer: runtime.timer,
     clock: runtime.clock,
     logger,
@@ -73,7 +75,7 @@ describe('RuntimeCacheStore round trip (R19.23)', () => {
     await runUntilSettled(store.set('k', { x: [1, 2] }, 60, { l2Kind: 'scan' }), runtime);
     advanceBy(runtime, 5000);
     const entry = await runUntilSettled(store.get('k', { l2Kind: 'scan' }), runtime);
-    expect(entry).toEqual({ value: { x: [1, 2] }, storedAtMs: START });
+    expect(entry).toEqual({ value: { x: [1, 2] }, storedAtMs: START, ttlSeconds: 60 });
   });
 
   it('honours an explicit storedAtMs', async () => {
@@ -175,6 +177,7 @@ describe('RuntimeCacheStore failures (R19.25)', () => {
     const { logger, lines } = createCollectingLogger();
     const store = new RuntimeCacheStore({
       getCache: throwingGetCache,
+      sha256Hex,
       timer: runtime.timer,
       clock: runtime.clock,
       logger,
@@ -189,6 +192,7 @@ describe('RuntimeCacheStore failures (R19.25)', () => {
     const l2 = createFakeL2(runtime, [{ kind: 'throw' }]);
     const store = new RuntimeCacheStore({
       getCache: l2.getCache,
+    sha256Hex,
       timer: runtime.timer,
       clock: runtime.clock,
       logger: {

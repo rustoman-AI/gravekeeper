@@ -687,7 +687,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/memory-cache-store.test.ts`: age `ttl * 1000 - 1` live and `ttl * 1000` expired, clock moving backwards, LRU order, replacing a key restarts the lifetime, `storedAtMs` kept when passed, the Upstream_Cache and Scan_Cache are separate instances.
     - _Requirements: 19.9, 19.10, 19.11, 19.12_
 
-  - [~] 7.3 Write property tests for the in-memory store
+  - [x] 7.3 Write property tests for the in-memory store
     - `tests/adapters/memory-cache-store.property.test.ts`.
     - **Property 59: Cache entries live exactly for their TTL**
     - **Property 60: Caches never exceed their size limit**
@@ -709,7 +709,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/adapters/l2-entries.test.ts`: fixed bodies per kind, the compact text is smaller, Mapper output on compact and full text is equal for each edge case of the table, a Scan_Result has exactly the top-level keys of R18.1.
     - _Requirements: 19.27, 19.31_
 
-  - [~] 7.8 Write the property test for compact entries
+  - [x] 7.8 Write the property test for compact entries
     - `tests/adapters/l2-entries.property.test.ts` over generated OSV, deps.dev and crates.io bodies, including wrong types and invalid owner lists.
     - **Property 71: A compact L2 entry gives the same facts as the full body**
     - **Validates: Requirements 19.31**
@@ -718,7 +718,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/cache/tiered-cache-store.ts`: L1 in front of L2; L2 read and written only when the call carries an `l2Kind` and L2 is enabled; an L2 hit is promoted into L1 with its original `storedAtMs`; the L2 write goes to the `Deferrer`; never throws.
     - _Requirements: 19.11, 19.20, 19.23, 19.24, 19.25_
 
-  - [~] 7.10 Write unit tests for the tiered store
+  - [x] 7.10 Write unit tests for the tiered store
     - `tests/adapters/tiered-cache-store.test.ts`: L1 hit does not touch L2, L2 hit promoted with the original lifetime, kinds outside the three are never read or written in L2, the write is deferred and not awaited, L2 off.
     - _Requirements: 19.20, 19.23, 19.24, 19.25_
 
@@ -727,7 +727,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 67: Tiered cache behaves like one cache that survives instance loss**
     - **Validates: Requirements 19.11**
 
-  - [~] 7.12 Implement the caching HTTP client
+  - [x] 7.12 Implement the caching HTTP client
     - Create `adapters/http/caching-http-client.ts`: `CachingHttpClient` decorates an `HttpClient`; a hit returns `ok` or `absent` with `fromCache: true` and `attempts: 0` without a limiter slot, gate call or budget change; a miss stores `{ status, bodyText }` only for `ok` or `absent`, honoring `storeWhen`, compacting for `l2Kind` policies, never storing failures, oversize bodies, 429, GraphQL with a foreign error type, an OSV detail 404 or headers; stored values validated on read.
     - _Requirements: 19.1, 19.2, 19.3, 19.4, 19.14, 19.17, 19.18, 19.24, 19.27, 15.2_
 
@@ -743,12 +743,12 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/scan/cache-keys.test.ts`: each field changes the key, owner or repo that differ only in letter case give different keys, path order does not change the key, the token cannot be an input.
     - _Requirements: 19.5, 19.13_
 
-  - [~] 7.16 Write the property test for Scan_Cache keys
+  - [x] 7.16 Write the property test for Scan_Cache keys
     - `tests/pipeline/scan/cache-keys.property.test.ts`.
     - **Property 61: Scan_Cache key identity**
     - **Validates: Requirements 19.13**
 
-  - [~] 7.17 Implement the Scan_Cache store rule and typed cache
+  - [x] 7.17 Implement the Scan_Cache store rule and typed cache
     - Create `pipeline/scan/scan-cache.ts`: `storeDecision(statuses, notes, cratesioUnits)` (full TTL when all six statuses are `ok` and no `github-token-missing` note; `PARTIAL_SCAN_TTL_SECONDS` when the only non-`ok` source is `cratesio` with status `partial` and every non-`ok` cratesio unit is a deadline-cancelled or deadline-unstarted owners lookup; otherwise no store), `TypedCache<ScanResult>` with validation on read (`isScanResult`), writes to L1 at once and to L2 through the `Deferrer` only when the serialized result is within `L2_MAX_SCAN_BYTES`.
     - _Requirements: 19.5, 19.6, 19.7, 19.22, 19.28, 19.30_
 
