@@ -1,4 +1,4 @@
-# Property traceability
+﻿# Property traceability
 
 Maps every design property of the `scan-pipeline`, `dependency-graveyard-core` and `scan-accuracy` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 2449 passed and 26 skipped (the live tests, skipped without `GRAVEKEEPER_LIVE_TESTS`), 162 test files passed and 6 skipped. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
 
@@ -174,8 +174,6 @@ None. All 12 properties (P1 to P12) have at least one passing test.
   - scan-pipeline P5: tag says "does not echo input", design says "uses fixed error messages" (`tests/pipeline/config/github-config.property.test.ts:31`).
   - dependency-graveyard-core P21: tag says "Score is the sum of its components (classify level)", design says "Score equals the sum of the components, clamp is a no-op" (`tests/core/classifier/classify.property.test.ts:191`).
   - dependency-graveyard-core P7, P8, P12, P14, P42: the design heading ends in "(extra)", or the tag adds "(parser side)" or "(serializer side)". Wording only.
-- scan-accuracy P3 and P4: `range-resolve.property.test.ts` has no `// Feature: scan-accuracy` tag comment and no `// Validates:` line. It was matched by its `describe` titles "Property 3: ..." and "Property 4: ...". Requirements come from tasks.md task 3.13.
-- scan-accuracy P11: `cache-header.property.test.ts` has the Feature tag but no `// Validates:` line. Requirements come from tasks.md task 5.11.
 - dependency-graveyard-core P47 shares its test with scan-accuracy P12 (one file carries both tags, the titles say "Property 12").
 - Rows changed by scan-accuracy: core P14, P15, P16 (titles updated), P24 (tag updated, titles unchanged) and the new core P47. Pipeline P14, P15, P57, P58, P64 and P68 keep their tests and titles and still pass.
 - Tests matched by tag comment only, because the title has no `P<n>` prefix: scan-pipeline P5, P14, P15, and the dependency-graveyard-core serialize-manifest tests.
@@ -184,3 +182,4 @@ None. All 12 properties (P1 to P12) have at least one passing test.
 
 - `dependency-graveyard-core/design.md` has 47 properties, not 39. The table has one row per property.
 - P16 and P17 are registry-driven: one test per mapper or per removed field in `mappers.property.test.ts`, so the title cell gives a count.
+- scan-accuracy P3, P4 and P11 are now tagged with `// Feature: scan-accuracy` and `// Validates:` lines.

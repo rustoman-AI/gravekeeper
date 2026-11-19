@@ -25,6 +25,8 @@
 - Parsers and classification rules get property-based tests.
 - Adapters are tested against fixtures.
 - Run tests with `npx vitest --run`.
+- Agents must never set `FC_NUM_RUNS` in the shared shell.
+- Start a deeper property run with `npm run test:deep`, optionally followed by test paths. It sets `FC_NUM_RUNS=1000` for that one process only.
 
 ## Security
 - Treat repo URLs and manifest contents as untrusted input.

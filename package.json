@@ -14,7 +14,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "test:deep": "tsx scripts/test-deep.ts"
   },
   "dependencies": {
     "@renovatebot/pep440": "5.0.1",

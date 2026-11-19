@@ -1,4 +1,5 @@
 // Feature: scan-accuracy, Property 11: The cache header is present on 200 only and never changes the body
+// Validates: Requirements 7.1, 7.2, 7.3, 7.4, 7.7, 7.8
 // Requirements 7.1, 7.2, 7.3, 7.4, 7.7, 7.8
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';

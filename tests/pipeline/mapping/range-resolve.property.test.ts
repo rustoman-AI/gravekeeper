@@ -100,6 +100,8 @@ const scenario: fc.Arbitrary<Scenario> = fc
     return { eco, stable, versions: [...list.slice(r), ...list.slice(0, r)] };
   });
 
+// Feature: scan-accuracy, Property 3: The resolved version is listed and satisfies every range
+// Validates: Requirements 3.2, 3.3, 3.4, 3.13, 3.14
 describe('Property 3: The resolved version is listed and satisfies every range', () => {
   it('a resolved version is an element of the list and satisfies each range under the library', () => {
     fc.assert(
@@ -144,6 +146,8 @@ describe('Property 3: The resolved version is listed and satisfies every range',
   });
 });
 
+// Feature: scan-accuracy, Property 4: The resolved version is the highest non-prerelease match
+// Validates: Requirements 3.2, 3.3, 3.4, 3.13, 3.14
 describe('Property 4: The resolved version is the highest non-prerelease match', () => {
   it('equals the independent integer maximum of the listed stable versions (or unresolved when none match)', () => {
     fc.assert(

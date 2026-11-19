@@ -6,6 +6,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128470551
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128491717
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128547708
       }
     ],
     "1.2 Update the property traceability document": [
@@ -13,6 +23,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128470610
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128553343
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128664333
       }
     ],
     "1.3 Add the `test:deep` script": [
@@ -20,6 +40,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128470646
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128492708
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128547846
       }
     ],
     "1.4 Write the test for the `test:deep` script": [
@@ -27,6 +57,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128470681
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128553813
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128665309
       }
     ],
     "1.5 Add the `FC_NUM_RUNS` rule to the tech steering file": [
@@ -34,6 +74,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128470716
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128493338
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128548322
       }
     ],
     "2. Checkpoint - Housekeeping": [
@@ -41,6 +91,11 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128470749
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128674185
       }
     ],
     "3.1 Add the `excluded` field to the advisory entries": [
@@ -309,4 +364,1006 @@
         "timestamp": 1795128472094
       }
     ],
-    
+    "5.34 Implement the URL state, the request body and the link builders": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472145
+      }
+    ],
+    "5.35 Write the unit tests for the URL module": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472228
+      }
+    ],
+    "5.36 Write the property test for the canonical URL round trip": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472268
+      }
+    ],
+    "5.37 Write the property test for the manifest query round trip": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472304
+      }
+    ],
+    "5.38 Write the property test for the safety of built links": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472339
+      }
+    ],
+    "5.39 Replay the recorded fixtures through the view-model": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472376
+      }
+    ],
+    "5.40 Create the view-model barrel": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472410
+      }
+    ],
+    "6. Checkpoint - View-model foundations": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472444
+      }
+    ],
+    "7.1 Install the pinned test dependencies": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472482
+      }
+    ],
+    "7.2 Update the package pin test": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472521
+      }
+    ],
+    "7.3 Configure Vitest for component tests": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472559
+      }
+    ],
+    "7.4 Write the DOM smoke test": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472593
+      }
+    ],
+    "7.5 Adjust the TypeScript and ESLint configuration": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472630
+      }
+    ],
+    "8. Checkpoint - Test dependencies and configuration": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472665
+      }
+    ],
+    "9.1 Record the font licences and align the steering sentence": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472704
+      }
+    ],
+    "9.2 Create the site shell components": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472742
+      }
+    ],
+    "9.3 Define the design tokens and base styles": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472777
+      }
+    ],
+    "9.4 Replace the root layout and the fonts": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472814
+      }
+    ],
+    "9.5 Write the token contrast test": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472855
+      }
+    ],
+    "9.6 Write the layout test": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472898
+      }
+    ],
+    "9.7 Write the component test for the site shell": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472943
+      }
+    ],
+    "10. Checkpoint - Fonts and theme": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128472991
+      }
+    ],
+    "11.1 Implement the Scan_Client": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473032
+      }
+    ],
+    "11.2 Write the unit tests for the Scan_Client": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473075
+      }
+    ],
+    "11.3 Implement the URL state hook and the scan session hook": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473119
+      }
+    ],
+    "11.4 Draw the first-pass SVG symbols for all six plot kinds": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473163
+      }
+    ],
+    "11.5 Implement the landing page components": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473207
+      }
+    ],
+    "11.6 Wire the app shell": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473247
+      }
+    ],
+    "11.7 Write the component tests for the landing page": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473289
+      }
+    ],
+    "11.8 Write the tests for the scan session hook": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473337
+      }
+    ],
+    "11.9 Write the app shell tests": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473388
+      }
+    ],
+    "11.10 Write the component test for the symbols": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473430
+      }
+    ],
+    "12. Checkpoint - Landing page": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473467
+      }
+    ],
+    "13.1 Implement the stage functions": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473510
+      }
+    ],
+    "13.2 Write the property test for the stage selection": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473547
+      }
+    ],
+    "13.3 Write the unit tests for the stages": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473585
+      }
+    ],
+    "13.4 Implement the scanning screen": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473621
+      }
+    ],
+    "13.5 Wire the scanning screen into the app": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473656
+      }
+    ],
+    "13.6 Write the component tests for the scanning screen": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473692
+      }
+    ],
+    "13.7 Write the app tests for cancel and Back": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473729
+      }
+    ],
+    "14. Checkpoint - Scanning state": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473768
+      }
+    ],
+    "15.1 Implement the results header components": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473807
+      }
+    ],
+    "15.2 Implement the scene components": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473843
+      }
+    ],
+    "15.3 Write the scene styles": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473879
+      }
+    ],
+    "15.4 Implement the results page and wire it into the app": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473917
+      }
+    ],
+    "15.5 Write the component tests for the header": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473958
+      }
+    ],
+    "15.6 Write the component tests for the scene": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128473994
+      }
+    ],
+    "15.7 Write the render and memoisation test for the scene": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474030
+      }
+    ],
+    "15.8 Write the tests for the results flow": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474065
+      }
+    ],
+    "16. Checkpoint - Results page and scene": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474102
+      }
+    ],
+    "17.1 Implement the table model": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474135
+      }
+    ],
+    "17.2 Write the unit tests for the table model": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474172
+      }
+    ],
+    "17.3 Write the property test for the sorted table": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474208
+      }
+    ],
+    "17.4 Write the property test for table and scene agreement": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474244
+      }
+    ],
+    "17.5 Write the property test for sort idempotence": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474282
+      }
+    ],
+    "17.6 Implement the list view": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474318
+      }
+    ],
+    "17.7 Write the component tests for the list view": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474354
+      }
+    ],
+    "18. Checkpoint - List view": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474396
+      }
+    ],
+    "19.1 Implement the fact formatter, the detail model and the advisory groups": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474489
+      }
+    ],
+    "19.2 Write the unit tests for the detail model and the advisory groups": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474535
+      }
+    ],
+    "19.3 Write the property test for the fact formatter": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474600
+      }
+    ],
+    "19.4 Write the property test for the detail contents": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474643
+      }
+    ],
+    "19.5 Write the property test for the advisory groups": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474678
+      }
+    ],
+    "19.6 Implement the detail panel components": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474716
+      }
+    ],
+    "19.7 Wire the detail panel into the scene and the list": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474756
+      }
+    ],
+    "19.8 Write the component tests for the detail panel": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474815
+      }
+    ],
+    "19.9 Write the component tests for the advisory groups": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474904
+      }
+    ],
+    "20. Checkpoint - Detail panel": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128474967
+      }
+    ],
+    "21.1 Write the end-to-end component flow test": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475010
+      }
+    ],
+    "21.2 Write the source rule tests": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475113
+      }
+    ],
+    "21.3 Write the reduced-motion style test": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475164
+      }
+    ],
+    "22. Checkpoint - Component tests": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475203
+      }
+    ],
+    "23.1 Configure Playwright": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475247
+      }
+    ],
+    "23.2 Create the fixture exporter": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475309
+      }
+    ],
+    "23.3 Write the test for the exporter": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475351
+      }
+    ],
+    "23.4 Create the end-to-end helpers": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475392
+      }
+    ],
+    "23.5 Write the landing page end-to-end spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475449
+      }
+    ],
+    "23.6 Write the scanning end-to-end spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475492
+      }
+    ],
+    "23.7 Write the results end-to-end spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475532
+      }
+    ],
+    "23.8 Write the detail panel end-to-end spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475570
+      }
+    ],
+    "23.9 Write the reduced-motion end-to-end spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475611
+      }
+    ],
+    "24. Checkpoint - End-to-end tests": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475655
+      }
+    ],
+    "25.1 Add the inert performance hook": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475695
+      }
+    ],
+    "25.2 Write the render budget spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475734
+      }
+    ],
+    "25.3 Implement the client JavaScript budget gate": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475777
+      }
+    ],
+    "25.4 Write the unit test for the budget gate": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475816
+      }
+    ],
+    "25.5 Write the measured JavaScript budget spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475856
+      }
+    ],
+    "25.6 Write the layout shift spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475891
+      }
+    ],
+    "25.7 Update the CI workflow": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475934
+      }
+    ],
+    "26. Checkpoint - Performance and bundle": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128475979
+      }
+    ],
+    "27. Checkpoint - Milestone 1": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476022
+      }
+    ],
+    "28.1 Implement the deployment check": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476063
+      }
+    ],
+    "28.2 Write the unit test for the deployment check": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476106
+      }
+    ],
+    "28.3 Push to main": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476152
+      }
+    ],
+    "28.4 Verify the deployed UI": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476195
+      }
+    ],
+    "29.1 Write the report specification": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476240
+      }
+    ],
+    "29.2 Implement the report writer": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476282
+      }
+    ],
+    "29.3 Write the unit test for the report writer": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476324
+      }
+    ],
+    "29.4 Capture the screenshots, measure and write the report": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476373
+      }
+    ],
+    "30. STOP - Milestone 1 ends here": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476416
+      }
+    ],
+    "31.1 Implement the notes model and the picker model": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476461
+      }
+    ],
+    "31.2 Write the unit tests for the notes and picker models": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476513
+      }
+    ],
+    "31.3 Write the property test for the note groups": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476562
+      }
+    ],
+    "31.4 Write the property test for the source list": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476607
+      }
+    ],
+    "31.5 Write the property test for the picker": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476713
+      }
+    ],
+    "31.6 Implement the notes components and the manifest picker": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476770
+      }
+    ],
+    "31.7 Wire the notes into the results page": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476809
+      }
+    ],
+    "31.8 Write the component tests for the notes": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476848
+      }
+    ],
+    "32. Checkpoint - Caretaker's notes": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476889
+      }
+    ],
+    "33.1 Implement the error model": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476928
+      }
+    ],
+    "33.2 Write the unit tests for the error model": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128476966
+      }
+    ],
+    "33.3 Write the property test for the error model": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477005
+      }
+    ],
+    "33.4 Write the property test for the retry countdown": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477046
+      }
+    ],
+    "33.5 Implement the error screen components": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477084
+      }
+    ],
+    "33.6 Wire the error screens into the app": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477122
+      }
+    ],
+    "33.7 Write the component tests for the error screens": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477162
+      }
+    ],
+    "34. Checkpoint - Error screens": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477200
+      }
+    ],
+    "35.1 Add the client failures to the error model and the session": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477238
+      }
+    ],
+    "35.2 Write the unit tests for the client failure model": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477275
+      }
+    ],
+    "35.3 Write the component tests for the client failures": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477313
+      }
+    ],
+    "36. Checkpoint - Client failure screens": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477352
+      }
+    ],
+    "37.1 Implement the Resurrect_Slot": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477388
+      }
+    ],
+    "37.2 Write the component tests for the Resurrect_Slot": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477427
+      }
+    ],
+    "38. Checkpoint - Resurrect placeholder": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477466
+      }
+    ],
+    "39.1 Write the error screen end-to-end spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477502
+      }
+    ],
+    "39.2 Write the client failure end-to-end spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477541
+      }
+    ],
+    "39.3 Write the notes, empty and picker end-to-end spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477582
+      }
+    ],
+    "39.4 Write the remaining reduced-motion spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477623
+      }
+    ],
+    "39.5 Write the reflow and keyboard spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477665
+      }
+    ],
+    "40. Checkpoint - Remaining end-to-end tests": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477707
+      }
+    ],
+    "41.1 Write the screenshot spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477747
+      }
+    ],
+    "41.2 Capture and verify the screenshots": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477785
+      }
+    ],
+    "42. Checkpoint - Screenshots": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477827
+      }
+    ],
+    "43.1 Add the security headers": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477864
+      }
+    ],
+    "43.2 Write the unit test for the policy": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477906
+      }
+    ],
+    "43.3 Write the policy end-to-end spec": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477947
+      }
+    ],
+    "44. Checkpoint - Content-Security-Policy": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128477985
+      }
+    ],
+    "45.1 Write the property test for JSON-safe models": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128478028
+      }
+    ],
+    "45.2 Update the property traceability document": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128478071
+      }
+    ],
+    "45.3 Write the traceability test for the graveyard-ui properties": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128478113
+      }
+    ],
+    "46. Checkpoint - Remaining properties": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128478154
+      }
+    ],
+    "47. Final checkpoint - Graveyard UI": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128478191
+      }
+    ],
+    "1. Housekeeping (committable alone)": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128665351
+      }
+    ]
+  }
+}
