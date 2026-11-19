@@ -818,11 +818,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/api/validate-request.ts`: media type check, JSON parse, the field checks of R21.2 in the order of R21.3 (d) to (h) (`repoUrl` string, `branch` string or absent, `manifests` an array of strings of at most the allowed count, unknown fields), branch conflict.
     - _Requirements: 21.2, 21.3, 21.4, 21.15_
 
-  - [~] 9.6 Write unit tests for request validation
+  - [x] 9.6 Write unit tests for request validation
     - `tests/pipeline/api/validate-request.test.ts`: each failing field with its `details.reason` and `field`, check order, `application/json; charset=utf-8` accepted, other media types give 415, unknown field, `manifests` over the limit.
     - _Requirements: 21.2, 21.3, 21.4_
 
-  - [~] 9.7 Implement `handleScanRequest`
+  - [x] 9.7 Implement `handleScanRequest`
     - Create `pipeline/api/handle-scan-request.ts`: order method (405, body untouched), media type (415), body read (413), JSON (400), fields, configuration (`readGithubConfig`), URL (`parseRepoUrl`), branch, branch conflict, then one `clock()` reading for `startedAtMs` and `asOf`, then `runScan` raced against the margin timer (`SCAN_DEADLINE_MS + SCAN_RESPONSE_MARGIN_MS` after Scan_Start); on the margin the progress is closed, a late scan result is discarded and never cached, and `assemblePartial` answers. The route-level `guard` converts exceptions into `internal-error`.
     - _Requirements: 21.1, 21.3, 21.8, 21.10, 21.13, 21.14, 21.15, 6.1, 16.12, 16.13, 2.11_
 
@@ -930,7 +930,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/live/deps-dev-versionbatch.live.test.ts`: one `POST https://api.deps.dev/v3alpha/versionbatch` with an `NPM`, a `PYPI` and a `CARGO` `versionKey` taken from the fixture repositories; check `responses[].request.versionKey.system`, `.name`, `.version` and `responses[].version`; every `responses[]` entry matches a request by `request.versionKey` and every request has a matching entry; a failure is reported under R23.15.
     - _Requirements: 23.17, 8.8, 8.9, 23.15_
 
-  - [~] 9.33 Write the live gating test
+  - [x] 9.33 Write the live gating test
     - `tests/live/live-gating.test.ts`: with the flag unset every live test reports as skipped (not passed) and the offline `fetch` stub records no call; with a token unset the three GraphQL rows are skipped with the stated reason.
     - _Requirements: 23.9, 23.14_
 
