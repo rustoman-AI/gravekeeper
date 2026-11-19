@@ -49,14 +49,18 @@ export function raceAbort<T>(
 }
 
 function outcomeOf(result: SourceResult): UnitOutcome {
-  return result.kind === 'failed' ? { ok: false, reason: result.reason } : { ok: true };
+  if (result.kind === 'failed') return { ok: false, reason: result.reason };
+  // Design D5: a 2xx body that is not JSON is a failed unit.
+  if (result.kind === 'unparsable') return { ok: false, reason: 'http-error' };
+  return { ok: true };
 }
 
 export interface UnitRunner {
   /**
    * Runs one Work_Unit and records its outcome. With an aborted signal the
-   * call is not made and `deadline` is recorded (R16.12). `ok`, `absent` and
-   * `unparsable` results are recorded as ok, `failed` with its reason.
+   * call is not made and `deadline` is recorded (R16.12). `ok` and `absent`
+   * results are recorded as ok, `failed` with its reason, `unparsable` as
+   * `http-error` (design D5).
    */
   runUnit<T>(
     source: SourceName,

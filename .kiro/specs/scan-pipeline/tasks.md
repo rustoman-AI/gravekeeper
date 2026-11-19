@@ -549,7 +549,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/scan/ledger.test.ts`: each row of R17.2 to R17.5, a source with no Applicable_Unit, deadline units, `prerequisite`, `budget`, `token-missing`, `truncated` units, nine reason categories.
     - _Requirements: 17.2, 17.3, 17.4, 17.5, 17.8, 17.13, 17.14_
 
-  - [~] 5.6 Write property tests for source statuses
+  - [x] 5.6 Write property tests for source statuses
     - `tests/pipeline/scan/source-status.property.test.ts`.
     - **Property 52: Source status and source notes follow the unit outcomes**
     - **Property 53: OSV truncation makes the source partial**
@@ -564,7 +564,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/scan/targets.test.ts`: shared target across scopes and manifests, cap at `SCAN_MAX_DEPENDENCIES` and `+ 1`, skipped targets sort after looked-up ones, `git` and `path` never looked up.
     - _Requirements: 16.3, 16.6, 16.7, 16.10, 13.16_
 
-  - [~] 5.9 Write the property test for the dependency cap
+  - [x] 5.9 Write the property test for the dependency cap
     - `tests/pipeline/scan/targets.property.test.ts`.
     - **Property 47: The dependency cap partitions the Lookup_Targets**
     - **Validates: Requirements 16.6, 16.7, 16.10**
@@ -573,11 +573,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/run-unit.ts`: `runUnit(source, unitKey, call)` (records `deadline` without calling when the signal is aborted, otherwise `raceAbort(call(), signal)`), `skipUnit(source, unitKey, reason)`, `raceAbort`, `safeLog`. A source that ignores the abort signal cannot hold the scan past the deadline.
     - _Requirements: 16.5, 16.8, 16.12, 17.5, 17.8_
 
-  - [~] 5.11 Write unit tests for unit execution helpers
+  - [x] 5.11 Write unit tests for unit execution helpers
     - `tests/pipeline/scan/run-unit.test.ts`: aborted signal records `deadline` and never calls, `raceAbort` resolves at the abort for a source that never settles, a throwing Logger is ignored.
     - _Requirements: 16.5, 16.8, 16.12_
 
-  - [~] 5.12 Implement the discovery stage
+  - [x] 5.12 Implement the discovery stage
     - Create `pipeline/scan/stage-discovery.ts`: repository, branch and tree requests in order with the shared `GithubBudget`; canonical owner, repo and branch; errors `repo-not-found`, `branch-not-found`, `upstream-unavailable` (with `resetAt` only when it is an integer instant), `deadline-exceeded`; always sends the repository and branch requests.
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.12, 3.13, 4.1, 4.11, 16.11, 18.1_
 
@@ -593,7 +593,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/scan/stage-manifests.test.ts`: default root selection, explicit list, `too-many-manifests`, `manifest-not-found`, oversize skip with no Work_Unit, a failed fetch continues, all failed gives an empty result with notes, warnings kept in order, ecosystem only from the ParseResult.
     - _Requirements: 5.1, 5.2, 5.4, 5.5, 5.8, 5.9, 5.10, 5.11, 5.12_
 
-  - [~] 5.16 Implement the package and registry stage
+  - [x] 5.16 Implement the package and registry stage
     - Create `pipeline/scan/stage-registries.ts`: deps.dev package documents, npm latest, PyPI json and crates.io owners started together under the source limits; owners requested in the order of `orderCratesLookups`; an unexpired owners entry is answered without a request.
     - _Requirements: 8.1, 12.1, 12.2, 12.5, 12.10, 12.13, 12.14, 16.1_
 
@@ -629,7 +629,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/assemble-result.ts`: per target `guard` around `assembleFacts`, `classify` once per target, `summarize` of `/core`, Source_Statuses, notes (exactly one `scan-deadline-reached` when the deadline was reached), the fields of R18.1 with canonical `repo`; and `assemblePartial(progress, input)` that feeds the same code path from a `ScanProgress`, returning `deadline-exceeded` when discovery is incomplete.
     - _Requirements: 13.5, 13.9, 13.14, 13.16, 16.5, 16.12, 17.7, 18.1, 18.2, 18.8, 18.9, 18.12_
 
-  - [~] 5.25 Write unit tests for result assembly
+  - [-] 5.25 Write unit tests for result assembly
     - `tests/pipeline/scan/assemble-result.test.ts`: lists have matching lengths, shared targets give equal facts and classifications, unassessed dependencies, the throwing-Mapper guard turns facts all-null, `assemblePartial` with discovery complete and incomplete, `summary` equals `summarize(assessed)`.
     - _Requirements: 13.16, 16.12, 17.7, 18.1, 18.8, 18.9, 18.12_
 
