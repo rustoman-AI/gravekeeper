@@ -1,0 +1,1 @@
+{"request":{"source":"depsdev","method":"GET","url":"https://api.deps.dev/v3/advisories/GHSA-w2j9-qh3j-4h63","body":null},"response":{"kind":"absent","status":404,"headers":{"content-type":"text/plain; charset=utf-8"},"bodyText":""}}

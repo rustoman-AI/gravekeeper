@@ -890,7 +890,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/fixtures/fixtures-hygiene.test.ts` (every file under `tests/fixtures` scanned recursively for the token when set, `Bearer `, token prefixes and `Authorization`) and `tests/fixtures/fixtures-size.test.ts` (every Fixture_Set at most `FIXTURE_SET_MAX_BYTES`, summing all files). Both run in every test run.
     - _Requirements: 23.6, 23.16_
 
-  - [~] 9.23 Record the fixture sets
+  - [x] 9.23 Record the fixture sets
     - With `GRAVEKEEPER_LIVE_TESTS=1` and the user's `GITHUB_TOKEN` set (ask the user to provide it if it is unset, and do not print or store it), run `npm run fixtures:record` for `request/request` (npm), `revmic/canopy` (Python) and `ajeetdsouza/zoxide` (Rust) and for the supplementary sets `ef8-withdrawn`, `ef10-informational` and `ef19-not-found-alias`. Confirm that each recorded set passes the hygiene and size tests.
     - _Requirements: 23.2, 23.3, 23.4, 23.16_
 

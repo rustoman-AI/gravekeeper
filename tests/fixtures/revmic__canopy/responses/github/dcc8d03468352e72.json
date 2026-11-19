@@ -1,0 +1,1 @@
+{"request":{"source":"github","method":"GET","url":"https://raw.githubusercontent.com/revmic/canopy/85211073be446ea810a5865f293f85a928d84343/requirements.txt","body":null},"response":{"kind":"ok","status":200,"headers":{"content-type":"text/plain; charset=utf-8"},"bodyText":"Flask==0.10.1\nFlask-Mail==0.9.0\nFlask-Script==0.6.6\nJinja2==2.7.1\nWerkzeug==0.9.4\nWTForms==1.0.5\n"}}
