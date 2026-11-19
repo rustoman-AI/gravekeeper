@@ -1,0 +1,56 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1. Audit DEAD and HAUNTED dependencies of request/request (no code changes)": [
+      {
+        "executionId": "a1199dca-73eb-4eec-b9d2-361eb5205156",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795058852878
+      },
+      {
+        "executionId": "a1199dca-73eb-4eec-b9d2-361eb5205156",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795058856982
+      },
+      {
+        "executionId": "a1199dca-73eb-4eec-b9d2-361eb5205156",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795059005808
+      }
+    ],
+    "2. Create .kiro/steering/ui-design.md": [
+      {
+        "executionId": "a1199dca-73eb-4eec-b9d2-361eb5205156",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795058852914
+      },
+      {
+        "executionId": "a1199dca-73eb-4eec-b9d2-361eb5205156",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795058857987
+      },
+      {
+        "executionId": "a1199dca-73eb-4eec-b9d2-361eb5205156",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795059005951
+      }
+    ],
+    "3. Production smoke test and log results": [
+      {
+        "executionId": "a1199dca-73eb-4eec-b9d2-361eb5205156",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795058852952
+      },
+      {
+        "executionId": "a1199dca-73eb-4eec-b9d2-361eb5205156",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795058859289
+      },
+      {
+        "executionId": "a1199dca-73eb-4eec-b9d2-361eb5205156",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795059006102
+      }
+    ]
+  }
+}

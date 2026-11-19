@@ -155,3 +155,11 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 - Live smoke scan request/request: grade B, 40 dependencies, ALIVE 11 / HAUNTED 0 / DEAD 29, 0 unassessed, all six sources ok, notes source-repo-unverified x40, 4251 ms.
 - Live smoke scan revmic/canopy: grade C, 6 dependencies, ALIVE 1 / HAUNTED 3 / DEAD 2, 0 unassessed, all six sources ok, notes source-repo-unverified x3, 3468 ms.
 - Live smoke scan ajeetdsouza/zoxide: grade B, 22 dependencies, ALIVE 17 / HAUNTED 0 / DEAD 3, 0 unassessed, all six sources ok, notes informational-advisory-excluded x1, maintainers-lower-bound x7, source-repo-unverified x17, unmaintained-advisory x1, 21494 ms (crates.io owners requests are spaced about 1 s apart).
+
+## Session 14
+
+- Production smoke test, https://gravekeeper-chi.vercel.app, no token on our side. POST /api/scan revmic/canopy: HTTP 200, ok true, grade C, 6 dependencies, ALIVE 1 / HAUNTED 3 / DEAD 2, 0 unassessed, all six sources ok, notes source-repo-unverified x3, no github-token-missing note, Cache-Control no-store. The measured response took 647 ms because an earlier unmeasured request (same body) had already populated the cache, so the cold scan time was not captured.
+- Immediate repeat: HTTP 200 in 951 ms with asOf identical to the first response (2026-11-19T03:28:18.506Z), which is the Scan_Cache hit evidence.
+- GET /api/scan: 405 with `Allow: POST`, body `invalid-request`, `details.reason` `method-not-allowed`.
+- POST https://gitlab.com/a/b: 400, `error.code` `invalid-url`, `details.part` `host`, message "Only repositories on github.com are accepted."
+- Env var reaches the function: no `github-token-missing` note in any response.
