@@ -94,8 +94,8 @@ pipeline/
                                     request-key.ts (pure), l2-entries.ts (pure compact encoders of the three L2 entry kinds, D12)
   mapping/                          pure Mappers (imports only core, mapping siblings, constants.ts)
   url/                              parse-repo-url.ts, format-repo-url.ts
-  config/                           github-config.ts (R2)
-  scan/                             orchestrator: run-scan.ts, stages, ledger.ts, github-budget.ts, notes.ts, source-status.ts,
+  config/                           github-config.ts (R2), config-messages.ts (the three fixed configuration messages, imported by github-config.ts and scan/messages.ts)
+  scan/                             orchestrator: run-scan.ts, stages, ledger.ts, github-budget.ts, notes.ts, messages.ts (R20.14), source-status.ts,
                                     cache-keys.ts, scan-cache.ts (store rule of R19.5, R19.7, R19.22 and lookup of R19.6)
   api/                              validate-request.ts, handle-scan-request.ts, scan-error.ts, read-body.ts
   internal/                         result.ts (ok, err), safe.ts (guard)
@@ -1634,6 +1634,12 @@ This property supports the Runtime Cache tier (OQ-D1, enabled by default) and ex
 
 **Validates: Requirements 11.16**
 
+### Property 76: Rendered messages are safe
+
+*For any* Scan_Note or Scan_Error built from generated `details`, *for any* Token and *for any* request input (`repoUrl`, `branch`, `manifests` and arbitrary body text, drawn from characters that do not occur in the fixed text of the table), the rendered `message` contains neither the Token, nor U+2014, nor any substring of 3 or more characters of the request input that is not part of a validated interpolated value.
+
+**Validates: Requirements 20.16**
+
 ### Traceability: PBT criterion to property
 
 | Requirement | Criterion to property |
@@ -1657,7 +1663,7 @@ This property supports the Runtime Cache tier (OQ-D1, enabled by default) and ex
 | 17 | 10 to P50, 11 to P51, 12 to P52, 14 to P53, 15 to P54, 16 to P52 |
 | 18 | 7 to P55, 8 to P56, 9 to P57, 12 to P58 |
 | 19 | 11 to P59 and P67, 12 to P60, 13 to P61, 16 to P62, 18 to P59, 21 to P68, 29 to P69, 30 to P70, 31 to P71, 32 to P72 |
-| 20 | 8 to P63, 9 to P63 |
+| 20 | 8 to P63, 9 to P63, 16 to P76 |
 | 21 | 12 to P64, 15 to P65 |
 | 22 | 15 to P66 |
 
@@ -1679,7 +1685,7 @@ export type ScanErrorBody =
   | { code: 'too-many-manifests'; message: string; details: { limit: number } }
   | { code: 'manifest-not-found'; message: string; details: { path: string } }
   | { code: 'repo-not-found'; message: string }
-  | { code: 'branch-not-found'; message: string }
+  | { code: 'branch-not-found'; message: string; details: { branch: string } }
   | { code: 'upstream-unavailable'; message: string; details: { source: SourceName; resetAt?: IsoInstant } }
   | { code: 'deadline-exceeded'; message: string }
   | { code: 'internal-error'; message: string };
@@ -1687,7 +1693,7 @@ export type ScanErrorBody =
 export type ScanResponseBody = ({ ok: true } & Omit<ScanResult, 'ok'>) | { ok: false; error: ScanErrorBody };
 ```
 
-`details` is omitted, not null, when the code defines none (R21.5, R21.6).
+`details` is omitted, not null, when the code defines none (R21.5, R21.6). `branch-not-found` carries `details.branch`, the selected branch name (R3.5, R21.6).
 
 | Code | HTTP | Header | Source of the error |
 |---|---|---|---|
@@ -1698,7 +1704,7 @@ export type ScanResponseBody = ({ ok: true } & Omit<ScanResult, 'ok'>) | { ok: f
 | `invalid-url` | 400 | | URL_Parser, branch check |
 | `too-many-manifests` | 400 | | R5.4 |
 | `manifest-not-found` | 404 | | R5.5 |
-| `repo-not-found`, `branch-not-found` | 404 | | R3.2, R3.5 |
+| `repo-not-found`, `branch-not-found` | 404 | | R3.2, R3.5. `branch-not-found` carries `details.branch`, the selected branch name |
 | `upstream-unavailable` with `resetAt` later than asOf | 503 | `Retry-After: ceil((resetAt - asOf) / 1000)`, at least 1 | R3.7, R14.5, R21.6 |
 | `upstream-unavailable` otherwise | 502 | | R3.6, R3.7, R3.9, R3.10, R4.11 |
 | `deadline-exceeded` | 504 | | R16.11 |
@@ -1722,6 +1728,10 @@ Every response, including every error, carries `Content-Type: application/json` 
 | Margin timer wins | `handleScanRequest` | `assemblePartial` result or `deadline-exceeded`. |
 
 The response never contains raw upstream text, an exception message, a stack, a header value or the token (R20.5, R20.12, R21.8). Notes and error messages are chosen from a table of fixed templates (`pipeline/scan/messages.ts`). Examples: `source-failed`: "A source did not answer. Facts that depend on it are unknown."; `invalid-url` for `host`: "Only repositories on <web host> are accepted." (the Web_Host comes from validated configuration, never from the input); `internal-error` for configuration: "GITHUB_API_URL is not a supported GitHub API URL." (names the variable, not its value).
+
+### User-facing messages (R20.14 to R20.16)
+
+`pipeline/scan/messages.ts` holds the message table of the requirements section "User-facing messages": one row per Scan_Note code, per error code, per `invalid-url` part, per `invalid-request` reason and per `internal-error` configuration message. It exports `renderNoteMessage(code, details)` and `renderErrorMessage(code, details, webHost)`, which look up the row and replace each `{key}` with the value of that exact `details` key (lists joined by a comma and a space in stored order). The `host` row takes the Web_Host from validated configuration. Every note and error is built through these two functions and no other code writes a `message`. The three configuration messages are exported from `pipeline/config/config-messages.ts`, which both `messages.ts` and `github-config.ts` import, so the table and `readGithubConfig` cannot differ (P5 keeps checking the fixed set). The architecture rules allow `scan` to import `config`. Tests: `tests/pipeline/scan/notes.test.ts` checks completeness (every NoteCode, error code, part and reason has exactly one row, every placeholder names a key that its code carries, no row has an em dash) and `tests/pipeline/scan/messages.property.test.ts` checks P76. Both belong to task 5.3.
 
 ---
 
@@ -1763,6 +1773,8 @@ tests/
     scan/scan-cache-store-rule.property.test.ts                               P70
     scan/crates-order.property.test.ts                                        P74 (scan level: owners cached in L1 or L2 send no request)
     scan/github-budget.property.test.ts                                       P40, P41
+    scan/notes.test.ts                         message table completeness (R20.14)
+    scan/messages.property.test.ts                                            P76
     api/handle-scan-request.test.ts, handle-scan-request.property.test.ts   P64, P65
     fixtures-coverage.test.ts, fixtures-scan.test.ts                          R23.2 to R23.5, R23.13
   adapters/

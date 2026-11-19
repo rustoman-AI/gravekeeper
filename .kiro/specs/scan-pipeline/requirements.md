@@ -264,6 +264,77 @@ This table is the single list of Scan_Note codes. `message` is always a fixed te
 
 The `github-budget-low` note is defined once, in Requirement 14, criterion 4. Requirement 11, criterion 13 and Requirement 23, criterion 12 (case 8) refer to that same note, and at most one such note exists per scan.
 
+## User-facing messages
+
+This section is the single source of the `message` text of every Scan_Note and every Scan_Error (Requirement 20, criteria 14 to 16). The UI adds any theme, so the text is plain. The error codes and their `details` are defined in Requirement 21, criterion 6, and the Scan_Note codes in the table above.
+
+Style rules:
+
+1. A message is written in plain English.
+2. A message has one or two sentences.
+3. A message ends with a period.
+4. A message contains no em dash (U+2014).
+5. A message contains no spooky wording.
+6. A message never contains a numeric rate limit, never contains the Token, and never contains raw request input.
+7. The only interpolated values are validated package names, ecosystems, manifest paths, advisory IDs, branch names, validated Source_Repo owner/repo (a GitHub `owner/repo` parsed and validated by the Source_Repo rules of Requirement 2, criterion 8 and Requirement 8, criterion 14), Upstream_Source names, and counts and limits, each taken from the `details` of the note or the error. The one other value is the Web_Host in the `host` row of `invalid-url`, which comes from validated configuration (Requirement 2) and never from the request.
+8. A list value (`pins`, `ids`) renders as its elements joined by a comma and a space, in the order stored in `details`.
+9. A placeholder `{key}` names the exact `details` key whose value it takes.
+
+Placeholder keys: `{path}` is `path`, `{name}` is `name`, `{pinned}` is `pinned`, `{pins}` is `pins`, `{ecosystem}` is `ecosystem`, `{sourceRepo}` is `sourceRepo`, `{ids}` is `ids`, `{total}` is `total`, `{limit}` is `limit`, `{source}` is `source`, `{branch}` is `branch`. The notes `no-root-manifest` (`paths`) and `github-budget-low` (`remaining`, `resetAt`) have details that no message renders.
+
+| Code | Condition | Text |
+|---|---|---|
+| `tree-truncated` | note | `GitHub returned a partial file tree for this repository, so the manifest list may be incomplete.` |
+| `no-manifests` | note | `No package.json, requirements.txt or Cargo.toml was found in this repository.` |
+| `no-root-manifest` | note | `No manifest was found at the repository root. Choose one of the manifests found in subfolders.` |
+| `manifest-too-large` | note | `The manifest {path} is too large to read and was skipped.` |
+| `manifest-fetch-failed` | note | `The manifest {path} could not be downloaded and was skipped.` |
+| `pin-not-found` | note | `{name} is pinned to {pinned}, which the registry does not list. The latest release was checked instead.` |
+| `no-default-version` | note | `The registry lists no current release for {name}, so its release facts are unknown.` |
+| `conflicting-pins` | note | `{name} is pinned to different versions in different manifests ({pins}). The latest release was checked instead.` |
+| `package-not-found` | note | `{name} was not found in the {ecosystem} registry.` |
+| `batch-fallback` | note | `The deps.dev batch lookup failed, so packages were looked up one at a time.` |
+| `source-repo-unverified` | note | `{name} links to the repository {sourceRepo}. This link comes from package metadata and is not verified.` |
+| `informational-advisory-excluded` | note | `{name} has informational advisories ({ids}) that are not counted as vulnerabilities.` |
+| `advisory-details-incomplete` | note | `Details for some advisories of {name} could not be loaded, so its highest severity may be understated.` |
+| `osv-pagination-ignored` | note | `OSV listed more advisories for {name} than could be loaded in time. Its vulnerability count may be incomplete.` |
+| `github-token-missing` | note | `No GitHub token is configured. Archived status and last-commit dates are unknown, and repository lookups use GitHub's lower unauthenticated rate limit.` |
+| `github-budget-low` | note | `The GitHub API rate limit was nearly used up, so some archived and last-commit facts are unknown.` |
+| `maintainers-lower-bound` | note | `{name} is also owned by teams on crates.io, so its maintainer count is a lower bound.` |
+| `dependency-cap-exceeded` | note | `This repository has {total} packages. Only the first {limit} were checked; the rest are listed as not checked.` |
+| `scan-deadline-reached` | note | `The scan ran out of time. Facts that were not loaded are unknown.` |
+| `source-partial` | note | `{source} answered only some requests. Some facts that depend on it are unknown.` |
+| `source-failed` | note | `A source did not answer. Facts that depend on it are unknown.` |
+| `unmaintained-advisory` | note | `{name} has a RustSec advisory ({ids}) saying it is unmaintained, so it is treated as deprecated.` |
+| `invalid-url` | `details.part` `url`, the URL is not of the accepted form (Requirement 1, criterion 7) | `The URL must look like https://<host>/<owner>/<repo>, without user information, port or unsupported query parameters.` |
+| `invalid-url` | `details.part` `url`, the parser failed unexpectedly (Requirement 1, criterion 14) | `The URL could not be read.` |
+| `invalid-url` | `details.part` `host` (Requirement 1, criterion 5) | `Only repositories on <web host> are accepted.` |
+| `invalid-url` | `details.part` `path` (Requirement 1, criterion 6) | `The path must be /<owner>/<repo> or /<owner>/<repo>/tree/<branch>, with at most one trailing slash.` |
+| `invalid-url` | `details.part` `owner` (Requirement 1, criterion 8) | `The owner is not a valid GitHub user or organization name.` |
+| `invalid-url` | `details.part` `repository` (Requirement 1, criterion 9) | `The repository is not a valid GitHub repository name.` |
+| `invalid-url` | `details.part` `branch` (Requirement 1, criterion 10; Requirement 21, criterion 14(c)) | `The branch is not a valid Git branch name.` |
+| `repo-not-found` | error | `This repository does not exist or is not public.` |
+| `branch-not-found` | error | `The branch {branch} does not exist in this repository.` |
+| `too-many-manifests` | error | `Choose at most {limit} manifests per scan.` |
+| `manifest-not-found` | error | `The manifest {path} was not found in this repository.` |
+| `upstream-unavailable` | error | `GitHub could not be reached, so the repository could not be read. Try again in a minute.` |
+| `deadline-exceeded` | error | `The repository could not be read in time. Try again in a minute.` |
+| `internal-error` | `GITHUB_API_URL` is not supported (Requirement 2, criterion 4) | `GITHUB_API_URL is not a supported GitHub API URL.` |
+| `internal-error` | `GITHUB_GRAPHQL_URL` is not supported (Requirement 2, criterion 9) | `GITHUB_GRAPHQL_URL is not a supported GitHub GraphQL URL.` |
+| `internal-error` | the GraphQL host differs from the API host (Requirement 20, criterion 11) | `GITHUB_GRAPHQL_URL must have the same host as GITHUB_API_URL.` |
+| `internal-error` | any other cause (Requirement 21, criterion 8) | `Something went wrong on our side. Try again in a minute.` |
+| `invalid-request` | `details.reason` `invalid-json` | `The request is not valid: the body is not valid JSON.` |
+| `invalid-request` | `details.reason` `invalid-type` | `The request is not valid: a field has the wrong type.` |
+| `invalid-request` | `details.reason` `unknown-field` | `The request is not valid: the body contains a field that is not accepted.` |
+| `invalid-request` | `details.reason` `missing-field` | `The request is not valid: a required field is missing.` |
+| `invalid-request` | `details.reason` `too-many-items` | `The request is not valid: the manifests list has too many items.` |
+| `invalid-request` | `details.reason` `branch-conflict` | `The request is not valid: the URL and the branch field name different branches.` |
+| `invalid-request` | `details.reason` `body-too-large` | `The request is not valid: the request body is too large.` |
+| `invalid-request` | `details.reason` `unsupported-media-type` | `The request is not valid: the content type must be application/json.` |
+| `invalid-request` | `details.reason` `method-not-allowed` | `The request is not valid: the method must be POST.` |
+
+The three `internal-error` configuration messages are exported from one shared place that both `pipeline/scan/messages.ts` and `pipeline/config/github-config.ts` import, so that the table and the configuration code cannot differ.
+
 ## Requirements
 
 ### Requirement 1: Repository URL parsing
@@ -318,7 +389,7 @@ The `github-budget-low` note is defined once, in Requirement 14, criterion 4. Re
 2. IF the repository request returns HTTP 404, or the body has `private` equal to true (EF-12), THEN THE Pipeline SHALL return the error `repo-not-found` with a fixed-template message stating that the repository does not exist or is not public, and SHALL send no further GitHub request for this scan.
 3. WHEN the Repo_Ref `branch` is null and `default_branch` is a non-empty string of at most `BRANCH_MAX_LENGTH` Unicode code points (EF-12; the same unit as Requirement 1, criterion 10), THE Pipeline SHALL select `default_branch` as the branch.
 4. WHEN a branch is selected (the Repo_Ref `branch` when it is not null, otherwise `default_branch`), THE Pipeline SHALL request that branch name unchanged (EF-13) and SHALL set Commit_SHA to `commit.sha`.
-5. IF the branch request returns HTTP 404, THEN THE Pipeline SHALL return the error `branch-not-found` with a fixed-template message naming the selected branch, and SHALL send no further GitHub request for this scan.
+5. IF the branch request returns HTTP 404, THEN THE Pipeline SHALL return the error `branch-not-found` with `details` equal to `{ branch }`, where `branch` is the selected branch name unchanged, and with the fixed-template message of the User-facing messages table, and SHALL send no further GitHub request for this scan.
 6. IF `commit.sha` is missing, is not a string, or is not exactly 40 characters from `0-9`, `a-f` and `A-F` (EF-13), THEN THE Pipeline SHALL return the error `upstream-unavailable` with `details.source` equal to `github`.
 7. IF a required discovery request (repository, branch or tree) ends as `failed` under Requirement 15 (after `RETRY_MAX_ATTEMPTS` attempts, or at once for an HTTP 4xx other than 429 and the throttle signals of EF-23, where an HTTP 404 of the repository request and of the branch request is handled by criteria 2 and 5 and an HTTP 404 of the tree request is a `failed` Work_Unit), or is not sent because GitHub_Budget is below `GITHUB_BUDGET_THRESHOLD` (Requirement 14, criterion 5), THEN THE Pipeline SHALL return the error `upstream-unavailable` with `details.source` equal to `github` and, only when `X-RateLimit-Reset` is an integer (EF-16), `details.resetAt` as that instant in ISO 8601 UTC. The one exception is a discovery request that ends `failed` with reason category `deadline` (cancelled or not started because of the scan deadline): THE Pipeline SHALL then return the error `deadline-exceeded` (Requirement 16, criterion 11).
 8. THE Pipeline SHALL NOT store repository and branch responses in the Upstream_Cache and SHALL send a new repository request and a new branch request for every scan, so that Commit_SHA is always current.
@@ -728,6 +799,9 @@ The `github-budget-low` note is defined once, in Requirement 14, criterion 4. Re
 11. IF the host of the GraphQL URL (compared case-insensitively, including any explicit port) is not equal to the host of the API URL, THEN THE Pipeline SHALL return the error `internal-error` (HTTP 500, Requirement 21) with a fixed message that names the variable `GITHUB_GRAPHQL_URL` and does not include its value, SHALL send no upstream request for that scan, and SHALL send the Token to no host, whether or not the Token is set.
 12. THE Scan_Route SHALL NOT include the Token or an `Authorization` header value in any response body or any response header, and SHALL NOT include any `GITHUB_TOKEN` value in any data it passes to client code.
 13. IF a response that the Fixture_Recorder is about to store contains the Token as a substring, or contains the string `Bearer ` followed by the Token, THEN THE Fixture_Recorder SHALL NOT write that Fixture, SHALL report a failure that does not contain the Token, and SHALL keep every previously stored Fixture unchanged.
+14. THE Pipeline SHALL build the `message` of every Scan_Note and every Scan_Error only from the User-facing messages table, with one row per condition: every Scan_Note code, every error code, every `details.part` value of `invalid-url`, every `details.reason` value of `invalid-request` and every configuration message of `internal-error` SHALL have exactly one row, and SHALL NOT build a message in any other way.
+15. THE Pipeline SHALL interpolate into a message only the values permitted by rule 7 of the User-facing messages section, taken from the `details` of that note or error under the exact key named by the placeholder.
+16. [PBT] THE Pipeline SHALL render, for every generated Scan_Note and Scan_Error and every generated Token and request input (`repoUrl`, `branch`, `manifests` and arbitrary body text), a message that contains neither the Token, nor the character U+2014, nor any substring of 3 or more characters of the request input that is not part of a validated interpolated value (the generated request input uses characters that do not occur in the fixed text of the table).
 
 ### Requirement 21: Scan API
 
@@ -752,14 +826,14 @@ The `github-budget-low` note is defined once, in Requirement 14, criterion 4. Re
    - (g) Criterion 2(c), 2(d) or 2(e) fails because of a wrong type of `repoUrl`, `branch` or `manifests`, or a non-string element of `manifests`: HTTP 400, `details.reason` `invalid-type`, `details.field` equal to the name of the first offending field in the order `repoUrl`, `branch`, `manifests`.
    - (h) `manifests` has more than `DISCOVERY_MAX_MANIFESTS` elements: HTTP 400, `details.reason` `too-many-items`, `details.field` `manifests`.
 4. IF `branch` and a `/tree/<branch>` part of `repoUrl` are both present and are not equal as strings (case-sensitive, comparing the body value with the percent-decoded URL value of Requirement 1, criterion 2), THEN THE Scan_Route SHALL return HTTP 400 with the error `invalid-request`, `details.reason` `branch-conflict` and `details.field` `branch`, with a fixed-template message that contains neither branch name, and SHALL send no upstream request.
-5. THE Scan_Route SHALL return, with the `Content-Type` `application/json`, a JSON body that is a discriminated union on `ok`: `{ ok: true, ...Scan_Result }` or `{ ok: false, error: { code, message, details? } }`. `message` SHALL be built from a fixed template (Requirement 20, criterion 5). `details` SHALL be omitted, not null, when criterion 6 defines no details for the code.
+5. THE Scan_Route SHALL return, with the `Content-Type` `application/json`, a JSON body that is a discriminated union on `ok`: `{ ok: true, ...Scan_Result }` or `{ ok: false, error: { code, message, details? } }`. `message` SHALL be built from a fixed template (Requirement 20, criterion 5), and the text of every message is given in the User-facing messages table. `details` SHALL be omitted, not null, when criterion 6 defines no details for the code.
 6. THE Scan_Route SHALL use exactly these error codes, HTTP statuses and `details` fields, and no other code, status or `details` field:
    - `invalid-request`: HTTP 400, 405, 413 or 415 as defined in criteria 3, 4 and 13. `details.reason` is one of `invalid-json`, `invalid-type`, `unknown-field`, `missing-field`, `too-many-items`, `branch-conflict`, `body-too-large`, `unsupported-media-type`, `method-not-allowed`. `details.field`, one of `body`, `repoUrl`, `branch`, `manifests`, is present for the reasons `invalid-type`, `unknown-field`, `missing-field`, `too-many-items` and `branch-conflict`, and absent for the others.
    - `invalid-url`: HTTP 400. `details.part` is one of `url`, `host`, `path`, `owner`, `repository`, `branch` (Requirement 1, criteria 5 to 10, and criterion 14 below).
    - `too-many-manifests`: HTTP 400. `details.limit` is `SCAN_MAX_MANIFESTS` (Requirement 5, criterion 4).
    - `manifest-not-found`: HTTP 404. `details.path` is the first offending path as given in the request (Requirement 5, criterion 5).
    - `repo-not-found`: HTTP 404, no `details` (Requirement 3, criterion 2).
-   - `branch-not-found`: HTTP 404, no `details` (Requirement 3, criterion 5).
+   - `branch-not-found`: HTTP 404. `details.branch` is the selected branch name, which is the validated branch of the Repo_Ref or `default_branch` (Requirement 3, criteria 3 and 5).
    - `upstream-unavailable`: `details.source` is an Upstream_Source name (Requirement 3, criteria 6, 7, 9 and 10; Requirement 4, criterion 11; Requirement 14, criterion 5). `details.resetAt` is an ISO 8601 UTC instant and is present only when Requirement 3, criterion 7 provides it. IF `details.resetAt` is present and later than asOf, THEN THE Scan_Route SHALL return HTTP 503 with a `Retry-After` header holding `ceil((resetAt - asOf) / 1000)` as a decimal integer of at least 1. Otherwise THE Scan_Route SHALL return HTTP 502 without a `Retry-After` header.
    - `deadline-exceeded`: HTTP 504, no `details`, no `Retry-After` header. Returned when the Scan_Deadline_Signal aborts before the Commit_SHA and the manifest selection are known (Requirement 16, criterion 11; Requirement 3, criterion 7).
    - `internal-error`: HTTP 500, no `details`. A configuration error (Requirement 2, criteria 4 and 9; Requirement 20, criterion 11) names the variable in the message and does not include its value.
@@ -768,7 +842,7 @@ The `github-budget-low` note is defined once, in Requirement 14, criterion 4. Re
 9. THE Scan_Route SHALL set `Cache-Control: no-store` on every response, including every error response.
 10. THE Scan_Route SHALL contain no scan logic beyond the checks of criteria 2 to 4, 13 and 14, asOf capture (Requirement 6, criterion 1, after the checks of criteria 3, 4 and 13 have passed), a call to the Pipeline entry function, and response formatting.
 11. THE Scan_Route SHALL run in a server-side runtime that provides the Node.js APIs the Pipeline needs (Requirement 20, criterion 1). The framework mechanism is defined in the design phase.
-12. [PBT] THE Scan_Route SHALL return, for every generated request (any method, any `Content-Type` value, any body bytes including arbitrary JSON, arbitrary strings and bodies around `REQUEST_BODY_MAX_BYTES`), a body that matches the discriminated union of criterion 5, an HTTP status in the set 200, 400, 404, 405, 413, 415, 500, 502, 503, 504, a status that matches the code according to criterion 6, only the `details` fields allowed for that code, and `Cache-Control: no-store`, and SHALL NOT throw.
+12. [PBT] THE Scan_Route SHALL return, for every generated request (any method, any `Content-Type` value, any body bytes including arbitrary JSON, arbitrary strings and bodies around `REQUEST_BODY_MAX_BYTES`), a body that matches the discriminated union of criterion 5, an HTTP status in the set 200, 400, 404, 405, 413, 415, 500, 502, 503, 504, a status that matches the code according to criterion 6, only the `details` fields allowed for that code by criterion 6 (including `branch` for `branch-not-found`), and `Cache-Control: no-store`, and SHALL NOT throw.
 13. IF the request method is not `POST` (including `GET`, `HEAD`, `PUT`, `PATCH`, `DELETE` and `OPTIONS`, compared case-sensitively), THEN THE Scan_Route SHALL return HTTP 405 with the error `invalid-request`, `details.reason` `method-not-allowed`, and the header `Allow: POST`, SHALL NOT read or validate the body, and SHALL send no upstream request.
 14. WHEN a request has passed the checks of criteria 2 and 3, THE Scan_Route SHALL apply these steps in this order, and SHALL stop at the first one that returns an error:
     - (a) Read the GitHub configuration (Requirement 2). A configuration error returns `internal-error`, so a configuration error takes precedence over `invalid-url`.

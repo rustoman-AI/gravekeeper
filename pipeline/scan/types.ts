@@ -222,7 +222,11 @@ export type ScanErrorBody =
       readonly details: { readonly path: string };
     }
   | { readonly code: 'repo-not-found'; readonly message: string }
-  | { readonly code: 'branch-not-found'; readonly message: string }
+  | {
+      readonly code: 'branch-not-found';
+      readonly message: string;
+      readonly details: { readonly branch: string };
+    }
   | {
       readonly code: 'upstream-unavailable';
       readonly message: string;

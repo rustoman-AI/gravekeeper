@@ -5,6 +5,7 @@ import {
   GITHUB_DEFAULT_WEB_HOST,
 } from '../constants';
 import type { GithubConfig } from '../ports/http';
+import { API_URL_MESSAGE, GRAPHQL_HOST_MESSAGE, GRAPHQL_URL_MESSAGE } from './config-messages';
 import { err, ok } from '../mapping/result';
 import type { Result } from '../mapping/result';
 
@@ -19,10 +20,6 @@ export interface ConfigError {
   readonly message: string;
 }
 
-// Fixed messages: they name the variable and never its value (Requirement 2.4, 2.9, 20.11).
-const API_URL_MESSAGE = 'GITHUB_API_URL is not a supported GitHub API URL.';
-const GRAPHQL_URL_MESSAGE = 'GITHUB_GRAPHQL_URL is not a supported GitHub GraphQL URL.';
-const GRAPHQL_HOST_MESSAGE = 'GITHUB_GRAPHQL_URL must have the same host as GITHUB_API_URL.';
 
 interface UrlParts {
   readonly scheme: string; // lowercase

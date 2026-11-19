@@ -533,7 +533,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/types.ts`: `ScanResult`, `ScanNote` and `NoteCode` (no `manifest-selection-capped`), `ScanInput`, `ScanDeps`, `ScanLimits`, `TypedCache`, `ScanProgress`, `LookupTarget`, `Scan_Error` types as in the Data Models section of the design.
     - _Requirements: 18.1, 17.9, 21.5, 21.6_
 
-  - [ ] 5.2 Implement the note templates and note builders
+  - [x] 5.2 Implement the note templates and note builders
     - Create `pipeline/scan/messages.ts` (fixed templates for every note and error message, no raw upstream text) and `pipeline/scan/notes.ts` (builders per `NoteCode`, `source-failed` and `source-partial` with `reasons` unique and in code point order).
     - _Requirements: 17.9, 17.15, 20.5, 21.5_
 
