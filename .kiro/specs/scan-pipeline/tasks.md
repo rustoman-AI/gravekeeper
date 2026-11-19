@@ -835,7 +835,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 64: The route always answers with the declared union**
     - **Validates: Requirements 21.12**
 
-  - [~] 9.10 Write the property test for branch resolution
+  - [x] 9.10 Write the property test for branch resolution
     - Append to `tests/pipeline/api/handle-scan-request.property.test.ts`.
     - **Property 65: Branch from the body and the URL**
     - **Validates: Requirements 21.15**
@@ -853,11 +853,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `adapters/composition.ts`: `createProductionDeps(env, deferrer, config)` builds the system clock, timer, random and logger, the shared `HttpClient` (limiters from `CONCURRENCY_*` and `CRATESIO_MIN_INTERVAL_MS`, authorizer, secrets), the six sources, the caching client, and the two stores (module-scope `globalThis` singletons for L1; `TieredCacheStore` with `RuntimeCacheStore` unless `GRAVEKEEPER_RUNTIME_CACHE` is `off`). It is the only module that reads `process.env`, through `adapters/runtime/env.ts` and `token-reader.ts`.
     - _Requirements: 19.19, 20.1, 22.5, 22.9, 22.17_
 
-  - [~] 9.14 Write unit tests for the composition
+  - [x] 9.14 Write unit tests for the composition
     - `tests/adapters/composition.test.ts`: `off` builds no `RuntimeCacheStore` and never calls `getCache`, unset, empty and any other value enable L2, singletons survive two calls, the token reaches only the authorizer.
     - _Requirements: 19.19, 20.1_
 
-  - [~] 9.15 Implement the route handler
+  - [x] 9.15 Implement the route handler
     - Read `node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md`, `03-api-reference/03-file-conventions/route.md`, `.../02-route-segment-config/maxDuration.md`, `.../runtime.md` and `04-functions/after.md` first (AGENTS.md). Create `app/api/scan/route.ts`: `export const maxDuration = 30;` as a number literal, named exports `POST`, `GET`, `HEAD`, `PUT`, `PATCH`, `DELETE`, `OPTIONS` that call one `handle` function, a `Deferrer` backed by `after`, `Response.json(body, { status, headers })` (empty body for `HEAD`). No `runtime`, `dynamic`, `revalidate` or `fetchCache` export. It is the only file outside `/adapters` that imports `adapters`.
     - _Requirements: 21.1, 21.9, 21.10, 21.11, 21.13, 21.16, 22.10_
 
@@ -870,7 +870,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 63: The token never reaches a sink**
     - **Validates: Requirements 20.8, 20.9, 20.12**
 
-  - [~] 9.18 Implement the fixture recorder
+  - [x] 9.18 Implement the fixture recorder
     - Create `scripts/record-fixtures.ts` and `scripts/fixtures/` helpers (`allowHeaders`, `assertNoSecrets`, staging in `tests/fixtures/.recording-<name>/`, size check against `FIXTURE_SET_MAX_BYTES` over every file of the set, replay check of R23.4 before replacing `tests/fixtures/<name>/`), a `RecordingHttpClient` around the production client with empty caches and no L2, the layout of the design (`metadata.json`, `index.json`, `responses/<source>/<hash16>.json`, byte-exact `bodyText`), refusal when `GRAVEKEEPER_LIVE_TESTS` is not `1` or `GITHUB_TOKEN` is unset, and the three supplementary recordings. Add `"fixtures:record": "tsx scripts/record-fixtures.ts"` to `package.json`.
     - _Requirements: 23.2, 23.3, 23.4, 23.6, 23.7, 23.10, 23.16, 20.13_
 

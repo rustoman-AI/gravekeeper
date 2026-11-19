@@ -1,10 +1,11 @@
-// Feature: scan-pipeline, Property 64: The route always answers with the declared union
+﻿// Feature: scan-pipeline, Property 64: The route always answers with the declared union
 // Requirement 21.12 (with 21.3, 21.5, 21.6, 21.9, 21.13)
 import * as fc from 'fast-check';
 import { describe, it } from 'vitest';
 import { handleScanRequest } from '../../../pipeline/api/handle-scan-request';
 import type { ApiDeps, RawScanRequest } from '../../../pipeline/api/handle-scan-request';
 import type { ApiResponse } from '../../../pipeline/api/scan-error';
+import { isValidBranchName } from '../../../pipeline/url/parse-repo-url';
 import { REQUEST_BODY_MAX_BYTES } from '../../../pipeline/constants';
 import type { SourceResult } from '../../../pipeline/ports';
 import type { ScanDeps } from '../../../pipeline/scan/types';
@@ -383,6 +384,129 @@ describe('handleScanRequest properties', () => {
         const problem = violation(response);
         if (problem !== null) {
           throw new Error(`${problem}: ${JSON.stringify({ status: response.status, headers: response.headers, body: response.body }).slice(0, 600)}`);
+        }
+      }),
+      cfg(),
+    );
+  });
+});
+
+// Feature: scan-pipeline, Property 65: Branch from the body and the URL
+// Requirement 21.15
+const BRANCH_ATOMS = ['a', 'b', 'Z', '0', '-', '_', '.', '/', '%', '%41', '#', '?', '@', '{', 'Ã©', 'æ—¥', 'ðŸ˜€', 'ÃŸ'];
+const arbBranchName: fc.Arbitrary<string> = fc
+  .array(fc.constantFrom(...BRANCH_ATOMS), { minLength: 1, maxLength: 10 })
+  .map((parts) => parts.join(''))
+  .filter(isValidBranchName);
+
+const encodeBranch = (branch: string, style: 'component' | 'keep-slash'): string =>
+  style === 'component'
+    ? encodeURIComponent(branch)
+    : branch.split('/').map(encodeURIComponent).join('/');
+
+interface BranchScenario {
+  readonly bodyBranch: string | undefined;
+  readonly urlBranch: string | undefined;
+  readonly style: 'component' | 'keep-slash';
+  readonly trailingSlash: boolean;
+}
+
+const arbBranchScenario: fc.Arbitrary<BranchScenario> = fc
+  .record({
+    first: arbBranchName,
+    second: arbBranchName,
+    shape: fc.constantFrom('body-only', 'url-only', 'neither', 'equal', 'different'),
+    style: fc.constantFrom<'component' | 'keep-slash'>('component', 'keep-slash'),
+    trailingSlash: fc.boolean(),
+  })
+  .map(({ first, second, shape, style, trailingSlash }) => {
+    const other = second === first ? `${second}x` : second;
+    switch (shape) {
+      case 'body-only':
+        return { bodyBranch: first, urlBranch: undefined, style, trailingSlash };
+      case 'url-only':
+        return { bodyBranch: undefined, urlBranch: first, style, trailingSlash };
+      case 'neither':
+        return { bodyBranch: undefined, urlBranch: undefined, style, trailingSlash };
+      case 'equal':
+        return { bodyBranch: first, urlBranch: first, style, trailingSlash };
+      default:
+        return { bodyBranch: first, urlBranch: other, style, trailingSlash };
+    }
+  });
+
+async function answerBranch(s: BranchScenario): Promise<{ response: ApiResponse; upstreamCalls: number; branches: string[] }> {
+  const runtime = createFakeRuntime(START_MS);
+  let upstreamCalls = 0;
+  const branches: string[] = [];
+  const base = buildSources('ok');
+  const sources = Object.fromEntries(
+    Object.entries(base as unknown as Record<string, Record<string, (...args: unknown[]) => unknown>>).map(
+      ([name, source]) => [
+        name,
+        Object.fromEntries(
+          Object.entries(source).map(([method, fn]) => [
+            method,
+            (...args: unknown[]) => {
+              if (method !== 'hasToken') upstreamCalls += 1;
+              if (name === 'github' && method === 'getBranch') branches.push(args[1] as string);
+              return fn(...args);
+            },
+          ]),
+        ),
+      ],
+    ),
+  ) as unknown as ScanDeps['sources'];
+  const treePart =
+    s.urlBranch === undefined ? '' : `/tree/${encodeBranch(s.urlBranch, s.style)}${s.trailingSlash ? '/' : ''}`;
+  const repoUrl = `https://github.com/o/r${treePart}`;
+  const payload = s.bodyBranch === undefined ? { repoUrl } : { repoUrl, branch: s.bodyBranch };
+  const request: RawScanRequest = {
+    method: 'POST',
+    contentType: 'application/json',
+    contentLength: null,
+    body: streamOfChunks(enc(JSON.stringify(payload)), 1024),
+  };
+  const deps: ApiDeps = {
+    sources,
+    clock: runtime.clock,
+    timer: runtime.timer,
+    random: runtime.random,
+    logger: { log: () => undefined },
+    scanCache: { get: () => Promise.resolve(null), set: () => Promise.resolve() },
+    readEnv: () => ({}),
+  };
+  const response = await runUntilSettled(handleScanRequest(request, deps), runtime);
+  return { response, upstreamCalls, branches };
+}
+
+describe('handleScanRequest branch resolution', () => {
+  // Feature: scan-pipeline, Property 65: Branch from the body and the URL
+  // **Validates: Requirements 21.15**
+  it('P65: uses the body branch, else the URL branch, and rejects unequal pairs without an upstream request', async () => {
+    await fc.assert(
+      fc.asyncProperty(arbBranchScenario, async (s) => {
+        const { response, upstreamCalls, branches } = await answerBranch(s);
+        const conflict = s.bodyBranch !== undefined && s.urlBranch !== undefined && s.bodyBranch !== s.urlBranch;
+        const detail = JSON.stringify({ s, status: response.status, body: response.body, branches }).slice(0, 600);
+        if (conflict) {
+          const body = response.body as { ok?: boolean; error?: { code?: string; details?: { reason?: string; field?: string } } };
+          if (
+            response.status !== 400 ||
+            body.ok !== false ||
+            body.error?.code !== 'invalid-request' ||
+            body.error.details?.reason !== 'branch-conflict' ||
+            body.error.details.field !== 'branch'
+          ) {
+            throw new Error(`expected branch-conflict: ${detail}`);
+          }
+          if (upstreamCalls !== 0) throw new Error(`upstream request after a conflict: ${detail}`);
+          return;
+        }
+        const expected = s.bodyBranch ?? s.urlBranch ?? 'main';
+        if (response.status !== 200) throw new Error(`expected a result: ${detail}`);
+        if (branches.length === 0 || branches.some((b) => b !== expected)) {
+          throw new Error(`requested branch differs from ${JSON.stringify(expected)}: ${detail}`);
         }
       }),
       cfg(),

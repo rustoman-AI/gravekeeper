@@ -6,6 +6,7 @@
     "dev": "next dev",
     "check:core": "tsx scripts/check-core-purity.ts",
     "check:architecture": "tsx scripts/check-architecture.ts",
+    "fixtures:record": "tsx scripts/record-fixtures.ts",
     "check": "npm run check:core && npm run check:architecture",
     "prebuild": "npm run check",
     "build": "next build",
