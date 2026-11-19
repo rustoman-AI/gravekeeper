@@ -27,21 +27,21 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 19.8_
 - [x] 2. Checkpoint - Housekeeping
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. This group can be committed alone. Ask the user if questions arise.
-- [ ] 3. Pipeline: advisory exclusion kind (Requirement 22)
-  - [~] 3.1 Add the `excluded` field to the advisory entries
+- [x] 3. Pipeline: advisory exclusion kind (Requirement 22)
+  - [x] 3.1 Add the `excluded` field to the advisory entries
     - In `pipeline/mapping/types.ts` add `readonly excluded: 'withdrawn' | 'informational' | null` to `AdvisoryEntry`. In `pipeline/mapping/advisories.ts` set it in `buildAdvisoryEntries`: `'withdrawn'` when the record has `withdrawn`, else `'informational'` when it has `informational`, else `null`, and `null` for an id without a record (it is counted as an unfetched id). Fix every other construction site that `npm run typecheck` reports. Change no count, note, message, score or entry order. Cite Requirement 22 in a comment above the rule.
     - _Requirements: 22.1, 22.2, 22.3, 22.4, 22.5, 22.6_
-  - [~] 3.2 Update and extend the unit tests
+  - [x] 3.2 Update and extend the unit tests
     - Update `tests/pipeline/mapping/advisories.test.ts`, `tests/pipeline/mapping/advisories.property.test.ts` and `tests/support/mapper-registry.ts` where they compare an entry by deep equality (they gain the field). Add cases to `tests/pipeline/mapping/advisories.test.ts`: a withdrawn record gives `'withdrawn'`, an informational record gives `'informational'`, a record that is both gives `'withdrawn'`, an unmaintained informational record gives `'informational'`, a plain record gives `null`, an id without a record gives `null`. Add a case to the assemble tests that the notes and counts equal those of the previous behaviour.
     - _Requirements: 22.1, 22.2, 22.3, 22.4, 22.5_
-  - [~] 3.3 Write the property test for the exclusion kind
+  - [x] 3.3 Write the property test for the exclusion kind
     - `tests/pipeline/mapping/advisory-exclusion.property.test.ts`, generating advisory records (all flag mixes, aliases) and unfetched ids and calling `assembleFacts` or `buildAdvisoryEntries` with `aggregateAdvisories` as the independent reference for the count.
     - **Property 34: Advisory exclusion kind agrees with the counted vulnerabilities (pipeline)**
     - **Validates: Requirements 22.1, 22.2, 22.3, 22.4, 22.5, 22.7**
-  - [~] 3.4 Check the field against the recorded fixtures
+  - [x] 3.4 Check the field against the recorded fixtures
     - In `tests/pipeline/fixtures-scan.test.ts` (or a new `tests/pipeline/fixtures-advisory-exclusion.test.ts` if the file would grow past one concern) assert for the three recorded fixture replays that every advisory entry has an `excluded` value, that the ids of the entries with `'informational'` equal the ids of the `informational-advisory-excluded` note of the same package (the `ajeetdsouza/zoxide` replay has one), and that the response body of `handleScanRequest` carries the field. No fixture is re-recorded.
     - _Requirements: 22.5, 22.6, 22.7_
-- [~] 4. Checkpoint - Pipeline field
+- [x] 4. Checkpoint - Pipeline field
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 5. View-model foundations
   - [~] 5.1 Create the constants, types and shared helper

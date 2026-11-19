@@ -103,6 +103,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128470787
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128685055
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128811018
       }
     ],
     "3.2 Update and extend the unit tests": [
@@ -110,6 +120,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128470842
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128811239
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128923434
       }
     ],
     "3.3 Write the property test for the exclusion kind": [
@@ -117,6 +137,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128470876
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128811374
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128924424
       }
     ],
     "3.4 Check the field against the recorded fixtures": [
@@ -124,6 +154,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128470910
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128811558
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128925437
       }
     ],
     "4. Checkpoint - Pipeline field": [
@@ -131,6 +171,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128470945
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128926009
+      },
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128993440
       }
     ],
     "5.1 Create the constants, types and shared helper": [
@@ -1363,6 +1413,13 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128665351
+      }
+    ],
+    "3. Pipeline: advisory exclusion kind (Requirement 22)": [
+      {
+        "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795128925500
       }
     ]
   }

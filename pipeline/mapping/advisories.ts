@@ -49,7 +49,9 @@ export function buildAdvisoryEntries(
   }
   return [...distinct].sort(compareCodePoints).map((id): AdvisoryEntry => {
     const record = records.get(id);
-    if (record === undefined) return { id, aliases: [], severity: null, url: advisoryUrl(id) };
+    if (record === undefined) return { id, aliases: [], severity: null, url: advisoryUrl(id), excluded: null };
+    // Requirement 22: withdrawn wins over informational; neither means counted.
+    const excluded = record.withdrawn ? 'withdrawn' : record.informational ? 'informational' : null;
     const aliases = new Set<string>();
     for (const alias of record.aliases) {
       if (alias !== '' && alias !== id) aliases.add(alias);
@@ -59,6 +61,7 @@ export function buildAdvisoryEntries(
       aliases: [...aliases].sort(compareCodePoints),
       severity: record.severity,
       url: advisoryUrl(id),
+      excluded,
     };
   });
 }

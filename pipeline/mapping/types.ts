@@ -137,6 +137,8 @@ export interface AdvisoryEntry {
   readonly aliases: readonly string[];
   readonly severity: Severity | null;
   readonly url: string;
+  /** Why the advisory is not counted as a vulnerability (Requirement 22). */
+  readonly excluded: 'withdrawn' | 'informational' | null;
 }
 
 export interface AssembledFacts {

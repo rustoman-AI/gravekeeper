@@ -42,7 +42,7 @@ describe('buildAdvisoryEntries', () => {
   });
   it('gives unfetched ids no aliases and null severity', () => {
     expect(buildAdvisoryEntries(['GHSA-1'], new Map())).toEqual([
-      { id: 'GHSA-1', aliases: [], severity: null, url: `${PREFIX}GHSA-1` },
+      { id: 'GHSA-1', aliases: [], severity: null, url: `${PREFIX}GHSA-1`, excluded: null },
     ]);
   });
   it('lists aliases distinct, ascending, without the id and without empty strings', () => {
@@ -50,7 +50,7 @@ describe('buildAdvisoryEntries', () => {
       ['GHSA-1', record('GHSA-1', { aliases: ['CVE-2', 'GHSA-1', 'CVE-1', 'CVE-2', ''], severity: 'HIGH' })],
     ]);
     expect(buildAdvisoryEntries(['GHSA-1'], records)).toEqual([
-      { id: 'GHSA-1', aliases: ['CVE-1', 'CVE-2'], severity: 'HIGH', url: `${PREFIX}GHSA-1` },
+      { id: 'GHSA-1', aliases: ['CVE-1', 'CVE-2'], severity: 'HIGH', url: `${PREFIX}GHSA-1`, excluded: null },
     ]);
   });
   it('keeps an alias that happens to spell the severity', () => {
@@ -63,6 +63,19 @@ describe('buildAdvisoryEntries', () => {
       ['I', record('I', { informational: true })],
     ]);
     expect(buildAdvisoryEntries(['W', 'I'], records).map((e) => e.id)).toEqual(['I', 'W']);
+  });
+  it.each([
+    ['withdrawn', { withdrawn: true }, 'withdrawn'],
+    ['informational', { informational: true }, 'informational'],
+    ['both', { withdrawn: true, informational: true }, 'withdrawn'],
+    ['unmaintained informational', { informational: true, unmaintained: true }, 'informational'],
+    ['plain', {}, null],
+  ] as const)('sets excluded for a %s record', (_name, extra, expected) => {
+    const records = new Map([['A', record('A', extra)]]);
+    expect(buildAdvisoryEntries(['A'], records)[0]?.excluded).toBe(expected);
+  });
+  it('sets excluded null for an id without a record', () => {
+    expect(buildAdvisoryEntries(['A'], new Map())[0]?.excluded).toBeNull();
   });
   it('returns an empty list for no ids', () => {
     expect(buildAdvisoryEntries([], new Map())).toEqual([]);

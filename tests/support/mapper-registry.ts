@@ -199,6 +199,7 @@ const isAdvisoryEntry = shape({
   aliases: arrayOf(isString),
   severity: nullOr(isSeverity),
   url: isString,
+  excluded: nullOr(literal('withdrawn', 'informational')),
 });
 const isAssembledFacts = shape({
   facts: isHealthFacts,

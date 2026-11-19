@@ -315,9 +315,9 @@ describe('assembleFacts: advisories field (R6)', () => {
       AS_OF,
     );
     expect(list).toEqual([
-      { id: 'GHSA-1', aliases: ['CVE-1'], severity: 'HIGH', url: url('GHSA-1') },
-      { id: 'GHSA-2', aliases: [], severity: null, url: url('GHSA-2') },
-      { id: 'GHSA-3', aliases: [], severity: null, url: url('GHSA-3') },
+      { id: 'GHSA-1', aliases: ['CVE-1'], severity: 'HIGH', url: url('GHSA-1'), excluded: null },
+      { id: 'GHSA-2', aliases: [], severity: null, url: url('GHSA-2'), excluded: null },
+      { id: 'GHSA-3', aliases: [], severity: null, url: url('GHSA-3'), excluded: null },
     ]);
   });
   it('lists withdrawn and informational advisories while the count excludes them', () => {
@@ -333,6 +333,22 @@ describe('assembleFacts: advisories field (R6)', () => {
     );
     expect(facts.openVulnerabilityCount).toBe(1);
     expect(list.map((e) => e.id)).toEqual(['R-1', 'R-2', 'R-3']);
+    expect(list.map((e) => e.excluded)).toEqual(['withdrawn', 'informational', null]);
+  });
+  it('keeps the notes and counts of the previous behaviour', () => {
+    const { facts, notes } = assembleFacts(
+      cargo(
+        idsOsv(['R-1', 'R-2', 'R-3'], {
+          'R-1': osvBody('R-1', { withdrawn: '2023-01-01T00:00:00Z' }),
+          'R-2': unmaintainedAdvisory('R-2'),
+          'R-3': osvBody('R-3'),
+        }),
+        false,
+      ),
+      AS_OF,
+    );
+    expect(facts.openVulnerabilityCount).toBe(1);
+    expect(notes.map((n) => n.code)).toEqual(['informational-advisory-excluded', 'unmaintained-advisory']);
   });
   it('lists both ids of an alias group while counting one vulnerability', () => {
     const { facts, advisories: list } = assembleFacts(

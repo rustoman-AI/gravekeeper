@@ -260,7 +260,7 @@ describe('createScanCache', () => {
         daysSinceLastRelease: null, daysSinceLastCommit: null, archived: null, deprecated: null,
         openVulnerabilityCount: null, maxSeverity: null, maintainerCount: null,
       },
-      advisories: [{ id: 'GHSA-a', aliases: ['CVE-1'], severity: 'HIGH', url: 'https://osv.dev/vulnerability/GHSA-a' }],
+      advisories: [{ id: 'GHSA-a', aliases: ['CVE-1'], severity: 'HIGH', url: 'https://osv.dev/vulnerability/GHSA-a', excluded: 'informational' }],
     };
     const withAdv = { ...makeResult(), dependencies: [entry] } as unknown as ScanResult;
     const bare = Object.fromEntries(Object.entries(entry).filter(([k]) => k !== 'advisories'));
@@ -272,10 +272,29 @@ describe('createScanCache', () => {
     expect(isScanResult(withAdv)).toBe(true);
     expect(isScanResult(without)).toBe(false);
     expect(isScanResult(badEntry)).toBe(false);
+    const adv = entry.advisories[0] as Record<string, unknown>;
+    const noExcluded = Object.fromEntries(Object.entries(adv).filter(([k]) => k !== 'excluded'));
+    const withoutExcluded = {
+      ...makeResult(),
+      dependencies: [{ ...entry, advisories: [noExcluded] }],
+    } as unknown as ScanResult;
+    const badExcluded = {
+      ...makeResult(),
+      dependencies: [{ ...entry, advisories: [{ ...adv, excluded: 'other' }] }],
+    } as unknown as ScanResult;
+    const nullExcluded = {
+      ...makeResult(),
+      dependencies: [{ ...entry, advisories: [{ ...adv, excluded: null }] }],
+    } as unknown as ScanResult;
+    expect(isScanResult(withoutExcluded)).toBe(false);
+    expect(isScanResult(badExcluded)).toBe(false);
+    expect(isScanResult(nullExcluded)).toBe(true);
     await store.set('with', withAdv as never, 60);
     await store.set('without', without as never, 60);
+    await store.set('noexcl', withoutExcluded as never, 60);
     expect(await runUntilSettled(cache.get('with'), runtime)).toEqual(withAdv);
     expect(await runUntilSettled(cache.get('without'), runtime)).toBeNull();
+    expect(await runUntilSettled(cache.get('noexcl'), runtime)).toBeNull();
   });
 
   it('treats a store that throws as a miss and a skipped store', async () => {

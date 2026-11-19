@@ -79,7 +79,8 @@ const allOf = (v: unknown, test: (item: unknown) => boolean): boolean =>
 function isAdvisory(v: unknown): boolean {
   return (
     isRec(v) &&
-    hasKeys(v, ['id', 'aliases', 'severity', 'url']) &&
+    hasKeys(v, ['id', 'aliases', 'severity', 'url', 'excluded']) &&
+    (v.excluded === null || v.excluded === 'withdrawn' || v.excluded === 'informational') &&
     isStr(v.id) &&
     isStrArr(v.aliases) &&
     (v.severity === null ||
