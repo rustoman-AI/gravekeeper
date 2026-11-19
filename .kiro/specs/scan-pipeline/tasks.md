@@ -537,7 +537,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/messages.ts` (fixed templates for every note and error message, no raw upstream text) and `pipeline/scan/notes.ts` (builders per `NoteCode`, `source-failed` and `source-partial` with `reasons` unique and in code point order).
     - _Requirements: 17.9, 17.15, 20.5, 21.5_
 
-  - [~] 5.3 Write unit tests for notes
+  - [x] 5.3 Write unit tests for notes
     - `tests/pipeline/scan/notes.test.ts`: every code has a fixed message, no template contains `${`, the Web_Host in `invalid-url` comes from configuration, `reasons` ordering and uniqueness.
     - _Requirements: 17.9, 17.15, 20.5, 21.5_
 
@@ -545,7 +545,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/ledger.ts` (`WorkLedger.record`, append-only) and `pipeline/scan/source-status.ts` (`computeSourceStatuses`, `buildSourceNotes`; `partial` for any deadline unit or a truncated OSV result, `failed` only when every Applicable_Unit failed for a reason other than `deadline`).
     - _Requirements: 17.1, 17.2, 17.3, 17.4, 17.5, 17.8, 17.9, 17.13, 17.14, 17.15, 17.16_
 
-  - [~] 5.5 Write unit tests for the ledger and statuses
+  - [x] 5.5 Write unit tests for the ledger and statuses
     - `tests/pipeline/scan/ledger.test.ts`: each row of R17.2 to R17.5, a source with no Applicable_Unit, deadline units, `prerequisite`, `budget`, `token-missing`, `truncated` units, nine reason categories.
     - _Requirements: 17.2, 17.3, 17.4, 17.5, 17.8, 17.13, 17.14_
 
@@ -560,7 +560,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/targets.ts`: dedupe registry dependencies into Lookup_Targets by `(ecosystem, name)`, order by `compareCodePoints`, cap at `SCAN_MAX_DEPENDENCIES` with `capped.total` and `capped.skipped`, mark `git` and `path` dependencies as unassessed.
     - _Requirements: 16.1, 16.2, 16.3, 16.4, 16.6, 16.7, 16.10, 13.16_
 
-  - [~] 5.8 Write unit tests for target planning
+  - [x] 5.8 Write unit tests for target planning
     - `tests/pipeline/scan/targets.test.ts`: shared target across scopes and manifests, cap at `SCAN_MAX_DEPENDENCIES` and `+ 1`, skipped targets sort after looked-up ones, `git` and `path` never looked up.
     - _Requirements: 16.3, 16.6, 16.7, 16.10, 13.16_
 
@@ -569,7 +569,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 47: The dependency cap partitions the Lookup_Targets**
     - **Validates: Requirements 16.6, 16.7, 16.10**
 
-  - [~] 5.10 Implement unit execution helpers
+  - [x] 5.10 Implement unit execution helpers
     - Create `pipeline/scan/run-unit.ts`: `runUnit(source, unitKey, call)` (records `deadline` without calling when the signal is aborted, otherwise `raceAbort(call(), signal)`), `skipUnit(source, unitKey, reason)`, `raceAbort`, `safeLog`. A source that ignores the abort signal cannot hold the scan past the deadline.
     - _Requirements: 16.5, 16.8, 16.12, 17.5, 17.8_
 
@@ -625,7 +625,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/scan/stage-repo-facts.test.ts`: no token, no Source_Repo, batch boundary, a `NOT_FOUND` alias is `ok` with null facts, a foreign error type fails the unit, budget stop.
     - _Requirements: 11.1, 11.2, 11.5, 11.7, 11.8, 11.9, 11.13, 14.3, 17.5_
 
-  - [~] 5.24 Implement result assembly and partial assembly
+  - [x] 5.24 Implement result assembly and partial assembly
     - Create `pipeline/scan/assemble-result.ts`: per target `guard` around `assembleFacts`, `classify` once per target, `summarize` of `/core`, Source_Statuses, notes (exactly one `scan-deadline-reached` when the deadline was reached), the fields of R18.1 with canonical `repo`; and `assemblePartial(progress, input)` that feeds the same code path from a `ScanProgress`, returning `deadline-exceeded` when discovery is incomplete.
     - _Requirements: 13.5, 13.9, 13.14, 13.16, 16.5, 16.12, 17.7, 18.1, 18.2, 18.8, 18.9, 18.12_
 
