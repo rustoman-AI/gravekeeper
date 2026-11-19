@@ -82,7 +82,7 @@ function importViolations(
     }
     const resolved = resolveSpecifier(file, ref.specifier);
     for (const rule of LAYER_RULES) {
-      if (rule.kind === 'import' && rule.appliesTo(file) && rule.forbids(resolved, file)) {
+      if (rule.kind === 'import' && rule.appliesTo(file) && rule.forbids(resolved, file, ref.kind)) {
         out.push({ file, line: ref.line, rule: rule.id });
       } else if (rule.kind === 'api' && rule.appliesTo(file) && resolved.kind === 'package') {
         const name = resolved.name.replace(/^node:/, '').split('/')[0];

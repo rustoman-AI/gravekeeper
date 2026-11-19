@@ -44,28 +44,28 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
 - [x] 4. Checkpoint - Pipeline field
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 5. View-model foundations
-  - [~] 5.1 Create the constants, types and shared helper
+  - [x] 5.1 Create the constants, types and shared helper
     - Create `view-model/constants.ts` (every constant of the requirements Constants table with Home "view-model", plus `SCENE_PADDING_PX`, `PLOT_BOX_WIDTH_PX`, `PLOT_BOX_HEIGHT_PX`, `REASON_PRIORITY`, `LINK_HOSTS`, `DEFAULT_SEVERITY` use from core, and `CLIENT_JS_BUDGET_BYTES`; import `SCAN_MAX_MANIFESTS` and `SCAN_MAX_DEPENDENCIES` from `pipeline/constants.ts`), `view-model/types.ts` (all types of the design "Types" section including `PlotKind` with six values, `StatusWord` with six words, `ParsedAdvisory`, `AdvisoryExclusion`, `HeadlineModel` with `haunted`, and `DetailModel.advisoryGroups`) and `view-model/internal/compare-code-points.ts`. Create no `index.ts` yet (task 5.40). Read `core/index.ts` and `pipeline/scan/types.ts` for the imported names. Every constant cites its requirement in a comment.
     - _Requirements: 6.1, 6.2, 6.3, 6.6, 8.1, 8.2, 8.3, 15.2, 17.2_
-  - [~] 5.2 Write the unit test for the constants
+  - [x] 5.2 Write the unit test for the constants
     - Create `tests/ui/view-model/constants.test.ts`: the five consistency rules of the requirements (`SCENE_MAX_PLOTS` equals `SCAN_MAX_DEPENDENCIES`, `CLIENT_FETCH_TIMEOUT_MS` above 26500, `SCAN_STAGE_START_MS` strictly increasing and below `SCAN_SLOW_NOTICE_MS`, `PLOT_JITTER_MAX_PX * 2` below `PLOT_CELL_WIDTH_PX`, `SCENE_MIN_COLUMNS` at most `SCENE_MAX_COLUMNS`), `PLOT_BOX_WIDTH_PX` is 80 and `PLOT_BOX_HEIGHT_PX` is 104, `REASON_PRIORITY` has the ten ids in order, `FEATURED_GRAVEYARDS` has the three URLs in order, `CLIENT_FETCH_TIMEOUT_MS` equals `ROUTE_MAX_DURATION_SECONDS * 1000`.
     - _Requirements: 19.7_
-  - [~] 5.3 Extend the architecture check with the UI rules
+  - [x] 5.3 Extend the architecture check with the UI rules
     - In `scripts/architecture/rules.ts` (read `check.ts`, `globals.ts`, `imports.ts` and `resolve.ts` first) add the rules of the design table: `view-model-import-not-allowed`, `view-model-forbidden-api`, `client-import-not-allowed`, `components-import-pipeline-runtime`, `components-no-core-runtime`, `view-model-uses-core-merge`, extend `no-default-export` and `file-name-style` to `view-model/**`, `client/**` and `components/**` (route files of `app/**` exempt), `no-inner-html`, `no-literal-colour`, `no-fixture-import`. Directories that do not exist yet are skipped without error.
     - _Requirements: 6.1, 6.2, 6.4, 6.5, 6.8, 15.2, 21.1, 2.5_
-  - [~] 5.4 Write the unit tests for the architecture rules
+  - [x] 5.4 Write the unit tests for the architecture rules
     - Create `tests/architecture/ui-rules.test.ts` with, for each new rule, one inline violating snippet that fails and one clean snippet that passes (for example a `react` import in `view-model/x.ts`, `Date.now()` in the view-model, `dangerouslySetInnerHTML` in a component, a hex colour in a component, a fixture import in `app/`), in the style of `tests/architecture/architecture.test.ts`.
     - _Requirements: 6.1, 6.2, 6.5, 6.8, 15.2, 21.1_
-  - [~] 5.5 Create the typed builders and the Scan_Result arbitrary
+  - [x] 5.5 Create the typed builders and the Scan_Result arbitrary
     - Create `tests/support/ui/scan-result-builder.ts` (typed builders that return a value satisfying `ScanResult` for every state in DG-17: unassessed items of each cause, `capped.skipped`, `partial` and `failed` sources, `no-manifests`, `no-root-manifest`, `range-unresolved`, a HAUNTED package without severity, a restless ghost (HAUNTED with `8.1`, `8.2`), a buried and a forgotten grave, advisories of every `excluded` value and with `excluded` absent, a 300-package and a 301-package result) and `tests/support/ui/scan-result-arbitrary.ts` (the arbitrary of design D10, built through the real core `classify` and `summarize`, with every generator listed in Requirement 19, criterion 2, up to 300 rows and up to 1000 for a `large` flag). Reuse `tests/support/arbitraries/`.
     - _Requirements: 19.2, 19.5_
-  - [~] 5.6 Write the unit test for the builders
+  - [x] 5.6 Write the unit test for the builders
     - Create `tests/ui/support/scan-result-builder.test.ts`: every builder result passes `parseScanResponse`-independent structural checks (`dependencies.length === assessed.length`, six `sources` keys, `summary.total` equals the unique keys), the arbitrary result has a summary equal to `summarize(result.assessed)`, and the restless, buried and forgotten builders have the intended ruleIds.
     - _Requirements: 19.2, 19.5_
-  - [~] 5.7 Implement the response boundary
+  - [x] 5.7 Implement the response boundary
     - Create `view-model/narrow.ts` (`narrowFacts`, `narrowAdvisories`, `narrowVersionBasis`, total) and `view-model/parse-response.ts` (`parseScanResponse`, `parseRetryAfter`, `parseCacheStatus`, case-insensitive header name, the nine error codes, status and body disagreement gives `malformed-response`). `narrowAdvisories` keeps an entry only under the rules of Requirement 14, criterion 5 and maps `excluded` `null`, `'informational'`, `'withdrawn'` to `counted`, `informational`, `withdrawn` and anything else (including absent) to `unknown`.
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.9, 6.6_
-  - [~] 5.8 Write the unit tests for the response boundary
+  - [x] 5.8 Write the unit tests for the response boundary
     - Create `tests/ui/view-model/parse-response.test.ts`: a valid result, `dependencies.length` unequal to `assessed.length`, a missing `advisories`, five source keys, a 200 with an error body, a 404 with a result body, each of the nine error codes, a tenth code, `Retry-After` values (`'0'`, `'1'`, `'86400'`, `'86401'`, `'1.5'`, `'abc'`, absent), the cache header values (`hit`, `miss`, `HIT`, ` hit`, absent), facts of the wrong type become `null`, an advisory without `id` is dropped, `excluded` of each value and absent.
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.9_
   - [~] 5.9 Write the property test for total parsing
@@ -80,10 +80,10 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/ui/view-model/parse-response-cache.property.test.ts`, arbitrary header strings (mixed case, whitespace), absent header, statuses 200 and others.
     - **Property 29: Cache status mapping**
     - **Validates: Requirements 14.9, 14.10**
-  - [~] 5.12 Implement grave type, plot kind, reasons and glow
+  - [x] 5.12 Implement grave type, plot kind, reasons and glow
     - Create `view-model/grave-type.ts` (`graveTypeOf`, `plotKindOf`, `statusWordOf` as in the design, with the rule that `8.3` alone never makes a restless ghost), `view-model/reasons.ts` (`REASON_PRIORITY` use, `strongestReason`, `shortForm` for each ruleId, `epitaphOf` including the Overgrown_Grave epitaph of Requirement 7.19 and the restless suffixes ", also archived", ", also deprecated", ", also archived and deprecated" of Requirement 7.20) and `view-model/glow.ts` (`glowOf`, `maxSeverityOf`, `GLOW_LEVELS`, `DEFAULT_SEVERITY` fallback). Import `Classification`, `Reason`, `Severity` from `core/index.ts` only.
     - _Requirements: 7.2, 7.4, 7.5, 7.7, 7.15, 7.16, 7.19, 7.20_
-  - [~] 5.13 Write the unit tests for the kind, reason and glow tables
+  - [x] 5.13 Write the unit tests for the kind, reason and glow tables
     - Create `tests/ui/view-model/grave-type.test.ts` and `tests/ui/view-model/reasons.test.ts`: every short form, the Reason_Priority order, the epitaph of a buried, forgotten (with and without `daysSinceLastRelease`), ghost, restless (`8.1` only, `8.2` only, both, `8.3` only stays a ghost) and lantern package, the six status words, the `unmaintained-advisory` case (`8.2`, buried), and the glow fallback chain (advisory severities, then `facts.maxSeverity`, then MEDIUM).
     - _Requirements: 7.4, 7.5, 7.7, 7.15, 7.16, 7.19, 7.20_
   - [~] 5.14 Write the property test for the grave type and plot kind
@@ -98,7 +98,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/ui/view-model/glow.property.test.ts`.
     - **Property 11: Glow level is monotone in severity**
     - **Validates: Requirements 7.7, 7.14**
-  - [~] 5.17 Implement the package rows
+  - [x] 5.17 Implement the package rows
     - Create `view-model/package-rows.ts`: `buildPackageRows` exactly as the design "Merged classification and rows" steps 1 to 8 (it imports `uniquePackages` from `core/index.ts`, never `STATUS_RANK` or `classificationTieKey`), the display name of pypi packages (`rawName`, Requirement 7.8), the unassessed causes (DG-10) and labels, the accessible label (Requirement 7.6) and the scene order (Requirement 7.9, ghosts and restless ghosts share the rank), using `compareCodePoints` from task 5.1.
     - _Requirements: 6.8, 7.1, 7.2, 7.3, 7.6, 7.8, 7.9_
   - [~] 5.18 Write the unit tests for the package rows
@@ -160,7 +160,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/ui/view-model/scene-nav.property.test.ts`.
     - **Property 18: Keyboard navigation stays on the grid**
     - **Validates: Requirements 9.6, 9.9**
-  - [~] 5.34 Implement the URL state, the request body and the link builders
+  - [x] 5.34 Implement the URL state, the request body and the link builders
     - Create `view-model/urls.ts`: `parseUrlState`, `buildUrl` (`repo`, repeated `manifest`, `view`; `/` when empty), `canonicalRepoUrl` (DG-8), `buildRequestBody` (only `repoUrl` and `manifests`), `encodeManifests`, `decodeManifests`, `registryLink`, `sourceRepoLink`, `advisoryLink` with the patterns of Requirement 21, criterion 3 and `encodeURIComponent` per path segment (npm scoped names keep a literal `@`). Every link function returns `null` for a value that fails its pattern.
     - _Requirements: 3.2, 3.3, 3.4, 3.11, 3.12, 10.10, 18.1, 21.2, 21.3, 21.4_
   - [~] 5.35 Write the unit tests for the URL module

@@ -1,6 +1,7 @@
 import ts from 'typescript';
-import { ZERO_ARGUMENT_DATE } from './globals';
-import { isInsideDir, toPosix, type ResolvedSpecifier } from './resolve';
+import { ZERO_ARGUMENT_DATE, findForbiddenApi } from './globals';
+import type { ImportKind } from './imports';
+import { isInsideDir, resolveSpecifier, toPosix, type ResolvedSpecifier } from './resolve';
 
 // Requirements 22.2, 22.4, 22.6 to 22.12, 22.17, 20.1, 20.10, 15.10
 
@@ -21,6 +22,15 @@ export type RuleId =
   | 'token-client-reachability'
   | 'token-next-public'
   | 'adapters-forbidden-time-api'
+  | 'view-model-import-not-allowed'
+  | 'view-model-forbidden-api'
+  | 'client-import-not-allowed'
+  | 'components-import-pipeline-runtime'
+  | 'components-no-core-runtime'
+  | 'view-model-uses-core-merge'
+  | 'no-inner-html'
+  | 'no-literal-colour'
+  | 'no-fixture-import'
   | 'non-literal-specifier';
 
 interface RuleBase {
@@ -34,7 +44,7 @@ interface RuleBase {
 export interface ImportRule extends RuleBase {
   kind: 'import';
   appliesTo: (filePath: string) => boolean;
-  forbids: (resolved: ResolvedSpecifier, filePath: string) => boolean;
+  forbids: (resolved: ResolvedSpecifier, filePath: string, kind: ImportKind) => boolean;
 }
 
 /** Reports every use of a listed API, and every import of a listed package. */
@@ -173,6 +183,113 @@ export function exportedInterfaceNames(filePath: string, text: string): string[]
   return names;
 }
 
+const UI_DIRS = ['view-model', 'client', 'components'] as const;
+const UI_AND_APP_DIRS = ['app', ...UI_DIRS] as const;
+const INNER_HTML_NAMES = new Set([
+  'dangerouslySetInnerHTML',
+  'innerHTML',
+  'outerHTML',
+  'insertAdjacentHTML',
+]);
+const HEX_COLOUR = /(^|[^\w&])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})(?![\w-])/;
+const FUNCTION_COLOUR = /\b(?:rgb|rgba|hsl|hsla)\(/i;
+
+function isTypeOnly(kind: ImportKind): boolean {
+  return kind === 'import-type' || kind === 'import-type-expression';
+}
+
+function isCoreIndex(p: string): boolean {
+  return p === 'core' || p === 'core/index' || p === 'core/index.ts';
+}
+
+function isPipelineConstants(p: string): boolean {
+  return isConstantsFile(p);
+}
+
+/** Lines of identifiers and string literals that satisfy a predicate. */
+function astLines(
+  filePath: string,
+  text: string,
+  onIdentifier: (name: string) => boolean,
+  onString: (value: string) => boolean,
+): number[] {
+  const sf = parse(filePath, text);
+  const lines: number[] = [];
+  const visit = (node: ts.Node): void => {
+    if (ts.isIdentifier(node) || ts.isPrivateIdentifier(node)) {
+      if (onIdentifier(node.text)) lines.push(lineOfNode(sf, node));
+    } else if (
+      ts.isStringLiteral(node) ||
+      ts.isNoSubstitutionTemplateLiteral(node) ||
+      ts.isTemplateHead(node) ||
+      ts.isTemplateMiddle(node) ||
+      ts.isTemplateTail(node)
+    ) {
+      if (onString(node.text)) lines.push(lineOfNode(sf, node));
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(sf);
+  return lines;
+}
+
+// Requirement 21.1
+function innerHtmlLines(filePath: string, text: string): number[] {
+  const lines = astLines(
+    filePath,
+    text,
+    (n) => INNER_HTML_NAMES.has(n),
+    (s) => INNER_HTML_NAMES.has(s),
+  );
+  for (const use of findForbiddenApi(text, ['document.write'])) lines.push(use.line);
+  return lines;
+}
+
+// Requirement 15.2
+function literalColourLines(filePath: string, text: string): number[] {
+  return astLines(
+    filePath,
+    text,
+    () => false,
+    (s) => HEX_COLOUR.test(s) || FUNCTION_COLOUR.test(s),
+  );
+}
+
+// Requirement 6.8
+function coreMergeLines(filePath: string, text: string): number[] {
+  const sf = parse(filePath, text);
+  let importsUniquePackages = false;
+  for (const statement of sf.statements) {
+    if (
+      !ts.isImportDeclaration(statement) ||
+      !ts.isStringLiteral(statement.moduleSpecifier) ||
+      statement.importClause?.isTypeOnly === true
+    ) {
+      continue;
+    }
+    const resolved = resolveSpecifier(filePath, statement.moduleSpecifier.text);
+    const bindings = statement.importClause?.namedBindings;
+    if (
+      resolved.kind === 'project' &&
+      isCoreIndex(resolved.path) &&
+      bindings !== undefined &&
+      ts.isNamedImports(bindings) &&
+      bindings.elements.some(
+        (e) => !e.isTypeOnly && (e.propertyName ?? e.name).text === 'uniquePackages',
+      )
+    ) {
+      importsUniquePackages = true;
+    }
+  }
+  const lines = astLines(
+    filePath,
+    text,
+    (n) => n === 'STATUS_RANK' || n === 'classificationTieKey',
+    () => false,
+  );
+  if (!importsUniquePackages) lines.push(1);
+  return lines;
+}
 export const LAYER_RULES: readonly LayerRule[] = [
   {
     kind: 'import',
@@ -285,7 +402,7 @@ export const LAYER_RULES: readonly LayerRule[] = [
     id: 'file-name-style',
     requirement: '22.8',
     message: 'file names are lowercase letters and digits joined by single hyphens',
-    appliesTo: (f) => inAny(f, ['pipeline', 'adapters']) && /\.tsx?$/.test(f),
+    appliesTo: (f) => inAny(f, ['pipeline', 'adapters', ...UI_DIRS]) && /\.tsx?$/.test(f),
     lines: (f) => fileNameLines(f),
   },
   {
@@ -294,7 +411,7 @@ export const LAYER_RULES: readonly LayerRule[] = [
     requirement: '22.8',
     message: 'pipeline and adapters files must not use export default or export =',
     appliesTo: (f) =>
-      inAny(f, ['pipeline', 'adapters']) && /\.tsx?$/.test(f) && toPosix(f) !== SCAN_ROUTE_FILE,
+      inAny(f, ['pipeline', 'adapters', ...UI_DIRS]) && /\.tsx?$/.test(f) && toPosix(f) !== SCAN_ROUTE_FILE,
     lines: defaultExportLines,
   },
   {
@@ -326,6 +443,109 @@ export const LAYER_RULES: readonly LayerRule[] = [
       isInsideDir(f, 'adapters') && !/^adapters\/runtime\/system-[^/]*$/.test(toPosix(f)),
     names: TIME_APIS,
     forbiddenPackages: [],
+  },
+  {
+    kind: 'import',
+    id: 'view-model-import-not-allowed',
+    requirement: '6.1, 6.5',
+    message:
+      'view-model may import only core/index.ts, view-model, pipeline/constants.ts, and types of pipeline',
+    appliesTo: (f) => isInsideDir(f, 'view-model'),
+    forbids: (r, _f, kind) => {
+      if (r.kind === 'package') return true;
+      if (isCoreIndex(r.path) || isInsideDir(r.path, 'view-model') || isPipelineConstants(r.path)) {
+        return false;
+      }
+      return !(isInsideDir(r.path, 'pipeline') && isTypeOnly(kind));
+    },
+  },
+  {
+    kind: 'api',
+    id: 'view-model-forbidden-api',
+    requirement: '6.2, 6.5',
+    message:
+      'view-model must not use clock, random, timer, network, DOM, storage or process.env APIs',
+    appliesTo: (f) => isInsideDir(f, 'view-model'),
+    names: [
+      'Date.now',
+      ZERO_ARGUMENT_DATE,
+      'Math.random',
+      'performance.now',
+      'fetch',
+      'window',
+      'document',
+      'localStorage',
+      'process.env',
+      'setTimeout',
+      'setInterval',
+    ],
+    forbiddenPackages: [],
+  },
+  {
+    kind: 'import',
+    id: 'client-import-not-allowed',
+    requirement: 'D6',
+    message: 'client may import only view-model, and types of core and pipeline',
+    appliesTo: (f) => isInsideDir(f, 'client'),
+    forbids: (r, _f, kind) => {
+      if (r.kind === 'package') return true;
+      if (isInsideDir(r.path, 'view-model') || isInsideDir(r.path, 'client')) return false;
+      return !(inAny(r.path, ['core', 'pipeline']) && isTypeOnly(kind));
+    },
+  },
+  {
+    kind: 'import',
+    id: 'components-import-pipeline-runtime',
+    requirement: '6.5',
+    message: 'components may import pipeline only through import type',
+    appliesTo: (f) => isInsideDir(f, 'components'),
+    forbids: (r, _f, kind) => isProjectPath(r, ['pipeline']) && !isTypeOnly(kind),
+  },
+  {
+    kind: 'import',
+    id: 'components-no-core-runtime',
+    requirement: '6.4',
+    message: 'components must not import core at runtime',
+    appliesTo: (f) => isInsideDir(f, 'components'),
+    forbids: (r, _f, kind) => isProjectPath(r, ['core']) && !isTypeOnly(kind),
+  },
+  {
+    kind: 'file',
+    id: 'view-model-uses-core-merge',
+    requirement: '6.8',
+    message:
+      'view-model/package-rows.ts must import uniquePackages from core and not name STATUS_RANK or classificationTieKey',
+    appliesTo: (f) => toPosix(f) === 'view-model/package-rows.ts',
+    lines: coreMergeLines,
+  },
+  {
+    kind: 'file',
+    id: 'no-inner-html',
+    requirement: '21.1',
+    message:
+      'no dangerouslySetInnerHTML, innerHTML, outerHTML, insertAdjacentHTML or document.write',
+    appliesTo: (f) => inAny(f, UI_AND_APP_DIRS) && /\.tsx?$/.test(f),
+    lines: innerHtmlLines,
+  },
+  {
+    kind: 'file',
+    id: 'no-literal-colour',
+    requirement: '15.2',
+    message: 'no hex, rgb( or hsl( colour literal; use the tokens in app/globals.css',
+    appliesTo: (f) =>
+      /\.tsx?$/.test(f) &&
+      (isInsideDir(f, 'components') ||
+        // TODO: remove the app/page.tsx exemption once the create-next-app placeholder is replaced.
+        (isInsideDir(f, 'app') && /\.tsx$/.test(f) && toPosix(f) !== 'app/page.tsx')),
+    lines: literalColourLines,
+  },
+  {
+    kind: 'import',
+    id: 'no-fixture-import',
+    requirement: '2.5',
+    message: 'app, components, client and view-model must not import from tests or fixtures',
+    appliesTo: (f) => inAny(f, UI_AND_APP_DIRS),
+    forbids: (r) => r.kind === 'project' && (isInsideDir(r.path, 'tests') || r.path.includes('fixtures')),
   },
 ];
 
