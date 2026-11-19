@@ -14,7 +14,7 @@ import { assemblePartial } from '../scan/assemble-result';
 import { renderErrorMessage } from '../scan/messages';
 import { createScanProgress, runScan } from '../scan/run-scan';
 import type { ScanDeps, ScanErrorBody, ScanInput, ScanOutcome } from '../scan/types';
-import { parseRepoUrl } from '../url/parse-repo-url';
+import { isValidBranchName, parseRepoUrl } from '../url/parse-repo-url';
 import { readRequestBody } from './read-body';
 import { respond } from './scan-error';
 import type { ApiResponse, ScanResponseBody } from './scan-error';
@@ -47,22 +47,6 @@ const internalError = (): ScanErrorBody => ({
 
 const outcomeResponse = (outcome: ScanOutcome, asOf: IsoInstant): ApiResponse =>
   outcome.ok ? respond({ ...outcome.value }, asOf) : fail(outcome.error, asOf);
-
-/** Characters that would change how the URL parser splits or rejects the synthetic URL. */
-const BRANCH_ESCAPE = /[%#?/\p{White_Space}\u0000-\u001f\u007f]/gu;
-
-/**
- * R21.14 (c): the body branch against the branch rules of R1.10, as given (no percent-decoding),
- * at least 1 code point. The rules live in the URL parser, so the branch is wrapped into a
- * `/tree/` URL with only the structural characters escaped and the parser's decoded result is
- * compared with the input. A branch the parser rejects for any reason is invalid.
- */
-function bodyBranchValid(branch: string, webHost: string): boolean {
-  if (branch.length === 0) return false;
-  const escaped = branch.replace(BRANCH_ESCAPE, (c) => encodeURIComponent(c));
-  const parsed = parseRepoUrl(`https://${webHost}/o/r/tree/${escaped}`, webHost);
-  return parsed.ok && parsed.value.branch === branch;
-}
 
 export async function handleScanRequest(request: RawScanRequest, deps: ApiDeps): Promise<ApiResponse> {
   try {
@@ -123,7 +107,7 @@ async function handle(request: RawScanRequest, deps: ApiDeps): Promise<ApiRespon
 
   // R21.14 (c)
   const bodyBranch = body.value.branch;
-  if (bodyBranch !== undefined && !bodyBranchValid(bodyBranch, config.webHost)) {
+  if (bodyBranch !== undefined && !isValidBranchName(bodyBranch)) {
     return fail({
       code: 'invalid-url',
       message: renderErrorMessage('invalid-url', { part: 'branch' }, config.webHost),

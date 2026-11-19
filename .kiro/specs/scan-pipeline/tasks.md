@@ -826,7 +826,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/api/handle-scan-request.ts`: order method (405, body untouched), media type (415), body read (413), JSON (400), fields, configuration (`readGithubConfig`), URL (`parseRepoUrl`), branch, branch conflict, then one `clock()` reading for `startedAtMs` and `asOf`, then `runScan` raced against the margin timer (`SCAN_DEADLINE_MS + SCAN_RESPONSE_MARGIN_MS` after Scan_Start); on the margin the progress is closed, a late scan result is discarded and never cached, and `assemblePartial` answers. The route-level `guard` converts exceptions into `internal-error`.
     - _Requirements: 21.1, 21.3, 21.8, 21.10, 21.13, 21.14, 21.15, 6.1, 16.12, 16.13, 2.11_
 
-  - [~] 9.8 Write unit tests for `handleScanRequest`
+  - [x] 9.8 Write unit tests for `handleScanRequest`
     - `tests/pipeline/api/handle-scan-request.test.ts`: validation order, 405 before the body is read, configuration error before `invalid-url`, branch from URL and body, the margin path with a never-settling `runScan` (answers a partial result or `deadline-exceeded` no later than 26.5 s on the fake clock), and case 11 of R23.12 (never-responding upstream through the real HTTP client).
     - _Requirements: 21.3, 21.13, 21.14, 21.15, 16.12, 16.13, 23.12_
 
@@ -840,12 +840,12 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 65: Branch from the body and the URL**
     - **Validates: Requirements 21.15**
 
-  - [~] 9.11 Write the property test for the response deadline
+  - [x] 9.11 Write the property test for the response deadline
     - Append to `tests/pipeline/scan/deadline.property.test.ts` (three variants: sources that honor the signal, sources that ignore it, and a never-settling `runScan` for the margin path).
     - **Property 49: A response arrives within the deadline plus margin**
     - **Validates: Requirements 16.13**
 
-  - [~] 9.12 Create the public entry point of the pipeline
+  - [x] 9.12 Create the public entry point of the pipeline
     - Create `pipeline/index.ts` exporting `runScan`, `handleScanRequest`, `RawScanRequest`, `ApiResponse` and the public types. No default export.
     - _Requirements: 21.10, 22.8_
 

@@ -83,6 +83,12 @@ function branchValid(branch: string): boolean {
   return true;
 }
 
+// Requirement 1.10, 21.14 (c)
+/** The branch rules applied to a branch as given (no percent-decoding), at least 1 code point. */
+export function isValidBranchName(branch: string): boolean {
+  return typeof branch === 'string' && branch.length > 0 && branchValid(branch);
+}
+
 function parse(input: unknown, webHost: string): Result<RepoRef, InvalidUrlError> {
   const urlMessage =
     'The URL must look like https://<host>/<owner>/<repo>, without user information, port or unsupported query parameters.';

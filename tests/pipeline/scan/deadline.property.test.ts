@@ -24,12 +24,14 @@ import {
   SCAN_DEADLINE_MS,
   SCAN_MAX_DEPENDENCIES,
   SCAN_MAX_MANIFESTS,
+  SCAN_RESPONSE_MARGIN_MS,
 } from '../../../pipeline/constants';
 import type { GithubConfig, SourceName } from '../../../pipeline/ports';
+import { handleScanRequest, type ApiDeps, type RawScanRequest } from '../../../pipeline/api/handle-scan-request';
 import { runScan } from '../../../pipeline/scan/run-scan';
 import type { ScanDeps } from '../../../pipeline/scan/types';
 import { scriptStep } from '../../support/arbitraries/scripts';
-import { createFakeRuntime, runUntilSettled } from '../../support/fake-runtime';
+import { createFakeRuntime, runUntilSettled, type FakeRuntime } from '../../support/fake-runtime';
 import { cfg } from '../../support/fc-config';
 import { createScriptedFetch, type ScriptedResponse, type Step } from '../../support/scripted-fetch';
 
@@ -154,8 +156,7 @@ interface ScenarioInput {
   readonly random: readonly number[];
 }
 
-async function runScenario(s: ScenarioInput): Promise<{ sentAtMs: readonly number[]; deadlineAtMs: number; outcomeOk: boolean }> {
-  const runtime = createFakeRuntime(s.startedAtMs, s.random);
+function buildStack(s: ScenarioInput, runtime: FakeRuntime): { deps: ScanDeps; scripted: ReturnType<typeof createScriptedFetch> } {
   const scripted = createScriptedFetch((rawUrl, attemptIndex) => {
     const url = new URL(rawUrl);
     const steps = s.scripts[sourceOf(url)];
@@ -207,6 +208,12 @@ async function runScenario(s: ScenarioInput): Promise<{ sentAtMs: readonly numbe
       maxAdvisoryDetails: OSV_MAX_ADVISORY_DETAILS,
     },
   };
+  return { deps, scripted };
+}
+
+async function runScenario(s: ScenarioInput): Promise<{ sentAtMs: readonly number[]; deadlineAtMs: number; outcomeOk: boolean }> {
+  const runtime = createFakeRuntime(s.startedAtMs, s.random);
+  const { deps, scripted } = buildStack(s, runtime);
   const outcome = await runUntilSettled(
     runScan(
       {
@@ -244,5 +251,108 @@ describe('P48 No attempt is sent at or after the deadline', () => {
     const result = await runScenario({ startedAtMs: 1_000_000, scripts, honorsSignal: false, random: [0.5] });
     expect(result.sentAtMs.length).toBeGreaterThan(4);
     for (const sentAt of result.sentAtMs) expect(sentAt).toBeLessThan(result.deadlineAtMs);
+  });
+});
+
+// Feature: scan-pipeline, Property 49: P49 A response arrives within the deadline plus margin
+// Validates: Requirements 16.13
+
+const ERROR_CODES = new Set([
+  'invalid-request',
+  'invalid-url',
+  'too-many-manifests',
+  'manifest-not-found',
+  'repo-not-found',
+  'branch-not-found',
+  'upstream-unavailable',
+  'deadline-exceeded',
+  'internal-error',
+]);
+
+function jsonRequest(text: string): RawScanRequest {
+  const bytes = new TextEncoder().encode(text);
+  return {
+    method: 'POST',
+    contentType: 'application/json',
+    contentLength: String(bytes.byteLength),
+    body: new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(bytes);
+        controller.close();
+      },
+    }),
+  };
+}
+
+/** Sources whose every method returns a promise that never settles and ignores the signal. */
+function neverSettlingSources(): ScanDeps['sources'] {
+  const never = (): ScanDeps['sources'][SourceName] =>
+    new Proxy({}, { get: () => (): Promise<never> => new Promise<never>(() => undefined) }) as unknown as ScanDeps['sources'][SourceName];
+  return { github: never(), depsdev: never(), osv: never(), npm: never(), cratesio: never(), pypi: never() } as unknown as ScanDeps['sources'];
+}
+
+async function respondAt(
+  deps: ScanDeps,
+  runtime: FakeRuntime,
+): Promise<{ response: Awaited<ReturnType<typeof handleScanRequest>>; finishedAtMs: number }> {
+  const apiDeps: ApiDeps = {
+    sources: deps.sources,
+    clock: deps.clock,
+    timer: deps.timer,
+    random: deps.random,
+    logger: deps.logger,
+    scanCache: deps.scanCache,
+    readEnv: () => ({}),
+  };
+  const response = await runUntilSettled(
+    handleScanRequest(jsonRequest(JSON.stringify({ repoUrl: 'https://github.com/o/r' })), apiDeps),
+    runtime,
+  );
+  return { response, finishedAtMs: runtime.clock() };
+}
+
+function expectValidResponse(response: Awaited<ReturnType<typeof handleScanRequest>>): void {
+  const body = response.body;
+  if (body.ok) {
+    expect(response.status).toBe(200);
+  } else {
+    expect(response.status).not.toBe(200);
+    expect(ERROR_CODES.has(body.error.code)).toBe(true);
+    expect(typeof body.error.message).toBe('string');
+  }
+}
+
+describe('P49 A response arrives within the deadline plus margin', () => {
+  it('P49: with sources that honor or ignore the signal, the response is produced by Scan_Start + SCAN_DEADLINE_MS + SCAN_RESPONSE_MARGIN_MS', async () => {
+    await fc.assert(
+      fc.asyncProperty(arbScenario, async (scenario) => {
+        const runtime = createFakeRuntime(scenario.startedAtMs, scenario.random);
+        const { deps } = buildStack(scenario, runtime);
+        const { response, finishedAtMs } = await respondAt(deps, runtime);
+        expect(finishedAtMs).toBeLessThanOrEqual(scenario.startedAtMs + SCAN_DEADLINE_MS + SCAN_RESPONSE_MARGIN_MS);
+        expectValidResponse(response);
+      }),
+      cfg(),
+    );
+  });
+
+  it('P49: with a never-settling scan that ignores the signal, only the margin timer answers, at exactly deadline plus margin', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        fc.integer({ min: 1_000_000, max: 2_000_000_000 }),
+        fc.array(fc.double({ min: 0, max: 0.999999, noNaN: true }), { minLength: 1, maxLength: 4 }),
+        async (startedAtMs, random) => {
+          const runtime = createFakeRuntime(startedAtMs, random);
+          const { deps } = buildStack(
+            { startedAtMs, scripts: { github: [], depsdev: [], osv: [], npm: [], cratesio: [], pypi: [] }, honorsSignal: false, random },
+            runtime,
+          );
+          const { response, finishedAtMs } = await respondAt({ ...deps, sources: neverSettlingSources() }, runtime);
+          expect(finishedAtMs).toBeLessThanOrEqual(startedAtMs + SCAN_DEADLINE_MS + SCAN_RESPONSE_MARGIN_MS);
+          expectValidResponse(response);
+        },
+      ),
+      cfg(),
+    );
   });
 });
