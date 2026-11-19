@@ -914,19 +914,19 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/live/github.live.test.ts`: one test per verified GitHub row (EF-12 to EF-19) against the real API; EF-17, EF-18 and EF-19 skipped without a token.
     - _Requirements: 23.8, 23.9, 23.14, 23.15_
 
-  - [~] 9.29 Write the deps.dev live contract tests
+  - [x] 9.29 Write the deps.dev live contract tests
     - `tests/live/depsdev.live.test.ts`: EF-1, EF-2 and EF-25 (including the 404 of the withdrawn advisory id).
     - _Requirements: 23.8, 23.9, 23.15_
 
-  - [~] 9.30 Write the OSV live contract tests
+  - [x] 9.30 Write the OSV live contract tests
     - `tests/live/osv.live.test.ts`: EF-5 to EF-10.
     - _Requirements: 23.8, 23.9, 23.15_
 
-  - [~] 9.31 Write the registry live contract tests
+  - [x] 9.31 Write the registry live contract tests
     - `tests/live/registries.live.test.ts`: EF-20 (npm), EF-21 (crates.io, with `User-Agent`), EF-22 (PyPI).
     - _Requirements: 23.8, 23.9, 23.15_
 
-  - [~] 9.32 Write the versionbatch live contract test
+  - [x] 9.32 Write the versionbatch live contract test
     - `tests/live/deps-dev-versionbatch.live.test.ts`: one `POST https://api.deps.dev/v3alpha/versionbatch` with an `NPM`, a `PYPI` and a `CARGO` `versionKey` taken from the fixture repositories; check `responses[].request.versionKey.system`, `.name`, `.version` and `responses[].version`; every `responses[]` entry matches a request by `request.versionKey` and every request has a matching entry; a failure is reported under R23.15.
     - _Requirements: 23.17, 8.8, 8.9, 23.15_
 
