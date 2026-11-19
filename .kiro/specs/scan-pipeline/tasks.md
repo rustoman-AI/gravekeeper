@@ -769,17 +769,17 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/scan/run-scan-cache.test.ts`: a hit sends only the repository, branch and tree requests, a hit equals the first result, a result with `github-token-missing` is not stored, expiry after `SCAN_CACHE_TTL_SECONDS`, a changed Commit_SHA misses, the partial result of a deadline-cut crates.io lookup is stored for `PARTIAL_SCAN_TTL_SECONDS`.
     - _Requirements: 19.5, 19.6, 19.7, 19.22, 3.13_
 
-  - [~] 7.22 Write property tests for cache hits
+  - [x] 7.22 Write property tests for cache hits
     - `tests/pipeline/scan/cache-replay.property.test.ts` with generated spelling variants of one repository resolving to the same canonical repository.
     - **Property 62: A cached scan repeats the result without upstream traffic**
     - **Property 68: A cache hit equals a fresh scan, for every request spelling**
     - **Validates: Requirements 19.16, 19.21**
 
-  - [~] 7.23 Write unit tests for crates.io owner caching
+  - [x] 7.23 Write unit tests for crates.io owner caching
     - `tests/pipeline/scan/crates-order.test.ts`: owners requested in scope order with the caching client in place, an unexpired owners entry in L1 and in L2 sends no request, a 404 marker is read as `absent`, the owners entry outlives the partial Scan_Result (`CRATES_OWNERS_TTL_SECONDS`).
     - _Requirements: 12.13, 12.14, 19.22_
 
-  - [~] 7.24 Write the property test for crates.io lookups
+  - [-] 7.24 Write the property test for crates.io lookups
     - Create `tests/pipeline/scan/crates-order.property.test.ts` using the caching client over the scripted source.
     - **Property 74: Crates owners are looked up in scope order and cached owners send no request** (scan level)
     - **Validates: Requirements 12.15**
