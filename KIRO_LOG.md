@@ -113,3 +113,19 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 - HTTP client: request headers win over the default User-Agent; body read only for 2xx; caching left to the later CachingHttpClient (`fromCache` false); fetch raced against abort so a hung fetch still settles.
 - Open item for group 3: the GitHub adapter encodes the branch once; the orchestrator must pass the decoded branch name, not the percent-encoded canonical form.
 - Counterexamples: P46 test-side only (assertion required exactly k+1 waits; scripted last step repeats, so further retries schedule more waits; changed to at least k+1; property unchanged).
+- Group 3 checkpoint: typecheck, lint, check:core, check:architecture all exit 0; vitest 112 files, 1852 tests pass (5.30 s); tests/pipeline/scan at FC_NUM_RUNS=1000: 20 files, 294 tests pass (3.41 s).
+- User-facing messages: texts supplied by the user, added to requirements.md as the "User-facing messages" table (R20.14-R20.16, P76); invalid-request reason phrases written by Kiro under the style rules; config internal-error messages moved to pipeline/config/config-messages.ts.
+- User decisions this session: `branch-not-found` carries `details.branch`; validated Source_Repo owner/repo is an allowed interpolation; invalid `default_branch` is always `upstream-unavailable` (R3.9, option B), `readRepository(body)` lost its `requestedBranch` parameter.
+- messages.ts holds its own copy of the invalid-url texts; a test pins them equal to parse-repo-url.ts and to the spec table (parsed at test time).
+- `renderErrorMessage` never throws (unknown part -> url row, unknown reason -> invalid-type, missing placeholder -> empty string); builder lists (pins, ids) are sorted and de-duplicated.
+- targets.ts leaves git/path deps out of Lookup_Targets; the assembler keeps them unassessed. versionSpecs keep duplicates; pins come from exactPin.
+- Source status: OSV truncation passed as `osvTruncated`; duplicate unit keys ignored (first outcome stands).
+- run-unit: `unparsable` 2xx body recorded as failed `http-error` (design D5); a throwing/rejecting source call is a `network` failure; runner is a per-scan `createUnitRunner(ledger, signal)`.
+- Discovery: repository request always first; budget checked before each request (`budget` unit + upstream-unavailable); unit keys `github:repository|branch|tree`; tree 404 stays upstream-unavailable.
+- Registry stage S5 has no PyPI; PyPI per-version request sits in S6 (stage-versions) after the Selected_Version; owners started in `orderCratesLookups` order.
+- Version stage: batch failure/unparsable/no `responses` -> single version docs + one `batch-fallback` note; no note when singles start after the deadline; OSV length mismatch -> failed `http-error`; `prerequisite` unit only for a failed/unparsable deps.dev package request.
+- Repo-facts stage: `github-token-missing` note whenever no token (R11.8 is unconditional); `github-budget-low` once the gate closes; repos matched case-insensitively.
+- Advisory stage: OSV detail failure is not in `unfetchedIds` (assembleFacts treats it as unfetched); deps.dev failure only drops the score.
+- Result assembly: notes sorted by code then canonical details JSON (R18.5); `PartialProgress.snapshot` added in assemble-result.ts and filled by runScan; runtime /core imports are relative because vitest has no `@/` alias.
+- runScan: selection runs twice (selectManifestStage then runManifestStage), pure; Scan_Cache hook point left for 7.20 after S2.
+- Counterexamples (group 3): none in product code; test-side only: P58 harness gitShadow entries (non-registry entries must be null/null; property reading corrected, not weakened) and P57 harness never selected sub/package.json (harness now passes the manifest list; this also made the `sub` extra effective in P39/P55/P56).

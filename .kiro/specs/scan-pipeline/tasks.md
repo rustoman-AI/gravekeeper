@@ -528,7 +528,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
 - [x] 4. Checkpoint - HTTP client and adapters
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 5. Orchestrator and deadline model
+- [x] 5. Orchestrator and deadline model
   - [x] 5.1 Define the scan types
     - Create `pipeline/scan/types.ts`: `ScanResult`, `ScanNote` and `NoteCode` (no `manifest-selection-capped`), `ScanInput`, `ScanDeps`, `ScanLimits`, `TypedCache`, `ScanProgress`, `LookupTarget`, `Scan_Error` types as in the Data Models section of the design.
     - _Requirements: 18.1, 17.9, 21.5, 21.6_
@@ -652,14 +652,14 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 51: Facts of failing sources are null**
     - **Validates: Requirements 3.11, 17.10, 17.11**
 
-  - [~] 5.30 Write property tests for scan output
+  - [x] 5.30 Write property tests for scan output
     - Append to `tests/pipeline/scan/run-scan.property.test.ts`.
     - **Property 39: Unassessed dependencies and shared targets**
     - **Property 55: Scan results are deterministic**
     - **Property 56: The summary is the core summary**
     - **Validates: Requirements 13.16, 18.7, 18.8**
 
-  - [~] 5.31 Write property tests for result shape
+  - [x] 5.31 Write property tests for result shape
     - Append to `tests/pipeline/scan/run-scan.property.test.ts`.
     - **Property 57: Result lists have matching lengths**
     - **Property 58: Version fields are consistent**
@@ -675,7 +675,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - **Property 48: No attempt is sent at or after the deadline**
     - **Validates: Requirements 16.9**
 
-- [~] 6. Checkpoint - Orchestrator and deadline model
+- [x] 6. Checkpoint - Orchestrator and deadline model
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 7. Caching

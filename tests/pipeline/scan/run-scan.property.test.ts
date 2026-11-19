@@ -3,7 +3,8 @@
 // runner) is shared with the later scan properties appended to this file.
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import type { RawHealthFacts } from '../../../core';
+import { parseManifest, summarize } from '../../../core';
+import type { ManifestFormat, RawHealthFacts } from '../../../core';
 import { REQUEST_TIMEOUT_MS } from '../../../pipeline/constants';
 import type { SourceName, SourceResult } from '../../../pipeline/ports';
 import { runScan } from '../../../pipeline/scan/run-scan';
@@ -48,9 +49,24 @@ interface RepoFacts {
   readonly commitDays: number;
 }
 
+/** Optional additions used by the unassessed/shared-target property (P39); absent in the base worlds. */
+interface Extras {
+  /** Git dependencies (npm `github:` specs, cargo `git`) listed next to the registry ones. */
+  readonly git: number;
+  /** Path dependencies (npm `file:` specs, cargo `path`). */
+  readonly path: number;
+  /** The first N npm packages are also listed in devDependencies (same target, other scope). */
+  readonly devDup: number;
+  /** The next npm package after those in devDependencies is a git spec under a registry name. */
+  readonly gitShadow: boolean;
+  /** `sub/package.json` repeats every npm package with the opposite pin (same target, other manifest). */
+  readonly sub: boolean;
+}
+
 interface World {
   readonly pkgs: readonly Pkg[];
   readonly repos: readonly RepoFacts[];
+  readonly extras?: Extras;
 }
 
 const PREFIX: Record<Eco, string> = { npm: 'n', pypi: 'p', cargo: 'c' };
@@ -148,9 +164,33 @@ function manifestFiles(world: World): ReadonlyMap<string, string> {
   const files = new Map<string, string>();
   const of = (eco: Eco): readonly Pkg[] => world.pkgs.filter((p) => p.ecosystem === eco);
   const npm = of('npm');
-  if (npm.length > 0) {
-    const dependencies = Object.fromEntries(npm.map((p) => [p.name, p.pinned ? '1.0.0' : '^1.0.0']));
-    files.set('package.json', JSON.stringify({ name: 'root', version: '1.0.0', dependencies }));
+  const x = world.extras;
+  const gitPath = (x?.git ?? 0) + (x?.path ?? 0);
+  if (npm.length > 0 || gitPath > 0) {
+    const dependencies: Record<string, string> = Object.fromEntries(
+      npm.map((p) => [p.name, p.pinned ? '1.0.0' : '^1.0.0']),
+    );
+    for (let i = 0; i < (x?.git ?? 0); i++) dependencies[`g${i}`] = `github:o/g${i}`;
+    for (let i = 0; i < (x?.path ?? 0); i++) dependencies[`l${i}`] = `file:../l${i}`;
+    const devDependencies: Record<string, string> = {};
+    npm.slice(0, x?.devDup ?? 0).forEach((p) => {
+      devDependencies[p.name] = p.pinned ? '^1.0.0' : '1.0.0';
+    });
+    const shadow = x?.gitShadow === true ? npm[x.devDup] : undefined;
+    if (shadow !== undefined) devDependencies[shadow.name] = 'github:o/shadow';
+    files.set(
+      'package.json',
+      JSON.stringify({
+        name: 'root',
+        version: '1.0.0',
+        dependencies,
+        ...(Object.keys(devDependencies).length > 0 ? { devDependencies } : {}),
+      }),
+    );
+  }
+  if (x?.sub === true && npm.length > 0) {
+    const dependencies = Object.fromEntries(npm.map((p) => [p.name, p.pinned ? '^1.0.0' : '1.0.0']));
+    files.set('sub/package.json', JSON.stringify({ name: 'sub', version: '1.0.0', dependencies }));
   }
   const pypi = of('pypi');
   if (pypi.length > 0) {
@@ -159,6 +199,8 @@ function manifestFiles(world: World): ReadonlyMap<string, string> {
   const cargo = of('cargo');
   if (cargo.length > 0) {
     const lines = cargo.map((p) => `${p.name} = "${p.pinned ? '=1.0.0' : '1.0.0'}"`);
+    for (let i = 0; i < (x?.git ?? 0); i++) lines.push(`cg${i} = { git = "https://github.com/o/cg${i}" }`);
+    for (let i = 0; i < (x?.path ?? 0); i++) lines.push(`cl${i} = { path = "../cl${i}" }`);
     files.set('Cargo.toml', `[package]\nname = "root"\nversion = "0.1.0"\n\n[dependencies]\n${lines.join('\n')}\n`);
   }
   return files;
@@ -313,24 +355,52 @@ interface RunOptions {
   readonly faults?: Faults;
   readonly discovery?: Discovery;
   readonly branch?: string | null;
+  /** Dependency cap, default 300 (large enough that no generated world reaches it). */
+  readonly maxDependencies?: number;
+  /** Microtask ticks each source call waits before it runs (cycled), to vary the settling order. */
+  readonly jitter?: readonly number[];
+}
+
+/** Wraps every async source method so that call n first yields `jitter[n % length]` microtask ticks. */
+function withJitter(sources: ScanDeps['sources'], jitter: readonly number[]): ScanDeps['sources'] {
+  let calls = 0;
+  const wrap = (source: object): object =>
+    Object.fromEntries(
+      Object.entries(source).map(([name, fn]) => [
+        name,
+        name === 'hasToken'
+          ? fn
+          : async (...args: unknown[]): Promise<unknown> => {
+              const ticks = jitter[calls++ % jitter.length] ?? 0;
+              for (let i = 0; i < ticks; i++) await Promise.resolve();
+              return (fn as (...a: unknown[]) => Promise<unknown>)(...args);
+            },
+      ]),
+    );
+  return Object.fromEntries(
+    Object.entries(sources).map(([name, source]) => [name, wrap(source as object)]),
+  ) as unknown as ScanDeps['sources'];
 }
 
 /** Runs the real `runScan` over the scripted ports. Everything settles in microtasks, no timer fires. */
 function scanWorld(world: World, options: RunOptions = {}): Promise<ScanOutcome> {
   const runtime = createFakeRuntime(START_MS);
   const deps: ScanDeps = {
-    sources: makeSources(world, options.faults ?? NO_FAULTS, options.discovery),
+    sources: ((s) => (options.jitter === undefined ? s : withJitter(s, options.jitter)))(
+      makeSources(world, options.faults ?? NO_FAULTS, options.discovery),
+    ),
     clock: runtime.clock,
     timer: runtime.timer,
     random: runtime.random,
     logger: { log: () => undefined },
     scanCache: { get: () => Promise.resolve(null), set: () => Promise.resolve() },
     config: { apiUrl: 'https://api.github.com', graphqlUrl: 'https://api.github.com/graphql', webHost: 'github.com' },
-    limits: { maxManifests: 10, maxDependencies: 300, maxAdvisoryDetails: 500 },
+    limits: { maxManifests: 10, maxDependencies: options.maxDependencies ?? 300, maxAdvisoryDetails: 500 },
   };
   const input: ScanInput = {
     repo: { host: 'github.com', owner: 'owner', repo: 'repo', branch: options.branch ?? null },
-    manifests: [],
+    // Without an explicit list only the root manifests are scanned; `sub/package.json` must be asked for.
+    manifests: world.extras?.sub === true ? [...manifestFiles(world).keys()] : [],
     asOf: AS_OF,
     startedAtMs: runtime.clock(),
   };
@@ -493,5 +563,217 @@ describe('runScan properties', () => {
       }),
       cfg(),
     );
+  });
+});
+
+// ---------------------------------------------------------------------------------------------
+// Scan output properties (P39, P55, P56)
+// ---------------------------------------------------------------------------------------------
+
+const extrasArb: fc.Arbitrary<Extras> = fc.record({
+  git: fc.integer({ min: 0, max: 2 }),
+  path: fc.integer({ min: 0, max: 2 }),
+  devDup: fc.integer({ min: 0, max: 3 }),
+  gitShadow: fc.boolean(),
+  sub: fc.boolean(),
+});
+
+/** The base world plus git/path dependencies and targets shared across scopes and manifests. */
+const extendedWorldArb: fc.Arbitrary<World> = fc
+  .tuple(worldArb, extrasArb)
+  .map(([world, extras]) => ({ ...world, extras }));
+
+const NULL_KEYS: readonly (keyof RawHealthFacts)[] = [
+  'daysSinceLastRelease',
+  'daysSinceLastCommit',
+  'archived',
+  'deprecated',
+  'openVulnerabilityCount',
+  'maxSeverity',
+  'maintainerCount',
+];
+
+describe('runScan output properties', () => {
+  // Feature: scan-pipeline, Property 39: Unassessed dependencies and shared targets
+  // Validates: Requirements 13.16
+  it('P39: unassessed dependencies and shared targets', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        extendedWorldArb,
+        faultsArb,
+        fc.option(fc.integer({ min: 1, max: 4 }), { nil: undefined }),
+        async (world, generated, cap) => {
+          const faults: Faults = { failed: generated.failed, githubManifest: false };
+          const result = resultOf(await scanWorld(world, { faults, maxDependencies: cap }));
+          expect(result.assessed).toHaveLength(result.dependencies.length);
+          const skipped = new Set(result.capped.skipped.map((s) => `${s.ecosystem}:${s.name}`));
+          const byTarget = new Map<string, { facts: RawHealthFacts; classification: unknown }>();
+          result.dependencies.forEach((entry, i) => {
+            const { dependency, facts } = entry;
+            const { classification } = result.assessed[i] ?? { classification: undefined };
+            const id = keyOf(entry);
+            const unassessed = dependency.sourceKind !== 'registry' || skipped.has(id);
+            if (unassessed) {
+              expect([id, classification]).toEqual([id, null]);
+              expect([id, facts]).toEqual([id, Object.fromEntries(NULL_KEYS.map((k) => [k, null]))]);
+              return;
+            }
+            expect(classification).not.toBeNull();
+            expect(classification).not.toBeUndefined();
+            const first = byTarget.get(id);
+            if (first === undefined) byTarget.set(id, { facts, classification });
+            else {
+              expect([id, facts]).toEqual([id, first.facts]);
+              expect([id, classification]).toEqual([id, first.classification]);
+            }
+          });
+        },
+      ),
+      cfg(),
+    );
+  });
+
+  // Feature: scan-pipeline, Property 55: Scan results are deterministic
+  // Validates: Requirements 18.7
+  it('P55: scan results are deterministic', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        extendedWorldArb,
+        faultsArb,
+        fc.array(fc.integer({ min: 0, max: 6 }), { minLength: 1, maxLength: 8 }),
+        fc.array(fc.integer({ min: 0, max: 6 }), { minLength: 1, maxLength: 8 }),
+        async (world, faults, jitterA, jitterB) => {
+          const first = await scanWorld(world, { faults, jitter: jitterA });
+          const second = await scanWorld(world, { faults, jitter: jitterB });
+          const plain = await scanWorld(world, { faults });
+          expect(second).toEqual(first);
+          expect(plain).toEqual(first);
+        },
+      ),
+      cfg(),
+    );
+  });
+
+  // Feature: scan-pipeline, Property 56: The summary is the core summary
+  // Validates: Requirements 18.8
+  it('P56: the summary is the core summary', async () => {
+    await fc.assert(
+      fc.asyncProperty(extendedWorldArb, faultsArb, async (world, generated) => {
+        const faults: Faults = { failed: generated.failed, githubManifest: false };
+        const result = resultOf(await scanWorld(world, { faults }));
+        expect(result.summary).toEqual(summarize(result.assessed));
+      }),
+      cfg(),
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------------------------
+// Result shape (P57, P58)
+// ---------------------------------------------------------------------------------------------
+
+const FORMAT_OF: Readonly<Record<string, ManifestFormat>> = {
+  'package.json': 'package.json',
+  'requirements.txt': 'requirements.txt',
+  'Cargo.toml': 'Cargo.toml',
+};
+
+/** Number of dependencies the core parsers find in the manifests of the world (the expected list length). */
+function parsedDependencyCount(world: World): number {
+  let total = 0;
+  for (const [path, text] of manifestFiles(world)) {
+    const format = FORMAT_OF[path.slice(path.lastIndexOf('/') + 1)];
+    if (format !== undefined) total += parseManifest(text, format).dependencies.length;
+  }
+  return total;
+}
+
+describe('runScan result shape properties', () => {
+  // Feature: scan-pipeline, Property 57: Result lists have matching lengths
+  // Validates: Requirements 18.9
+  it('P57: result lists have matching lengths', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        extendedWorldArb,
+        faultsArb,
+        fc.option(fc.integer({ min: 1, max: 4 }), { nil: undefined }),
+        async (world, generated, cap) => {
+          const faults: Faults = { failed: generated.failed, githubManifest: false };
+          const result = resultOf(await scanWorld(world, { faults, maxDependencies: cap }));
+          const expected = parsedDependencyCount(world);
+          expect(result.dependencies).toHaveLength(expected);
+          expect(result.assessed).toHaveLength(expected);
+        },
+      ),
+      cfg(),
+    );
+  });
+
+  // Feature: scan-pipeline, Property 58: Version fields are consistent
+  // Validates: Requirements 18.12
+  it('P58: version fields are consistent', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        extendedWorldArb,
+        faultsArb,
+        fc.option(fc.integer({ min: 1, max: 4 }), { nil: undefined }),
+        async (world, generated, cap) => {
+          const faults: Faults = { failed: generated.failed, githubManifest: false };
+          const result = resultOf(await scanWorld(world, { faults, maxDependencies: cap }));
+          const byTarget = new Map<string, readonly [string | null, string | null]>();
+          for (const entry of result.dependencies) {
+            const id = keyOf(entry);
+            const { lookupVersion, versionBasis } = entry;
+            expect([id, lookupVersion === null]).toEqual([id, versionBasis === null]);
+            // A git or path spec under a registry name is not a Lookup_Target: it is never looked up.
+            if (entry.dependency.sourceKind !== 'registry') {
+              expect([id, lookupVersion, versionBasis]).toEqual([id, null, null]);
+              continue;
+            }
+            const seen = byTarget.get(id);
+            if (seen === undefined) byTarget.set(id, [lookupVersion, versionBasis]);
+            else expect([id, seen]).toEqual([id, [lookupVersion, versionBasis]]);
+          }
+        },
+      ),
+      cfg(),
+    );
+  });
+});
+
+describe('extended world sanity', () => {
+  it('a fixed world with all extras and a small cap has git, path, cap-skipped and shared targets', async () => {
+    const pkg = (ecosystem: Eco, i: number): Pkg => ({
+      ecosystem,
+      name: `${PREFIX[ecosystem]}${i}`,
+      pinned: i % 2 === 0,
+      found: true,
+      releaseDays: 10,
+      deprecated: false,
+      repoIndex: 0,
+      vulns: 1,
+      maintainers: 2,
+    });
+    const world: World = {
+      pkgs: [0, 1, 2].map((i) => pkg('npm', i)).concat([0, 1].map((i) => pkg('pypi', i)), [0, 1].map((i) => pkg('cargo', i))),
+      repos: [
+        { archived: false, commitDays: 1 },
+        { archived: false, commitDays: 2 },
+        { archived: false, commitDays: 3 },
+      ],
+      extras: { git: 1, path: 1, devDup: 2, gitShadow: true, sub: true },
+    };
+    const result = resultOf(await scanWorld(world, { maxDependencies: 4 }));
+    expect(result.dependencies.some((d) => d.dependency.sourceKind === 'git')).toBe(true);
+    expect(result.dependencies.some((d) => d.dependency.sourceKind === 'path')).toBe(true);
+    expect(result.capped.skipped.length).toBeGreaterThan(0);
+    const skipped = new Set(result.capped.skipped.map((s) => `${s.ecosystem}:${s.name}`));
+    const counts = new Map<string, number>();
+    for (const d of result.dependencies) {
+      if (d.dependency.sourceKind === 'registry' && !skipped.has(keyOf(d))) {
+        counts.set(keyOf(d), (counts.get(keyOf(d)) ?? 0) + 1);
+      }
+    }
+    expect([...counts.values()].some((n) => n >= 2)).toBe(true);
   });
 });
