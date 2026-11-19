@@ -589,7 +589,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/stage-manifests.ts`: discovery result, `selectManifests`, skip by `size` over `MAX_MANIFEST_LENGTH` (`manifest-too-large`), one fetch at a time in ascending path order, `parseManifest` of `/core`, `manifest-fetch-failed` notes, `no-manifests`, `no-root-manifest`, `tree-truncated`; remaining manifests fail with reason `deadline` after the deadline.
     - _Requirements: 4.6, 4.8, 5.1, 5.2, 5.3, 5.4, 5.5, 5.7, 5.8, 5.9, 5.10, 5.11, 5.12_
 
-  - [~] 5.15 Write unit tests for the manifest stage
+  - [x] 5.15 Write unit tests for the manifest stage
     - `tests/pipeline/scan/stage-manifests.test.ts`: default root selection, explicit list, `too-many-manifests`, `manifest-not-found`, oversize skip with no Work_Unit, a failed fetch continues, all failed gives an empty result with notes, warnings kept in order, ecosystem only from the ParseResult.
     - _Requirements: 5.1, 5.2, 5.4, 5.5, 5.8, 5.9, 5.10, 5.11, 5.12_
 
@@ -605,11 +605,11 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - Create `pipeline/scan/stage-versions.ts`: `selectVersion` per target, deps.dev `versionbatch` with fallback to single version documents and one `batch-fallback` note, OSV `querybatch` in chunks of `OSV_BATCH_SIZE`, targets without a Selected_Version recorded with reason `prerequisite`.
     - _Requirements: 7.4, 7.5, 7.6, 7.11, 8.7, 8.8, 8.9, 9.1, 9.2, 9.3, 17.8_
 
-  - [~] 5.19 Write unit tests for the version stage
+  - [x] 5.19 Write unit tests for the version stage
     - `tests/pipeline/scan/stage-versions.test.ts`: pinned and default basis, batch success, batch failure with fallback and the note, a target with a missing package document, OSV chunking at `OSV_BATCH_SIZE` and `+ 1`, length mismatch.
     - _Requirements: 7.4, 7.5, 8.8, 9.1, 9.2, 9.3, 17.8_
 
-  - [~] 5.20 Implement the advisory stage
+  - [x] 5.20 Implement the advisory stage
     - Create `pipeline/scan/stage-advisories.ts`: one plan for the union of ids (`planAdvisoryRequests`), OSV detail and deps.dev advisory requests for the same id set, unfetched ids recorded with reason `truncated`, `advisory-details-incomplete` input for `assembleFacts`.
     - _Requirements: 9.4, 9.9, 9.18, 9.20, 9.23, 17.14_
 
@@ -617,7 +617,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/pipeline/scan/stage-advisories.test.ts`: both request sets equal and ordered, cap at `OSV_MAX_ADVISORY_DETAILS`, a deps.dev 404 is `ok`, an OSV 404 is a failed unit, shared ids across targets requested once.
     - _Requirements: 9.4, 9.9, 9.18, 9.20, 9.23, 17.6_
 
-  - [~] 5.22 Implement the repository facts stage
+  - [x] 5.22 Implement the repository facts stage
     - Create `pipeline/scan/stage-repo-facts.ts`: `planGraphqlBatches`, `buildRepositoriesQuery`, one GraphQL request per batch under the `github` limiter with the budget gate; without a token every unit is `token-missing` and one `github-token-missing` note is added; units after a closed gate are `budget`.
     - _Requirements: 11.1, 11.2, 11.7, 11.8, 11.13, 14.3, 14.4, 17.5_
 
