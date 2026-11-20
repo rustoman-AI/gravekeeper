@@ -187,7 +187,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
 - [x] 6. Checkpoint - View-model foundations
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 7. Test dependencies and configuration
-  - [~] 7.1 Install the pinned test dependencies
+  - [x] 7.1 Install the pinned test dependencies
     - For each of `@testing-library/react`, `@testing-library/dom`, `@testing-library/user-event`, `jsdom`, `@vitejs/plugin-react`, `vite-tsconfig-paths`, `@playwright/test` and `@axe-core/playwright` run `npm view <package> version` at task time, then `npm install --save-dev --save-exact <package>@<version>` with that version. Check that the installed `axe-core` (dependency of `@axe-core/playwright`) accepts the tag `wcag22aa` (read its `README` or run a one-line `axe.getRules(['wcag22aa'])` check) and, if it does not, pick the newest `@axe-core/playwright` that does and record the reason in the commit message. Check that `package.json` shows no `^` or `~` for the new packages and that `package-lock.json` is updated. Do not run `npm audit fix` and do not update other dependencies. Do not download browsers here (task 23.1).
     - _Requirements: 19.8_
   - [~] 7.2 Update the package pin test

@@ -183,3 +183,30 @@ None. All 12 properties (P1 to P12) have at least one passing test.
 - `dependency-graveyard-core/design.md` has 47 properties, not 39. The table has one row per property.
 - P16 and P17 are registry-driven: one test per mapper or per removed field in `mappers.property.test.ts`, so the title cell gives a count.
 - scan-accuracy P3, P4 and P11 are now tagged with `// Feature: scan-accuracy` and `// Validates:` lines.
+
+## graveyard-ui (PBT status)
+Status of the graveyard-ui property tests, recorded on 2026-11-19. "Default" is `npx vitest --run` with FC_NUM_RUNS unset. "1000 runs" is `npm run test:deep`. Each test file's `// Feature: graveyard-ui, Property <n>` tag was checked against the property number. Only properties that have a test are listed here. The remaining graveyard-ui properties (P3, P6, P19 to P26, P30 to P32) have no test yet, because their tasks are not done.
+
+| Property | Test file | Default | 1000 runs | Date | Counterexample and fix |
+| --- | --- | --- | --- | --- | --- |
+| P1 | `tests/ui/view-model/urls-canonical.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P2 | `tests/ui/view-model/urls-manifests.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P4 | `tests/ui/view-model/header-summary.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P5 | `tests/ui/view-model/header-headline.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P7 | `tests/ui/view-model/rows-key-set.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P8 | `tests/ui/view-model/rows-kinds.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P9 | `tests/ui/view-model/reasons.property.test.ts` | passed | passed | 2026-11-19 | none. The generator excludes DEAD together with 7.2, following the core status precedence (see the design note). |
+| P10 | `tests/ui/view-model/rows-labels.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P11 | `tests/ui/view-model/glow.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P12 | `tests/ui/view-model/grave-type.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P13 | `tests/ui/view-model/rows-graves.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P14 | `tests/ui/view-model/scene-overlap.property.test.ts` | passed | passed | 2026-11-19 | none. Rectangles are half-open, so plots with touching edges do not overlap. |
+| P15 | `tests/ui/view-model/scene-bounds.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P16 | `tests/ui/view-model/scene-determinism.property.test.ts` | passed | passed after fix | 2026-11-19 | Failed at 1000 runs with seed 1457184590 (columns=4, offset=10). Two rows with the same ecosystem and name but a different sourceKind kept input order. Fixed with a sourceKind tiebreak in the scene sort of `view-model/package-rows.ts` (design step 8 updated). |
+| P17 | `tests/ui/view-model/scene-plots.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P18 | `tests/ui/view-model/scene-nav.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P27 | `tests/ui/view-model/parse-response-total.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P28 | `tests/ui/view-model/parse-response-roundtrip.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P29 | `tests/ui/view-model/parse-response-cache.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P33 | `tests/ui/view-model/urls-links.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P34 | `tests/pipeline/mapping/advisory-exclusion.property.test.ts` | passed | passed | 2026-11-19 | none. This is the pipeline advisory-exclusion test. |
