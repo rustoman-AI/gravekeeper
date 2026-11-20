@@ -628,7 +628,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [x] 47. Final checkpoint - Graveyard UI
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build`, `npm run check:bundle` and `npm run test:e2e`, and ensure all pass. Run `npm run test:deep tests/ui tests/pipeline/mapping` once and ensure it passes. Ask the user if questions arise.
-- [ ] 48. Deploy and report Milestone 2
+- [x] 48. Deploy and report Milestone 2
   - Relationship with group 41: group 41 keeps the full two-viewport screenshot set in `docs/screenshots/`. This group's task 48.4 produces `docs/screenshots/m2/`, the set used by the Milestone 2 report. The scene art and the colour palette stay unchanged.
   - [x] 48.1 Write the Milestone 2 report screenshot specification
     - Create `tests/e2e/m2-report.spec.ts` (desktop project only, runs only when `M2_REPORT=1`, `reducedMotion: 'reduce'`, `page.clock.install({ time: '2026-11-19T12:00:00Z' })`, mocked `/api/scan`, viewport 1440x900, `document.fonts.ready` awaited, `page.screenshot({ animations: 'disabled' })`) that saves into `docs/screenshots/m2/`: `notes-section.png` (the caretaker's notes section of a degraded result), `error-invalid-url.png` (part `url`), `error-invalid-request.png`, `error-repo-not-found.png`, `error-branch-not-found.png`, `error-too-many-manifests.png`, `error-manifest-not-found.png`, `error-upstream-503.png`, `error-upstream-502.png`, `error-deadline-exceeded.png`, `error-internal-error.png`, `picker.png` (manifest picker of `no-root-manifest`), `empty-graveyard.png` and `client-failure-network-failure.png`. It runs axe on each of the 14 screens and merges the result (violation count and rule ids per screen) into `test-results/m2-measurements.json` without removing keys written by other specs. `docs/screenshots/m2/README.md` lists each file with its screen name.
@@ -639,10 +639,10 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - [x] 48.3 Write the unit test for the Milestone 2 report writer
     - Create `tests/ui/write-m2-report.test.ts`: `renderReport` names every screenshot, prints an axe violation list per screen, prints the credits line, marks a failed deploy check, and never prints an environment variable.
     - _Requirements: 20.10, 16.10_
-  - [-] 48.4 Push, verify the deployment and capture the report
+  - [x] 48.4 Push, verify the deployment and capture the report
     - Confirm with `git status` that the work is committed and that `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build` and `npm run check:bundle` pass. With the user's approval (ask the orchestrator first), run `git push origin main`, wait for the CI run and the Vercel deployment, then run `npm run verify:deploy`, `deployed.spec.ts` and `live-scan.spec.ts` against production with `E2E_BASE_URL` set for each command only (as in tasks 28.4 and 30.5). Then run `$env:M2_REPORT = "1"; npx playwright test tests/e2e/m2-report.spec.ts --project=desktop; Remove-Item Env:M2_REPORT` and `npm run report:m2`, and check that `docs/screenshots/m2/` has the 14 PNG files at 1440x900 and that `docs/milestone-2-report.md` shows axe per screen, the deploy check, design changes, known gaps and the credits line. Look at each screenshot and fix a visibly broken screen before the report is accepted.
     - _Requirements: 15.8, 20.12, 20.10, 20.11, 16.10_
-  - [~] 48.5 STOP - Milestone 2 ends here
+  - [x] 48.5 STOP - Milestone 2 ends here
     - Milestone 2 ends here; do not continue without the user's approval. Report the screenshot paths, the axe results, the deploy check and the known gaps to the user and wait for the user's decision.
     - _Requirements: none (stop task)_
 ## Notes

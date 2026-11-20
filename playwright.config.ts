@@ -9,6 +9,8 @@ const baseURL = externalBaseUrl ?? `http://localhost:${PORT}`;
 
 export default defineConfig({
   testDir: "tests/e2e",
+  // Two workers collide on the artifact directory (ENOENT) in the deployed project.
+  workers: externalBaseUrl ? 1 : undefined,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",

@@ -1,0 +1,685 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Run the Deployed_Project with one worker": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177521870
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177536633
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177638432
+      }
+    ],
+    "1.2 Test the Playwright worker setting": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177521908
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177643298
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177723877
+      }
+    ],
+    "1.3 Replace the Vite tsconfig-paths plugin with the native option": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177521971
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177537161
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177638978
+      }
+    ],
+    "1.4 Remove the plugin package when nothing else uses it": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522022
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177643728
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177722884
+      }
+    ],
+    "2. Checkpoint - Housekeeping": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522054
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177724317
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177771975
+      }
+    ],
+    "3.1 Add the art constants and move `hashKey`": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522090
+      }
+    ],
+    "3.2 Add the new colour tokens and extend the token test": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522124
+      }
+    ],
+    "4.1 Backdrop, shared defs and the night landscape": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522162
+      }
+    ],
+    "4.2 Stage, ground and fog styles; fog layer names": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522195
+      }
+    ],
+    "4.3 Scene stage and the results page layout": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522226
+      }
+    ],
+    "4.4 Depth in the view-model": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522257
+      }
+    ],
+    "4.5 Write the property test for depth monotonicity": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522289
+      }
+    ],
+    "4.6 Write the property test for layout independence": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522323
+      }
+    ],
+    "4.7 Apply depth to the plot and style the plot art": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522362
+      }
+    ],
+    "4.8 Component tests for the stage and the plot": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522418
+      }
+    ],
+    "5. Checkpoint - Scene atmosphere": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522448
+      }
+    ],
+    "6.1 Variant, tilt and symbol-id functions": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522479
+      }
+    ],
+    "6.2 Write the property test for variant choice": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522511
+      }
+    ],
+    "6.3 Write the property test for tilt": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522546
+      }
+    ],
+    "6.4 Variant, symbol id and tilt on the plot model": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522581
+      }
+    ],
+    "6.5 Stone symbols: tombstones and overgrown graves": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522614
+      }
+    ],
+    "6.6 Ghost and restless symbols": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522650
+      }
+    ],
+    "6.7 Lantern and unmarked symbols": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522683
+      }
+    ],
+    "6.8 Assemble the sprite sheet and use the symbol id": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522726
+      }
+    ],
+    "6.9 Write the property test for symbol ids and the sheet test": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522775
+      }
+    ],
+    "6.10 Tilt, flicker and motion styles": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522805
+      }
+    ],
+    "6.11 Update the scene tests for the new art": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522834
+      }
+    ],
+    "6.12 Measure the render time and the bundle after the sprites": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522866
+      }
+    ],
+    "7. Checkpoint - Sprites": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522898
+      }
+    ],
+    "8.1 Header model: chips and meta line": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522933
+      }
+    ],
+    "8.2 Status chip and grade plaque components": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522966
+      }
+    ],
+    "8.3 Results header layout and styles": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177522996
+      }
+    ],
+    "8.4 Update the header tests": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523028
+      }
+    ],
+    "9. Checkpoint - Results header": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523071
+      }
+    ],
+    "10.1 Humanised durations": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523130
+      }
+    ],
+    "10.2 Plain reason lines": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523160
+      }
+    ],
+    "10.3 Write the property test for duration totality": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523192
+      }
+    ],
+    "10.4 Write the property test for duration monotonicity": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523227
+      }
+    ],
+    "10.5 Write the property test for plain reason lines": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523259
+      }
+    ],
+    "10.6 Epitaph builder": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523292
+      }
+    ],
+    "10.7 Write the property test for the epitaph name and shape": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523324
+      }
+    ],
+    "10.8 Write the property test for no invented facts": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523355
+      }
+    ],
+    "10.9 Detail model: epitaph and plain reasons": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523391
+      }
+    ],
+    "10.10 Write the property test for verbatim reasons": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523422
+      }
+    ],
+    "10.11 Epitaph block and reason item components": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523460
+      }
+    ],
+    "10.12 Detail panel and styles": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523518
+      }
+    ],
+    "10.13 Update the detail tests": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523552
+      }
+    ],
+    "11. Checkpoint - Epitaphs": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523584
+      }
+    ],
+    "12.1 Hero and cemetery gate": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523618
+      }
+    ],
+    "12.2 How the caretaker decides": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523649
+      }
+    ],
+    "12.3 Landing page, shell and featured headstones": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523680
+      }
+    ],
+    "12.4 Landing tests": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523716
+      }
+    ],
+    "13. Checkpoint - Landing page": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523748
+      }
+    ],
+    "14.1 Caretaker scene model": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523779
+      }
+    ],
+    "14.2 Write the property test for the lit stones": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523812
+      }
+    ],
+    "14.3 Caretaker scene component": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523850
+      }
+    ],
+    "14.4 Scanning screen and styles": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523916
+      }
+    ],
+    "14.5 Scanning tests": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523946
+      }
+    ],
+    "15. Checkpoint - Scanning screen": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177523978
+      }
+    ],
+    "16.1 Header empty sentence and nullable grade": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524011
+      }
+    ],
+    "16.2 Show the empty-graveyard message once": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524046
+      }
+    ],
+    "16.3 Write the property test for the header": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524078
+      }
+    ],
+    "16.4 Write the property test for the message shown once": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524110
+      }
+    ],
+    "16.5 Render the empty states": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524147
+      }
+    ],
+    "16.6 Update the empty-state tests": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524183
+      }
+    ],
+    "17. Checkpoint - Empty states": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524225
+      }
+    ],
+    "18.1 Art style test": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524282
+      }
+    ],
+    "18.2 Final reduced-motion style test": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524313
+      }
+    ],
+    "18.3 Art end-to-end spec": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524347
+      }
+    ],
+    "18.4 Update the flow specs and add axe for the new screens": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524380
+      }
+    ],
+    "18.5 Update the motion, reflow and layout-shift specs": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524414
+      }
+    ],
+    "18.6 Performance and size gates": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524449
+      }
+    ],
+    "19. Checkpoint - End-to-end, axe and performance": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524483
+      }
+    ],
+    "20.1 Traceability test for this spec": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524516
+      }
+    ],
+    "20.2 Add this spec to the property traceability document": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524548
+      }
+    ],
+    "20.3 Write the Milestone 3 design changes": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524586
+      }
+    ],
+    "21. Checkpoint - Traceability and documents": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524627
+      }
+    ],
+    "22.1 Decide which screenshots changed": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524682
+      }
+    ],
+    "22.2 Regenerate the changed screenshots": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524713
+      }
+    ],
+    "23. Checkpoint - Screenshots": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524746
+      }
+    ],
+    "24. Final checkpoint - Graveyard art": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524780
+      }
+    ],
+    "25.1 Verify the deployment": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524813
+      }
+    ],
+    "25.2 Run the deployed specs with one worker": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524846
+      }
+    ],
+    "26.1 Write the report spec": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524882
+      }
+    ],
+    "26.2 Run the report spec, the perf spec and the bundle gate": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524916
+      }
+    ],
+    "27.1 Write the report writer": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177524958
+      }
+    ],
+    "27.2 Test the report writer": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177525021
+      }
+    ],
+    "27.3 Generate the report": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177525054
+      }
+    ],
+    "28. Milestone 3 ends here": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177525089
+      }
+    ],
+    "1. Housekeeping (committable alone)": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177723909
+      }
+    ]
+  }
+}

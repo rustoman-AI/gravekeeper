@@ -61,7 +61,6 @@ const UI_TOOLING = [
   '@testing-library/user-event',
   'jsdom',
   '@vitejs/plugin-react',
-  'vite-tsconfig-paths',
   '@playwright/test',
   '@axe-core/playwright',
 ];
