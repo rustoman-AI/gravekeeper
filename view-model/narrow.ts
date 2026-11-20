@@ -13,6 +13,54 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+// Same host shape the pipeline accepts for a configured web host (github-config HOST_NAME).
+const REPO_HOST = /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$/;
+// Same character set as the sourceRepo pattern of Requirement 21, criterion 3.
+const REPO_NAME_PART = /^[A-Za-z0-9_.-]+$/;
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === 'string' && value !== '';
+}
+
+function hostIsUrlSafe(host: string): boolean {
+  if (!REPO_HOST.test(host)) return false;
+  try {
+    return new URL(`https://${host}/`).hostname === host;
+  } catch {
+    return false;
+  }
+}
+
+function encodesCleanly(value: string): boolean {
+  try {
+    encodeURIComponent(value);
+    return true;
+  } catch {
+    return false; // lone surrogate
+  }
+}
+
+/**
+ * Requirement 21, criterion 3 and Requirement 14, criterion 2: the parts of the Canonical_Repo_URL
+ * must be validated before any link is built from them. Total, never throws.
+ */
+export function isValidRepo(repo: unknown): boolean {
+  if (!isRecord(repo)) return false;
+  const { host, owner, repo: name, branch, defaultBranch } = repo;
+  return (
+    typeof host === 'string' &&
+    hostIsUrlSafe(host) &&
+    typeof owner === 'string' &&
+    REPO_NAME_PART.test(owner) &&
+    typeof name === 'string' &&
+    REPO_NAME_PART.test(name) &&
+    isNonEmptyString(branch) &&
+    encodesCleanly(branch) &&
+    isNonEmptyString(defaultBranch) &&
+    encodesCleanly(defaultBranch)
+  );
+}
+
 function nonNegativeInteger(value: unknown): number | null {
   return typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : null;
 }

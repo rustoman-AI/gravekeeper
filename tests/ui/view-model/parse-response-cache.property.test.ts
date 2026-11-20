@@ -17,7 +17,7 @@ function body(): Record<string, unknown> {
   return {
     ok: true,
     asOf: '2026-01-01T00:00:00Z',
-    repo: {},
+    repo: { host: 'github.com', owner: 'o', repo: 'r', branch: 'main', defaultBranch: 'main' },
     discovery: {},
     manifests: [],
     dependencies: [{ dependency: { name: 'a' }, facts: {}, versionBasis: 'pinned', advisories: [] }],

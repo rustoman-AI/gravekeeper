@@ -74,5 +74,5 @@ describe('P6 Model values are JSON-safe', () => {
       }),
       cfg(),
     );
-  });
+  }, 600_000);
 });

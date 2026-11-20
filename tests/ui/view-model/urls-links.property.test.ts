@@ -12,6 +12,9 @@ import {
   sourceRepoLink,
 } from '../../../view-model/urls';
 import { cfg } from '../../support/fc-config';
+import { noManifestsResult } from '../../support/ui/scan-result-builder';
+import { isValidRepo } from '../../../view-model/narrow';
+import { parseScanResponse } from '../../../view-model/parse-response';
 
 const ECOSYSTEMS: readonly Ecosystem[] = ['npm', 'pypi', 'cargo'];
 
@@ -128,12 +131,33 @@ describe('P33: Built links are safe', () => {
     );
   });
 
+  // The repo of a Scan_Result reaches canonicalRepoUrl only through parseScanResponse, which
+  // accepts it only when isValidRepo holds (Requirement 21, criterion 3). The generator draws
+  // the host, owner, repo and branch from that parsed domain: hostile text is kept for the
+  // branch, the only free-form part, and the owner and repo use the validated character set.
   it('P33 canonicalRepoUrl stays on https and the Scan_Result repo host, whatever the owner, repo and branch', () => {
+    const nameParts = fc.stringMatching(/^[A-Za-z0-9_.-]{1,39}$/);
     fc.assert(
-      fc.property(repoHosts, text, text, text, text, (host, owner, repoName, branch, defaultBranch) => {
-        const repo = { host, owner, repo: repoName, branch, defaultBranch } as unknown as ParsedScanResult['repo'];
-        const link = canonicalRepoUrl(repo);
+      fc.property(repoHosts, nameParts, nameParts, text, text, (host, owner, repoName, branch, defaultBranch) => {
+        const repo = { host, owner, repo: repoName, branch, defaultBranch };
+        fc.pre(isValidRepo(repo));
+        const link = canonicalRepoUrl(repo as unknown as ParsedScanResult['repo']);
         expectSafe(link, [...LINK_HOSTS, host]);
+      }),
+      cfg(),
+    );
+  });
+
+  it('P33 a repo that fails validation is never accepted by the response boundary', () => {
+    fc.assert(
+      fc.property(repoHosts, text, text, text, (host, owner, repoName, branch) => {
+        const repo = { host, owner, repo: repoName, branch, defaultBranch: 'main' };
+        fc.pre(!isValidRepo(repo));
+        const body = { ...noManifestsResult(), repo };
+        expect(parseScanResponse(200, { get: () => null }, body)).toEqual({
+          kind: 'failure',
+          failure: { kind: 'malformed-response' },
+        });
       }),
       cfg(),
     );

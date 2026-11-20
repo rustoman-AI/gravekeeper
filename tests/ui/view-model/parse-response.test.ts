@@ -31,7 +31,7 @@ function validResult(overrides: Record<string, unknown> = {}): Record<string, un
   return {
     ok: true,
     asOf: '2026-01-01T00:00:00Z',
-    repo: {},
+    repo: { host: 'github.com', owner: 'o', repo: 'r', branch: 'main', defaultBranch: 'main' },
     discovery: {},
     manifests: [],
     dependencies: [entry()],
@@ -56,6 +56,16 @@ describe('parseScanResponse', () => {
     expect(out.kind).toBe('result');
   });
 
+  it.each([
+    ['empty', {}],
+    ['invalid host', { host: 'a.xn--', owner: '', repo: '', branch: '/', defaultBranch: 'main' }],
+    ['empty owner', { host: 'github.com', owner: '', repo: 'r', branch: 'main', defaultBranch: 'main' }],
+    ['hostile repo name', { host: 'github.com', owner: 'o', repo: 'r/../x', branch: 'main', defaultBranch: 'main' }],
+    ['empty branch', { host: 'github.com', owner: 'o', repo: 'r', branch: '', defaultBranch: 'main' }],
+    ['host with path', { host: 'evil.test/x', owner: 'o', repo: 'r', branch: 'main', defaultBranch: 'main' }],
+  ])('rejects a repo that fails validation (%s)', (_label, repo) => {
+    expect(parseScanResponse(200, headers(), validResult({ repo }))).toEqual(malformed);
+  });
   it('rejects mismatched dependencies and assessed lengths', () => {
     expect(parseScanResponse(200, headers(), validResult({ assessed: [] }))).toEqual(malformed);
   });
