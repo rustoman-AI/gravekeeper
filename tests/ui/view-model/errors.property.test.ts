@@ -71,7 +71,7 @@ const clientInput = fc
   .map((r): ErrorInput => ({ kind: 'client', ...r }));
 
 describe('P24: Error model is total and keeps the plain message', () => {
-  it('never throws, and always has a heading, a way out and unique actions', () => {
+  it('P24 never throws, and always has a heading, a way out and unique actions', () => {
     fc.assert(
       fc.property(fc.oneof(apiInput, clientInput), (input) => {
         const model = buildErrorModel(input);
@@ -88,7 +88,7 @@ describe('P24: Error model is total and keeps the plain message', () => {
     );
   });
 
-  it('keeps the API message exactly', () => {
+  it('P24 keeps the API message exactly', () => {
     fc.assert(
       fc.property(apiInput, (input) => {
         if (input.kind !== 'api') throw new Error('unreachable');

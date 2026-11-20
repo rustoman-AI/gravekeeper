@@ -19,7 +19,7 @@ const keyOf = (ecosystem: string, name: string, sourceKind: string): string =>
   JSON.stringify([ecosystem, name, sourceKind]);
 
 describe('P7: One row per package key', () => {
-  it('has exactly one row per distinct dependency key, and as many rows as summary.total', () => {
+  it('P7 has exactly one row per distinct dependency key, and as many rows as summary.total', () => {
     fc.assert(
       fc.property(arbScanResult(), (generated) => {
         const result = parsed(generated);

@@ -17,7 +17,7 @@ const path = fc.array(piece, { maxLength: 6 }).map((parts) => parts.join(''));
 const pathList = fc.array(fc.oneof(path, fc.constant('')), { maxLength: 8 });
 
 describe('P2: Manifest query round trip', () => {
-  it('decodeManifests(encodeManifests(list)) equals list in the same order', () => {
+  it('P2 decodeManifests(encodeManifests(list)) equals list in the same order', () => {
     fc.assert(
       fc.property(pathList, (list) => {
         expect(decodeManifests(encodeManifests(list))).toEqual(list);
@@ -26,7 +26,7 @@ describe('P2: Manifest query round trip', () => {
     );
   });
 
-  it('also holds with a leading "?" and through buildUrl and parseUrlState', () => {
+  it('P2 also holds with a leading "?" and through buildUrl and parseUrlState', () => {
     fc.assert(
       fc.property(pathList, fc.constantFrom<'scene' | 'list'>('scene', 'list'), (list, view) => {
         const url = buildUrl({ repo: 'github.com/a/b', manifests: list, view });

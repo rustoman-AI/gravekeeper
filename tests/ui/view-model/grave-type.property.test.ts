@@ -31,7 +31,7 @@ function setKey(ids: readonly string[]): string {
 }
 
 describe('P12: Grave type and plot kind are functions of status and rule ids', () => {
-  it('equals for equal status and equal rule id set, whatever the order and duplicates', () => {
+  it('P12 equals for equal status and equal rule id set, whatever the order and duplicates', () => {
     fc.assert(
       fc.property(
         fc.constantFrom(...STATUSES),
@@ -53,7 +53,7 @@ describe('P12: Grave type and plot kind are functions of status and rule ids', (
     );
   });
 
-  it('derives grave type and plot kind exactly as specified', () => {
+  it('P12 derives grave type and plot kind exactly as specified', () => {
     fc.assert(
       fc.property(classification, (input) => {
         const c = input === null ? null : make(input[0], input[1]);
@@ -76,7 +76,7 @@ describe('P12: Grave type and plot kind are functions of status and rule ids', (
     );
   });
 
-  it('maps the six kinds to six distinct words', () => {
+  it('P12 maps the six kinds to six distinct words', () => {
     expect(new Set(KINDS.map(statusWordOf)).size).toBe(6);
   });
 });

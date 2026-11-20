@@ -42,11 +42,11 @@ function expectValid(text: string): void {
 }
 
 describe('P19: Fact formatting', () => {
-  it('lists the seven fact fields', () => {
+  it('P19 lists the seven fact fields', () => {
     expect(new Set(FACT_FIELDS).size).toBe(7);
   });
 
-  it('returns "unknown" for any value that is not valid for any field', () => {
+  it('P19 returns "unknown" for any value that is not valid for any field', () => {
     fc.assert(
       fc.property(field, fc.oneof(nonNumbers, badNumbers), (f, v) => {
         const isBoolOk = BOOL_FIELDS.includes(f) && typeof v === 'boolean';
@@ -58,7 +58,7 @@ describe('P19: Fact formatting', () => {
     );
   });
 
-  it('formats non-negative whole numbers of day fields as "<n> days", and 0 as "0 days"', () => {
+  it('P19 formats non-negative whole numbers of day fields as "<n> days", and 0 as "0 days"', () => {
     expect(formatFact('daysSinceLastRelease', 0)).toBe('0 days');
     expect(formatFact('daysSinceLastCommit', 0)).toBe('0 days');
     fc.assert(
@@ -71,7 +71,7 @@ describe('P19: Fact formatting', () => {
     );
   });
 
-  it('formats booleans as "yes" and "no", and false as "no"', () => {
+  it('P19 formats booleans as "yes" and "no", and false as "no"', () => {
     expect(formatFact('archived', false)).toBe('no');
     expect(formatFact('deprecated', false)).toBe('no');
     fc.assert(
@@ -84,7 +84,7 @@ describe('P19: Fact formatting', () => {
     );
   });
 
-  it('formats non-negative integer counts as their decimal text and rejects non-integers', () => {
+  it('P19 formats non-negative integer counts as their decimal text and rejects non-integers', () => {
     fc.assert(
       fc.property(countField, naturals, nonIntegers, (f, n, frac) => {
         const text = formatFact(f, n);
@@ -96,7 +96,7 @@ describe('P19: Fact formatting', () => {
     );
   });
 
-  it('formats severity words as themselves and every other string as unknown', () => {
+  it('P19 formats severity words as themselves and every other string as unknown', () => {
     fc.assert(
       fc.property(fc.constantFrom(...SEVERITIES), fc.string(), (sev, s) => {
         const text = formatFact('maxSeverity', sev);
@@ -108,7 +108,7 @@ describe('P19: Fact formatting', () => {
     );
   });
 
-  it('never formats an unknown value as 0, "no" or empty', () => {
+  it('P19 never formats an unknown value as 0, "no" or empty', () => {
     fc.assert(
       fc.property(field, (f) => {
         for (const v of [null, undefined]) {

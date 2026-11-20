@@ -613,18 +613,18 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 21.6, 15.3_
 - [x] 44. Checkpoint - Content-Security-Policy
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build` and `npm run test:e2e`, and ensure all pass. Ask the user if questions arise.
-- [ ] 45. Remaining properties and traceability
-  - [~] 45.1 Write the property test for JSON-safe models
+- [x] 45. Remaining properties and traceability
+  - [x] 45.1 Write the property test for JSON-safe models
     - `tests/ui/view-model/json-safe.property.test.ts`, covering `buildSceneModel`, `buildTableModel`, `buildHeaderModel` and `buildNotesModel`.
     - **Property 6: Model values are JSON-safe**
     - **Validates: Requirements 6.7**
-  - [~] 45.2 Update the property traceability document
+  - [x] 45.2 Update the property traceability document
     - In `docs/property-traceability.md` add a `graveyard-ui` section with one row per Property 1 to 34 (requirements, test file, test title, status from a full `npx vitest --run`), update the header counts and the "Properties without a test" list.
     - _Requirements: 19.1_
-  - [~] 45.3 Write the traceability test for the graveyard-ui properties
+  - [x] 45.3 Write the traceability test for the graveyard-ui properties
     - Create `tests/ui/traceability.test.ts`: every number from 1 to 34 appears in exactly one `// Feature: graveyard-ui, Property <n>` tag under `tests/`, each tagged file has a `// Validates:` line, and each test title starts with `P<n>`.
     - _Requirements: 19.1_
-- [~] 46. Checkpoint - Remaining properties
+- [x] 46. Checkpoint - Remaining properties
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [~] 47. Final checkpoint - Graveyard UI
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build`, `npm run check:bundle` and `npm run test:e2e`, and ensure all pass. Run `npm run test:deep tests/ui tests/pipeline/mapping` once and ensure it passes. Ask the user if questions arise.

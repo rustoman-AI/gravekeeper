@@ -26,7 +26,7 @@ function lastStartAtMost(t: number): number {
 }
 
 describe('P3: Stage selection is monotone and follows the start times', () => {
-  it('is an integer in 0..3 equal to the index of the last start time at most t', () => {
+  it('P3 is an integer in 0..3 equal to the index of the last start time at most t', () => {
     fc.assert(
       fc.property(elapsed, (t) => {
         const stage = stageAt(t);
@@ -39,7 +39,7 @@ describe('P3: Stage selection is monotone and follows the start times', () => {
     );
   });
 
-  it('never decreases as the elapsed time grows', () => {
+  it('P3 never decreases as the elapsed time grows', () => {
     fc.assert(
       fc.property(elapsed, elapsed, (x, y) => {
         const a = Math.min(x, y);

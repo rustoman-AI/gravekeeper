@@ -43,7 +43,7 @@ const scenario = fc
   );
 
 describe('P26: Picker lists candidates and encodes the selection', () => {
-  it('lists every candidate once in order and disables unchecked boxes at the limit', () => {
+  it('P26 lists every candidate once in order and disables unchecked boxes at the limit', () => {
     fc.assert(
       fc.property(scenario, ({ candidates, selected, repo }) => {
         const model = buildPickerModel(candidates, selected, repo);
@@ -63,7 +63,7 @@ describe('P26: Picker lists candidates and encodes the selection', () => {
     );
   });
 
-  it('builds a URL that decodes to the selected paths in candidate order and the repo value', () => {
+  it('P26 builds a URL that decodes to the selected paths in candidate order and the repo value', () => {
     fc.assert(
       fc.property(scenario, ({ candidates, selected, repo }) => {
         const model = buildPickerModel(candidates, selected, repo);

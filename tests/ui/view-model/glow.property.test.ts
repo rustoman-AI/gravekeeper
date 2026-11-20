@@ -19,7 +19,7 @@ function highest(list: readonly (Severity | null)[]): Severity | null {
 }
 
 describe('P11: Glow level is monotone in severity', () => {
-  it('GLOW_LEVELS[a] <= GLOW_LEVELS[b] whenever a is not higher than b', () => {
+  it('P11 GLOW_LEVELS[a] <= GLOW_LEVELS[b] whenever a is not higher than b', () => {
     fc.assert(
       fc.property(severity, severity, (a, b) => {
         if (ORDER.indexOf(a) <= ORDER.indexOf(b)) expect(GLOW_LEVELS[a]).toBeLessThanOrEqual(GLOW_LEVELS[b]);
@@ -28,7 +28,7 @@ describe('P11: Glow level is monotone in severity', () => {
     );
   });
 
-  it('equals the level of the highest advisory severity, then fact severity, then MEDIUM', () => {
+  it('P11 equals the level of the highest advisory severity, then fact severity, then MEDIUM', () => {
     fc.assert(
       fc.property(severityList, severityList, (advisories, facts) => {
         const expected = highest(advisories) ?? highest(facts) ?? 'MEDIUM';
@@ -38,7 +38,7 @@ describe('P11: Glow level is monotone in severity', () => {
     );
   });
 
-  it('defaults to MEDIUM', () => {
+  it('P11 defaults to MEDIUM', () => {
     expect(DEFAULT_SEVERITY).toBe('MEDIUM');
     expect(glowOf([], [])).toBe(GLOW_LEVELS.MEDIUM);
     expect(glowOf([null], [null])).toBe(GLOW_LEVELS.MEDIUM);

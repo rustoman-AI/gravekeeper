@@ -20,7 +20,7 @@ function retryEnabled(s: number, t: number): boolean {
 }
 
 describe('P25: Retry countdown', () => {
-  it('is non-increasing in elapsed time and never negative', () => {
+  it('P25 is non-increasing in elapsed time and never negative', () => {
     fc.assert(
       fc.property(cooldownAndTimes, ({ s, t1, t2 }) => {
         const r1 = retryRemainingMs(s, t1);
@@ -33,7 +33,7 @@ describe('P25: Retry countdown', () => {
     );
   });
 
-  it('is s * 1000 - t before the cooldown ends and 0 from s * 1000 on', () => {
+  it('P25 is s * 1000 - t before the cooldown ends and 0 from s * 1000 on', () => {
     fc.assert(
       fc.property(cooldownAndTimes, ({ s, t2: t }) => {
         const r = retryRemainingMs(s, t);
@@ -48,7 +48,7 @@ describe('P25: Retry countdown', () => {
     );
   });
 
-  it('enables Retry exactly when the remaining time is 0', () => {
+  it('P25 enables Retry exactly when the remaining time is 0', () => {
     fc.assert(
       fc.property(cooldownAndTimes, ({ s, t2: t }) => {
         expect(retryRemainingMs(s, t) === 0).toBe(retryEnabled(s, t));
@@ -57,7 +57,7 @@ describe('P25: Retry countdown', () => {
     );
   });
 
-  it('starts at the full cooldown at elapsed 0', () => {
+  it('P25 starts at the full cooldown at elapsed 0', () => {
     fc.assert(
       fc.property(seconds, (s) => {
         expect(retryRemainingMs(s, 0)).toBe(s * 1000);

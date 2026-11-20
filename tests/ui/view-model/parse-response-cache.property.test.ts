@@ -47,7 +47,7 @@ const headerValue = fc.oneof(
 const maybeHeader = fc.option(headerValue, { nil: undefined });
 
 describe('P29: Cache status mapping', () => {
-  it('maps hit and miss exactly, anything else to unknown, and never changes the result', () => {
+  it('P29 maps hit and miss exactly, anything else to unknown, and never changes the result', () => {
     const reference = parseScanResponse(200, headers(undefined), body());
     expect(reference.kind).toBe('result');
     fc.assert(
@@ -61,7 +61,7 @@ describe('P29: Cache status mapping', () => {
     );
   });
 
-  it('reads no cache status from a non-200 status', () => {
+  it('P29 reads no cache status from a non-200 status', () => {
     fc.assert(
       fc.property(
         fc.integer({ min: 100, max: 599 }).filter((s) => s !== 200),

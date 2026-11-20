@@ -73,7 +73,7 @@ function parsedWith(generated: unknown, notes: readonly { code: string; message:
 }
 
 describe('P22: Every note lands in exactly one group', () => {
-  it('puts every note in exactly one group, with counts summing to notes.length and messages verbatim', () => {
+  it('P22 puts every note in exactly one group, with counts summing to notes.length and messages verbatim', () => {
     fc.assert(
       fc.property(arbScanResult(), arbNotes, (generated, notes) => {
         const model = buildNotesModel(parsedWith(generated, notes));
@@ -123,7 +123,7 @@ describe('P22: Every note lands in exactly one group', () => {
     );
   });
 
-  it('agrees with the exported section table', () => {
+  it('P22 agrees with the exported section table', () => {
     expect(OTHER_NOTES_TITLE).toBe(OTHER_TITLE);
     expect(NOTE_SECTIONS.map((s) => ({ title: s.title, codes: s.codes.map(([c]) => c) }))).toEqual(SECTIONS);
   });

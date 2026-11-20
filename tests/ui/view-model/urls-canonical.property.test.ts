@@ -29,7 +29,7 @@ const repoArb: fc.Arbitrary<Repo> = fc.record({
 }) as unknown as fc.Arbitrary<Repo>;
 
 describe('P1: Canonical URL round trip', () => {
-  it('repoUrl of the request body equals the Canonical_Repo_URL after writing it as the repo query value', () => {
+  it('P1 repoUrl of the request body equals the Canonical_Repo_URL after writing it as the repo query value', () => {
     fc.assert(
       fc.property(repoArb, fc.boolean(), (repo, sameBranch) => {
         const r: Repo = sameBranch ? { ...repo, branch: repo.defaultBranch } : repo;
@@ -44,7 +44,7 @@ describe('P1: Canonical URL round trip', () => {
     );
   });
 
-  it('round-trips a plain example', () => {
+  it('P1 round-trips a plain example', () => {
     const repo = { host: 'github.com', owner: 'o', repo: 'r', branch: 'dev/x', defaultBranch: 'main' } as Repo;
     const canonical = canonicalRepoUrl(repo);
     expect(canonical).toBe('https://github.com/o/r/tree/dev/x');

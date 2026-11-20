@@ -35,7 +35,7 @@ const classification = fc
   });
 
 describe('P9: Strongest reason selection', () => {
-  it('is an element of reasons, avoids 6.3/11.2 when another exists, and is 8.1-8.3 for DEAD', () => {
+  it('P9 is an element of reasons, avoids 6.3/11.2 when another exists, and is 8.1-8.3 for DEAD', () => {
     fc.assert(
       fc.property(classification, (c) => {
         const strongest = strongestReason(c);
@@ -53,7 +53,7 @@ describe('P9: Strongest reason selection', () => {
     );
   });
 
-  it('returns null for a null classification', () => {
+  it('P9 returns null for a null classification', () => {
     expect(strongestReason(null)).toBeNull();
   });
 });

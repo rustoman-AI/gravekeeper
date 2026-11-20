@@ -61,7 +61,7 @@ const input = fc.tuple(
 );
 
 describe('P21: Detail lists every advisory once, in its labelled group', () => {
-  it('puts every entry in exactly one group, in API order, with unchanged id and checked href', () => {
+  it('P21 puts every entry in exactly one group, in API order, with unchanged id and checked href', () => {
     fc.assert(
       fc.property(input, ([advisories, count, noteIds]) => {
         const groups = buildAdvisoryGroups(advisories, count, noteIds);
@@ -91,7 +91,7 @@ describe('P21: Detail lists every advisory once, in its labelled group', () => {
     );
   });
 
-  it('with every exclusion known, each entry is in the group its value names and nothing is unclassified', () => {
+  it('P21 with every exclusion known, each entry is in the group its value names and nothing is unclassified', () => {
     const known = fc.array(
       advisory.map((a) => ({ ...a, exclusion: a.exclusion === 'unknown' ? ('counted' as const) : a.exclusion })),
       { maxLength: 15 },
@@ -109,7 +109,7 @@ describe('P21: Detail lists every advisory once, in its labelled group', () => {
     );
   });
 
-  it('with an absent exclusion, note-named ids are informational and the rest are not classified', () => {
+  it('P21 with an absent exclusion, note-named ids are informational and the rest are not classified', () => {
     const absent = fc.array(
       advisory.map((a) => ({ ...a, exclusion: 'unknown' as const })),
       { maxLength: 15 },
@@ -128,7 +128,7 @@ describe('P21: Detail lists every advisory once, in its labelled group', () => {
     );
   });
 
-  it('a withdrawn entry stays withdrawn even when a note names its id', () => {
+  it('P21 a withdrawn entry stays withdrawn even when a note names its id', () => {
     fc.assert(
       fc.property(advisory, (a) => {
         const groups = buildAdvisoryGroups([{ ...a, exclusion: 'withdrawn' }], 0, new Set([a.id]));

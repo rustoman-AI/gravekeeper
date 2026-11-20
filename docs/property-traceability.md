@@ -1,6 +1,6 @@
-# Property traceability
+﻿# Property traceability
 
-Maps every design property of the `scan-pipeline`, `dependency-graveyard-core` and `scan-accuracy` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 2449 passed and 26 skipped (the live tests, skipped without `GRAVEKEEPER_LIVE_TESTS`), 162 test files passed and 6 skipped. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
+Maps every design property of the `scan-pipeline`, `dependency-graveyard-core`, `scan-accuracy` and `graveyard-ui` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 3164 passed and 26 skipped (the live tests, skipped without `GRAVEKEEPER_LIVE_TESTS`), 251 test files passed and 6 skipped. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
 
 ## scan-pipeline
 
@@ -152,6 +152,47 @@ Maps every design property of the `scan-pipeline`, `dependency-graveyard-core` a
 | P11 | 7.1, 7.2, 7.3, 7.4, 7.7, 7.8 | `tests/pipeline/api/cache-header.property.test.ts` | Property 11: The cache header is present on 200 only and never changes the body | passing |
 | P12 | 9.2, 9.5, 9.6 | `tests/core/summarizer/unique-packages.property.test.ts` | Property 12: uniquePackages length equals summarize total and merged classifications match<br>Property 12: mergeClassifications returns a member that no other member beats | passing |
 
+## graveyard-ui
+
+| Property | Requirement(s) | Test file | Test title | Status | 1000 runs | Date | Counterexample and fix |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| P1 | 3.11 | `tests/ui/view-model/urls-canonical.property.test.ts` | P1 repoUrl of the request body equals the Canonical_Repo_URL after writing it as the repo query value<br>P1 round-trips a plain example | passing | passed | 2026-11-19 | none |
+| P2 | 3.12 | `tests/ui/view-model/urls-manifests.property.test.ts` | P2 also holds with a leading "?" and through buildUrl and parseUrlState<br>P2 decodeManifests(encodeManifests(list)) equals list in the same order | passing | passed | 2026-11-19 | none |
+| P3 | 4.13 | `tests/ui/view-model/stages.property.test.ts` | P3 is an integer in 0..3 equal to the index of the last start time at most t<br>P3 never decreases as the elapsed time grows | passing | passed | 2026-11-19 | none |
+| P4 | 5.9 | `tests/ui/view-model/header-summary.property.test.ts` | P4 N, M and the status counts come from the summary | passing | passed | 2026-11-19 | none |
+| P5 | 5.2, 5.10 | `tests/ui/view-model/header-headline.property.test.ts` | P5 B + F = DEAD, H = HAUNTED, N = B + F + H, and the text equals the oracle | passing | passed | 2026-11-19 | none |
+| P6 | 6.7 | `tests/ui/view-model/json-safe.property.test.ts` | P6 scene, table, header and notes models are plain JSON values that round-trip unchanged | passing | passed | 2026-11-20 | none |
+| P7 | 7.1, 7.10 | `tests/ui/view-model/rows-key-set.property.test.ts` | P7 has exactly one row per distinct dependency key, and as many rows as summary.total | passing | passed | 2026-11-19 | none |
+| P8 | 7.2, 7.11 | `tests/ui/view-model/rows-kinds.property.test.ts` | P8 rows carry the core classification and kind, and kind counts equal the summary | passing | passed | 2026-11-19 | none |
+| P9 | 7.4, 7.12 | `tests/ui/view-model/reasons.property.test.ts` | P9 is an element of reasons, avoids 6.3/11.2 when another exists, and is 8.1-8.3 for DEAD<br>P9 returns null for a null classification | passing | passed | 2026-11-19 | none. The generator excludes DEAD together with 7.2, following the core status precedence (see the design note). |
+| P10 | 7.6, 7.13 | `tests/ui/view-model/rows-labels.property.test.ts` | P10 every label is non-empty, names the package and status word, and is unique | passing | passed | 2026-11-19 | none |
+| P11 | 7.7, 7.14 | `tests/ui/view-model/glow.property.test.ts` | P11 defaults to MEDIUM<br>P11 equals the level of the highest advisory severity, then fact severity, then MEDIUM<br>P11 GLOW_LEVELS[a] <= GLOW_LEVELS[b] whenever a is not higher than b | passing | passed | 2026-11-19 | none |
+| P12 | 7.15, 7.16, 7.17, 7.20 | `tests/ui/view-model/grave-type.property.test.ts` | P12 derives grave type and plot kind exactly as specified<br>P12 equals for equal status and equal rule id set, whatever the order and duplicates<br>P12 maps the six kinds to six distinct words | passing | passed | 2026-11-19 | none |
+| P13 | 7.15, 7.16, 7.18, 7.20, 7.21 | `tests/ui/view-model/rows-graves.property.test.ts` | P13 buried plus forgotten equal DEAD, only dead plots have a grave, and restless ghosts are exactly the haunted with 8.1 or 8.2 | passing | passed | 2026-11-19 | none |
+| P14 | 8.11, 8.15 | `tests/ui/view-model/scene-overlap.property.test.ts` | P14 no two distinct plot rectangles intersect for 2 to 20 columns | passing | passed | 2026-11-19 | none. Rectangles are half-open, so plots with touching edges do not overlap. Now includes label rectangles (30.4, passed at 1000 runs on 2026-11-19). |
+| P15 | 8.3, 8.12, 8.15 | `tests/ui/view-model/scene-bounds.property.test.ts` | P15 every plot rectangle is inside [0, width] x [0, height] and height follows the formula | passing | passed | 2026-11-19 | none. Now includes label rectangles (30.4, passed at 1000 runs on 2026-11-19). |
+| P16 | 8.2, 8.13 | `tests/ui/view-model/scene-determinism.property.test.ts` | P16 builds equal scenes twice and after rotating dependencies and assessed together | passing | passed after fix | 2026-11-19 | Failed at 1000 runs with seed 1457184590 (columns=4, offset=10). Two rows with the same ecosystem and name but a different sourceKind kept input order. Fixed with a sourceKind tiebreak in the scene sort of `view-model/package-rows.ts` (design step 8 updated). |
+| P17 | 8.14 | `tests/ui/view-model/scene-plots.property.test.ts` | P17 each row has exactly one plot with a non-empty label containing its name or its cut form | passing | passed | 2026-11-19 | none |
+| P18 | 9.6, 9.9 | `tests/ui/view-model/scene-nav.property.test.ts` | P18 every move lands on an existing plot, edges keep the index, right then left returns | passing | passed | 2026-11-19 | none |
+| P19 | 10.4, 10.14 | `tests/ui/view-model/format-fact.property.test.ts` | P19 formats booleans as "yes" and "no", and false as "no"<br>P19 formats non-negative integer counts as their decimal text and rejects non-integers<br>P19 formats non-negative whole numbers of day fields as "<n> days", and 0 as "0 days"<br>P19 formats severity words as themselves and every other string as unknown<br>P19 lists the seven fact fields<br>P19 never formats an unknown value as 0, "no" or empty<br>P19 returns "unknown" for any value that is not valid for any field | passing | passed | 2026-11-19 | none |
+| P20 | 10.4, 10.15 | `tests/ui/view-model/detail.property.test.ts` | P20 the detail lists every reason verbatim in order, marks one as main, and names each fact once | passing | passed | 2026-11-19 | none. The 1000-run pass used `--testTimeout=600000` on the command line. The file sets no per-test timeout. Now includes labels (30.2, passed at 1000 runs on 2026-11-19). |
+| P21 | 10.16, 10.18, 10.19 | `tests/ui/view-model/advisory-groups.property.test.ts` | P21 a withdrawn entry stays withdrawn even when a note names its id<br>P21 puts every entry in exactly one group, in API order, with unchanged id and checked href<br>P21 with an absent exclusion, note-named ids are informational and the rest are not classified<br>P21 with every exclusion known, each entry is in the group its value names and nothing is unclassified | passing | passed | 2026-11-19 | none |
+| P22 | 11.4, 11.7, 11.8, 11.14 | `tests/ui/view-model/notes-groups.property.test.ts` | P22 agrees with the exported section table<br>P22 puts every note in exactly one group, with counts summing to notes.length and messages verbatim | passing | passed | 2026-11-19 | none |
+| P23 | 11.2, 11.15 | `tests/ui/view-model/notes-sources.property.test.ts` | P23 lists the six sources once each in the fixed order, with the status taken from sources | passing | passed | 2026-11-19 | none |
+| P24 | 13.1, 13.2, 13.13 | `tests/ui/view-model/errors.property.test.ts` | P24 keeps the API message exactly<br>P24 never throws, and always has a heading, a way out and unique actions | passing | passed | 2026-11-19 | none |
+| P25 | 13.4, 13.14 | `tests/ui/view-model/errors-countdown.property.test.ts` | P25 enables Retry exactly when the remaining time is 0<br>P25 is non-increasing in elapsed time and never negative<br>P25 is s * 1000 - t before the cooldown ends and 0 from s * 1000 on<br>P25 starts at the full cooldown at elapsed 0 | passing | passed | 2026-11-19 | none |
+| P26 | 11.11, 13.15, 13.17 | `tests/ui/view-model/picker.property.test.ts` | P26 builds a URL that decodes to the selected paths in candidate order and the repo value<br>P26 lists every candidate once in order and disables unchecked boxes at the limit | passing | passed | 2026-11-19 | none |
+| P27 | 14.1, 14.2, 14.3, 14.4, 14.7 | `tests/ui/view-model/parse-response-total.property.test.ts` | P27: returns exactly one of result, error or failure and never throws | passing | passed | 2026-11-19 | none |
+| P28 | 14.5, 14.8 | `tests/ui/view-model/parse-response-roundtrip.property.test.ts` | P28 returns the input unchanged apart from narrowing, keeping valid facts, advisories and bases | passing | passed | 2026-11-19 | none |
+| P29 | 14.9, 14.10 | `tests/ui/view-model/parse-response-cache.property.test.ts` | P29 maps hit and miss exactly, anything else to unknown, and never changes the result<br>P29 reads no cache status from a non-200 status | passing | passed | 2026-11-19 | none |
+| P30 | 18.4, 18.5, 18.9 | `tests/ui/view-model/table-sort.property.test.ts` | P30 sorted rows permute the scene rows and are ordered by the column key, null keys last | passing | passed | 2026-11-19 | none |
+| P31 | 18.10 | `tests/ui/view-model/table-scene.property.test.ts` | P31 table and scene hold the same keys, and each table row matches its plot row | passing | passed | 2026-11-19 | none |
+| P32 | 18.11 | `tests/ui/view-model/table-idempotent.property.test.ts` | P32 building the table from the rows of a table built with the same sort keeps the row order | passing | passed | 2026-11-19 | none |
+| P33 | 21.3, 21.4, 21.7 | `tests/ui/view-model/urls-links.property.test.ts` | P33 advisoryLink is null or an https link to a LINK_HOSTS host<br>P33 canonicalRepoUrl stays on https and the Scan_Result repo host, whatever the owner, repo and branch<br>P33 javascript: and data: inputs never produce a link<br>P33 non-string sourceRepo and advisory url give null<br>P33 registryLink gives null for non-string names<br>P33 registryLink is null or an https link to a registry host<br>P33 sourceRepoLink is null or an https link to a LINK_HOSTS host | passing | passed | 2026-11-19 | none |
+| P34 | 22.1, 22.2, 22.3, 22.4, 22.5, 22.7 | `tests/pipeline/mapping/advisory-exclusion.property.test.ts` | P34: Advisory exclusion kind agrees with the counted vulnerabilities (pipeline) | passing | passed | 2026-11-19 | none. This is the pipeline advisory-exclusion test. |
+
+Status is from a full `npx vitest --run` with FC_NUM_RUNS unset on 2026-11-20. "1000 runs" is `npm run test:deep` on the file. Each tag was checked against the property number, and `tests/ui/traceability.test.ts` enforces it for P1 to P34. P34 is the pipeline advisory-exclusion test, outside `tests/ui`.
+
 ## Properties without a test
 
 ### scan-pipeline (0 of 76)
@@ -165,6 +206,10 @@ None. All 47 properties (P1 to P47) have at least one passing test.
 ### scan-accuracy (0 of 12)
 
 None. All 12 properties (P1 to P12) have at least one passing test.
+
+### graveyard-ui (0 of 34)
+
+None. All 34 properties (P1 to P34) have at least one passing test.
 
 ## Tag and number mismatches
 
@@ -184,41 +229,3 @@ None. All 12 properties (P1 to P12) have at least one passing test.
 - P16 and P17 are registry-driven: one test per mapper or per removed field in `mappers.property.test.ts`, so the title cell gives a count.
 - scan-accuracy P3, P4 and P11 are now tagged with `// Feature: scan-accuracy` and `// Validates:` lines.
 
-## graveyard-ui (PBT status)
-Status of the graveyard-ui property tests, recorded on 2026-11-19. "Default" is `npx vitest --run` with FC_NUM_RUNS unset. "1000 runs" is `npm run test:deep`. Each test file's `// Feature: graveyard-ui, Property <n>` tag was checked against the property number. Only properties that have a test are listed here. The remaining graveyard-ui properties (P6) has no test yet, because its task is not done.
-
-| Property | Test file | Default | 1000 runs | Date | Counterexample and fix |
-| --- | --- | --- | --- | --- | --- |
-| P1 | `tests/ui/view-model/urls-canonical.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P2 | `tests/ui/view-model/urls-manifests.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P3 | `tests/ui/view-model/stages.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P4 | `tests/ui/view-model/header-summary.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P5 | `tests/ui/view-model/header-headline.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P7 | `tests/ui/view-model/rows-key-set.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P8 | `tests/ui/view-model/rows-kinds.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P9 | `tests/ui/view-model/reasons.property.test.ts` | passed | passed | 2026-11-19 | none. The generator excludes DEAD together with 7.2, following the core status precedence (see the design note). |
-| P10 | `tests/ui/view-model/rows-labels.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P11 | `tests/ui/view-model/glow.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P12 | `tests/ui/view-model/grave-type.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P13 | `tests/ui/view-model/rows-graves.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P14 | `tests/ui/view-model/scene-overlap.property.test.ts` | passed | passed | 2026-11-19 | none. Rectangles are half-open, so plots with touching edges do not overlap. Now includes label rectangles (30.4, passed at 1000 runs on 2026-11-19). |
-| P15 | `tests/ui/view-model/scene-bounds.property.test.ts` | passed | passed | 2026-11-19 | none. Now includes label rectangles (30.4, passed at 1000 runs on 2026-11-19). |
-| P16 | `tests/ui/view-model/scene-determinism.property.test.ts` | passed | passed after fix | 2026-11-19 | Failed at 1000 runs with seed 1457184590 (columns=4, offset=10). Two rows with the same ecosystem and name but a different sourceKind kept input order. Fixed with a sourceKind tiebreak in the scene sort of `view-model/package-rows.ts` (design step 8 updated). |
-| P17 | `tests/ui/view-model/scene-plots.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P18 | `tests/ui/view-model/scene-nav.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P19 | `tests/ui/view-model/format-fact.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P20 | `tests/ui/view-model/detail.property.test.ts` | passed | passed | 2026-11-19 | none. The 1000-run pass used `--testTimeout=600000` on the command line. The file sets no per-test timeout. Now includes labels (30.2, passed at 1000 runs on 2026-11-19). |
-| P21 | `tests/ui/view-model/advisory-groups.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P22 | `tests/ui/view-model/notes-groups.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P23 | `tests/ui/view-model/notes-sources.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P24 | `tests/ui/view-model/errors.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P25 | `tests/ui/view-model/errors-countdown.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P26 | `tests/ui/view-model/picker.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P27 | `tests/ui/view-model/parse-response-total.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P28 | `tests/ui/view-model/parse-response-roundtrip.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P29 | `tests/ui/view-model/parse-response-cache.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P30 | `tests/ui/view-model/table-sort.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P31 | `tests/ui/view-model/table-scene.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P32 | `tests/ui/view-model/table-idempotent.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P33 | `tests/ui/view-model/urls-links.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P34 | `tests/pipeline/mapping/advisory-exclusion.property.test.ts` | passed | passed | 2026-11-19 | none. This is the pipeline advisory-exclusion test. |

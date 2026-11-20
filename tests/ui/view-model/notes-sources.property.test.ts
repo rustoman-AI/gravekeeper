@@ -14,7 +14,7 @@ const SYMBOL = { ok: '✓', partial: '◐', failed: '✕' } as const;
 const headers = { get: () => null };
 
 describe('P23: Sources are listed once each', () => {
-  it('lists the six sources once each in the fixed order, with the status taken from sources', () => {
+  it('P23 lists the six sources once each in the fixed order, with the status taken from sources', () => {
     fc.assert(
       fc.property(arbScanResult(), (generated: ScanResult) => {
         const out = parseScanResponse(200, headers, JSON.parse(JSON.stringify(generated)) as unknown);

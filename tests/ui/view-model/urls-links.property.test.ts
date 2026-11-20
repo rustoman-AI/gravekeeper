@@ -66,7 +66,7 @@ function expectSafe(link: string | null, allowedHosts: readonly string[]): void 
 }
 
 describe('P33: Built links are safe', () => {
-  it('registryLink is null or an https link to a registry host', () => {
+  it('P33 registryLink is null or an https link to a registry host', () => {
     fc.assert(
       fc.property(fc.constantFrom(...ECOSYSTEMS, 'other' as unknown as Ecosystem), names, (eco, name) => {
         expectSafe(registryLink(eco, name), LINK_HOSTS);
@@ -75,7 +75,7 @@ describe('P33: Built links are safe', () => {
     );
   });
 
-  it('registryLink gives null for non-string names', () => {
+  it('P33 registryLink gives null for non-string names', () => {
     fc.assert(
       fc.property(
         fc.constantFrom(...ECOSYSTEMS),
@@ -88,7 +88,7 @@ describe('P33: Built links are safe', () => {
     );
   });
 
-  it('sourceRepoLink is null or an https link to a LINK_HOSTS host', () => {
+  it('P33 sourceRepoLink is null or an https link to a LINK_HOSTS host', () => {
     fc.assert(
       fc.property(sourceRepos, (s) => {
         expectSafe(sourceRepoLink(s), LINK_HOSTS);
@@ -97,7 +97,7 @@ describe('P33: Built links are safe', () => {
     );
   });
 
-  it('advisoryLink is null or an https link to a LINK_HOSTS host', () => {
+  it('P33 advisoryLink is null or an https link to a LINK_HOSTS host', () => {
     fc.assert(
       fc.property(advisoryUrls, (u) => {
         expectSafe(advisoryLink(u), LINK_HOSTS);
@@ -106,7 +106,7 @@ describe('P33: Built links are safe', () => {
     );
   });
 
-  it('non-string sourceRepo and advisory url give null', () => {
+  it('P33 non-string sourceRepo and advisory url give null', () => {
     fc.assert(
       fc.property(fc.oneof(fc.constant(null), fc.constant(undefined), fc.integer(), fc.object()), (v) => {
         expect(sourceRepoLink(v)).toBeNull();
@@ -116,7 +116,7 @@ describe('P33: Built links are safe', () => {
     );
   });
 
-  it('javascript: and data: inputs never produce a link', () => {
+  it('P33 javascript: and data: inputs never produce a link', () => {
     fc.assert(
       fc.property(fc.constantFrom('javascript:', 'data:', 'JAVASCRIPT:', 'Data:'), text, (prefix, rest) => {
         const s = prefix + rest;
@@ -128,7 +128,7 @@ describe('P33: Built links are safe', () => {
     );
   });
 
-  it('canonicalRepoUrl stays on https and the Scan_Result repo host, whatever the owner, repo and branch', () => {
+  it('P33 canonicalRepoUrl stays on https and the Scan_Result repo host, whatever the owner, repo and branch', () => {
     fc.assert(
       fc.property(repoHosts, text, text, text, text, (host, owner, repoName, branch, defaultBranch) => {
         const repo = { host, owner, repo: repoName, branch, defaultBranch } as unknown as ParsedScanResult['repo'];
