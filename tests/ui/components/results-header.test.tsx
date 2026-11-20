@@ -63,15 +63,18 @@ describe("status counts (Requirement 5.3)", () => {
   });
 });
 
-describe("nothing assessed (Requirement 5.4)", () => {
-  it("shows the sentence and 'no grade' instead of the headline", () => {
-    const { container } = renderHeader(parsedOf({}));
-    expect(screen.getByText("No dependencies could be assessed")).toBeTruthy();
-    expect(screen.getByText("no grade", { selector: "strong" })).toBeTruthy();
+describe("nothing assessed (Requirement 5.4, graveyard-art R11.1)", () => {
+  it("shows only the empty sentence: no headline, plaque, chips or old texts", () => {
+    const { container } = renderHeader(parsedOf({ "unassessed-git": 2 }));
+    // R11: the empty sentence replaces "No dependencies could be assessed" and "no grade".
+    expect(screen.getByText("The caretaker could not assess any of the 2 dependencies, so there is no grade.")).toBeTruthy();
     expect(container.textContent).not.toContain("are in the graveyard");
+    expect(container.textContent).not.toContain("No dependencies could be assessed");
+    expect(container.textContent).not.toContain("NO GRADE");
+    expect(container.querySelector("figure")).toBeNull();
+    expect(container.querySelector("ul")).toBeNull();
   });
 });
-
 describe("grade line (Requirements 5.5, 5.6)", () => {
   it("shows the label, letter and explanation built from the summary", () => {
     const parsed = parsedOf({ buried: 1, alive: 2 });
@@ -188,22 +191,18 @@ describe("grade plaque component (Requirements 5.2, 5.8)", () => {
   it("renders the letter and caption in one figure, then the explanation and the closed scale", () => {
     const parsed = parsedOf({ buried: 1, alive: 2 });
     const header = headerOf(parsed);
-    const { container } = render(<GradePlaque grade={header.grade} />);
+    const { container } = render(<GradePlaque grade={header.grade!} />);
     const figure = container.querySelector("figure") as HTMLElement;
-    expect(figure.querySelector("strong")?.textContent).toBe(header.grade.letter);
+    expect(figure.querySelector("strong")?.textContent).toBe(header.grade!.letter);
     expect(figure.querySelector("figcaption")?.textContent).toBe("worst single risk");
-    expect(figure.nextElementSibling?.textContent).toBe(header.grade.explanation);
+    expect(figure.nextElementSibling?.textContent).toBe(header.grade!.explanation);
     const details = container.querySelector("details") as HTMLDetailsElement;
     expect(details.open).toBe(false);
     expect(figure.contains(details)).toBe(false);
-    for (const entry of header.grade.scale) {
+    for (const entry of header.grade!.scale) {
       expect(details.textContent).toContain(`${entry.letter}: ${entry.range}`);
     }
   });
 
-  it("shows 'no grade' as the letter when nothing was assessed", () => {
-    const header = headerOf(parsedOf({}));
-    const { container } = render(<GradePlaque grade={header.grade} />);
-    expect(container.querySelector("figure strong")?.textContent).toBe("no grade");
-  });
+  // R11: the 'no grade' plaque test is removed; with nothing assessed the header has no grade object (see "nothing assessed").
 });

@@ -1,7 +1,7 @@
 import type { HeaderModel } from '../view-model';
 
 export interface GradePlaqueProps {
-  grade: HeaderModel['grade'];
+  grade: NonNullable<HeaderModel['grade']>;
 }
 
 /**

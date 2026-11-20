@@ -73,42 +73,44 @@ function parsedWith(generated: unknown, notes: readonly { code: string; message:
 }
 
 describe('P22: Every note lands in exactly one group', () => {
-  it('P22 puts every note in exactly one group, with counts summing to notes.length and messages verbatim', () => {
+  it('P22 puts every note whose message differs from empty.message (when empty !== null) in exactly one group, with counts summing to notes.length and messages verbatim', () => {
     fc.assert(
       fc.property(arbScanResult(), arbNotes, (generated, notes) => {
         const model = buildNotesModel(parsedWith(generated, notes));
+        // R11: the empty-graveyard message leaves the groups, so only notes that differ from empty.message are grouped.
+        const kept = model.empty === null ? notes : notes.filter((n) => n.message !== model.empty!.message);
         const groups = model.sections.flatMap((s) => s.groups.map((g) => ({ section: s.title, group: g })));
 
         // Sum of counts, and each count is the length of its message list.
-        expect(groups.reduce((n, g) => n + g.group.count, 0)).toBe(notes.length);
+        expect(groups.reduce((n, g) => n + g.group.count, 0)).toBe(kept.length);
         for (const { group } of groups) {
           expect(group.count).toBe(group.messages.length);
           expect(group.count).toBeGreaterThan(0);
         }
 
         // Expected multiset of (section, message): each note counted once, under the section of its code.
-        const expected = notes.map((n) => JSON.stringify([sectionOf(n.code), n.message])).sort();
+        const expected = kept.map((n) => JSON.stringify([sectionOf(n.code), n.message])).sort();
         const actual = groups
           .flatMap((g) => g.group.messages.map((m) => JSON.stringify([g.section, m])))
           .sort();
         expect(actual).toEqual(expected);
 
         // One group per distinct known code, and a single group for all unknown codes.
-        const knownCodes = new Set(notes.filter((n) => KNOWN.has(n.code)).map((n) => n.code));
-        const hasUnknown = notes.some((n) => !KNOWN.has(n.code));
+        const knownCodes = new Set(kept.filter((n) => KNOWN.has(n.code)).map((n) => n.code));
+        const hasUnknown = kept.some((n) => !KNOWN.has(n.code));
         expect(groups).toHaveLength(knownCodes.size + (hasUnknown ? 1 : 0));
         for (const code of knownCodes) {
           const mine = groups.filter((g) => g.group.code === code);
           expect(mine).toHaveLength(1);
           expect(mine[0]?.section).toBe(sectionOf(code));
-          expect(mine[0]?.group.count).toBe(notes.filter((n) => n.code === code).length);
+          expect(mine[0]?.group.count).toBe(kept.filter((n) => n.code === code).length);
         }
 
         // Unknown codes: the "Other notes" section, each message verbatim.
         const other = model.sections.filter((s) => s.title === OTHER_TITLE);
         expect(other).toHaveLength(hasUnknown ? 1 : 0);
         if (hasUnknown) {
-          const unknown = notes.filter((n) => !KNOWN.has(n.code)).map((n) => n.message);
+          const unknown = kept.filter((n) => !KNOWN.has(n.code)).map((n) => n.message);
           expect(other[0]?.groups.flatMap((g) => g.messages).sort()).toEqual([...unknown].sort());
         }
 

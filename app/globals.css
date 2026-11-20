@@ -478,6 +478,11 @@ main[tabindex="-1"]:focus-visible {
   color: var(--color-bone);
 }
 
+/* R11.1: the single empty-state sentence, smaller than the verdict headline. */
+.gk-headline-empty {
+  font-size: clamp(1.5rem, 3vw + 0.5rem, 2.25rem);
+}
+
 /* R5.2: carved plaque with an inset bevel built from tokens. */
 .gk-plaque {
   display: inline-flex;

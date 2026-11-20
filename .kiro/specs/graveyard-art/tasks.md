@@ -272,33 +272,33 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
 - [x] 15. Checkpoint - Scanning screen
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 16. Empty states
-  - [~] 16.1 Header empty sentence and nullable grade
+- [x] 16. Empty states
+  - [x] 16.1 Header empty sentence and nullable grade
     - In `view-model/types.ts` make `grade` of `HeaderModel` nullable, replace `emptyText` by `emptySentence`; in `view-model/header.ts` set `headline`, `chips` and `grade` to null or empty when `assessed === 0`, and `emptySentence` per R11.2 to R11.4; remove the "no grade" explanation path and the constants `NO_ASSESSED_TEXT` and `NO_GRADE_TEXT`.
     - Files: `view-model/types.ts`, `view-model/header.ts`
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
-  - [~] 16.2 Show the empty-graveyard message once
+  - [x] 16.2 Show the empty-graveyard message once
     - In `view-model/notes.ts` remove from every group the messages equal to `empty.message` when `empty !== null` (drop emptied groups and sections, recompute `count` and `previewCount`). Keep the picker, the cap banner and every other note.
     - Files: `view-model/notes.ts`
     - _Requirements: 11.6, 11.7, 11.8_
-  - [~] 16.3 Write the property test for the header
+  - [x] 16.3 Write the property test for the header
     - `tests/ui/view-model/header-empty.property.test.ts`: results from the shared arbitrary with `assessed` forced to 0 (with and without manifests) and above 0.
     - **Property 12: The header shows either a verdict or one empty sentence (GA-P12)**
     - **Validates: Requirements 5.4, 5.9, 11.1, 11.2, 11.3, 11.4, 11.5**
-  - [~] 16.4 Write the property test for the message shown once
+  - [x] 16.4 Write the property test for the message shown once
     - `tests/ui/view-model/notes-once.property.test.ts`: results with `no-manifests` and `no-root-manifest` notes and with other notes of arbitrary codes.
     - **Property 13: The empty-graveyard message appears once (GA-P13)**
     - **Validates: Requirements 11.6, 11.8**
-  - [~] 16.5 Render the empty states
+  - [x] 16.5 Render the empty states
     - In `components/results-header.tsx` render nothing but h1, the single `emptySentence` paragraph (`.gk-headline`, smaller clamp) when present, and the meta line when `grade === null`; no plaque, chips, headline or grade scale. In `components/results-page.tsx` keep `EmptyGraveyard` and the picker as they are (the notes model no longer repeats the message).
     - Files: `components/results-header.tsx`, `components/results-page.tsx`
     - _Requirements: 11.1, 11.4, 11.6, 11.7_
-  - [~] 16.6 Update the empty-state tests
+  - [x] 16.6 Update the empty-state tests
     - Update `tests/ui/components/results-header.test.tsx`, the header and notes view-model tests and `tests/ui/components/graveyard-app-results.test.tsx` where they assert "No dependencies could be assessed", "no grade" or the old notes group for the empty message (reason: R11). Add `tests/ui/components/empty-state.test.tsx`: the three cases render exactly one sentence, none of "NO GRADE", "no grade" or "No dependencies could be assessed" appears, and the "No manifests" message appears exactly once on the page (header, empty block and notes together).
     - Files: `tests/ui/components/results-header.test.tsx`, `tests/ui/components/graveyard-app-results.test.tsx`, `tests/ui/view-model/header-empty.test.ts`, `tests/ui/components/empty-state.test.tsx`
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.6, 11.7_
 
-- [~] 17. Checkpoint - Empty states
+- [x] 17. Checkpoint - Empty states
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 18. End-to-end, axe, style and performance updates

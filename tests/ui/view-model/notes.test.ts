@@ -57,6 +57,7 @@ describe('buildNotesModel sections (R11.7, R11.8)', () => {
 
   for (const [title, codes] of Object.entries(SPEC_SECTIONS)) {
     for (const code of codes) {
+      if (code === 'no-manifests') continue; // R11: the no-manifests note is the empty message and leaves the groups; see the test below.
       it(`puts ${code} in "${title}"`, () => {
         const model = buildNotesModel(parse({ notes: [noteOf(code as never)] }));
         expect(model.sections.map((s) => s.title)).toEqual([title]);
@@ -66,6 +67,13 @@ describe('buildNotesModel sections (R11.7, R11.8)', () => {
       });
     }
   }
+
+  it('keeps the no-manifests note out of every group because it is the empty message', () => {
+    // R11: the no-manifests note now equals empty.message and is removed from the groups (R11.6).
+    const model = buildNotesModel(parse({ notes: [noteOf('no-manifests')] }));
+    expect(model.empty).toEqual({ message: 'Synthetic note no-manifests.' });
+    expect(model.sections).toEqual([]);
+  });
 
   it('covers every note code the pipeline emits, each in exactly one section', () => {
     const listed = Object.values(SPEC_SECTIONS).flat();
@@ -83,7 +91,7 @@ describe('buildNotesModel sections (R11.7, R11.8)', () => {
   });
 
   it('puts "Other notes" after the themed sections', () => {
-    const result = parse({ notes: [noteOf('no-manifests'), noteOf('pin-not-found')] });
+    const result = parse({ notes: [noteOf('manifest-too-large'), noteOf('pin-not-found')] }); // R11: no-manifests no longer forms a group, so manifest-too-large stands for The plot map
     const model = buildNotesModel({
       ...result,
       notes: [...result.notes, { code: 'zzz', message: 'odd' } as never],

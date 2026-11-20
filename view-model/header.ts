@@ -4,8 +4,6 @@ import { SHORT_SHA_LENGTH } from './constants';
 import type { HeaderModel, PackageRow, ParsedScanResult, StatusChipModel } from './types';
 import { canonicalRepoUrl } from './urls';
 
-const NO_ASSESSED_TEXT = 'No dependencies could be assessed';
-const NO_GRADE_TEXT = 'no grade';
 
 /** Requirement 5.2: the Headline. Parts with count 0 are omitted; the colon only when a part is kept. */
 export function headlineText(n: number, m: number, b: number, f: number, h: number): string {
@@ -40,10 +38,18 @@ function absoluteUtc(iso: string): string {
 
 function explanationOf(result: ParsedScanResult): string {
   const s = result.summary;
-  if (s.assessed === 0 || s.maxScorePackage === null || s.maxScore === null || s.averageScore === null) {
-    return NO_GRADE_TEXT;
+  if (s.maxScorePackage === null || s.maxScore === null || s.averageScore === null) {
+    return 'Graded on the riskiest package, not on the average';
   }
   return `Graded on the riskiest package, ${s.maxScorePackage.name} (score ${s.maxScore}), not on the average (${s.averageScore})`;
+}
+
+/** Graveyard-art Requirements 11.2 to 11.4: the Empty_Sentence; null when assessed > 0 or no manifest was found. */
+function emptySentenceOf(result: ParsedScanResult): string | null {
+  const { summary, manifests } = result;
+  if (summary.assessed > 0 || manifests.length === 0) return null;
+  if (summary.total === 0) return 'This repository declares no dependencies, so there is nothing to grade.';
+  return `The caretaker could not assess any of the ${summary.total} dependencies, so there is no grade.`;
 }
 
 /** Graveyard-art Requirements 5.4, 5.5, 5.9: the four chips; counts come from the summary and the row split. */
@@ -95,7 +101,7 @@ export function buildHeaderModel(result: ParsedScanResult, rows: readonly Packag
           haunted,
           text: headlineText(buried + forgotten + haunted, m, buried, forgotten, haunted),
         },
-    emptyText: noneAssessed ? NO_ASSESSED_TEXT : null,
+    emptySentence: emptySentenceOf(result),
     counts: {
       alive: summary.counts.ALIVE,
       haunted,
@@ -104,12 +110,14 @@ export function buildHeaderModel(result: ParsedScanResult, rows: readonly Packag
       forgotten,
       unassessed: summary.unassessed,
     },
-    grade: {
-      letter: noneAssessed ? null : summary.grade,
-      label: 'worst single risk',
-      explanation: explanationOf(result),
-      scale: GRADE_SCALE,
-    },
+    grade: noneAssessed || summary.grade === null
+      ? null
+      : {
+          letter: summary.grade,
+          label: 'worst single risk',
+          explanation: explanationOf(result),
+          scale: GRADE_SCALE,
+        },
     entriesSentence:
       entries > summary.total
         ? `${entries} dependency entries across ${result.manifests.length} manifests, ${summary.total} unique packages`

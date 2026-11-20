@@ -41,7 +41,7 @@ describe('buildHeaderModel headline (R5.2, R5.4)', () => {
     const h = headerOf(specsOf({ alive: 2, buried: 2, forgotten: 3, haunted: 4 }));
     expect(h.headline).toMatchObject({ n: 9, m: 11, buried: 2, forgotten: 3, haunted: 4 });
     expect(h.headline?.text).toBe('9 of 11 dependencies are in the graveyard: 2 buried, 3 forgotten, 4 haunted.');
-    expect(h.emptyText).toBeNull();
+    expect(h.emptySentence).toBeNull(); // R11: renamed from emptyText; assessed > 0 has no empty sentence
   });
 
   it('writes no colon when nothing is in the graveyard', () => {
@@ -59,9 +59,10 @@ describe('buildHeaderModel headline (R5.2, R5.4)', () => {
   it('shows the empty sentence and no grade when M is 0', () => {
     const h = headerOf(specsOf({ 'unassessed-git': 2 }));
     expect(h.headline).toBeNull();
-    expect(h.emptyText).toBe('No dependencies could be assessed');
-    expect(h.grade.letter).toBeNull();
-    expect(h.grade.explanation).toBe('no grade');
+    // R11: the empty sentence replaces 'No dependencies could be assessed'; there is no grade object at all.
+    expect(h.emptySentence).toBe('The caretaker could not assess any of the 2 dependencies, so there is no grade.');
+    expect(h.grade).toBeNull();
+    expect(h.chips).toEqual([]);
     expect(h.counts.unassessed).toBe(2);
   });
 });
@@ -71,9 +72,9 @@ describe('buildHeaderModel grade (R5.5)', () => {
     const result = buildScanResult(specsOf({ alive: 1, forgotten: 1 })) as unknown as ParsedScanResult;
     const h = buildHeaderModel(result, buildPackageRows(result));
     const s = result.summary;
-    expect(h.grade.label).toBe('worst single risk');
-    expect(h.grade.letter).toBe(s.grade);
-    expect(h.grade.explanation).toBe(
+    expect(h.grade!.label).toBe('worst single risk');
+    expect(h.grade!.letter).toBe(s.grade);
+    expect(h.grade!.explanation).toBe(
       `Graded on the riskiest package, ${s.maxScorePackage!.name} (score ${s.maxScore}), not on the average (${s.averageScore})`,
     );
   });

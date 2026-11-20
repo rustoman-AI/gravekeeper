@@ -81,7 +81,9 @@ function firstMessage(notes: readonly Note[], code: string): string | null {
   return notes.find((n) => n.code === code)?.message ?? null;
 }
 
-function buildSections(notes: readonly Note[]): NotesModel['sections'] {
+function buildSections(allNotes: readonly Note[], emptyMessage: string | null): NotesModel['sections'] {
+  // Requirements 11.6, 11.8: the empty-graveyard message is shown once, so it leaves the groups.
+  const notes = emptyMessage === null ? allNotes : allNotes.filter((n) => n.message !== emptyMessage);
   const known = new Set(NOTE_SECTIONS.flatMap((s) => s.codes.map(([c]) => c)));
   const sections: { title: string; groups: NotesModel['sections'][number]['groups'][number][] }[] = [];
   const group = (code: string, heading: string, messages: string[]) => ({
@@ -158,7 +160,7 @@ export function buildNotesModel(result: ParsedScanResult): NotesModel {
 
   return {
     sources,
-    sections: buildSections(notes),
+    sections: buildSections(notes, empty === null ? null : empty.message),
     capBanner,
     empty,
     manifestWarnings: result.manifests

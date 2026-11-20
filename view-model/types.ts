@@ -242,8 +242,8 @@ export interface HeaderModel {
   readonly asOfText: string;
   /** null when summary.assessed is 0. */
   readonly headline: HeadlineModel | null;
-  /** "No dependencies could be assessed" when headline is null. */
-  readonly emptyText: string | null;
+  /** Graveyard-art Requirements 11.2 to 11.4: the one sentence when nothing was assessed; null when assessed > 0 or no manifest was found. */
+  readonly emptySentence: string | null;
   readonly counts: {
     readonly alive: number;
     readonly haunted: number;
@@ -252,12 +252,13 @@ export interface HeaderModel {
     readonly forgotten: number;
     readonly unassessed: number;
   };
+  /** null when summary.assessed is 0 (Requirement 11.1). */
   readonly grade: {
-    readonly letter: Grade | null;
+    readonly letter: Grade;
     readonly label: 'worst single risk';
     readonly explanation: string;
     readonly scale: readonly { readonly letter: Grade; readonly range: string }[];
-  };
+  } | null;
   /** "<entries> dependency entries across <manifests> manifests, <total> unique packages", or null (Requirement 5.7). */
   readonly entriesSentence: string | null;
   /** Four status chips; [] when summary.assessed is 0 (Requirements 5.4, 5.5, 5.9). */

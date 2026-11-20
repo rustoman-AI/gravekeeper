@@ -27,7 +27,7 @@ function resultPath(name: FixtureName): string {
 
 function headlineOf(name: FixtureName): string {
   const { header } = parsed(name);
-  return header.headline !== null ? header.headline.text : (header.emptyText ?? "");
+  return header.headline !== null ? header.headline.text : (header.emptySentence ?? "") /* R11: emptyText renamed to emptySentence */;
 }
 
 async function openList(page: Page): Promise<void> {

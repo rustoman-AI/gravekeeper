@@ -48,7 +48,7 @@ test("live production scan of revmic/canopy", async ({ page }) => {
   const rows = buildPackageRows(outcome.result);
   const header = buildHeaderModel(outcome.result, rows);
   const expectedHeadline =
-    header.headline !== null ? header.headline.text : (header.emptyText ?? "");
+    header.headline !== null ? header.headline.text : (header.emptySentence ?? "") /* R11: emptyText renamed to emptySentence */;
   expect(expectedHeadline).not.toBe("");
 
   await expect(page.getByText(expectedHeadline, { exact: true })).toBeVisible({
