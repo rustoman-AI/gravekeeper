@@ -1609,6 +1609,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474135
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139689303
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139774894
       }
     ],
     "17.2 Write the unit tests for the table model": [
@@ -1616,6 +1626,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474172
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139779353
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139893302
       }
     ],
     "17.3 Write the property test for the sorted table": [
@@ -1623,6 +1643,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474208
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139780349
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139894530
       }
     ],
     "17.4 Write the property test for table and scene agreement": [
@@ -1630,6 +1660,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474244
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139781349
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139895537
       }
     ],
     "17.5 Write the property test for sort idempotence": [
@@ -1637,6 +1677,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474282
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139782350
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139896597
       }
     ],
     "17.6 Implement the list view": [
@@ -1644,6 +1694,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474318
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139783030
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139897534
       }
     ],
     "17.7 Write the component tests for the list view": [
@@ -1651,6 +1711,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474354
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139920562
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139998965
       }
     ],
     "18. Checkpoint - List view": [
@@ -1658,6 +1728,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474396
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139999377
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140069233
       }
     ],
     "19.1 Implement the fact formatter, the detail model and the advisory groups": [
@@ -2302,6 +2382,13 @@
         "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795139621221
+      }
+    ],
+    "17. List view": [
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795139999059
       }
     ]
   }

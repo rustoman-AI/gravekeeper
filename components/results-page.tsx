@@ -8,7 +8,8 @@ import {
   columnsFor,
   sceneHeight,
 } from '../view-model/index';
-import type { CacheStatus, ParsedScanResult } from '../view-model/index';
+import dynamic from 'next/dynamic';
+import type { CacheStatus, PackageKeyString, ParsedScanResult } from '../view-model/index';
 import { useContainerWidth } from './hooks/use-container-width';
 import { ResultsHeader } from './results-header';
 import { Scene } from './scene';
@@ -27,6 +28,11 @@ export interface ResultsPageProps {
   onOpen?: (index: number) => void;
 }
 
+// Loaded only when the list view is chosen (Requirements 16.7, 17.7).
+const ListView = dynamic(() => import('./list-view').then((mod) => mod.ListView), {
+  loading: () => <p className="text-bone">Loading...</p>,
+});
+
 const NOOP = () => undefined;
 
 /** Requirements 3.4, 3.5, 8.3, 17.3, 17.5, 18.1: header, view toggle and the Scene. */
@@ -40,6 +46,12 @@ export function ResultsPage({ result, cache, nowMs, view, onViewChange, onOpen =
   const scene = useMemo(() => buildSceneModel(rows, columns), [rows, columns]);
   // Reserved before any plot renders, so the page does not shift (Requirement 17.3).
   const reserved = sceneHeight(rows.length, columns);
+
+  // The list reports a package key; rows are in scene order, so the row index is the plot index.
+  const openByKey = (key: PackageKeyString) => {
+    const index = rows.findIndex((row) => row.key === key);
+    if (index >= 0) onOpen(index);
+  };
 
   // Focus moves to the page heading when results appear.
   useEffect(() => {
@@ -55,7 +67,7 @@ export function ResultsPage({ result, cache, nowMs, view, onViewChange, onOpen =
         {view === 'scene' ? (
           <Scene scene={scene} onOpen={onOpen} skipTargetId={VIEW_TOGGLE_ID} />
         ) : (
-          <p className="text-bone">The list view is not available yet.</p>
+          <ListView rows={rows} onOpen={openByKey} />
         )}
       </div>
     </div>

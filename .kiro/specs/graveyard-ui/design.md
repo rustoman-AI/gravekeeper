@@ -894,7 +894,7 @@ export function nextFocus(scene: SceneModel, current: number, move: FocusMove): 
 
 ### Table sort (R18.4, R18.5, R18.11)
 
-Sort keys: `name` (display name, code point), `ecosystem` (code point), `status` (the status rank of the scene order, then grave type), `score` (number, `null` last in both directions), `reason` (`epitaphShort`, code point), `scopes` (joined `SCOPE_ORDER` text, code point), `version` (`lookupVersion` text with `null` last). The tiebreaker is always the scene order (the row's index in `buildPackageRows`), applied in ascending order whatever the direction, which makes the sort stable and idempotent. No sort given means scene order.
+Sort keys: `name` (display name, code point), `ecosystem` (code point), `status` (the status rank of the scene order, then the status word (code-point order)), `score` (number, `null` last in both directions), `reason` (`epitaphShort`, code point), `scopes` (joined `SCOPE_ORDER` text, code point), `version` (`lookupVersion` text with `null` last). The tiebreaker is always the scene order (the row's index in `buildPackageRows`), applied in ascending order whatever the direction, which makes the sort stable and idempotent. The status word is the finer key: it separates a ghost ("haunted") from a restless ghost ("haunted, buried"), which share a rank and both have a null grave type, and for DEAD rows it gives the same order as grave type (buried before forgotten). No sort given means scene order.
 
 ### Notes model (R11)
 

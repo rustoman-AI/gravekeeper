@@ -313,32 +313,32 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 3.4, 3.10, 18.1_
 - [x] 16. Checkpoint - Results page and scene
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 17. List view
-  - [~] 17.1 Implement the table model
+- [x] 17. List view
+  - [x] 17.1 Implement the table model
     - Create `view-model/table.ts` (`buildTableModel(rows, sort)` with the seven columns, `aria-sort` values, sort keys as in the design "Table sort": status key is the status rank then the status word, scores with `null` last in both directions, scene order as the stable tiebreaker, "not assessed" and "unknown" cell texts) and export it from `view-model/index.ts`.
     - _Requirements: 18.3, 18.4, 18.5, 18.7_
-  - [~] 17.2 Write the unit tests for the table model
+  - [x] 17.2 Write the unit tests for the table model
     - Create `tests/ui/view-model/table.test.ts`: the column labels, each sort column ascending and descending, `aria-sort` of the sorted header only, an unmarked grave shows "not assessed" and never 0, an unknown version shows "unknown", ties follow the scene order, a restless row has the status text "haunted, buried".
     - _Requirements: 18.3, 18.4, 18.5, 18.7_
-  - [~] 17.3 Write the property test for the sorted table
+  - [x] 17.3 Write the property test for the sorted table
     - `tests/ui/view-model/table-sort.property.test.ts`.
     - **Property 30: Sorted table is an ordered permutation**
     - **Validates: Requirements 18.4, 18.5, 18.9**
-  - [~] 17.4 Write the property test for table and scene agreement
+  - [x] 17.4 Write the property test for table and scene agreement
     - `tests/ui/view-model/table-scene.property.test.ts`.
     - **Property 31: Table and scene agree**
     - **Validates: Requirements 18.10**
-  - [~] 17.5 Write the property test for sort idempotence
+  - [x] 17.5 Write the property test for sort idempotence
     - `tests/ui/view-model/table-idempotent.property.test.ts`.
     - **Property 32: Sorting is idempotent**
     - **Validates: Requirements 18.11**
-  - [~] 17.6 Implement the list view
+  - [x] 17.6 Implement the list view
     - Read `lazy-loading.md` first. Create `components/list-view.tsx` (native `table` with `caption`, `th scope="col"`, a sort button per header with `aria-sort`, one `tr` per row, the package name as a button that opens the detail, all rows without pagination) and load it with `next/dynamic` in `components/results-page.tsx` for `view=list`, with the text fallback "Loading...".
     - _Requirements: 16.7, 17.7, 18.2, 18.4, 18.6, 18.8_
-  - [~] 17.7 Write the component tests for the list view
+  - [x] 17.7 Write the component tests for the list view
     - Create `tests/ui/components/list-view.test.tsx` (jsdom): caption and column headers, one row per package with the same keys as the scene, sorting by each column, `aria-sort` toggles ascending and descending, "not assessed" and "unknown" cells, activating the name calls `onOpen`, 300 rows render without pagination.
     - _Requirements: 18.2, 18.3, 18.4, 18.6, 18.7, 18.8_
-- [~] 18. Checkpoint - List view
+- [x] 18. Checkpoint - List view
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 19. Detail panel
   - [~] 19.1 Implement the fact formatter, the detail model and the advisory groups
