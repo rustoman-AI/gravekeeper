@@ -36,6 +36,16 @@ const FACT_NAMES = [
   "maintainerCount",
 ];
 
+const FACT_LABELS = [
+  "Days since last release",
+  "Days since last commit",
+  "Archived",
+  "Deprecated",
+  "Open vulnerabilities",
+  "Highest severity",
+  "Maintainers",
+];
+
 function Harness({ model, onClosed }: { model: DetailModel; onClosed?: () => void }) {
   const [open, setOpen] = useState(false);
   return (
@@ -110,13 +120,17 @@ describe("DetailPanel focus and dialog behaviour (R10.1)", () => {
 });
 
 describe("DetailPanel content", () => {
-  it("shows 'unknown' for each Unknown_Value and lists all seven fact names (R10.4)", () => {
+  it("shows 'unknown' for each Unknown_Value and lists all seven fact labels with the field name as title (R10.4, R10.15)", () => {
     const model = modelOf([{ name: "mystery", kind: "unknown-facts" }], "mystery");
     const { dialog } = renderPanel(model);
     const terms = within(dialog)
       .getAllByRole("term")
       .map((t) => t.textContent);
-    expect(terms).toEqual(FACT_NAMES);
+    expect(terms).toEqual(FACT_LABELS);
+    const titles = within(dialog)
+      .getAllByRole("term")
+      .map((t) => t.getAttribute("title"));
+    expect(titles).toEqual(FACT_NAMES);
     const defs = within(dialog).getAllByRole("definition");
     expect(defs).toHaveLength(7);
     for (const d of defs) expect(d.textContent).toBe("unknown");

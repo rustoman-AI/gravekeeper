@@ -182,3 +182,40 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 - advisoryUrl/buildAdvisoryEntries registered as helpers (not body mappers) in the mapper registry.
 - Process: CI failed once on 1c0da21 (spec-only commit: the messages completeness test parses the spec table, which gained a row before messages.ts did); fixed by 42d7c85. A checkpoint sub-agent timed out (1 h) because FC_NUM_RUNS=1000 was left set in the shared shell; cleared and re-run.
 - Live: psf/requests has no root requirements.txt (no-root-manifest note; pyproject.toml is not a supported format), so it reports 0 dependencies.
+## Session 16
+- Asked: execute graveyard-ui to Milestone 1 (landing, scanning, results scene with first-pass art for six plot kinds, list view, detail panel), deploy to https://gravekeeper-chi.vercel.app, and report with 1440x900 screenshots, scene render time, gzipped JS against the budget, axe per screen and the design changes. Rules: commit and push per green sub-group, never weaken a property, one owner per file, FC_NUM_RUNS never set in the shared shell (use test:deep), never print the token.
+- Went well: every group was committed green with CI green (commits 2cd7e4d to 815f3b1). 34 graveyard-ui properties are planned; P1-P5, P7-P21 and P27-P34 are tested at 1000 runs. Tests caught real bugs before production. axe reports 0 violations on 17 screens x 2 projects and on production. CLS 0. Client JS 156,222 B gzip of 256,000. Scene render request 38.7 ms; synthetic-300 63.9 ms at 4x throttle (budget 100).
+- Report: docs/milestone-1-report.md; screenshots in docs/screenshots/m1; PBT results in docs/property-traceability.md (no tool updates PBT status in tasks.md, so the table holds them; user-approved).
+### Counterexamples and fixes
+- P16 (scene determinism) at 1000 runs, seed 1457184590, columns=4, offset=10: rows with the same ecosystem and name but different sourceKind kept input order. Fix: final sourceKind tiebreak in the scene sort.
+- App shell test (11.9): a featured-link click pushed `/` instead of `/?repo=...` because the callback treated a repo URL as an href. Fix: push `{ repo, manifests: [], view }`.
+- Scene CSS unit mismatch (caught in review): the component set `--x` as px lengths and the CSS multiplied by 1px. Fix: CSS uses the values directly.
+- axe `link-in-text-block` in the detail panel (links told apart by colour alone). Fix: `.gk-link` is underlined.
+- Layout-shift spec: the footer shifted at scanning to results (CLS 0.03-0.12 against 0.01). Fix: `<main>` has `min-h-dvh`.
+- Scene render: synthetic-300 median 344 ms, then 171.6 ms (row bands, content-visibility), then 85.1 ms (windowed rows); design contingency item 9.
+- Perf spec was flaky under parallel workers (one 505 ms median). Fix: its own Playwright project after desktop and mobile.
+- js-budget lazy-chunk step was flaky (it checked before the request started). Fix: wait for the response.
+- Screenshot review: overlapping plot labels, a focus box on the programmatically focused h1, an empty Advisories heading. Fixes: label clamp to plot width, no outline on tabindex=-1 headings, section hidden when empty.
+### What went wrong
+- One 28.4 run read the client-rendered Suspense shell as a stale deployment and sent a mangled API request (PowerShell quoting). I re-checked and production was fine.
+- Parallel agents briefly saw each other's transient typecheck errors.
+- tasks.md once reverted a completed task's marker (5.38); it was re-marked.
+### Design changes (docs/m1-design-changes.md, 16 items)
+- Property 9 relies on core's status precedence (design note added).
+- Scene order has a final sourceKind tiebreak.
+- Table status sort key is status rank, then status word.
+- Scene render contingency applied: row bands, then windowed rows; later bands mount after a timer.
+- Perf spec runs in its own Playwright project.
+- `<main>` has `min-h-dvh`.
+- `.gk-link` is underlined.
+- Detail panel fact labels use field names (Requirement 10.4).
+- Per-package note headings use a local table in `view-model/detail.ts` until the group 31 notes model exists.
+- Featured-graveyard ecosystem names are a small map in the component.
+- Contrast, perf and CLS constants live in the tests.
+- The results page moves focus to the results `h1`.
+- `test:deep` is `scripts/test-deep.ts`.
+- Scene labels are plot-wide, wrap anywhere and clamp at two lines.
+- Programmatic-focus targets show no focus outline.
+- The Advisories section renders only when it has content.
+- Next (user approved after Milestone 1, in progress): human fact labels, scene row spacing for two-line labels, a live production scan spec.
+- Credits: Kiro credit usage can't be seen from inside the session, so none is recorded here.

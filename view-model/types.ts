@@ -258,7 +258,11 @@ export interface DetailModel {
     readonly isMain: boolean;
   }[];
   /** Exactly seven entries in the order of HealthFacts (Requirements 10.4, 10.15). */
-  readonly facts: readonly { readonly field: HealthFactField; readonly text: string }[];
+  readonly facts: readonly {
+    readonly field: HealthFactField;
+    readonly label: string;
+    readonly text: string;
+  }[];
   /** "<version> (pinned)", "(resolved from range)", "(latest)", or "not looked up". */
   readonly versionLine: string;
   /** As written in the manifest. */

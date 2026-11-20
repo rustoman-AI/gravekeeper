@@ -16,19 +16,19 @@
 
 ## Scene render time
 
-- request/request: median 38.7 ms against 100 ms budget (within budget) (4x CPU throttle; 5 runs: 71.8, 38.7, 37.5, 37.8, 40.8 ms)
-- 300 plots (synthetic): median 63.9 ms against 100 ms budget (within budget) (4x CPU throttle; 5 runs: 93.8, 61.1, 60.9, 67.6, 63.9 ms)
+- request/request: median 43.1 ms against 100 ms budget (within budget) (4x CPU throttle; 5 runs: 66.7, 41.5, 39.6, 43.1, 44 ms)
+- 300 plots (synthetic): median 65.4 ms against 100 ms budget (within budget) (4x CPU throttle; 5 runs: 96.1, 61.8, 65.4, 67.5, 65.4 ms)
 
 ## Client JavaScript size
 
-- Total: 156222 bytes gzipped against 256000 bytes budget (within budget)
-- Margin: 99778 bytes under budget
+- Total: 156353 bytes gzipped against 256000 bytes budget (within budget)
+- Margin: 99647 bytes under budget
 - Largest files:
   - `static/chunks/01t2i9pe5vz2-.js`: 71616 bytes
   - `static/chunks/33j1_fwxp3v_3.js`: 44178 bytes
-  - `static/chunks/2-4svd-j7uq4o.js`: 11157 bytes
+  - `static/chunks/2puzmbo4yl6z9.js`: 11198 bytes
   - `static/chunks/3onkkwyty4v2n.js`: 8401 bytes
-  - `static/chunks/2ob5f4-a0z6qv.js`: 6865 bytes
+  - `static/chunks/2udets0741z-q.js`: 6955 bytes
 
 ## Accessibility (axe)
 
@@ -47,7 +47,7 @@
 - verify:deploy: pass
 - Deployed spec: pass
 - axe violations on deployment: 0
-- Commit: efb55dc
+- Commit: 815f3b1
 - Vercel status: success
 - Checked at: 2026-11-20T03:39:51.027Z
 
@@ -69,6 +69,8 @@
 - Scene labels (`.gk-plot-label`) are as wide as the plot box (`var(--w)`), wrap anywhere and clamp at two lines, at 0.75rem with line-height 1.1. Reason: the first M1 screenshots showed long names (`karma-phantomjs-launcher`, `json-stringify-safe`) overlapping their neighbours. Full names stay in the aria-label and tooltip.
 - Programmatic-focus targets (`h1`, `h2`, `main` and `[role="dialog"]` with `tabindex="-1"`) show no focus outline, and the explicit `[tabindex]` ring rule is narrowed to `[tabindex]:not([tabindex="-1"])`. Reason: the results `h1` showed a thick focus box after focus moved to it. Interactive elements keep their `:focus-visible` ring.
 - The detail panel renders the Advisories section only when there is at least one advisory group or an empty-text sentence. Reason: a package with no advisories (aws-sign2) showed an Advisories heading with nothing under it.
+- The detail panel shows human fact labels (FACT_LABELS, for example 'Days since last release') with the field name as the title. Reason: the panel showed raw field names.
+- Scene row spacing: PLOT_CELL_HEIGHT_PX goes from 120 to 156, with LABEL_LINE_HEIGHT_PX 14, LABEL_BAND_HEIGHT_PX 28 and LABEL_FONT_SIZE_PX 12. Rule: 156 - 8 - 104 = 44 = 2x14 + 2x8, so two-line labels stay clear of the plots below. Reason: two-line labels touched the plots in the next row.
 
 ## Known gaps
 

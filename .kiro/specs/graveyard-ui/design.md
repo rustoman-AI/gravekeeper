@@ -303,7 +303,20 @@ export function advisoryLink(url: unknown): string | null;                      
 
 // format-fact.ts
 export function formatFact(field: HealthFactField, value: unknown): string;            // R10.4, R10.14
+
+// fact-labels.ts (exported from view-model/index.ts)
+export const FACT_LABELS: Readonly<Record<HealthFactField, string>> = {
+  daysSinceLastRelease: 'Days since last release',
+  daysSinceLastCommit: 'Days since last commit',
+  archived: 'Archived',
+  deprecated: 'Deprecated',
+  openVulnerabilityCount: 'Open vulnerabilities',
+  maxSeverity: 'Highest severity',
+  maintainerCount: 'Maintainers',
+};                                                                                      // R10.4
 ```
+
+Fact labels (R10.4). `buildDetailModel` fills `label` from `FACT_LABELS[field]` for each of the seven facts in HealthFacts order. The `DetailPanel` shows the label as the visible name and keeps the field name for traceability as a `title` attribute on the label element (decision: `title`, not a hidden suffix, so that the accessible name of the row is the human label and a screen reader does not read the camelCase identifier). Value formatting stays in `formatFact` and does not change.
 
 ### Scan_Client (`client/scan-client.ts`)
 
@@ -332,7 +345,7 @@ export function createScanClient(deps: ScanClientDeps): {
 | `ResultsHeader`, `GradeLine`, `CacheNote` | `HeaderModel`, `ageText`, `cache` | R5. `time` element with `dateTime`. Grade scale is a closed `<details>` (R5.6). |
 | `Scene`, `ScenePlot`, `SceneSprites`, `SceneTooltip`, `FogLayer` | `SceneModel`, `onOpen(key)`, `reducedMotion` | R8, R9. See Scene rendering. |
 | `ListView` | `TableModel`, `onSort(column)`, `onOpen(key)` | R18. Native `table`, sort buttons with `aria-sort`. |
-| `DetailPanel` | `DetailModel`, `onClose` | R10. Custom modal, `useFocusTrap`, link list through `ExternalLink`. Contains `ResurrectSlot` when `detail.resurrect` is true. |
+| `DetailPanel` | `DetailModel`, `onClose` | R10. Custom modal, `useFocusTrap`, link list through `ExternalLink`. Facts show `label` with the field name in a `title` attribute (R10.4). Contains `ResurrectSlot` when `detail.resurrect` is true. |
 | `ResurrectSlot` | `{ packageKey: string; displayName: string }` | R12. Inert placeholder in its own file. |
 | `CaretakersNotes`, `NoteGroupSection`, `SourceStatusList`, `CapBanner`, `EmptyGraveyard` | `NotesModel` and parts | R11. |
 | `ErrorScreen`, `RetryButton`, `BackToGate` | `ErrorModel`, `onAction(id)` | R13. Focus moves to the `h1` on display. `RetryButton` uses `useCountdown`. |
@@ -428,7 +441,11 @@ Every constant of the requirements Constants table with Home "view-model" is exp
 |---|---|---|
 | `SCENE_PADDING_PX` | 16 | Padding on each side of the Scene (R8.3 "fixed padding"). |
 | `PLOT_BOX_WIDTH_PX` | `PLOT_CELL_WIDTH_PX - 2 * PLOT_JITTER_MAX_PX` = 80 | Width of one Plot box. |
-| `PLOT_BOX_HEIGHT_PX` | `PLOT_CELL_HEIGHT_PX - 2 * PLOT_JITTER_MAX_PX` = 104 | Height of one Plot box. |
+| `PLOT_CELL_HEIGHT_PX` | 156 (was 120) | Cell height (R8.15). Arithmetic: box 104 + top jitter margin 8 + label space 44 = 156. |
+| `PLOT_BOX_HEIGHT_PX` | 104 (fixed; the art keeps its size) | Height of one Plot box. |
+| `LABEL_MAX_LINES` | 2 | Label lines (R8.15). |
+| `LABEL_LINE_HEIGHT_PX` | 14 | Label line height; font size `LABEL_FONT_SIZE_PX` = 12 (R8.15). |
+| `LABEL_BAND_HEIGHT_PX` | `LABEL_MAX_LINES * LABEL_LINE_HEIGHT_PX` = 28 | Label rectangle height, directly below the Plot box and as wide as the box. Rule: space under the box in its cell `156 - 8 - 104 = 44 >= 2 * 14 + 2 * 8 = 44`. Worst case: label bottom `16 + 104 + 28 = 148 <= 156` = top of the next row box with maximum jitter in both directions. |
 | `REASON_PRIORITY` | `7.2, 8.1, 8.2, 8.3, 8.4, 10.7, 10.8, 10.6, 6.3, 11.2` | R7.4. |
 | `LINK_HOSTS` | `www.npmjs.com`, `pypi.org`, `crates.io`, `github.com`, `osv.dev` | R21.7. The configured `repo.host` is added by `canonicalRepoUrl`. |
 
@@ -662,8 +679,8 @@ export interface DetailModel {
     readonly message: string;        // plain message, verbatim (R10.3)
     readonly isMain: boolean;
   }[];
-  /** Exactly seven entries in the order of HealthFacts (R10.4, R10.15). */
-  readonly facts: readonly { readonly field: HealthFactField; readonly text: string }[];
+  /** Exactly seven entries in the order of HealthFacts (R10.4, R10.15). `label` is `FACT_LABELS[field]`, `field` is the name kept for traceability. */
+  readonly facts: readonly { readonly field: HealthFactField; readonly label: string; readonly text: string }[];
   readonly versionLine: string;      // "<version> (pinned)", "(resolved from range)", "(latest)", or "not looked up"
   readonly versionSpecText: string;  // as written in the manifest
   readonly versionNotes: readonly string[];  // plain messages of pin-not-found, conflicting-pins, range-unresolved, no-default-version
@@ -873,6 +890,8 @@ export function buildSceneModel(rows: readonly PackageRow[], columns: number): S
 
 Why the properties hold by construction. A Plot's x lies in `[cellX, cellX + 2J]` and its right edge in `[cellX + W - 2J, cellX + W]` with `W = 96` and `J = 8`, because the box is `W - 2J` wide. The same holds for y. Every box therefore lies inside its own cell, and cells do not overlap, so boxes do not overlap (P14). Every cell lies inside `[SCENE_PADDING_PX, width - SCENE_PADDING_PX]`, so boxes lie inside the Scene (P15). Position depends on the index in the already sorted row list and on a hash of the key, and the row list does not depend on the order of `dependencies` because `uniquePackages` groups by key and the scene order sorts totally (ecosystem, name and `sourceKind` break every tie, and the key is unique), so rotating the input gives an equal model (P16). The hash uses code units and `Math.imul`, so it is deterministic across engines.
 
+**Row spacing and label band (R8.15, approved change).** A plot label wraps to at most two lines (`LABEL_MAX_LINES = 2`) and sits in a label band below the Plot box, inside the same cell. The vertical gap between rows (`PLOT_CELL_HEIGHT_PX` minus the Plot box height and, where the label sits outside the box, the label band height `LABEL_BAND_HEIGHT_PX`) must satisfy this rule: the space below a Plot box inside its cell is at least `LABEL_MAX_LINES * LABEL_LINE_HEIGHT_PX` (two label lines at the label font size and line height) plus `2 * PLOT_JITTER_MAX_PX` (the largest vertical jitter of this plot downwards and of the plot below upwards), so that the lowest label pixel of a Plot is above the top of the Plot box of the same column one row below, in every jitter case. The implementer picks the constants (`PLOT_CELL_HEIGHT_PX`, `PLOT_BOX_HEIGHT_PX`, `LABEL_BAND_HEIGHT_PX`, `LABEL_LINE_HEIGHT_PX`, and the label font size) by this rule and records the chosen values and the arithmetic in the constants table of this document (replacing 104 in the table above where it changes). `labelRect(plot)` is a pure function of the Plot box and these constants and is used by P14 and P15. The sizes may change only if P14 and P15 still hold with the same `sceneHeight` formula and `SCENE_RENDER_BUDGET_MS` (100) is still met (re-measured with the scene-perf spec). The scene art and the colour palette do not change in this step.
+
 ### Keyboard navigation (R9.6, R9.9)
 
 ```ts
@@ -1046,17 +1065,17 @@ The DEAD clause relies on core's status precedence: `statusOf` in `core/classifi
 
 **Validates: Requirements 7.15, 7.16, 7.18, 7.20, 7.21**
 
-### Property 14: Plots do not overlap
+### Property 14: Plots and their labels do not overlap
 
-*For any* valid Scan_Result (up to 1000 rows) and column count from 2 to 20, the rectangles of any two distinct Plots SHALL have an empty intersection.
+*For any* valid Scan_Result (up to 1000 rows) and column count from 2 to 20, the rectangles of any two distinct Plots SHALL have an empty intersection, and the label rectangle of any Plot (two lines at the label font size, from `labelRect(plot)`) SHALL have an empty intersection with the box and the label rectangle of every other Plot.
 
-**Validates: Requirements 8.11**
+**Validates: Requirements 8.11, 8.15**
 
 ### Property 15: Plots lie inside the scene
 
-*For any* valid Scan_Result (up to 1000 rows) and column count from 2 to 20, every Plot rectangle SHALL lie inside `[0, width] x [0, height]` of the Scene_Model and `height` SHALL equal `rows * PLOT_CELL_HEIGHT_PX + 2 * SCENE_PADDING_PX`.
+*For any* valid Scan_Result (up to 1000 rows) and column count from 2 to 20, every Plot rectangle and every label rectangle SHALL lie inside `[0, width] x [0, height]` of the Scene_Model and `height` SHALL equal `rows * PLOT_CELL_HEIGHT_PX + 2 * SCENE_PADDING_PX`.
 
-**Validates: Requirements 8.3, 8.12**
+**Validates: Requirements 8.3, 8.12, 8.15**
 
 ### Property 16: Scene is deterministic and independent of input order
 
@@ -1084,7 +1103,7 @@ The DEAD clause relies on core's status precedence: `statusOf` in `core/classifi
 
 ### Property 20: Detail contains every reason and fact
 
-*For any* Package_Row with a classification, the Detail_Model SHALL contain every reason message verbatim and in order, SHALL mark exactly one reason as main, and SHALL contain each of the seven fact names exactly once.
+*For any* Package_Row with a classification, the Detail_Model SHALL contain every reason message verbatim and in order, SHALL mark exactly one reason as main, and SHALL contain each of the seven facts exactly once, in HealthFacts order, each with its `FACT_LABELS` label and its field name (and the rendered panel SHALL show each label once).
 
 **Validates: Requirements 10.3, 10.15**
 
@@ -1246,6 +1265,8 @@ Unit tests, property tests, component tests and end-to-end tests are complementa
 - Render budget (R17.1, R20.8): a CDP session sets `Emulation.setCPUThrottlingRate` to `SCENE_PERF_CPU_THROTTLE`. A tiny inert hook (`scene-perf.ts`, active only when `window.__GK_PERF__ === true`, set by `addInitScript`) calls `performance.mark('gk-model-ready')` when `GraveyardApp` receives the result and, in the Scene's layout effect, `requestAnimationFrame(() => performance.measure('gk-scene', 'gk-model-ready'))`. The test loads the 300-package result `SCENE_PERF_RUNS` (5) times and asserts that the median is at most `SCENE_RENDER_BUDGET_MS` (100). The hook does nothing in normal use.
 - JS budget: see "JS budget enforcement" (R17.2, R20.9).
 - Screenshots (R20.10, R20.11): `tests/e2e/screenshots.spec.ts` saves every screen of the Screen list into `docs/screenshots/<screen>-<variant>-<viewport>.png`. It uses `reducedMotion: 'reduce'`, `page.clock.install({ time: '2026-11-19T12:00:00Z' })` for a fixed time, `await page.evaluate(() => document.fonts.ready)`, and `page.screenshot({ path, animations: 'disabled' })`, which overwrites an earlier file of the same name. The images are committed.
+- Live production scan (R20.12): `tests/e2e/live-scan.spec.ts` is matched only by the `deployed` project of `playwright.config.ts` (next to `deployed.spec.ts`; both specs are ignored by `desktop`, `mobile` and `perf`) and runs only when `E2E_BASE_URL` is set. It installs no `page.route` mock. It clicks the featured link `revmic/canopy`, waits for the Results_Page for up to `SCAN_DEADLINE_MS + SCAN_RESPONSE_MARGIN_MS` plus 15 seconds (it uses `page.waitForResponse` on `POST /api/scan` to read the body), builds the Header_Model from the parsed body with `parseScanResponse`, `buildPackageRows` and `buildHeaderModel`, and checks that the headline text equals `headline.text`, that the Plot count equals the number of unique packages (the row count), that the Detail_Panel opens on a Plot and closes with "Close", and that axe finds no violation. It is never part of CI (`ci.yml` sets no `E2E_BASE_URL`). It makes a real scan request, so it runs once per deployment check.
+- Milestone 2 report (task group 48): `tests/e2e/m2-report.spec.ts` runs only when `M2_REPORT=1` and writes 1440x900 screenshots into `docs/screenshots/m2/` for the caretaker's notes section, every error screen (S9 to S17 variants: `invalid-url` with part `url`, `repo-not-found`, `branch-not-found`, `too-many-manifests`, `manifest-not-found`, `upstream-unavailable` as 503 and as 502, `deadline-exceeded`, `internal-error`, `invalid-request`), the manifest picker (S8), the empty graveyard (S7) and one client-failure screen (S18, `network-failure`), each with an axe scan. `tests/e2e/screenshots.spec.ts` (group 41) stays the full two-viewport set in `docs/screenshots/`; the `docs/screenshots/m2/` set belongs to group 48 only.
 
 ### CI
 

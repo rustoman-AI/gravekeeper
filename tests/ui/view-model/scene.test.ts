@@ -49,10 +49,10 @@ describe('sceneHeight (R8.3)', () => {
     expect(sceneHeight(0, 4)).toBe(32);
   });
   it('is one row plus padding for one plot', () => {
-    expect(sceneHeight(1, 4)).toBe(120 + 32);
+    expect(sceneHeight(1, 4)).toBe(156 + 32);
   });
   it('rounds rows up for 301 plots', () => {
-    expect(sceneHeight(301, 20)).toBe(16 * 120 + 32);
+    expect(sceneHeight(301, 20)).toBe(16 * 156 + 32);
   });
 });
 
@@ -85,13 +85,13 @@ describe('buildSceneModel (R8.2, R8.9)', () => {
     expect(scene.columns).toBe(3);
     expect(scene.rows).toBe(3);
     expect(scene.width).toBe(3 * 96 + 32);
-    expect(scene.height).toBe(3 * 120 + 32);
+    expect(scene.height).toBe(3 * 156 + 32);
     const p = scene.plots[4]!;
     expect([p.row, p.col]).toEqual([1, 1]);
     expect(p.x).toBeGreaterThanOrEqual(16 + 96);
     expect(p.x).toBeLessThanOrEqual(16 + 96 + 16);
-    expect(p.y).toBeGreaterThanOrEqual(16 + 120);
-    expect(p.y).toBeLessThanOrEqual(16 + 120 + 16);
+    expect(p.y).toBeGreaterThanOrEqual(16 + 156);
+    expect(p.y).toBeLessThanOrEqual(16 + 156 + 16);
   });
 });
 

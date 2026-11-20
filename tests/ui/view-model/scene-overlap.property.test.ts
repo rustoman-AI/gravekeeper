@@ -1,10 +1,10 @@
-// Feature: graveyard-ui, Property 14: Plots do not overlap
-// Validates: Requirements 8.11
+// Feature: graveyard-ui, Property 14: Plots and their labels do not overlap
+// Validates: Requirements 8.11, 8.15
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { buildPackageRows } from '../../../view-model/package-rows';
 import { parseScanResponse } from '../../../view-model/parse-response';
-import { buildSceneModel } from '../../../view-model/scene';
+import { buildSceneModel, labelRect } from '../../../view-model/scene';
 import type { ScanResult } from '../../../pipeline/scan/types';
 import { arbScanResult } from '../../support/ui/scan-result-arbitrary';
 import { cfg } from '../../support/fc-config';
@@ -51,13 +51,11 @@ describe('P14 Plots do not overlap', () => {
 
           const scene = buildSceneModel(buildPackageRows(out.result), columns);
           expect(scene.columns).toBe(columns);
-          const rects = scene.plots.map((p) => ({
-            key: p.key,
-            x: p.x,
-            y: p.y,
-            width: p.width,
-            height: p.height,
-          }));
+          const rects: Rect[] = [];
+          for (const p of scene.plots) {
+            rects.push({ key: p.key, x: p.x, y: p.y, width: p.width, height: p.height });
+            rects.push({ key: p.key + '#label', ...labelRect(p) });
+          }
           expect(firstOverlap(rects)).toBeNull();
         },
       ),

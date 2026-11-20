@@ -467,9 +467,36 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - [x] 29.4 Capture the screenshots, measure and write the report
     - Run `npm run build`, then `npx playwright test tests/e2e/m1-report.spec.ts tests/e2e/scene-perf.spec.ts tests/e2e/js-budget.spec.ts`, then `npm run report:m1`, and check that `docs/screenshots/m1/` has the six PNG files at 1440x900 and that `docs/milestone-1-report.md` shows the render time for `request/request`, the gzipped client JavaScript against `CLIENT_JS_BUDGET_BYTES`, and the axe result of each of the five screens. Look at each screenshot. If a screen is visibly broken, fix it before the report is accepted. **EXECUTION STOPS AFTER THIS TASK.** Do not start group 31 or any later task. Report the numbers and the screenshot paths to the user and wait for the user's decision.
     - _Requirements: 17.1, 17.2, 20.10, 20.11, 16.10_
-- [~] 30. STOP - Milestone 1 ends here
-  - Milestone 1 is complete after the report of task 29.4. Do not execute any task numbered 31 or higher until the user has reviewed the Milestone 1 report and approves Milestone 2.
+- [~] 30. Milestone 1 follow-ups (approved)
+  - Milestone 1 is complete after the report of task 29.4. Do not execute any task numbered 31 or higher until the user has reviewed the Milestone 1 report and approves Milestone 2. Tasks 30.1 to 30.7 are the approved follow-ups to Milestone 1 (human fact labels, scene row spacing, the live production scan test, the session log) and are the only tasks that may run before that approval. Execution stops after task 30.7.
+  - [x] 30.1 Add the KIRO_LOG Session 16 entry
+    - Documentation task: add the Session 16 entry to `KIRO_LOG.md` (what was changed in this follow-up: fact labels, scene row spacing, the live scan spec, and the reason). No requirement changes.
+    - _Requirements: none (documentation task)_
+  - [x] 30.2 Add FACT_LABELS to the view-model and the detail model, with tests
+    - Create `view-model/fact-labels.ts` with `FACT_LABELS` (`Record<HealthFactField, string>`: "Days since last release", "Days since last commit", "Archived", "Deprecated", "Open vulnerabilities", "Highest severity", "Maintainers"), export it from `view-model/index.ts`, and add `label` to each entry of `DetailModel.facts` in `buildDetailModel` (`view-model/detail.ts`), in HealthFacts order. `formatFact` does not change. Update `tests/ui/view-model/detail.test.ts` (labels and order) and the P20 property test so that it checks the seven labels together with the seven field names, each exactly once, and the P19 test file only if its imports change.
+    - **Property 20: Detail contains every reason and fact**
+    - **Validates: Requirements 10.4, 10.15**
+    - _Requirements: 10.4, 10.14, 10.15_
+  - [x] 30.3 Render the fact labels in the detail panel, with the component test update
+    - In `components/detail-panel.tsx` show `fact.label` as the visible name of each fact and keep `fact.field` as the `title` attribute of the label element (design, "Fact labels"). Update `tests/ui/components/detail-panel.test.tsx` (and any Playwright spec that looks for a field name as visible text) to query by the labels, and assert that the field name is present as `title`.
+    - _Requirements: 10.4, 10.15, 16.3_
+  - [x] 30.4 Set the scene row spacing constants and test label and plot separation
+    - Pick `PLOT_CELL_HEIGHT_PX`, `PLOT_BOX_HEIGHT_PX`, `LABEL_BAND_HEIGHT_PX`, `LABEL_LINE_HEIGHT_PX` and `LABEL_MAX_LINES` by the rule in the design section "Row spacing and label band": the space under a Plot box in its cell is at least two label lines plus `2 * PLOT_JITTER_MAX_PX`. Record the chosen values and the arithmetic in the constants table of `design.md`, change `view-model/constants.ts` and add the pure `labelRect(plot)` to `view-model/scene.ts`, and make the scene CSS use the same values (one source of truth in the constants). Extend the P14 test so that it also asserts that no label rectangle intersects another Plot box or label rectangle, extend the P15 test so that label rectangles lie inside the scene, and update any example test that hard-codes the old cell height. Rerun `npx playwright test tests/e2e/scene-perf.spec.ts` and record the median in the commit message or in the Session 16 log entry; it must stay at or below `SCENE_RENDER_BUDGET_MS` (100). Do not change the scene art or the colour palette.
+    - **Property 14: Plots and their labels do not overlap**
+    - **Validates: Requirements 8.11, 8.15**
+    - **Property 15: Plots lie inside the scene**
+    - **Validates: Requirements 8.3, 8.12, 8.15**
+    - _Requirements: 8.2, 8.3, 8.10, 8.11, 8.12, 8.15, 17.1_
+  - [x] 30.5 Write the live production scan spec
+    - Create `tests/e2e/live-scan.spec.ts` as in the design (Testing Strategy, "Live production scan") with no API mock, and add it to the `deployed` project in `playwright.config.ts` (`testMatch` covers `deployed.spec.ts` and `live-scan.spec.ts`; the `desktop`, `mobile` and `perf` projects ignore both). It skips when `E2E_BASE_URL` is unset. It never runs in CI: do not add `E2E_BASE_URL` to any workflow. Run it once against production (PowerShell: `$env:E2E_BASE_URL = "https://gravekeeper-chi.vercel.app"; npx playwright test tests/e2e/live-scan.spec.ts --project=deployed; Remove-Item Env:E2E_BASE_URL`) only after the user approves a push of the follow-up changes and the deployment finished.
+    - _Requirements: 20.12, 20.5, 10.1_
+  - [x] 30.6 Re-capture the Milestone 1 screenshots and regenerate the report
+    - Run `npm run build`, then `npx playwright test tests/e2e/m1-report.spec.ts tests/e2e/scene-perf.spec.ts tests/e2e/js-budget.spec.ts`, then `npm run report:m1`. Check that `docs/screenshots/m1/` has the six PNG files at 1440x900, that `docs/milestone-1-report.md` is regenerated and that the detail panel screenshots show the labels and the scene screenshots show two-line labels clear of the plots below. Look at each screenshot.
+    - _Requirements: 20.10, 20.11, 17.1, 17.2, 16.10_
+  - [-] 30.7 Checkpoint - Milestone 1 follow-ups, commit and push
+    - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build`, `npm run check:bundle` and `npm run test:e2e`, and ensure all pass. Commit the follow-ups and, with the user's approval (ask the orchestrator first), run `git push origin main`. Do not force-push. **EXECUTION STOPS AFTER THIS TASK.** Do not start group 31 until the user approves Milestone 2.
 - [ ] 31. Caretaker's notes (Milestone 2)
+  - Constraint for all of Milestone 2 (groups 31 to 48): do not change the scene art or the colour palette yet (user instruction). Changes to `components/scene-sprites.tsx` art and to the theme colour tokens are out of scope until the user lifts this.
   - [~] 31.1 Implement the notes model and the picker model
     - Create `view-model/notes.ts` (`buildNotesModel`: the six sources in fixed order with names, status words, distinct symbols and alert lines, `NOTE_SECTIONS` with the four sections and the "Other notes" section for unknown codes, groups by `code` with counts and `previewCount` of at most 5, `capBanner`, `empty`, `manifestWarnings`, the discovery note and the picker for the `no-root-manifest` note) and `view-model/picker.ts` (`buildPickerModel(candidates, selected, repoValue)`: every candidate once in order, at most `SCAN_MAX_MANIFESTS` selectable and the rest disabled with "limit reached", `scanUrl` null while nothing is selected, built with `buildUrl`). Export both from `view-model/index.ts`.
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.7, 11.8, 11.9, 11.10, 11.11, 11.12, 11.13_
@@ -565,6 +592,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
 - [~] 40. Checkpoint - Remaining end-to-end tests
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run` and `npm run test:e2e`, and ensure all pass. Ask the user if questions arise.
 - [ ] 41. Remaining screenshots
+  - Relationship with group 48: group 41 produces the full two-viewport set in `docs/screenshots/`. Task 48.4 (the Milestone 2 report) alone produces `docs/screenshots/m2/` (1440x900, `M2_REPORT=1`). The two sets are independent and neither task writes into the other's folder.
   - [~] 41.1 Write the screenshot spec
     - Create `tests/e2e/screenshots.spec.ts` for the projects `desktop` (1280x800) and `mobile` (390x844) with `reducedMotion: 'reduce'`, `page.clock.install({ time: '2026-11-19T12:00:00Z' })`, `document.fonts.ready` and `page.screenshot({ animations: 'disabled' })`, saving into `docs/screenshots/` with names `<screen>-<variant>-<viewport>.png` for every screen of the design Screen list S1 to S18: landing (default, empty input), the four scanning stages, results Scene and List for each recorded fixture, the detail panel of a tombstone, an overgrown grave, a ghost, a restless ghost, a lantern and an unmarked grave, Caretaker's notes (recorded and degraded), the empty graveyard, the picker, and every error and client failure screen. An earlier file of the same name is overwritten. The milestone 1 folder `docs/screenshots/m1/` is not touched.
     - _Requirements: 20.10, 20.11_
@@ -600,7 +628,25 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [~] 47. Final checkpoint - Graveyard UI
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build`, `npm run check:bundle` and `npm run test:e2e`, and ensure all pass. Run `npm run test:deep tests/ui tests/pipeline/mapping` once and ensure it passes. Ask the user if questions arise.
+- [ ] 48. Deploy and report Milestone 2
+  - Relationship with group 41: group 41 keeps the full two-viewport screenshot set in `docs/screenshots/`. This group's task 48.4 produces `docs/screenshots/m2/`, the set used by the Milestone 2 report. The scene art and the colour palette stay unchanged.
+  - [~] 48.1 Write the Milestone 2 report screenshot specification
+    - Create `tests/e2e/m2-report.spec.ts` (desktop project only, runs only when `M2_REPORT=1`, `reducedMotion: 'reduce'`, `page.clock.install({ time: '2026-11-19T12:00:00Z' })`, mocked `/api/scan`, viewport 1440x900, `document.fonts.ready` awaited, `page.screenshot({ animations: 'disabled' })`) that saves into `docs/screenshots/m2/`: `notes-section.png` (the caretaker's notes section of a degraded result), `error-invalid-url.png` (part `url`), `error-invalid-request.png`, `error-repo-not-found.png`, `error-branch-not-found.png`, `error-too-many-manifests.png`, `error-manifest-not-found.png`, `error-upstream-503.png`, `error-upstream-502.png`, `error-deadline-exceeded.png`, `error-internal-error.png`, `picker.png` (manifest picker of `no-root-manifest`), `empty-graveyard.png` and `client-failure-network-failure.png`. It runs axe on each of the 14 screens and merges the result (violation count and rule ids per screen) into `test-results/m2-measurements.json` without removing keys written by other specs. `docs/screenshots/m2/README.md` lists each file with its screen name.
+    - _Requirements: 20.10, 20.11, 16.10, 11.1, 11.9, 11.10, 11.11, 13.1, 13.8_
+  - [~] 48.2 Implement the Milestone 2 report writer
+    - Create `scripts/write-m2-report.ts` with a pure `renderReport(measurements, files)` and a CLI that writes `docs/milestone-2-report.md`: every screenshot embedded, the axe result per screen, the deploy check result of task 48.4, a "Design changes" section (the follow-ups of group 30 and changes made during Milestone 2), a "Known gaps" section, and a credits line that says credit usage cannot be seen from the session. It never prints an environment variable. Add `"report:m2": "tsx scripts/write-m2-report.ts"` to `package.json`.
+    - _Requirements: 20.10, 16.10_
+  - [~] 48.3 Write the unit test for the Milestone 2 report writer
+    - Create `tests/ui/write-m2-report.test.ts`: `renderReport` names every screenshot, prints an axe violation list per screen, prints the credits line, marks a failed deploy check, and never prints an environment variable.
+    - _Requirements: 20.10, 16.10_
+  - [~] 48.4 Push, verify the deployment and capture the report
+    - Confirm with `git status` that the work is committed and that `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build` and `npm run check:bundle` pass. With the user's approval (ask the orchestrator first), run `git push origin main`, wait for the CI run and the Vercel deployment, then run `npm run verify:deploy`, `deployed.spec.ts` and `live-scan.spec.ts` against production with `E2E_BASE_URL` set for each command only (as in tasks 28.4 and 30.5). Then run `$env:M2_REPORT = "1"; npx playwright test tests/e2e/m2-report.spec.ts --project=desktop; Remove-Item Env:M2_REPORT` and `npm run report:m2`, and check that `docs/screenshots/m2/` has the 14 PNG files at 1440x900 and that `docs/milestone-2-report.md` shows axe per screen, the deploy check, design changes, known gaps and the credits line. Look at each screenshot and fix a visibly broken screen before the report is accepted.
+    - _Requirements: 15.8, 20.12, 20.10, 20.11, 16.10_
+  - [~] 48.5 STOP - Milestone 2 ends here
+    - Milestone 2 ends here; do not continue without the user's approval. Report the screenshot paths, the axe results, the deploy check and the known gaps to the user and wait for the user's decision.
+    - _Requirements: none (stop task)_
 ## Notes
+- Task 30 (renamed "Milestone 1 follow-ups (approved)") holds the approved follow-ups of Milestone 1. Milestone 2 is groups 31 to 48 and ends at task 48.5. The scene art and the colour palette are not changed in Milestone 2 until the user says so.
 - Every task, including the property-based tests, is required. Nothing is marked optional.
 - Milestone 1 is groups 1 to 30. Execution stops after the Milestone 1 report (task 29.4). Groups 31 to 47 start only after the user approves Milestone 2.
 - Each property test carries the tag comments `// Feature: graveyard-ui, Property N: ...` and `// Validates: Requirements X.Y` and uses `cfg()` from `tests/support/fc-config.ts`. Agents never set `FC_NUM_RUNS` in the shared shell; `npm run test:deep` sets it for one process.
@@ -657,23 +703,30 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     { "id": 43, "tasks": ["29.1", "29.2"] },
     { "id": 44, "tasks": ["29.3"] },
     { "id": 45, "tasks": ["29.4"] },
-    { "id": 46, "tasks": ["31.1"] },
-    { "id": 47, "tasks": ["31.2", "31.3", "31.4", "31.5", "31.6"] },
-    { "id": 48, "tasks": ["31.7", "31.8"] },
-    { "id": 49, "tasks": ["33.1"] },
-    { "id": 50, "tasks": ["33.2", "33.3", "33.4", "33.5"] },
-    { "id": 51, "tasks": ["33.6", "33.7"] },
-    { "id": 52, "tasks": ["35.1"] },
-    { "id": 53, "tasks": ["35.2", "35.3"] },
-    { "id": 54, "tasks": ["37.1"] },
-    { "id": 55, "tasks": ["37.2"] },
-    { "id": 56, "tasks": ["39.1", "39.2", "39.3", "39.4", "39.5"] },
-    { "id": 57, "tasks": ["41.1"] },
-    { "id": 58, "tasks": ["41.2"] },
-    { "id": 59, "tasks": ["43.1"] },
-    { "id": 60, "tasks": ["43.2", "43.3"] },
-    { "id": 61, "tasks": ["45.1"] },
-    { "id": 62, "tasks": ["45.2", "45.3"] }
+    { "id": 46, "tasks": ["30.1", "30.2", "30.4", "30.5"] },
+    { "id": 47, "tasks": ["30.3"] },
+    { "id": 48, "tasks": ["30.6"] },
+    { "id": 49, "tasks": ["31.1"] },
+    { "id": 50, "tasks": ["31.2", "31.3", "31.4", "31.5", "31.6"] },
+    { "id": 51, "tasks": ["31.7", "31.8"] },
+    { "id": 52, "tasks": ["33.1"] },
+    { "id": 53, "tasks": ["33.2", "33.3", "33.4", "33.5"] },
+    { "id": 54, "tasks": ["33.6", "33.7"] },
+    { "id": 55, "tasks": ["35.1"] },
+    { "id": 56, "tasks": ["35.2", "35.3"] },
+    { "id": 57, "tasks": ["37.1"] },
+    { "id": 58, "tasks": ["37.2"] },
+    { "id": 59, "tasks": ["39.1", "39.2", "39.3", "39.4", "39.5"] },
+    { "id": 60, "tasks": ["41.1"] },
+    { "id": 61, "tasks": ["41.2"] },
+    { "id": 62, "tasks": ["43.1"] },
+    { "id": 63, "tasks": ["43.2", "43.3"] },
+    { "id": 64, "tasks": ["45.1"] },
+    { "id": 65, "tasks": ["45.2", "45.3"] },
+    { "id": 66, "tasks": ["48.1", "48.2"] },
+    { "id": 67, "tasks": ["48.3"] },
+    { "id": 68, "tasks": ["48.4"] },
+    { "id": 69, "tasks": ["48.5"] }
   ]
 }
 ```

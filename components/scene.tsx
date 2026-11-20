@@ -17,6 +17,12 @@ import type {
   MouseEvent,
 } from "react";
 import { nextFocus, PLOT_CELL_HEIGHT_PX, SCENE_PADDING_PX } from "@/view-model";
+import {
+  LABEL_BAND_HEIGHT_PX,
+  LABEL_FONT_SIZE_PX,
+  LABEL_LINE_HEIGHT_PX,
+  LABEL_MAX_LINES,
+} from "@/view-model/constants";
 import type { FocusMove, PlotModel, SceneModel } from "@/view-model";
 import { FogLayer } from "./fog-layer";
 import { ScenePlot } from "./scene-plot";
@@ -31,9 +37,6 @@ export interface SceneProps {
   /** Element id of the view toggle; the skip link moves focus there. */
   skipTargetId: string;
 }
-
-// Room under a cell for the epitaph label, which sits below the plot box.
-const BAND_LABEL_ROOM_PX = 32;
 
 const MOVES: Record<string, FocusMove> = {
   ArrowUp: "up",
@@ -116,7 +119,7 @@ const SceneBand = memo(function SceneBand({
       style={
         {
           top: bandTop,
-          height: PLOT_CELL_HEIGHT_PX + BAND_LABEL_ROOM_PX,
+          height: PLOT_CELL_HEIGHT_PX,
           "--band-y": `${bandTop}px`,
         } as CSSProperties
       }
@@ -222,7 +225,16 @@ export function Scene({ scene, onOpen, skipTargetId }: SceneProps) {
     ref.current?.querySelector<HTMLElement>(`[data-index="${next}"]`)?.focus();
   };
 
-  const style = { height: scene.height, width: scene.width } as CSSProperties;
+  // One source of truth for row and label sizes (R8.15): the CSS reads these custom properties.
+  const style = {
+    height: scene.height,
+    width: scene.width,
+    "--cell-h": `${PLOT_CELL_HEIGHT_PX}px`,
+    "--label-line-h": `${LABEL_LINE_HEIGHT_PX}px`,
+    "--label-font": `${LABEL_FONT_SIZE_PX}px`,
+    "--label-band-h": `${LABEL_BAND_HEIGHT_PX}px`,
+    "--label-lines": LABEL_MAX_LINES,
+  } as CSSProperties;
 
   return (
     <>

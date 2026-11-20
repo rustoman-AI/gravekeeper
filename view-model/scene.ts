@@ -1,5 +1,6 @@
 import {
   EPITAPH_MAX_CHARS,
+  LABEL_BAND_HEIGHT_PX,
   PLOT_BOX_HEIGHT_PX,
   PLOT_BOX_WIDTH_PX,
   PLOT_CELL_HEIGHT_PX,
@@ -46,6 +47,16 @@ export function hashKey(key: string): number {
 export function sceneHeight(plotCount: number, columns: number): number {
   const cols = clampColumns(columns);
   return Math.ceil(plotCount / cols) * PLOT_CELL_HEIGHT_PX + 2 * SCENE_PADDING_PX;
+}
+
+/** Label rectangle of a plot: directly below its box, as wide as the box, LABEL_BAND_HEIGHT_PX high (R8.15). */
+export function labelRect(plot: Pick<PlotModel, 'x' | 'y' | 'width' | 'height'>): {
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+} {
+  return { x: plot.x, y: plot.y + plot.height, width: plot.width, height: LABEL_BAND_HEIGHT_PX };
 }
 
 /** Cut to at most EPITAPH_MAX_CHARS code points, the last one an ellipsis when cut. */

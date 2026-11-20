@@ -93,7 +93,7 @@ export function DetailPanel({
           <dl>
             {model.facts.map((f) => (
               <div key={f.field} className="gk-detail-fact">
-                <dt>{f.field}</dt>
+                <dt title={f.field}>{f.label}</dt>
                 <dd>{f.text}</dd>
               </div>
             ))}

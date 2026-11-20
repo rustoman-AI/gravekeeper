@@ -1,4 +1,5 @@
 import { buildAdvisoryGroups } from './advisory-groups';
+import { FACT_LABELS } from './fact-labels';
 import { FACT_FIELDS, formatFact } from './format-fact';
 import { unassessedLabelOf } from './package-rows';
 import type { DetailModel, PackageKeyString, PackageRow, ParsedScanResult } from './types';
@@ -128,6 +129,7 @@ export function buildDetailModel(
     })),
     facts: FACT_FIELDS.map((field) => ({
       field,
+      label: FACT_LABELS[field],
       text: field === 'maxSeverity' ? maxSeverityText(row) : formatFact(field, row.facts[field]),
     })),
     versionLine: versionLineOf(row),

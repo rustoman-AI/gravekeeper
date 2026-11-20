@@ -173,7 +173,7 @@ main[tabindex="-1"]:focus-visible {
   width: 100%;
   pointer-events: none;
   content-visibility: auto;
-  contain-intrinsic-size: auto 120px;
+  contain-intrinsic-size: auto var(--cell-h, 156px);
 }
 
 .gk-plot {
@@ -213,17 +213,17 @@ main[tabindex="-1"]:focus-visible {
   top: 100%;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: var(--label-lines, 2);
+  line-clamp: var(--label-lines, 2);
   width: var(--w, 80px);
-  max-height: 2.2em;
+  height: var(--label-band-h, 28px);
   margin-top: 0;
   overflow: hidden;
   overflow-wrap: anywhere;
   white-space: normal;
   color: var(--color-bone);
-  font-size: 0.75rem;
-  line-height: 1.1;
+  font-size: var(--label-font, 12px);
+  line-height: var(--label-line-h, 14px);
   text-align: center;
   pointer-events: none;
   text-shadow: 0 1px 3px var(--color-night);

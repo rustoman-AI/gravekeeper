@@ -88,6 +88,15 @@ describe('maxSeverity text (R10.5)', () => {
       'maxSeverity',
       'maintainerCount',
     ]);
+    expect(d.facts.map((f) => f.label)).toEqual([
+      'Days since last release',
+      'Days since last commit',
+      'Archived',
+      'Deprecated',
+      'Open vulnerabilities',
+      'Highest severity',
+      'Maintainers',
+    ]);
     expect(d.facts[0]!.text).toBe('10 days');
   });
 });

@@ -10,14 +10,21 @@ export const CLIENT_JS_BUDGET_BYTES = 256000;
 
 // Requirement 8.1: scene cell size.
 export const PLOT_CELL_WIDTH_PX = 96;
-export const PLOT_CELL_HEIGHT_PX = 120;
+// Requirement 8.15: cell height = box + top jitter margin + label space (see below).
+export const PLOT_CELL_HEIGHT_PX = 156;
 // Requirement 8.2: maximum jitter of a plot inside its cell.
 export const PLOT_JITTER_MAX_PX = 8;
 // Requirement 8.3: fixed scene padding.
 export const SCENE_PADDING_PX = 16;
 // Requirement 8.11: plot box is the cell minus the jitter on both sides, so plots cannot overlap.
 export const PLOT_BOX_WIDTH_PX = PLOT_CELL_WIDTH_PX - 2 * PLOT_JITTER_MAX_PX;
-export const PLOT_BOX_HEIGHT_PX = PLOT_CELL_HEIGHT_PX - 2 * PLOT_JITTER_MAX_PX;
+export const PLOT_BOX_HEIGHT_PX = 104;
+// Requirement 8.15: label band below the Plot box: at most two lines of exact pixel line height.
+// Space under a box in its cell: 156 - 8 - 104 = 44 = 2 * 14 + 2 * 8.
+export const LABEL_MAX_LINES = 2;
+export const LABEL_LINE_HEIGHT_PX = 14;
+export const LABEL_FONT_SIZE_PX = 12;
+export const LABEL_BAND_HEIGHT_PX = LABEL_MAX_LINES * LABEL_LINE_HEIGHT_PX;
 // Requirement 8.3: column limits.
 export const SCENE_MIN_COLUMNS = 2;
 export const SCENE_MAX_COLUMNS = 20;

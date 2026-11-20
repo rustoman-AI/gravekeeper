@@ -7,6 +7,10 @@
     "19.3 Write the property test for the fact formatter": {
       "status": "passed",
       "lastRunTimestamp": 1795140303508
+    },
+    "30.2 Add FACT_LABELS to the view-model and the detail model, with tests": {
+      "status": "passed",
+      "lastRunTimestamp": 1795147469208
     }
   },
   "executionHistory": {
@@ -2391,6 +2395,16 @@
         "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795144762982
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795146756974
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795146783945
       }
     ],
     "29.1 Write the report specification": [
@@ -2865,6 +2879,155 @@
         "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795146080690
+      }
+    ],
+    "30.1 Add the KIRO_LOG Session 16 entry": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147367277
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147386776
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147659440
+      }
+    ],
+    "30.2 Add FACT_LABELS to the view-model and the detail model, with tests": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147367347
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147386927
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147660327
+      }
+    ],
+    "30.3 Render the fact labels in the detail panel, with the component test update": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147367401
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147665729
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147746746
+      }
+    ],
+    "30.4 Set the scene row spacing constants and test label and plot separation": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147367465
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147387112
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147661324
+      }
+    ],
+    "30.5 Write the live production scan spec": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147367526
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147387288
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147661598
+      }
+    ],
+    "30.6 Re-capture the Milestone 1 screenshots and regenerate the report": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147367579
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147747459
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147869344
+      }
+    ],
+    "30.7 Checkpoint - Milestone 1 follow-ups, commit and push": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147367629
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147869493
+      }
+    ],
+    "48.1 Write the Milestone 2 report screenshot specification": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147367676
+      }
+    ],
+    "48.2 Implement the Milestone 2 report writer": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147367730
+      }
+    ],
+    "48.3 Write the unit test for the Milestone 2 report writer": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147367775
+      }
+    ],
+    "48.4 Push, verify the deployment and capture the report": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147367827
+      }
+    ],
+    "48.5 STOP - Milestone 2 ends here": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795147367876
       }
     ]
   }

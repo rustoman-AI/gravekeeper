@@ -1,9 +1,10 @@
 // Feature: graveyard-ui, Property 20: Detail contains every reason and fact
-// Validates: Requirements 10.3, 10.15
+// Validates: Requirements 10.4, 10.15
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { uniquePackages } from '../../../core';
 import { buildDetailModel } from '../../../view-model/detail';
+import { FACT_LABELS } from '../../../view-model/fact-labels';
 import { FACT_FIELDS } from '../../../view-model/format-fact';
 import { buildPackageRows } from '../../../view-model/package-rows';
 import { parseScanResponse } from '../../../view-model/parse-response';
@@ -43,6 +44,9 @@ describe('P20 Detail contains every reason and fact', () => {
           const names = detail.facts.map((f) => f.field);
           expect(names).toEqual([...FACT_FIELDS]);
           expect(new Set(names).size).toBe(7);
+          const labels = detail.facts.map((f) => f.label);
+          expect(labels).toEqual(FACT_FIELDS.map((f) => FACT_LABELS[f]));
+          expect(new Set(labels).size).toBe(7);
         }
       }),
       cfg(),

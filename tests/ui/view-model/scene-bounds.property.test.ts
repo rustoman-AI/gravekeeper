@@ -1,11 +1,11 @@
 // Feature: graveyard-ui, Property 15: Plots lie inside the scene
-// Validates: Requirements 8.3, 8.12
+// Validates: Requirements 8.3, 8.12, 8.15
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { PLOT_CELL_HEIGHT_PX, SCENE_PADDING_PX } from '../../../view-model/constants';
 import { buildPackageRows } from '../../../view-model/package-rows';
 import { parseScanResponse } from '../../../view-model/parse-response';
-import { buildSceneModel } from '../../../view-model/scene';
+import { buildSceneModel, labelRect } from '../../../view-model/scene';
 import type { ScanResult } from '../../../pipeline/scan/types';
 import { arbScanResult } from '../../support/ui/scan-result-arbitrary';
 import { cfg } from '../../support/fc-config';
@@ -30,6 +30,11 @@ describe('P15 Plots lie inside the scene', () => {
             expect(p.y).toBeGreaterThanOrEqual(0);
             expect(p.x + p.width).toBeLessThanOrEqual(scene.width);
             expect(p.y + p.height).toBeLessThanOrEqual(scene.height);
+            const l = labelRect(p);
+            expect(l.x).toBeGreaterThanOrEqual(0);
+            expect(l.y).toBeGreaterThanOrEqual(0);
+            expect(l.x + l.width).toBeLessThanOrEqual(scene.width);
+            expect(l.y + l.height).toBeLessThanOrEqual(scene.height);
           }
         },
       ),

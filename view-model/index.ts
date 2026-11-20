@@ -80,6 +80,7 @@ export { nextFocus } from './scene-nav';
 export { buildTableModel } from './table';
 export { stageAt, stageStates } from './stages';
 export { FACT_FIELDS, formatFact } from './format-fact';
+export { FACT_LABELS } from './fact-labels';
 export {
   ALIAS_SENTENCE,
   UNCLASSIFIED_SENTENCE,

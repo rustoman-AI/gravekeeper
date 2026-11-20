@@ -3,7 +3,7 @@ import { defineConfig } from "@playwright/test";
 const PORT = 3100;
 const PERF_SPEC = /scene-perf\.spec\.ts/;
 // Targets production: only the `deployed` project runs it, and only with E2E_BASE_URL set.
-const DEPLOYED_SPEC = /deployed\.spec\.ts/;
+const DEPLOYED_SPEC = /(deployed|live-scan)\.spec\.ts/;
 const externalBaseUrl = process.env.E2E_BASE_URL;
 const baseURL = externalBaseUrl ?? `http://localhost:${PORT}`;
 
