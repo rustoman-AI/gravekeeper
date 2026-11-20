@@ -37,10 +37,11 @@ export function FeaturedGraveyards({ onSelect }: FeaturedGraveyardsProps) {
                 onSelect(url);
               }
             }}
-            className="inline-block rounded bg-night-raised px-3 py-2 text-bone underline hover:text-amber"
+            className="gk-headstone"
           >
-            {ownerRepo(url)}
-            <span className="ml-2 text-bone-muted">{ECOSYSTEM_BY_URL[url] ?? ''}</span>
+            {/* Requirement 9.6: headstone card labelled owner/repo. */}
+            <span className="underline">{ownerRepo(url)}</span>
+            <span className="text-sm text-bone-muted">{ECOSYSTEM_BY_URL[url] ?? ''}</span>
           </a>
         </li>
       ))}

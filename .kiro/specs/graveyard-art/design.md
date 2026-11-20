@@ -390,7 +390,7 @@ Copy of "How the caretaker decides" (three sentences, fixed text in `how-it-deci
 
 1. "The caretaker reads your manifests, then asks deps.dev, the npm, PyPI and crates.io registries, OSV and GitHub about every dependency."
 2. "A package is dead when it is archived, deprecated or untouched for years, haunted when it has open security advisories, and alive when neither applies."
-3. "A package the caretaker cannot look up stays an unmarked grave, and the grade is the worst single risk, not an average. See the [legend](#legend-heading)."
+3. "A package the caretaker cannot look up stays an unmarked grave, and the grade is the worst single risk, not an average, as the [legend](#legend-heading) explains."
 
 The third sentence ends with an inline link to the Legend heading (`href="#legend-heading"`); the three sentences are three `<p>` elements, the link is inside the third.
 

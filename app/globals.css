@@ -387,7 +387,11 @@ main[tabindex="-1"]:focus-visible {
   .gk-scanning,
   .gk-scanning *,
   .gk-scanning-fog,
-  .gk-scanning-lantern {
+  .gk-scanning-lantern,
+  /* Hero (R9): fog and headstones stay still. */
+  .gk-hero,
+  .gk-hero *,
+  .gk-headstone {
     animation: none;
     transition: none;
   }
@@ -548,3 +552,102 @@ main[tabindex="-1"]:focus-visible {
   height: 2rem;
   flex: none;
 }
+
+/*
+ * Landing hero (graveyard-art R9.1, R9.7, R9.8): the shared night landscape, the cemetery
+ * gate bottom-aligned and centred, and a copy plate behind the title and pitch so text
+ * contrast holds over the landscape. The height is fixed and also set inline by Hero, and
+ * GateFallback renders the same Hero, so hydration adds no layout shift.
+ */
+.gk-hero {
+  --hero-h: 360px;
+  --cell-h: 120px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  width: 100%;
+  height: var(--hero-h);
+  background: var(--color-night);
+}
+
+@media (max-width: 639px) {
+  .gk-hero {
+    --hero-h: 300px;
+  }
+}
+
+.gk-hero > .gk-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.gk-hero > .gk-cemetery-gate {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: 2;
+  height: 205px;
+  width: auto;
+  max-width: 100%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+@media (max-width: 639px) {
+  .gk-hero > .gk-cemetery-gate {
+    height: 150px;
+  }
+}
+
+.gk-hero-copy {
+  position: absolute;
+  top: 1.25rem;
+  left: 50%;
+  z-index: 3;
+  display: flex;
+  width: min(34rem, calc(100% - 2rem));
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.875rem 1.25rem;
+  text-align: center;
+  transform: translateX(-50%);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--color-night) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-iron) 80%, transparent);
+}
+
+@media (max-width: 639px) {
+  .gk-hero-copy {
+    top: 0.75rem;
+    padding: 0.625rem 0.875rem;
+  }
+  .gk-hero-copy p {
+    font-size: 1rem;
+  }
+}
+
+/* Featured graveyards as headstones: arched top, flat bottom, plinth border. */
+.gk-headstone {
+  display: inline-flex;
+  min-width: 9rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1.5rem 1rem 0.75rem;
+  text-align: center;
+  color: var(--color-bone);
+  background: var(--color-plaque);
+  border: 2px solid var(--color-stone);
+  border-bottom-width: 6px;
+  border-radius: 4.5rem 4.5rem 0 0;
+  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--color-night) 45%, transparent);
+  text-shadow: 0 -1px 0 var(--color-night);
+}
+
+.gk-headstone:hover {
+  color: var(--color-amber);
+  border-color: var(--color-bone-muted);
+}
+

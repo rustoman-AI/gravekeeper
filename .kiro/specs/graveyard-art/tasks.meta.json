@@ -838,6 +838,11 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795181050789
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181106269
       }
     ],
     "12.1 Hero and cemetery gate": [
@@ -845,6 +850,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523618
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181112943
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181206273
       }
     ],
     "12.2 How the caretaker decides": [
@@ -852,6 +867,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523649
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181113915
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181236817
       }
     ],
     "12.3 Landing page, shell and featured headstones": [
@@ -859,6 +884,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523680
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181241070
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181526887
       }
     ],
     "12.4 Landing tests": [
@@ -866,6 +901,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523716
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181527745
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181643124
       }
     ],
     "13. Checkpoint - Landing page": [
@@ -873,6 +918,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523748
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181643996
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181696495
       }
     ],
     "14.1 Caretaker scene model": [
@@ -1167,6 +1222,13 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795181049904
+      }
+    ],
+    "12. Landing page": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181643154
       }
     ]
   }

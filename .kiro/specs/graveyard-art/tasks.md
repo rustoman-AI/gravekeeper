@@ -223,28 +223,28 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
     - Files: `tests/ui/components/detail-panel.test.tsx`
     - _Requirements: 7.1, 7.9, 7.10, 8.5, 8.7, 8.8_
 
-- [-] 11. Checkpoint - Epitaphs
+- [x] 11. Checkpoint - Epitaphs
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 12. Landing page
-  - [~] 12.1 Hero and cemetery gate
+- [x] 12. Landing page
+  - [x] 12.1 Hero and cemetery gate
     - Create `components/cemetery-gate.tsx` (original SVG: two stone pillars with caps, an iron gate of bars and an arch, tokens only, `aria-hidden`) and `components/hero.tsx` (`section.gk-hero` with `NightLandscape variant="hero"`, `CemeteryGate`, and the copy block with the `h1` "Gravekeeper" and the pitch sentence; no hook, no browser API, so it is Server Component-safe).
     - Files: `components/cemetery-gate.tsx`, `components/hero.tsx`
     - _Requirements: 9.1, 9.7, 9.8_
-  - [~] 12.2 How the caretaker decides
+  - [x] 12.2 How the caretaker decides
     - Create `components/how-it-decides.tsx` with the `h2` "How the caretaker decides" and the three sentences of the design (naming deps.dev, npm, PyPI, crates.io, OSV, GitHub, dead, haunted, alive, unmarked graves) and the inline link to `#legend-heading` in the third.
     - Files: `components/how-it-decides.tsx`
     - _Requirements: 9.3, 9.4, 9.5_
-  - [~] 12.3 Landing page, shell and featured headstones
+  - [x] 12.3 Landing page, shell and featured headstones
     - In `components/landing-page.tsx` use `Hero` (then the grade sentence, `RepoForm`, `HowItDecides`, the featured section, the Legend); in `components/gate-fallback.tsx` render the same `Hero`; in `components/featured-graveyards.tsx` give each link the class `gk-headstone` and keep the handler and label. In `app/globals.css` add `.gk-hero` (`--hero-h` 360px, 300px under 640px; relative; fog and gate placement), the hero copy plate (`color-mix` of `--color-night` at 55 percent), `.gk-headstone` (arched top, flat bottom, plinth border, `--color-plaque` background) and the reduced-motion selectors for the hero.
     - Files: `components/landing-page.tsx`, `components/gate-fallback.tsx`, `components/featured-graveyards.tsx`, `app/globals.css`
     - _Requirements: 9.1, 9.2, 9.6, 9.8, 9.9, 9.10_
-  - [~] 12.4 Landing tests
+  - [x] 12.4 Landing tests
     - Update `tests/ui/components/landing-page.test.tsx` (reason: the layout gained the hero and the new section; keep the form, featured, legend, h1 and grade-sentence assertions). Add `tests/ui/components/hero.test.tsx` (one `h1`, one backdrop, gate present and `aria-hidden`), `tests/ui/components/how-it-decides.test.tsx` (three paragraphs, each source and state name present, the link `href` equals the id of the Legend heading in `LandingPage`), `tests/ui/components/gate-fallback.test.tsx` (renders the same hero markup as the landing page).
     - Files: `tests/ui/components/landing-page.test.tsx`, `tests/ui/components/hero.test.tsx`, `tests/ui/components/how-it-decides.test.tsx`, `tests/ui/components/gate-fallback.test.tsx`
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.8, 9.10_
 
-- [~] 13. Checkpoint - Landing page
+- [x] 13. Checkpoint - Landing page
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 14. Scanning screen

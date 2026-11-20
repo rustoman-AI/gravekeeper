@@ -128,6 +128,7 @@ describe("LandingPage (Requirements 1 and 2)", () => {
       .map((h) => ({ level: Number(h.tagName.slice(1)), text: h.textContent }));
     expect(levels).toEqual([
       { level: 1, text: "Gravekeeper" },
+      { level: 2, text: "How the caretaker decides" },
       { level: 2, text: "Featured graveyards" },
       { level: 2, text: "Legend" },
     ]);
