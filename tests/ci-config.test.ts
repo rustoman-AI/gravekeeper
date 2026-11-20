@@ -22,7 +22,26 @@ describe('CI workflow configuration', () => {
       'npm run check:core',
       'npm run check:architecture',
       'npx vitest --run',
+      'npm run build',
+      'npm run check:bundle',
+      'npx playwright install --with-deps chromium',
+      'npm run e2e:fixtures',
+      'npx playwright test',
     ]);
+  });
+
+  it('uploads the playwright report after the e2e run, even on failure', () => {
+    const lines = ci.split(/\r?\n/);
+    const e2e = lines.findIndex((l) => l.includes('npx playwright test'));
+    const upload = lines.findIndex((l) =>
+      l.includes('actions/upload-artifact@'),
+    );
+    expect(e2e).toBeGreaterThan(-1);
+    expect(upload).toBeGreaterThan(e2e);
+    const block = lines.slice(upload, upload + 8).join('\n');
+    expect(block).toMatch(/if:\s*\$\{\{\s*(!cancelled\(\)|always\(\))\s*\}\}/);
+    expect(block).toContain('name: playwright-report');
+    expect(block).toContain('path: playwright-report/');
   });
 
   it('never sets the live flag or a token', () => {

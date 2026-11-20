@@ -29,7 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="bg-night text-bone font-sans min-h-full flex flex-col">
         <SkipLink />
         <SiteHeader />
-        <main id="main" className="flex-1">
+        <main id="main" className="flex-1 min-h-dvh">
           {children}
         </main>
         <SiteFooter />

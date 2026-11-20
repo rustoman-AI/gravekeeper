@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 import { LandingPage } from './landing-page';
 import { ResultsPage } from './results-page';
 import type { ViewName } from './view-toggle';
+import { markModelReady } from './scene-perf';
 import { ScanningScreen } from './scanning-screen';
 import type { ScanningScreenProps } from './scanning-screen';
 import { useScan } from './hooks/use-scan';
@@ -45,6 +46,8 @@ export function GraveyardAppView({
   const [arrivalMs, setArrivalMs] = useState(0);
   const onCanonical = useCallback(
     (url: string) => {
+      // Runs right after the result dispatch, before React renders the scene.
+      markModelReady();
       setArrivalMs(nowFn());
       replaceInPlace({ repo: url, manifests: urlState.manifests, view: urlState.view });
     },

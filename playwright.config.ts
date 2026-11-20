@@ -1,6 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
 const PORT = 3100;
+const PERF_SPEC = /scene-perf\.spec\.ts/;
 const externalBaseUrl = process.env.E2E_BASE_URL;
 const baseURL = externalBaseUrl ?? `http://localhost:${PORT}`;
 
@@ -16,8 +17,25 @@ export default defineConfig({
   },
   // Viewports are set per project; a test may override with test.use({ viewport }).
   projects: [
-    { name: "desktop", use: { viewport: { width: 1280, height: 800 } } },
-    { name: "mobile", use: { viewport: { width: 390, height: 844 } } },
+    {
+      name: "desktop",
+      testIgnore: PERF_SPEC,
+      use: { viewport: { width: 1280, height: 800 } },
+    },
+    {
+      name: "mobile",
+      testIgnore: PERF_SPEC,
+      use: { viewport: { width: 390, height: 844 } },
+    },
+    // The render-budget measurement runs alone, after the other projects finish,
+    // so parallel workers do not compete for CPU while it measures.
+    {
+      name: "perf",
+      testMatch: PERF_SPEC,
+      fullyParallel: false,
+      dependencies: ["desktop", "mobile"],
+      use: { viewport: { width: 1280, height: 800 } },
+    },
   ],
   // With E2E_BASE_URL set, tests run against an external deployment: no local server.
   // The tests mock /api/scan in the browser, so this server never calls GitHub.

@@ -8,6 +8,7 @@
     "check:architecture": "tsx scripts/check-architecture.ts",
     "fixtures:record": "tsx scripts/record-fixtures.ts",
     "live:report": "tsx scripts/live-report.ts",
+    "check:bundle": "tsx scripts/check-client-js-budget.ts",
     "check": "npm run check:core && npm run check:architecture",
     "prebuild": "npm run check",
     "build": "next build",

@@ -415,29 +415,29 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 20.6, 4.10, 8.7, 16.6_
 - [x] 24. Checkpoint - End-to-end tests
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run` and `npm run test:e2e`, and ensure all pass. Ask the user if questions arise.
-- [ ] 25. Scene render time and client JavaScript size
-  - [~] 25.1 Add the inert performance hook
+- [x] 25. Scene render time and client JavaScript size
+  - [x] 25.1 Add the inert performance hook
     - Create `components/scene-perf.ts` (active only when `window.__GK_PERF__ === true`): `markModelReady()` calls `performance.mark('gk-model-ready')`, `measureSceneCommit()` calls `requestAnimationFrame` and then `performance.measure('gk-scene', 'gk-model-ready')`. Call them from `components/graveyard-app.tsx` when the result arrives and from the scene's layout effect in `components/scene.tsx`. The hook does nothing in normal use and is covered by a unit test in `tests/ui/components/scene-perf.test.tsx` (inactive without the flag, marks and measures with it).
     - _Requirements: 8.10, 17.1_
-  - [~] 25.2 Write the render budget spec
+  - [x] 25.2 Write the render budget spec
     - Create `tests/e2e/scene-perf.spec.ts`: a CDP session sets `Emulation.setCPUThrottlingRate` to `SCENE_PERF_CPU_THROTTLE`, the 300-package synthetic result is loaded `SCENE_PERF_RUNS` times, the median of `gk-scene` is at most `SCENE_RENDER_BUDGET_MS`. WHEN the median is above the budget, apply the contingency of the design "Scene rendering and performance" item 9 in order (row bands with `content-visibility: auto`, then windowed rows), change only `components/scene.tsx` and `app/globals.css`, repeat the measurement, and record before and after in the commit message. The spec also merges the median for the 40-plot `request` result into `test-results/m1-measurements.json` (creating the file when it is missing).
     - _Requirements: 8.10, 17.1, 20.8_
-  - [~] 25.3 Implement the client JavaScript budget gate
+  - [x] 25.3 Implement the client JavaScript budget gate
     - Create `scripts/check-client-js-budget.ts`: a pure function `sumGzipBytes(files)` and a CLI that after `next build` reads `.next/server/app/index.html`, collects every `<script src>` and `<link rel="preload" as="script">` URL, adds the chunk files listed by `.next/server/app/page_client-reference-manifest.js` for the statically imported modules of `graveyard-app.tsx`, de-duplicates by file, sums `zlib.gzipSync(..., { level: 9 })` sizes, imports `CLIENT_JS_BUDGET_BYTES` from `view-model/constants.ts`, exits 1 above the budget and names the constant, the total and the five largest chunks. Add `"check:bundle": "tsx scripts/check-client-js-budget.ts"` to `package.json`. If the measured baseline already exceeds the budget, change the constant in `view-model/constants.ts` with the reason in a comment and in design.md (Open question 13), never skip the check.
     - _Requirements: 17.2_
-  - [~] 25.4 Write the unit test for the budget gate
+  - [x] 25.4 Write the unit test for the budget gate
     - Create `tests/ui/check-client-js-budget.test.ts`: `sumGzipBytes` on small in-memory files, the exit decision above and at the budget, de-duplication of a chunk listed twice, the message names `CLIENT_JS_BUDGET_BYTES`.
     - _Requirements: 17.2_
-  - [~] 25.5 Write the measured JavaScript budget spec
+  - [x] 25.5 Write the measured JavaScript budget spec
     - Create `tests/e2e/js-budget.spec.ts`: against `next start`, load `/?repo=<featured url>` with the mocked scan, wait for the results (Scene view, no panel opened), sum the gzip size of every JavaScript response, assert at most `CLIENT_JS_BUDGET_BYTES` with a failure message that names the constant, the total and the largest five chunks, assert that the list, detail and picker chunks are not requested before they are needed, and merge the total into `test-results/m1-measurements.json` without removing other keys.
     - _Requirements: 17.2, 17.7, 20.9_
-  - [~] 25.6 Write the layout shift spec
+  - [x] 25.6 Write the layout shift spec
     - Create `tests/e2e/layout-shift.spec.ts`: an init script installs a `PerformanceObserver` for `layout-shift` entries without recent input, and after the results render the sum is at most `RESULTS_CLS_MAX` for each recorded fixture and for the 300-package result.
     - _Requirements: 17.3, 17.6, 20.7_
-  - [~] 25.7 Update the CI workflow
+  - [x] 25.7 Update the CI workflow
     - In `.github/workflows/ci.yml` keep the current steps and add after `npx vitest --run`: `npm run build`, `npm run check:bundle`, `npx playwright install --with-deps chromium`, `npm run e2e:fixtures`, `npx playwright test`, and upload `playwright-report` as an artifact. Update `tests/ci-config.test.ts` so that it asserts the new steps in this order.
     - _Requirements: 17.2, 20.9, 20.1_
-- [~] 26. Checkpoint - Performance and bundle
+- [x] 26. Checkpoint - Performance and bundle
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build`, `npm run check:bundle` and `npm run test:e2e`, and ensure all pass. Ask the user if questions arise.
 - [~] 27. Checkpoint - Milestone 1
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build`, `npm run check:bundle` and `npm run test:e2e`, and ensure all pass. Check that `git status` shows no unrelated change, that the three commits of the commit order (housekeeping, pipeline field, UI) can be made, and ask the user if questions arise.

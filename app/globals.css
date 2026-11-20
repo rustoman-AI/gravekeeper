@@ -153,11 +153,22 @@
   overflow: hidden;
 }
 
+/* Row band: one row of plots; plot offsets stay scene-relative through --band-y. */
+.gk-scene-band {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 120px;
+}
+
 .gk-plot {
+  pointer-events: auto;
   position: absolute;
   left: 0;
   top: 0;
-  transform: translate(var(--x, 0px), var(--y, 0px));
+  transform: translate(var(--x, 0px), calc(var(--y, 0px) - var(--band-y, 0px)));
   width: var(--w, 0px);
   height: var(--h, 0px);
   margin: 0;
