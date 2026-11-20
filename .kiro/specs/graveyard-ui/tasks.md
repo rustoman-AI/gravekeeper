@@ -552,17 +552,17 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.7, 13.9, 13.10, 13.11, 13.12_
 - [x] 34. Checkpoint - Error screens
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 35. Client failure screens
-  - [~] 35.1 Add the client failures to the error model and the session
+- [x] 35. Client failure screens
+  - [x] 35.1 Add the client failures to the error model and the session
     - In `view-model/errors.ts` handle `kind: 'client'` (`network-failure` "The road is washed out", `timeout` "The night ran out", `malformed-response` "The records are garbled", the three fixed plain sentences of Requirement 13.8, cooldown 0, actions `retry` and `back-to-gate`), and in `components/hooks/use-scan.ts` map the Scan_Client outcomes `failure` to the `failed` phase with that model.
     - _Requirements: 13.8, 14.1_
-  - [~] 35.2 Write the unit tests for the client failure model
+  - [x] 35.2 Write the unit tests for the client failure model
     - Add `tests/ui/view-model/errors-client.test.ts`: the three headings, the three sentences, cooldown 0 and the two actions for each failure.
     - _Requirements: 13.8_
-  - [~] 35.3 Write the component tests for the client failures
+  - [x] 35.3 Write the component tests for the client failures
     - Create `tests/ui/components/client-failure.test.tsx` (jsdom, fake client and fake timers): a rejected fetch, a response that never arrives (the timeout after `CLIENT_FETCH_TIMEOUT_MS`) and a body that is not valid JSON each show their screen with the plain sentence and an enabled Retry, Retry sends the same request again and shows the scanning screen.
     - _Requirements: 13.7, 13.8, 14.1_
-- [~] 36. Checkpoint - Client failure screens
+- [-] 36. Checkpoint - Client failure screens
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 37. Resurrect placeholder
   - [~] 37.1 Implement the Resurrect_Slot
