@@ -193,6 +193,27 @@ Maps every design property of the `scan-pipeline`, `dependency-graveyard-core`, 
 
 Status is from a full `npx vitest --run` with FC_NUM_RUNS unset on 2026-11-20. "1000 runs" is `npm run test:deep` on the file. Each tag was checked against the property number, and `tests/ui/traceability.test.ts` enforces it for P1 to P34. P34 is the pipeline advisory-exclusion test, outside `tests/ui`.
 
+## graveyard-art (GA-P1 to GA-P14)
+
+Tags read `// Feature: graveyard-art, Property GA-P<n>`. Test titles start with `GA-P<n>`. Titles below are the design property titles. All 14 properties passed in the normal and the deep (`npm run test:deep`) runs.
+
+| Property | Requirement(s) | Test file | Test title | Status |
+| --- | --- | --- | --- | --- |
+| GA-P1 | 3.2, 3.3, 3.4 | `tests/ui/view-model/variant-choice.property.test.ts` | Variant choice is a deterministic function of kind and key | passing |
+| GA-P2 | 3.6, 3.8 | `tests/ui/view-model/tilt.property.test.ts` | Tilt stays within the range and only stones lean | passing |
+| GA-P3 | 2.6, 2.7 | `tests/ui/view-model/depth.property.test.ts` | Depth is monotone by row and stays in range | passing |
+| GA-P4 | 2.8, 17.1 | `tests/ui/view-model/depth-geometry.property.test.ts` | Depth does not change any layout box | passing |
+| GA-P5 | 6.1, 6.2, 6.6 | `tests/ui/view-model/duration-total.property.test.ts` | Duration formatting is total | passing |
+| GA-P6 | 6.3, 6.4 | `tests/ui/view-model/duration-monotone.property.test.ts` | Duration formatting is monotone with exact unit boundaries | passing |
+| GA-P7 | 8.1, 8.2, 8.3, 8.4 | `tests/ui/view-model/plain-reasons.property.test.ts` | Plain reason lines are total and take numbers only from the facts | passing |
+| GA-P8 | 7.2, 7.7 | `tests/ui/view-model/epitaph-name.property.test.ts` | The epitaph contains the name and is made of sentences | passing |
+| GA-P9 | 7.3, 7.4, 7.5, 7.6, 7.8 | `tests/ui/view-model/epitaph-facts.property.test.ts` | The epitaph invents no fact | passing |
+| GA-P10 | 4.7, 4.8 | `tests/ui/view-model/symbol-ids.property.test.ts` | Every plot resolves to one existing, kind-unique symbol | passing |
+| GA-P11 | 10.2, 10.3, 10.5 | `tests/ui/view-model/caretaker-scene.property.test.ts` | Lit stones grow as a prefix and the lantern follows the last lit stone | passing |
+| GA-P12 | 5.4, 5.9, 11.1, 11.2, 11.3, 11.4, 11.5 | `tests/ui/view-model/header-empty.property.test.ts` | The header shows either a verdict or one empty sentence | passing |
+| GA-P13 | 11.6, 11.8 | `tests/ui/view-model/notes-once.property.test.ts` | The empty-graveyard message appears once | passing |
+| GA-P14 | 8.1, 8.6, 8.8 | `tests/ui/view-model/detail-reasons.property.test.ts` | Reasons keep the core message and rule id verbatim | passing |
+
 ## Properties without a test
 
 ### scan-pipeline (0 of 76)

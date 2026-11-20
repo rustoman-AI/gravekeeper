@@ -330,21 +330,21 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
 - [x] 19. Checkpoint - End-to-end, axe and performance
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run` and `npm run test:e2e` (the mocked projects and the perf project), and ensure all pass. Ask the user if questions arise.
 
-- [ ] 20. Traceability and documents
-  - [~] 20.1 Traceability test for this spec
+- [x] 20. Traceability and documents
+  - [x] 20.1 Traceability test for this spec
     - Create `tests/ui/art-traceability.test.ts` with the three checks of `tests/ui/traceability.test.ts` for the tag regex `/\/\/\s*Feature:\s*graveyard-art,\s*Property\s+GA-P(\d+)\b/g`: each of 1 to 14 appears in exactly one tag, every tagged file has a `// Validates:` line, every `it` or `test` title in a tagged file starts with `GA-P<n>` of its first tag. Do not edit `tests/ui/traceability.test.ts`.
     - Files: `tests/ui/art-traceability.test.ts`
     - _Requirements: 18.1, 18.2, 17.1_
-  - [~] 20.2 Add this spec to the property traceability document
+  - [x] 20.2 Add this spec to the property traceability document
     - In `docs/property-traceability.md` add a section "graveyard-art (GA-P1 to GA-P14)" with one row per property: number, title, test file, requirements. Change no existing row.
     - Files: `docs/property-traceability.md`
     - _Requirements: 18.1_
-  - [~] 20.3 Write the Milestone 3 design changes
+  - [x] 20.3 Write the Milestone 3 design changes
     - Create `docs/m3-design-changes.md` in the style of `docs/m2-design-changes.md`: one bullet per decision that differs from or is not stated in the spec (for example the three variant counts, the horizon heights, the legend anchor, fog placement, any contingency applied in task 6.12), each with its reason. This file is the "design changes" source of the report writer.
     - Files: `docs/m3-design-changes.md`
     - _Requirements: 19.4_
 
-- [~] 21. Checkpoint - Traceability and documents
+- [x] 21. Checkpoint - Traceability and documents
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 22. Screenshots of the graveyard-ui set (only if the art changed)
