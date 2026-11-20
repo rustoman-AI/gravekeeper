@@ -10,12 +10,13 @@
  * set on the plot button; custom properties inherit into the <use> tree.
  */
 
+import { memo } from "react";
 import { SceneDefs } from "./scene-defs";
 import { GhostDefs, GhostSymbols } from "./scene-sprite-ghosts";
 import { PropsDefs, PropsSymbols } from "./scene-sprite-props";
 import { SceneSpriteStones } from "./scene-sprite-stones";
 
-export function SceneSprites() {
+function SceneSpritesImpl() {
   return (
     <svg width="0" height="0" aria-hidden="true" focusable="false" style={{ position: "absolute" }}>
       <defs>
@@ -36,3 +37,5 @@ export function SceneSprites() {
     </svg>
   );
 }
+
+export const SceneSprites = memo(SceneSpritesImpl);

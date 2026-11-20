@@ -22,7 +22,6 @@ import { LazyDetailPanel } from './lazy-detail-panel';
 import { ResultsHeader } from './results-header';
 import { Scene } from './scene';
 import { SceneStage } from './scene-stage';
-import { SceneSprites } from './scene-sprites';
 import { VIEW_TOGGLE_ID, ViewToggle } from './view-toggle';
 import type { ViewName } from './view-toggle';
 
@@ -92,10 +91,14 @@ export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanMa
   const onOpenKey = useCallback((key: PackageKeyString) => setOpen({ result: resultRef.current, key }), []);
   const onClose = useCallback(() => setOpen(null), []);
 
-  // Focus moves to the page heading when results appear.
+  // The notes sit below the scene: they mount after the scene's first frame so they stay out of its render budget.
+  const [notesReady, setNotesReady] = useState(false);
   useEffect(() => {
-    document.getElementById('results-heading')?.focus();
-  }, [result]);
+    const id = requestAnimationFrame(() => setNotesReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+
 
   // The picker loads lazily; its space is reserved so the notes below do not shift (Requirement 17.3).
   const picker =
@@ -106,13 +109,24 @@ export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanMa
     );
   const column = 'mx-auto flex w-full max-w-6xl flex-col gap-6 px-4';
   const showScene = notes.empty === null && view === 'scene';
+  // The unmeasured first pass of the scene view renders only the measured column. Everything else mounts in
+  // the synchronous re-render that follows the measurement, before the first paint, so the forced layout that
+  // reads the width does not have to lay out the header, backdrop and fog (cold) inside the render window.
+  const ready = !showScene || measured;
+
+  // Focus moves to the page heading when results appear.
+  useEffect(() => {
+    if (!ready) return;
+    // focus() forces a layout, so it waits for the next frame, which is also when the scene render is measured.
+    const id = requestAnimationFrame(() => document.getElementById('results-heading')?.focus());
+    return () => cancelAnimationFrame(id);
+  }, [result, ready]);
   return (
     <div className="flex w-full flex-col">
       <div className={`${column} pt-8 pb-6`}>
-        <SceneSprites />
-        <ResultsHeader header={header} cache={cache} nowMs={nowMs} />
-        {notes.capBanner === null ? null : <CapBanner banner={notes.capBanner} />}
-        {notes.empty === null ? (
+        {ready ? <ResultsHeader header={header} cache={cache} nowMs={nowMs} /> : null}
+        {ready && notes.capBanner !== null ? <CapBanner banner={notes.capBanner} /> : null}
+        {!ready ? null : notes.empty === null ? (
           <ViewToggle view={view} onChange={onViewChange} />
         ) : (
           <>
@@ -128,15 +142,15 @@ export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanMa
         ) : null}
       </div>
       {showScene ? (
-        <SceneStage>
+        <SceneStage ready={ready}>
           <div ref={sceneRef} style={{ minHeight: reserved, maxWidth: '100%', overflowX: 'auto' }}>
             {measured ? <Scene scene={scene} onOpen={onOpenIndex} skipTargetId={VIEW_TOGGLE_ID} /> : null}
           </div>
         </SceneStage>
       ) : null}
       <div className={`${column} py-8`}>
-        {notes.empty === null ? picker : null}
-        <CaretakersNotes model={notes} />
+        {notesReady && notes.empty === null ? picker : null}
+        {notesReady ? <CaretakersNotes model={notes} /> : null}
         {detail !== null ? <LazyDetailPanel model={detail} onClose={onClose} /> : null}
       </div>
     </div>

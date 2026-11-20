@@ -9,6 +9,7 @@ import { LandingPage } from './landing-page';
 import { ResultsPage } from './results-page';
 import type { ViewName } from './view-toggle';
 import { markModelReady } from './scene-perf';
+import { SceneSprites } from './scene-sprites';
 import { ScanningScreen } from './scanning-screen';
 import type { ScanningScreenProps } from './scanning-screen';
 import { useScan } from './hooks/use-scan';
@@ -36,7 +37,7 @@ export interface GraveyardAppViewProps {
  * Hooks are called unconditionally; `GraveyardApp` supplies the production values.
  * Placeholders for `scanning`, `result` and `failed` stay until groups 13, 15 and 33 replace them.
  */
-export function GraveyardAppView({
+function GraveyardAppBody({
   router,
   search,
   history,
@@ -169,6 +170,16 @@ export function GraveyardAppView({
       initialRepoValue={repoValue}
       onAction={onErrorAction}
     />
+  );
+}
+
+/** The app shell. The sprite sheet mounts once here, so pages never re-render its SVG nodes. */
+export function GraveyardAppView(props: GraveyardAppViewProps) {
+  return (
+    <>
+      <SceneSprites />
+      <GraveyardAppBody {...props} />
+    </>
   );
 }
 

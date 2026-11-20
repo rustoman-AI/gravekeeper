@@ -6,6 +6,8 @@
  * only; no filter, no mask, no text, no title. Fully deterministic.
  */
 
+import { memo } from "react";
+
 export type BackdropVariant = "stage" | "hero" | "scanning";
 
 interface VariantConfig {
@@ -156,7 +158,7 @@ function hillPath(profile: readonly (readonly [number, number])[], w: number, h:
   return d;
 }
 
-export function SceneBackdrop({ variant }: { variant: BackdropVariant }) {
+function SceneBackdropImpl({ variant }: { variant: BackdropVariant }) {
   const c = VARIANTS[variant];
   const { w, h, u } = c;
   const moonR = 20 * u;
@@ -247,3 +249,5 @@ export function SceneBackdrop({ variant }: { variant: BackdropVariant }) {
     </svg>
   );
 }
+
+export const SceneBackdrop = memo(SceneBackdropImpl);

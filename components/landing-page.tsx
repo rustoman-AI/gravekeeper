@@ -3,7 +3,6 @@ import { Hero } from './hero';
 import { HowItDecides } from './how-it-decides';
 import { Legend } from './legend';
 import { RepoForm } from './repo-form';
-import { SceneSprites } from './scene-sprites';
 
 export interface LandingPageProps {
   initialValue?: string;
@@ -24,7 +23,6 @@ export function LandingPage({
 }: LandingPageProps) {
   return (
     <div className="flex w-full flex-col pb-8">
-      <SceneSprites />
       <Hero />
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 pt-8">
       <RepoForm initialValue={initialValue} focusOnMount={focusOnMount} onSubmit={onSubmit} />
