@@ -439,16 +439,16 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 17.2, 20.9, 20.1_
 - [x] 26. Checkpoint - Performance and bundle
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build`, `npm run check:bundle` and `npm run test:e2e`, and ensure all pass. Ask the user if questions arise.
-- [~] 27. Checkpoint - Milestone 1
+- [x] 27. Checkpoint - Milestone 1
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build`, `npm run check:bundle` and `npm run test:e2e`, and ensure all pass. Check that `git status` shows no unrelated change, that the three commits of the commit order (housekeeping, pipeline field, UI) can be made, and ask the user if questions arise.
 - [ ] 28. Deploy Milestone 1
-  - [~] 28.1 Implement the deployment check
+  - [x] 28.1 Implement the deployment check
     - Deployment is Vercel's git integration on push to `main` (checked: `origin` is `https://github.com/rustoman-AI/gravekeeper.git`, there is no `.vercel` folder, no Vercel CLI and no deploy step in `.github/workflows/`). The landing page is rendered on the client under `Suspense` (design D1), so the static HTML holds only the shell, and the interactive parts must be checked in a browser. Create `scripts/verify-deployment.ts` with a pure `checkLandingHtml(html)` (the static HTML has `lang="en"`, the title "Gravekeeper", an `h1` with the text "Gravekeeper", the reserved form block of `GateFallback`, and does not contain the starter text "To get started, edit") and a CLI `tsx scripts/verify-deployment.ts <url>` that fetches the URL (up to 30 attempts, 20 s apart, so that a build in progress can finish), prints each failed check and exits 1 on failure. Create `tests/e2e/deployed.spec.ts` (desktop project, no API mock, no `/api/scan` request): the page has the `h1` "Gravekeeper", a labelled URL input, a button "Dig up", the "Featured graveyards" row with three links, and a legend of six entries including "Restless ghost", with axe on the page. Add `"verify:deploy": "tsx scripts/verify-deployment.ts https://gravekeeper-chi.vercel.app"` to `package.json`. Do not create a Vercel project and do not add a deploy step to a workflow.
     - _Requirements: 15.8, 1.1, 1.2, 1.7_
-  - [~] 28.2 Write the unit test for the deployment check
+  - [x] 28.2 Write the unit test for the deployment check
     - Create `tests/ui/verify-deployment.test.ts`: `checkLandingHtml` accepts the prerendered shell of the landing page (generate it from the built `.next/server/app/index.html` when it exists, otherwise from a fixed snippet), rejects the starter page, an HTML without the `h1` "Gravekeeper", and an HTML with the wrong title.
     - _Requirements: 15.8, 1.2, 1.7_
-  - [~] 28.3 Push to main
+  - [-] 28.3 Push to main
     - Confirm with `git status` that the work is committed in the commit order of the Overview (housekeeping alone, then the pipeline field, then the UI), that `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build` and `npm run check:bundle` pass, then run `git push origin main`. Ask the orchestrator for the user's approval first if it was not given in the session. Do not force-push and do not change git configuration.
     - _Requirements: 15.8_
   - [~] 28.4 Verify the deployed UI
