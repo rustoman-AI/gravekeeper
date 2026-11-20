@@ -77,6 +77,7 @@ export { unassessedLabelOf, buildPackageRows } from './package-rows';
 export { headlineText, buildHeaderModel, formatAge } from './header';
 export { columnsFor, hashKey, sceneHeight, buildSceneModel } from './scene';
 export { nextFocus } from './scene-nav';
+export { stageAt, stageStates } from './stages';
 export {
   encodeManifests,
   decodeManifests,

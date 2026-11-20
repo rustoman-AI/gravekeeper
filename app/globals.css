@@ -99,12 +99,35 @@
 }
 
 /* Scanning screen: CSS-only fog and lantern, carries no information (R4.11). */
+.gk-scanning-decor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
 .gk-scanning-fog {
+  position: absolute;
+  inset: -20% -50%;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--color-bone-muted) 22%, transparent) 0%,
+    transparent 65%
+  );
   animation: gk-fog-drift 40s linear infinite alternate;
+  will-change: transform, opacity;
 }
 
 .gk-scanning-lantern {
-  animation: gk-lantern-pulse 3s ease-in-out infinite;
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background: var(--color-amber);
+  box-shadow: 0 0 1.5rem 0.5rem color-mix(in srgb, var(--color-amber) 45%, transparent);
+  animation: gk-lantern-pulse 3s ease-in-out infinite alternate;
+  will-change: transform, opacity;
 }
 
 @keyframes gk-lantern-pulse {

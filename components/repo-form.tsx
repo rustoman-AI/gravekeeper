@@ -1,10 +1,12 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 
 export interface RepoFormProps {
   initialValue?: string;
+  /** Focuses the input once on mount. Off by default so the initial landing load does not steal focus. */
+  focusOnMount?: boolean;
   /** Called with the trimmed input, as typed, when it is not empty. */
   onSubmit: (value: string) => void;
 }
@@ -13,10 +15,16 @@ const EMPTY_MESSAGE = 'Enter a repository URL';
 const MESSAGE_ID = 'repo-url-message';
 
 // Requirements 1.2 to 1.5: labelled input, "Dig up" button, empty-input message.
-export function RepoForm({ initialValue = '', onSubmit }: RepoFormProps) {
+export function RepoForm({ initialValue = '', focusOnMount = false, onSubmit }: RepoFormProps) {
   const [value, setValue] = useState(initialValue);
   const [message, setMessage] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (focusOnMount) inputRef.current?.focus();
+    // Mount only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

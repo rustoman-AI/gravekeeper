@@ -185,12 +185,13 @@ None. All 12 properties (P1 to P12) have at least one passing test.
 - scan-accuracy P3, P4 and P11 are now tagged with `// Feature: scan-accuracy` and `// Validates:` lines.
 
 ## graveyard-ui (PBT status)
-Status of the graveyard-ui property tests, recorded on 2026-11-19. "Default" is `npx vitest --run` with FC_NUM_RUNS unset. "1000 runs" is `npm run test:deep`. Each test file's `// Feature: graveyard-ui, Property <n>` tag was checked against the property number. Only properties that have a test are listed here. The remaining graveyard-ui properties (P3, P6, P19 to P26, P30 to P32) have no test yet, because their tasks are not done.
+Status of the graveyard-ui property tests, recorded on 2026-11-19. "Default" is `npx vitest --run` with FC_NUM_RUNS unset. "1000 runs" is `npm run test:deep`. Each test file's `// Feature: graveyard-ui, Property <n>` tag was checked against the property number. Only properties that have a test are listed here. The remaining graveyard-ui properties (P6, P19 to P26, P30 to P32) have no test yet, because their tasks are not done.
 
 | Property | Test file | Default | 1000 runs | Date | Counterexample and fix |
 | --- | --- | --- | --- | --- | --- |
 | P1 | `tests/ui/view-model/urls-canonical.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P2 | `tests/ui/view-model/urls-manifests.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P3 | `tests/ui/view-model/stages.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P4 | `tests/ui/view-model/header-summary.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P5 | `tests/ui/view-model/header-headline.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P7 | `tests/ui/view-model/rows-key-set.property.test.ts` | passed | passed | 2026-11-19 | none |

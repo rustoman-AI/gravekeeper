@@ -5,6 +5,8 @@ import { SceneSprites } from './scene-sprites';
 
 export interface LandingPageProps {
   initialValue?: string;
+  /** Focus the repository input on mount (used after Cancel). */
+  focusOnMount?: boolean;
   onSubmit: (value: string) => void;
   /** Optional: lets the app shell push history on a featured link click. */
   onSelectFeatured?: (url: string) => void;
@@ -12,7 +14,12 @@ export interface LandingPageProps {
 
 // Requirement 1: one h1 with one adjacent paragraph, the grade sentence, the form,
 // the featured row (Requirement 2) and the legend. The layout provides header, main and footer.
-export function LandingPage({ initialValue, onSubmit, onSelectFeatured }: LandingPageProps) {
+export function LandingPage({
+  initialValue,
+  focusOnMount,
+  onSubmit,
+  onSelectFeatured,
+}: LandingPageProps) {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-8">
       <SceneSprites />
@@ -26,7 +33,7 @@ export function LandingPage({ initialValue, onSubmit, onSelectFeatured }: Landin
           The grade is the worst single risk among the dependencies, not an average.
         </p>
       </section>
-      <RepoForm initialValue={initialValue} onSubmit={onSubmit} />
+      <RepoForm initialValue={initialValue} focusOnMount={focusOnMount} onSubmit={onSubmit} />
       <section aria-labelledby="featured-heading" className="flex flex-col gap-3">
         <h2 id="featured-heading" className="text-2xl text-bone">
           Featured graveyards

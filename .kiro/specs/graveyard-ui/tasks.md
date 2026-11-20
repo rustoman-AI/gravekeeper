@@ -261,30 +261,30 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 8.4, 8.5, 15.2, 15.4_
 - [x] 12. Checkpoint - Landing page
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 13. Scanning state
-  - [~] 13.1 Implement the stage functions
+- [x] 13. Scanning state
+  - [x] 13.1 Implement the stage functions
     - Create `view-model/stages.ts` (`SCAN_STAGES` labels, `stageAt(elapsedMs)`, `stageStates(elapsedMs)` with the text states "done", "in progress", "waiting"), export them from `view-model/index.ts`. The functions take the elapsed time as an argument and read no clock.
     - _Requirements: 4.1, 4.2, 4.3, 4.12_
-  - [~] 13.2 Write the property test for the stage selection
+  - [x] 13.2 Write the property test for the stage selection
     - `tests/ui/view-model/stages.property.test.ts`.
     - **Property 3: Stage selection is monotone and follows the start times**
     - **Validates: Requirements 4.13**
-  - [~] 13.3 Write the unit tests for the stages
+  - [x] 13.3 Write the unit tests for the stages
     - Create `tests/ui/view-model/stages.test.ts`: the four labels in order, `stageAt` at 0, 1999, 2000, 5999, 6000, 9999, 10000 and 100000, the state texts for each Stage.
     - _Requirements: 4.1, 4.2, 4.3_
-  - [~] 13.4 Implement the scanning screen
+  - [x] 13.4 Implement the scanning screen
     - Create `components/hooks/use-elapsed.ts` (timer, injected clock), `components/hooks/use-reduced-motion.ts` (`matchMedia`), `components/stage-list.tsx` and `components/scanning-screen.tsx`: four Stages with text states, the approximation sentence, no percentage, no numeric progress, no remaining time, the slow notice at `SCAN_SLOW_NOTICE_MS`, one polite live region that announces a Stage change once, "Cancel" as the first focusable element, a static list under Reduced_Motion and a CSS-only fog and lantern animation otherwise. Add the animation classes to `app/globals.css` (compositor properties only).
     - _Requirements: 4.1, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.10, 4.11, 17.4_
-  - [~] 13.5 Wire the scanning screen into the app
+  - [x] 13.5 Wire the scanning screen into the app
     - In `components/graveyard-app.tsx` render `ScanningScreen` for the `scanning` phase; "Cancel" aborts the request, calls `router.replace('/')` and shows the landing page with the last submitted value in the input and focus on the input.
     - _Requirements: 4.8, 4.9_
-  - [~] 13.6 Write the component tests for the scanning screen
+  - [x] 13.6 Write the component tests for the scanning screen
     - Create `tests/ui/components/scanning-screen.test.tsx` (jsdom, fake timers): the text states at 0, 2000, 6000 and 10000 ms, one live announcement per Stage change, no `progressbar` role and no percent text, the slow notice at 15000 ms without changing Stage states, "Cancel" is the first focusable element, the reduced-motion variant has no animated element.
     - _Requirements: 4.1, 4.3, 4.4, 4.6, 4.7, 4.8, 4.10_
-  - [~] 13.7 Write the app tests for cancel and Back
+  - [x] 13.7 Write the app tests for cancel and Back
     - Create `tests/ui/components/graveyard-app-scanning.test.tsx` (jsdom): Cancel aborts the in-flight request, the URL returns to `/`, the input keeps the last value and has focus; Back during a scan aborts it and starts the scan of the earlier URL.
     - _Requirements: 3.8, 4.9_
-- [~] 14. Checkpoint - Scanning state
+- [x] 14. Checkpoint - Scanning state
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 15. Results page: header and scene
   - [~] 15.1 Implement the results header components
