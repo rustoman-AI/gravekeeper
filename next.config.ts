@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { contentSecurityPolicy } from "./security-headers";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -11,6 +12,19 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: contentSecurityPolicy(process.env.NODE_ENV !== "production"),
+          },
+        ],
+      },
+    ];
   },
 };
 

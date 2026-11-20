@@ -601,17 +601,17 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 20.10, 20.11_
 - [x] 42. Checkpoint - Screenshots
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 43. Content-Security-Policy
-  - [~] 43.1 Add the security headers
+- [x] 43. Content-Security-Policy
+  - [x] 43.1 Add the security headers
     - Read `node_modules/next/dist/docs/01-app/02-guides/content-security-policy.md` first. In `next.config.ts` add `headers()` for `/(.*)` with the policy `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'`, with `'unsafe-eval'` added to `script-src` in development only. Keep `cacheComponents`, `partialPrefetching` and the Tailwind turbopack rule.
     - _Requirements: 21.6_
-  - [~] 43.2 Write the unit test for the policy
+  - [x] 43.2 Write the unit test for the policy
     - Create `tests/ui/csp.test.ts`: load `next.config.ts`, call `headers()` and assert the exact directive set and values of Requirement 21, criterion 6, that the source `/(.*)` is covered, that `'unsafe-eval'` is absent in production mode, and that the existing config keys are unchanged.
     - _Requirements: 21.6_
-  - [~] 43.3 Write the policy end-to-end spec
+  - [x] 43.3 Write the policy end-to-end spec
     - Create `tests/e2e/csp.spec.ts`: the header is present on the landing page, on the results page and on `/api/scan`, and no console message reports a CSP violation on the landing, scanning, results, list, detail and error screens (fonts load from the same origin).
     - _Requirements: 21.6, 15.3_
-- [~] 44. Checkpoint - Content-Security-Policy
+- [x] 44. Checkpoint - Content-Security-Policy
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build` and `npm run test:e2e`, and ensure all pass. Ask the user if questions arise.
 - [ ] 45. Remaining properties and traceability
   - [~] 45.1 Write the property test for JSON-safe models
