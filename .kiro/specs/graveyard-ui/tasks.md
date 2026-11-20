@@ -228,38 +228,38 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 1.9, 16.4_
 - [x] 10. Checkpoint - Fonts and theme
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 11. Scan client, URL state, first-pass art and landing page
-  - [~] 11.1 Implement the Scan_Client
+- [x] 11. Scan client, URL state, first-pass art and landing page
+  - [x] 11.1 Implement the Scan_Client
     - Create `client/scan-client.ts` exactly as the design "Scan_Client": `createScanClient({ fetchImpl, setTimer, clearTimer })`, `run(request, signal)` posts `JSON.stringify(request)` with `Content-Type: application/json`, `credentials: 'omit'`, `cache: 'no-store'` to `/api/scan`, one timer of `CLIENT_FETCH_TIMEOUT_MS`, maps a rejected fetch to `network-failure`, the timer to `timeout`, the caller's abort to `aborted`, a non-JSON body to `parseScanResponse(status, headers, undefined)`, and never throws.
     - _Requirements: 3.2, 3.3, 14.1, 21.5_
-  - [~] 11.2 Write the unit tests for the Scan_Client
+  - [x] 11.2 Write the unit tests for the Scan_Client
     - Create `tests/ui/client/scan-client.test.ts` with a fake `fetch` and fake timers: the request body, headers and options, a 200 result with `hit`, a 503 with `Retry-After`, a 502 without it, a body that is not JSON, a rejected fetch, no answer within `CLIENT_FETCH_TIMEOUT_MS`, an abort by the caller, an abort after the answer is ignored, the function never throws.
     - _Requirements: 3.2, 3.3, 14.1, 21.5_
-  - [~] 11.3 Implement the URL state hook and the scan session hook
+  - [x] 11.3 Implement the URL state hook and the scan session hook
     - Read `use-search-params.md`, `use-router.md` and `single-page-applications.md` in `node_modules/next/dist/docs/` first. Create `components/hooks/use-url-state.ts` (reads `useSearchParams`, writes with `router.push`, `router.replace` and `window.history.replaceState` as in design D2) and `components/hooks/use-scan.ts` with the `ScanSession` reducer (`idle`, `scanning`, `result`, `failed`), the `requestKey` and `canonicalKey` of design D3, abort on cleanup, one request per key, and a dependency-injected client so tests need no module mocking.
     - _Requirements: 3.1, 3.2, 3.4, 3.7, 3.8, 3.9_
-  - [~] 11.4 Draw the first-pass SVG symbols for all six plot kinds
+  - [x] 11.4 Draw the first-pass SVG symbols for all six plot kinds
     - Create `components/scene-sprites.tsx`: one hidden `<svg width="0" height="0" aria-hidden="true">` with an original `<symbol>` for each of `plot-tombstone` (stone-grey), `plot-overgrown` (leaning stone, ivy and moss, no inscription), `plot-ghost` (spectral, glow through a radial gradient scaled by `--glow`, no filter), `plot-restless` (the tombstone shape with the ghost shape over it, built from the two sub-shapes), `plot-lantern` (lit amber) and `plot-unmarked` (bare mound), plus a `-flat` variant of each for the simplified form. Colours come from the tokens (`var(--color-*)`). First-pass art: simple recognisable shapes, no raster image, no third-party artwork. Each symbol has a `viewBox` of 80 by 104.
     - _Requirements: 8.4, 8.5, 15.1, 15.4, 16.3_
-  - [~] 11.5 Implement the landing page components
+  - [x] 11.5 Implement the landing page components
     - Create `components/legend.tsx` (six entries, each with a `<svg><use href="#plot-..."/></svg>` drawing and the visible text of Requirement 1.7), `components/featured-graveyards.tsx` (anchors for `FEATURED_GRAVEYARDS` with `owner/repo` and the ecosystem name), `components/repo-form.tsx` (labelled input, "Dig up" button, empty-input message with `aria-describedby`, polite live region, focus to the input), `components/landing-page.tsx` (one `h1`, one adjacent paragraph, the grade sentence, the form, the featured row, the legend) and `components/gate-fallback.tsx` (static markup with the same `h1` and a reserved block of the form's height). Mount `SceneSprites` once in the landing page.
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.1, 2.2, 2.3, 2.4, 2.5_
-  - [~] 11.6 Wire the app shell
+  - [x] 11.6 Wire the app shell
     - Create `components/graveyard-app.tsx` (`'use client'`; reads the URL state, holds the session, renders `LandingPage` for `idle` and a plain "Scanning" placeholder paragraph for `scanning`, `result` and `failed` until groups 13, 15 and 33 replace them) and rewrite `app/page.tsx` as a synchronous Server Component with `<Suspense fallback={<GateFallback />}><GraveyardApp /></Suspense>` and no `searchParams` prop. Remove the starter page content. Read `page.md` and `use-search-params.md` first.
     - _Requirements: 3.1, 3.2, 3.7, 3.9, 15.8_
-  - [~] 11.7 Write the component tests for the landing page
+  - [x] 11.7 Write the component tests for the landing page
     - Create `tests/ui/components/landing-page.test.tsx` (jsdom): one `h1`, the form label and button, Enter submits, an empty and a whitespace input show "Enter a repository URL" linked by `aria-describedby`, announce it and focus the input and call no submit handler, the submit handler receives the trimmed value as typed, the legend has the six texts of Requirement 1.7, the featured links are anchors with `href` `/?repo=<URL>` in constant order with the ecosystem names, the grade sentence is present, headings are in order.
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 1.8, 1.9, 2.1, 2.2, 2.3, 2.4_
-  - [~] 11.8 Write the tests for the scan session hook
+  - [x] 11.8 Write the tests for the scan session hook
     - Create `tests/ui/components/use-scan.test.tsx` (jsdom) with a fake client and fake router: a repo value starts one request, a double activation sends one request, a new key aborts the old request first, a result for an aborted request is ignored, the canonical `repo` replacement does not start a second scan, Back to a different value rescans, no `repo` gives `idle`.
     - _Requirements: 3.2, 3.4, 3.7, 3.8, 3.9_
-  - [~] 11.9 Write the app shell tests
+  - [x] 11.9 Write the app shell tests
     - Create `tests/ui/components/graveyard-app.test.tsx` (jsdom) with the fake client and router injected through props: `/` shows the landing page, `/?repo=...` calls the client with `{ repoUrl }` only, `manifest` values are forwarded, a featured link and "Dig up" push one history entry.
     - _Requirements: 3.1, 3.2, 3.3, 3.7_
-  - [~] 11.10 Write the component test for the symbols
+  - [x] 11.10 Write the component test for the symbols
     - Create `tests/ui/components/scene-sprites.test.tsx` (jsdom): the six symbol ids and the six `-flat` ids exist, the sheet is `aria-hidden`, no symbol contains a `filter` element, an `image` element or an `href` to an external URL, and no fill is a literal colour.
     - _Requirements: 8.4, 8.5, 15.2, 15.4_
-- [~] 12. Checkpoint - Landing page
+- [x] 12. Checkpoint - Landing page
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 13. Scanning state
   - [~] 13.1 Implement the stage functions

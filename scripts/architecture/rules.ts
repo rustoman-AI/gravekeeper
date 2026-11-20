@@ -535,8 +535,7 @@ export const LAYER_RULES: readonly LayerRule[] = [
     appliesTo: (f) =>
       /\.tsx?$/.test(f) &&
       (isInsideDir(f, 'components') ||
-        // TODO: remove the app/page.tsx exemption once the create-next-app placeholder is replaced.
-        (isInsideDir(f, 'app') && /\.tsx$/.test(f) && toPosix(f) !== 'app/page.tsx')),
+        (isInsideDir(f, 'app') && /\.tsx$/.test(f))),
     lines: literalColourLines,
   },
   {
