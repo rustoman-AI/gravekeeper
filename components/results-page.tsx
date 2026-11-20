@@ -49,7 +49,10 @@ function pickerReservedHeight(count: number): number {
 /** Requirements 3.4, 3.5, 8.3, 17.3, 17.5, 18.1: header, view toggle and the Scene. */
 export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanManifests }: ResultsPageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const width = useContainerWidth(containerRef);
+  // -1 marks the unmeasured first pass (one column, one band per plot). The Scene waits for the layout
+  // effect in the hook so its first commit already uses the real column count.
+  const width = useContainerWidth(containerRef, -1);
+  const measured = width >= 0;
   // The Scene adds SCENE_PADDING_PX on each side, so columns fit the content width (R8.1, R16.9).
   const columns = columnsFor(width - 2 * SCENE_PADDING_PX);
 
@@ -107,7 +110,9 @@ export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanMa
           <ViewToggle view={view} onChange={onViewChange} />
           <div ref={containerRef} style={{ minHeight: reserved, maxWidth: '100%', overflowX: 'auto' }}>
             {view === 'scene' ? (
-              <Scene scene={scene} onOpen={onOpenIndex} skipTargetId={VIEW_TOGGLE_ID} />
+              measured ? (
+                <Scene scene={scene} onOpen={onOpenIndex} skipTargetId={VIEW_TOGGLE_ID} />
+              ) : null
             ) : (
               <ListView rows={rows} onOpen={onOpenKey} />
             )}
