@@ -373,17 +373,17 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 10.16, 10.17, 10.18, 10.19, 21.3_
 - [x] 20. Checkpoint - Detail panel
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 21. Component test coverage for Milestone 1
-  - [~] 21.1 Write the end-to-end component flow test
+- [x] 21. Component test coverage for Milestone 1
+  - [x] 21.1 Write the end-to-end component flow test
     - Create `tests/ui/components/graveyard-flow.test.tsx` (jsdom, fake client): landing, submit, scanning, results for the replayed recorded fixtures (through `parseScanResponse`), switch to the list, open a tombstone, a forgotten grave, a ghost and a restless ghost in the detail panel, close it, and check the headline of each fixture equals the header model text.
     - _Requirements: 3.2, 5.2, 9.5, 10.1, 18.1, 19.3_
-  - [~] 21.2 Write the source rule tests
+  - [x] 21.2 Write the source rule tests
     - Create `tests/ui/source-rules.test.ts`: read the real files under `app/`, `components/`, `client/` and `view-model/` and assert no `dangerouslySetInnerHTML`, `innerHTML`, `outerHTML`, `insertAdjacentHTML` or `document.write`, no hex, `rgb(` or `hsl(` literal in `components/**` and `app/**/*.tsx`, no import from `tests/` or a path containing `fixtures`, no `Date.now`, `Math.random` or `fetch` in `view-model/`.
     - _Requirements: 2.5, 6.2, 15.2, 21.1_
-  - [~] 21.3 Write the reduced-motion style test
+  - [x] 21.3 Write the reduced-motion style test
     - Create `tests/ui/reduced-motion-css.test.ts`: `app/globals.css` has one `@media (prefers-reduced-motion: reduce)` block that disables animation and transition for the scene, the fog and the scanning classes, and every `@keyframes` rule in the file animates only `transform` and `opacity`.
     - _Requirements: 8.6, 8.7, 16.6, 17.4_
-- [~] 22. Checkpoint - Component tests
+- [-] 22. Checkpoint - Component tests
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 23. Playwright setup, mocked API and Milestone 1 flows with axe
   - [~] 23.1 Configure Playwright
