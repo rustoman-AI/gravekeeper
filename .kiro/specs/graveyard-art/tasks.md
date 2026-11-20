@@ -169,61 +169,61 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
 - [x] 9. Checkpoint - Results header
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 10. Human epitaphs and plain-language reasons
-  - [~] 10.1 Humanised durations
+- [x] 10. Human epitaphs and plain-language reasons
+  - [x] 10.1 Humanised durations
     - Create `view-model/duration.ts` with `durationParts` and `humanizeDays` as in the design (constants from `view-model/constants.ts`; no `Date`, no locale formatting). Add `tests/ui/view-model/duration.test.ts`: the boundary table (0.5, 1, 2, 59, 59.9, 60, 61, 729, 730, 731), the four examples (1, 40, 210, 3285), `NaN`, `Infinity`, `-1`.
     - Files: `view-model/duration.ts`, `tests/ui/view-model/duration.test.ts`
     - _Requirements: 6.1, 6.3, 6.5, 6.6_
-  - [~] 10.2 Plain reason lines
+  - [x] 10.2 Plain reason lines
     - Create `view-model/plain-reasons.ts` with `plainReasonLine(reason)` and the closed table of the design (number-free fallbacks, the unknown-rule line, no use of `reason.message`, numbers only from `openVulnerabilityCount` and `maxSeverity` facts).
     - Files: `view-model/plain-reasons.ts`
     - _Requirements: 8.1, 8.2, 8.3, 8.4_
-  - [~] 10.3 Write the property test for duration totality
+  - [x] 10.3 Write the property test for duration totality
     - `tests/ui/view-model/duration-total.property.test.ts`: `fc.double` with `noNaN: false`, infinities, negatives, values up to 1e15 and `fc.integer` around the boundaries.
     - **Property 5: Duration formatting is total (GA-P5)**
     - **Validates: Requirements 6.1, 6.2, 6.6**
-  - [~] 10.4 Write the property test for duration monotonicity
+  - [x] 10.4 Write the property test for duration monotonicity
     - `tests/ui/view-model/duration-monotone.property.test.ts`.
     - **Property 6: Duration formatting is monotone with exact unit boundaries (GA-P6)**
     - **Validates: Requirements 6.3, 6.4**
-  - [~] 10.5 Write the property test for plain reason lines
+  - [x] 10.5 Write the property test for plain reason lines
     - `tests/ui/view-model/plain-reasons.property.test.ts`: reasons with `fc.string()` rule ids (and the ten core ids), arbitrary messages, facts with wrong types, missing fields and duplicates; check the digit sequences against the integer fact values.
     - **Property 7: Plain reason lines are total and take numbers only from the facts (GA-P7)**
     - **Validates: Requirements 8.1, 8.2, 8.3, 8.4**
-  - [~] 10.6 Epitaph builder
+  - [x] 10.6 Epitaph builder
     - Create `view-model/epitaph.ts` with `buildEpitaph(row)` and `EpitaphModel` as in the design (sentence order, `finiteNonNegative`, verdicts per kind, rule presence from `row.classification.reasons`, the unassessed label from `unassessedLabelOf`). Add `tests/ui/view-model/epitaph.test.ts`: one row each for `overgrown` (the aws-sign2 case: "Here lies aws-sign2. Last release 9 years ago. Last commit 9 years ago. It may be finished, or abandoned." with 3285-day facts), archived and deprecated tombstones, an unmaintained-advisory tombstone, a ghost (with and without severity, one vulnerability), a restless ghost, a lantern, an unmarked grave, both facts unknown, one fact unknown.
     - Files: `view-model/epitaph.ts`, `tests/ui/view-model/epitaph.test.ts`
     - _Requirements: 7.2, 7.3, 7.4, 7.5, 7.6_
-  - [~] 10.7 Write the property test for the epitaph name and shape
+  - [x] 10.7 Write the property test for the epitaph name and shape
     - `tests/ui/view-model/epitaph-name.property.test.ts`: rows from the shared arbitrary (including names with unicode, spaces and a trailing dot).
     - **Property 8: The epitaph contains the name and is made of sentences (GA-P8)**
     - **Validates: Requirements 7.2, 7.7**
-  - [~] 10.8 Write the property test for no invented facts
+  - [x] 10.8 Write the property test for no invented facts
     - `tests/ui/view-model/epitaph-facts.property.test.ts`: rows whose facts are set to `null`, negative, `NaN` or valid at random; check the if-and-only-if rules and the allowed numbers.
     - **Property 9: The epitaph invents no fact (GA-P9)**
     - **Validates: Requirements 7.3, 7.4, 7.5, 7.6, 7.8**
-  - [~] 10.9 Detail model: epitaph and plain reasons
+  - [x] 10.9 Detail model: epitaph and plain reasons
     - In `view-model/types.ts` add `epitaph` to `DetailModel` and `plain` to each reason entry; in `view-model/detail.ts` set `epitaph: buildEpitaph(row)` and `plain: plainReasonLine(r)`, leaving `ruleId`, `message` and `isMain` as they are.
     - Files: `view-model/types.ts`, `view-model/detail.ts`
     - _Requirements: 7.1, 7.2, 8.1, 8.8_
-  - [~] 10.10 Write the property test for verbatim reasons
+  - [x] 10.10 Write the property test for verbatim reasons
     - `tests/ui/view-model/detail-reasons.property.test.ts`.
     - **Property 14: Reasons keep the core message and rule id verbatim (GA-P14)**
     - **Validates: Requirements 8.1, 8.6, 8.8**
-  - [~] 10.11 Epitaph block and reason item components
+  - [x] 10.11 Epitaph block and reason item components
     - Create `components/epitaph-block.tsx` (`section[aria-label="Epitaph"].gk-epitaph` with `p` of one `span` per sentence, React text nodes only) and `components/reason-item.tsx` (`li` with the optional "main reason:" label, the plain line, and `details.gk-rule > summary "Show the rule"` that holds the exact message and `(rule <id>)`, closed by default).
     - Files: `components/epitaph-block.tsx`, `components/reason-item.tsx`
     - _Requirements: 7.9, 8.5, 8.7, 8.8_
-  - [~] 10.12 Detail panel and styles
+  - [x] 10.12 Detail panel and styles
     - In `components/detail-panel.tsx` render `EpitaphBlock` directly after the status line and before "Reasons", and render each reason with `ReasonItem`; keep every other section. In `app/globals.css` add `.gk-epitaph` (display font 1.25rem, `--color-plaque` background, `--color-iron` border, carved text-shadow from tokens, no filter) and `.gk-rule` (summary focus ring comes from the existing rule).
     - Files: `components/detail-panel.tsx`, `app/globals.css`
     - _Requirements: 7.1, 7.9, 7.10, 8.5, 8.7_
-  - [~] 10.13 Update the detail tests
+  - [x] 10.13 Update the detail tests
     - Update `tests/ui/components/detail-panel.test.tsx` (reason: reasons render the plain line first and the rule text moves into a closed disclosure; keep every assertion about facts, version, advisories, links, focus trap and Resurrect), and add cases: the epitaph block is the first section after the status line, "Show the rule" is closed by default, Enter on the summary opens it and shows the exact core message and rule id, the main-reason marker stays.
     - Files: `tests/ui/components/detail-panel.test.tsx`
     - _Requirements: 7.1, 7.9, 7.10, 8.5, 8.7, 8.8_
 
-- [~] 11. Checkpoint - Epitaphs
+- [-] 11. Checkpoint - Epitaphs
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 12. Landing page

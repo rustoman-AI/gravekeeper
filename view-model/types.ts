@@ -9,6 +9,7 @@ import type {
   SourceKind,
 } from '../core';
 import type { ScanErrorBody, ScanResult } from '../pipeline';
+import type { EpitaphModel } from './epitaph';
 
 // ---- identity and vocabulary ----------------------------------------------------------------
 /** JSON.stringify([ecosystem, name, sourceKind]), the same encoding core uses for Package_Key. */
@@ -270,10 +271,14 @@ export interface DetailModel {
   readonly statusWord: StatusWord;
   readonly scoreText: string;
   readonly unassessedLabel: string | null;
+  /** graveyard-art Requirement 7.1, 7.2: the human epitaph of the package. */
+  readonly epitaph: EpitaphModel;
   readonly reasons: readonly {
     readonly ruleId: string;
     /** Plain message, verbatim (Requirement 10.3). */
     readonly message: string;
+    /** graveyard-art Requirement 8.1, 8.8: plain-language line; `message` stays verbatim. */
+    readonly plain: string;
     readonly isMain: boolean;
   }[];
   /** Exactly seven entries in the order of HealthFacts (Requirements 10.4, 10.15). */

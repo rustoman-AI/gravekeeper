@@ -3,8 +3,10 @@
 import { useId, useRef, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import { AdvisoryGroups } from "@/components/advisory-groups";
+import { EpitaphBlock } from "@/components/epitaph-block";
 import { ExternalLink } from "@/components/external-link";
 import { useFocusTrap } from "@/components/hooks/use-focus-trap";
+import { ReasonItem } from "@/components/reason-item";
 import { ResurrectSlot } from "@/components/resurrect-slot";
 import type { DetailModel } from "@/view-model";
 
@@ -74,16 +76,14 @@ export function DetailPanel({
           )}
         </p>
 
+        <EpitaphBlock epitaph={model.epitaph} />
+
         {model.reasons.length === 0 ? null : (
           <section aria-labelledby={`${titleId}-reasons`}>
             <h3 id={`${titleId}-reasons`}>Reasons</h3>
             <ul>
               {model.reasons.map((r, i) => (
-                <li key={`${r.ruleId}-${String(i)}`}>
-                  {r.isMain ? <strong>main reason: </strong> : null}
-                  <span>{r.message}</span>{" "}
-                  <span className="gk-detail-rule">(rule {r.ruleId})</span>
-                </li>
+                <ReasonItem key={`${r.ruleId}-${String(i)}`} reason={r} />
               ))}
             </ul>
           </section>

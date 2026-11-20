@@ -177,6 +177,43 @@ describe("DetailPanel content", () => {
     expect(within(dialog).getAllByText(/main reason/)).toHaveLength(1);
   });
 
+  it("puts the epitaph block right after the status line (R7.1, R7.9)", () => {
+    const model = modelOf([{ name: "epitaph-one", kind: "buried" }], "epitaph-one");
+    const { dialog } = renderPanel(model);
+    const status = dialog.querySelector(".gk-detail-status");
+    const next = status?.nextElementSibling;
+    expect(next?.tagName).toBe("SECTION");
+    expect(next?.getAttribute("aria-label")).toBe("Epitaph");
+    expect(next?.textContent).toContain("epitaph-one");
+  });
+
+  it("renders the plain line first and keeps 'Show the rule' closed until Enter opens it (R8.5, R8.7, R8.8)", async () => {
+    const user = userEvent.setup();
+    const model = modelOf([{ name: "twice-cursed", kind: "restless-both" }], "twice-cursed");
+    const { dialog } = renderPanel(model);
+    const items = dialog.querySelectorAll("li:has(> details.gk-rule)");
+    expect(items).toHaveLength(model.reasons.length);
+    model.reasons.forEach((r, i) => {
+      const item = items[i] as HTMLElement;
+      const plain = within(item).getByText(r.plain);
+      const details = item.querySelector("details") as HTMLDetailsElement;
+      expect(plain.compareDocumentPosition(details) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      expect(details.open).toBe(false);
+    });
+    const first = items[0] as HTMLElement;
+    const details = first.querySelector("details") as HTMLDetailsElement;
+    const summary = within(first).getByText("Show the rule");
+    // jsdom does not turn Enter on a <summary> into a toggle (browsers do, and the detail e2e spec covers it),
+    // so the test checks the summary is keyboard-focusable and activates it with the click that Enter dispatches.
+    summary.focus();
+    expect(document.activeElement).toBe(summary);
+    await user.click(summary);
+    expect(details.open).toBe(true);
+    expect(within(first).getByText(model.reasons[0].message)).toBeTruthy();
+    expect(within(first).getByText(`(rule ${model.reasons[0].ruleId})`)).toBeTruthy();
+    expect(within(dialog).getAllByText(/main reason/)).toHaveLength(1);
+  });
+
   it("shows the registry link and the unverified source repository link with rel and host (R10.10, R10.11)", () => {
     const model = modelOf(
       [{ name: "linked", kind: "alive" }],

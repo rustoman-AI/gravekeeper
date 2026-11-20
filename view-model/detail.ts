@@ -1,8 +1,10 @@
 import { buildAdvisoryGroups } from './advisory-groups';
+import { buildEpitaph } from './epitaph';
 import { FACT_LABELS } from './fact-labels';
 import { FACT_FIELDS, formatFact } from './format-fact';
 import { NOTE_SECTIONS, OTHER_NOTES_TITLE } from './notes';
 import { unassessedLabelOf } from './package-rows';
+import { plainReasonLine } from './plain-reasons';
 import type { DetailModel, PackageKeyString, PackageRow, ParsedScanResult } from './types';
 import { registryLink, sourceRepoLink } from './urls';
 
@@ -98,9 +100,13 @@ export function buildDetailModel(
     statusWord: row.statusWord,
     scoreText: row.score === null ? 'not assessed' : String(row.score),
     unassessedLabel: row.unassessedCause === null ? null : unassessedLabelOf(row.unassessedCause),
+    // graveyard-art Requirements 7.1, 7.2
+    epitaph: buildEpitaph(row),
     reasons: (classification?.reasons ?? []).map((r) => ({
       ruleId: r.ruleId,
       message: r.message,
+      // graveyard-art Requirements 8.1, 8.8: plain line added, ruleId and message untouched
+      plain: plainReasonLine(r),
       isMain: r === row.strongestReason,
     })),
     facts: FACT_FIELDS.map((field) => ({

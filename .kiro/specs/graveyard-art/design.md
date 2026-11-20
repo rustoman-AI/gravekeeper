@@ -550,7 +550,7 @@ Only the pure View_Model functions of this spec have properties. The SVG art, th
 
 ### Property 5: Duration formatting is total (GA-P5)
 
-*For any* number `days`, including `NaN`, `Infinity`, `−Infinity`, negative numbers, fractions and values up to 10^15, `humanizeDays(days)` SHALL return a non-empty string and SHALL not throw, and *for any* finite `days` of at least 0 the string SHALL match `^(less than a day|1 day|[1-9]\d* days|[2-9]\d* months|[1-9]\d* years)$` (months and years counts are at least 2 by the unit boundaries).
+*For any* number `days`, including `NaN`, `Infinity`, `−Infinity`, negative numbers, fractions and values up to 10^15, `humanizeDays(days)` SHALL return a non-empty string and SHALL not throw, and *for any* finite `days` of at least 0 the string SHALL match `^(less than a day|1 day|([2-9]|[1-5]\d) days|([2-9]|[1-9]\d+) months|([2-9]|[1-9]\d+) years)$` (the days count is 2 to 59 because "1 day" is its own alternative, and the months and years counts are any integer of at least 2 by the unit boundaries, so "10 months" matches). This correction was found by GA-P5: the earlier regex `[2-9]\d* months` rejected the counterexample 300 days, which formats as "10 months".
 
 **Validates: Requirements 6.1, 6.2, 6.6**
 

@@ -3,6 +3,19 @@
     "4.6 Write the property test for layout independence": {
       "status": "passed",
       "lastRunTimestamp": 1795178159498
+    },
+    "10.3 Write the property test for duration totality": {
+      "status": "failed",
+      "failingExample": "[300] -> humanizeDays(300) = \"10 months\", which does not match design regex ^(...|[2-9]\\d* months|...)$ (seed -431936536)",
+      "lastRunTimestamp": 1795180388146
+    },
+    "10.5 Write the property test for plain reason lines": {
+      "status": "passed",
+      "lastRunTimestamp": 1795180415266
+    },
+    "10.8 Write the property test for no invented facts": {
+      "status": "passed",
+      "lastRunTimestamp": 1795180599795
     }
   },
   "executionHistory": {
@@ -599,6 +612,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523130
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180282450
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180342739
       }
     ],
     "10.2 Plain reason lines": [
@@ -606,6 +629,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523160
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180283177
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180342905
       }
     ],
     "10.3 Write the property test for duration totality": [
@@ -613,6 +646,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523192
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180347980
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180701065
       }
     ],
     "10.4 Write the property test for duration monotonicity": [
@@ -620,6 +663,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523227
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180348966
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180477389
       }
     ],
     "10.5 Write the property test for plain reason lines": [
@@ -627,6 +680,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523259
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180350470
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180477509
       }
     ],
     "10.6 Epitaph builder": [
@@ -634,6 +697,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523292
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180351188
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180477728
       }
     ],
     "10.7 Write the property test for the epitaph name and shape": [
@@ -641,6 +714,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523324
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180504811
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180702053
       }
     ],
     "10.8 Write the property test for no invented facts": [
@@ -648,6 +731,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523355
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180505804
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180706130
       }
     ],
     "10.9 Detail model: epitaph and plain reasons": [
@@ -655,6 +748,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523391
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180506528
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180706257
       }
     ],
     "10.10 Write the property test for verbatim reasons": [
@@ -662,6 +765,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523422
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180710853
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180790023
       }
     ],
     "10.11 Epitaph block and reason item components": [
@@ -669,6 +782,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523460
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180711731
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180789113
       }
     ],
     "10.12 Detail panel and styles": [
@@ -676,6 +799,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523518
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180794507
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180907662
       }
     ],
     "10.13 Update the detail tests": [
@@ -683,6 +816,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523552
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180908407
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181049872
       }
     ],
     "11. Checkpoint - Epitaphs": [
@@ -690,6 +833,11 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523584
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181050789
       }
     ],
     "12.1 Hero and cemetery gate": [
@@ -1012,6 +1160,13 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795180220700
+      }
+    ],
+    "10. Human epitaphs and plain-language reasons": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795181049904
       }
     ]
   }

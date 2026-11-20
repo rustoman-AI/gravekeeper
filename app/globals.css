@@ -432,6 +432,50 @@ main[tabindex="-1"]:focus-visible {
 .gk-link-host {
   color: var(--color-bone-muted);
 }
+/* graveyard-art R7.1, R7.9, R7.10: the engraved epitaph. Tokens only, no filter. */
+.gk-epitaph {
+  margin: 1rem 0;
+  padding: 1.75rem 1.5rem;
+  background: var(--color-plaque);
+  border: 1px solid var(--color-iron);
+  border-radius: 0.25rem;
+  box-shadow:
+    inset 0 0 0 0.35rem var(--color-plaque),
+    inset 0 0 0 calc(0.35rem + 1px)
+      color-mix(in srgb, var(--color-bone) 28%, var(--color-night)),
+    inset 0 2px 10px color-mix(in srgb, var(--color-night) 70%, transparent);
+  color: var(--color-bone);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.5;
+  text-align: center;
+  text-shadow:
+    0 1px 0 color-mix(in srgb, var(--color-bone) 25%, transparent),
+    0 -1px 0 var(--color-night);
+}
+.gk-epitaph p {
+  margin: 0;
+}
+.gk-epitaph span {
+  display: block;
+}
+
+/* graveyard-art R8.5, R8.7: the rule disclosure; the focus ring comes from the global rule. */
+.gk-rule {
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem; /* space between reason items */
+  color: var(--color-bone-muted);
+}
+.gk-rule summary {
+  cursor: pointer;
+  color: var(--color-spectral);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.gk-rule[open] summary {
+  margin-bottom: 0.25rem;
+}
+
 .gk-link {
   color: var(--color-spectral);
   text-decoration: underline;
