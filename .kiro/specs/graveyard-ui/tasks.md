@@ -591,15 +591,15 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 16.4, 16.9, 9.6_
 - [x] 40. Checkpoint - Remaining end-to-end tests
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run` and `npm run test:e2e`, and ensure all pass. Ask the user if questions arise.
-- [ ] 41. Remaining screenshots
+- [x] 41. Remaining screenshots
   - Relationship with group 48: group 41 produces the full two-viewport set in `docs/screenshots/`. Task 48.4 (the Milestone 2 report) alone produces `docs/screenshots/m2/` (1440x900, `M2_REPORT=1`). The two sets are independent and neither task writes into the other's folder.
-  - [~] 41.1 Write the screenshot spec
+  - [x] 41.1 Write the screenshot spec
     - Create `tests/e2e/screenshots.spec.ts` for the projects `desktop` (1280x800) and `mobile` (390x844) with `reducedMotion: 'reduce'`, `page.clock.install({ time: '2026-11-19T12:00:00Z' })`, `document.fonts.ready` and `page.screenshot({ animations: 'disabled' })`, saving into `docs/screenshots/` with names `<screen>-<variant>-<viewport>.png` for every screen of the design Screen list S1 to S18: landing (default, empty input), the four scanning stages, results Scene and List for each recorded fixture, the detail panel of a tombstone, an overgrown grave, a ghost, a restless ghost, a lantern and an unmarked grave, Caretaker's notes (recorded and degraded), the empty graveyard, the picker, and every error and client failure screen. An earlier file of the same name is overwritten. The milestone 1 folder `docs/screenshots/m1/` is not touched.
     - _Requirements: 20.10, 20.11_
-  - [~] 41.2 Capture and verify the screenshots
+  - [x] 41.2 Capture and verify the screenshots
     - Run the spec twice on the same build and check that the two runs give identical files (compare SHA-256 per file). If a file differs, remove the source of the difference (clock, font loading, animation) and rerun. Commit the images. List the files in `docs/screenshots/README.md` with the screen name of each.
     - _Requirements: 20.10, 20.11_
-- [~] 42. Checkpoint - Screenshots
+- [x] 42. Checkpoint - Screenshots
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 43. Content-Security-Policy
   - [~] 43.1 Add the security headers

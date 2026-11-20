@@ -171,6 +171,23 @@ describe('buildNotesModel empty state (R11.10)', () => {
     expect(model.empty).toEqual({ message: 'Synthetic note no-manifests.' });
   });
 
+  it('uses the no-root-manifest message when manifests is empty and there is no no-manifests note', () => {
+    const model = buildNotesModel(
+      parse({ manifestPaths: [], notes: [noteOf('no-root-manifest')], discovery: { candidates: [] } }, []),
+    );
+    expect(model.empty).toEqual({ message: 'Synthetic note no-root-manifest.' });
+  });
+
+  it('prefers the no-manifests message over no-root-manifest', () => {
+    const model = buildNotesModel(
+      parse(
+        { manifestPaths: [], notes: [noteOf('no-root-manifest'), noteOf('no-manifests')], discovery: { candidates: [] } },
+        [],
+      ),
+    );
+    expect(model.empty).toEqual({ message: 'Synthetic note no-manifests.' });
+  });
+
   it('shows an empty state when manifests is empty without the note', () => {
     const model = buildNotesModel(parse({ manifestPaths: [], discovery: { candidates: [] } }, []));
     expect(model.empty).not.toBeNull();

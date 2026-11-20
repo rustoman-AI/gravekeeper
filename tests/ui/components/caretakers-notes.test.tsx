@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { CapBanner } from "../../../components/cap-banner";
 import { CaretakersNotes } from "../../../components/caretakers-notes";
 import { EmptyGraveyard } from "../../../components/empty-graveyard";
@@ -68,7 +68,7 @@ describe("note groups (Requirement 11.4, 11.5, 11.6)", () => {
     const model = modelOf({}, (b) => {
       b["notes"] = [note("package-not-found", "First plain message."), note("pin-not-found", "Pin message.")];
     });
-    render(<CaretakersNotes model={model} repoValue="https://github.com/a/b" onScan={vi.fn()} />);
+    render(<CaretakersNotes model={model} />);
     expect(screen.getByText("First plain message.")).toBeTruthy();
     expect(screen.getByText("Pin message.")).toBeTruthy();
   });
@@ -125,7 +125,7 @@ describe("cap banner (Requirement 11.9)", () => {
     const model = modelOf({ skipped: [{ ecosystem: "npm", name: "a" }] }, (b) => {
       b["notes"] = [note("dependency-cap-exceeded", "Only 3 of 5 dependencies were assessed.")];
     });
-    render(<CaretakersNotes model={model} repoValue="r" onScan={vi.fn()} />);
+    render(<CaretakersNotes model={model} />);
     expect(screen.queryByRole("status")).toBeNull();
   });
 });

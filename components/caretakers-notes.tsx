@@ -1,18 +1,13 @@
-import { LazyManifestPicker } from "@/components/lazy-manifest-picker";
 import { NoteGroupSection } from "@/components/note-group-section";
 import { SourceStatusList } from "@/components/source-status-list";
 import type { NotesModel } from "@/view-model";
 
 export interface CaretakersNotesProps {
   model: NotesModel;
-  /** Repo value used by the picker's scan URL. */
-  repoValue: string;
-  /** Called with the scan URL when the picker's button is used. */
-  onScan: (url: string) => void;
 }
 
 /** Requirement 11: the caretaker's notes, from source status to the manifest picker. */
-export function CaretakersNotes({ model, repoValue, onScan }: CaretakersNotesProps) {
+export function CaretakersNotes({ model }: CaretakersNotesProps) {
   const groupCodes = model.sections.flatMap((s) => s.groups.map((g) => g.code));
   return (
     <section aria-labelledby="caretakers-notes-heading" className="flex flex-col gap-4">
@@ -45,13 +40,6 @@ export function CaretakersNotes({ model, repoValue, onScan }: CaretakersNotesPro
             </div>
           ))}
         </section>
-      )}
-      {model.picker === null ? null : (
-        <LazyManifestPicker
-          candidates={model.picker.candidates}
-          repoValue={repoValue}
-          onScan={onScan}
-        />
       )}
     </section>
   );

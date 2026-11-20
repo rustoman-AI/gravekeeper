@@ -2,9 +2,9 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import type { Page, Response } from "@playwright/test";
 import { gzipSync } from "node:zlib";
-import { CLIENT_JS_BUDGET_BYTES } from "../../view-model";
-import { loadScan, type FixtureName } from "./support/fixtures";
-import { mockScan, respondWithFixture } from "./support/mock-scan";
+import { CLIENT_JS_BUDGET_BYTES, parseScanResponse } from "../../view-model";
+import { loadScan, type FixtureName, type ScanOkBody } from "./support/fixtures";
+import { mockScan, respondWithFixture, respondWithStatus } from "./support/mock-scan";
 import { expect, test } from "./support/test";
 
 // Requirements 17.2, 17.7, 20.9: measured client JavaScript budget, lazy chunks.
@@ -68,6 +68,30 @@ function repoUrlOf(name: FixtureName): string {
   const { owner, repo } = body.repo ?? {};
   if (!owner || !repo) throw new Error(`fixture ${name} has no repo`);
   return `https://github.com/${owner}/${repo}`;
+}
+
+/** A `no-root-manifest` body built from the request fixture, validated by the view-model. */
+function noRootManifestBody(): ScanOkBody {
+  const body = loadScan(FEATURED);
+  const paths = ["packages/a/package.json", "packages/b/package.json"];
+  body.notes = [
+    {
+      code: "no-root-manifest",
+      message:
+        "No manifest was found at the repository root. Choose one of the manifests found in subfolders.",
+      details: { paths },
+    },
+  ];
+  body.discovery = {
+    ...(body.discovery as Record<string, unknown>),
+    candidates: paths.map((p) => ({ path: p, format: "package.json", depth: 2, sizeBytes: 500 })),
+  };
+  body.manifests = [];
+  body.dependencies = [];
+  body.assessed = [];
+  const outcome = parseScanResponse(200, { get: () => null }, body);
+  if (outcome.kind !== "result") throw new Error("no-root-manifest body did not parse");
+  return body;
 }
 
 /** Records every JavaScript response; bodies are read lazily by `drain`. */
@@ -177,7 +201,36 @@ test.describe("client JavaScript budget", () => {
     ).not.toHaveLength(0);
   });
 
-  // The repository picker (Requirement 17.7) does not exist until Milestone 2, so there is
-  // no picker chunk to observe yet. Not asserted here rather than inventing it.
-  test.skip("the picker chunk is not requested before the picker opens", () => {});
+  test("the picker chunk is not requested before the picker opens", async ({ page }) => {
+    const scripts = recordScripts(page);
+    await mockScan(page, respondWithFixture(FEATURED));
+    await page.goto(`/?repo=${encodeURIComponent(repoUrlOf(FEATURED))}`);
+    await expect(page.locator(".gk-scene")).toBeVisible();
+    await page.waitForLoadState("networkidle");
+    // A normal result shows no picker.
+    await expect(page.getByText("No manifest at the root")).toHaveCount(0);
+    const seenFiles = new Set((await scripts.drain()).map((f) => f.file));
+
+    // A no-root-manifest result renders the picker, which loads its own chunk.
+    const body = noRootManifestBody();
+    await page.unroute("**/api/scan");
+    await mockScan(page, respondWithStatus(200, body));
+    const isNewChunk = (r: Response): boolean => {
+      const file = urlToNextFile(new URL(r.url()).pathname);
+      return file !== undefined && !seenFiles.has(file);
+    };
+    await Promise.all([
+      page.waitForResponse(isNewChunk),
+      page.goto(`/?repo=${encodeURIComponent(repoUrlOf(FEATURED))}`),
+    ]);
+    await expect(page.getByText("No manifest at the root").first()).toBeVisible();
+    await page.waitForLoadState("networkidle");
+    const pickerChunks = (await scripts.drain())
+      .map((f) => f.file)
+      .filter((f) => !seenFiles.has(f));
+    expect(
+      pickerChunks,
+      "rendering the picker should request a lazy picker chunk",
+    ).not.toHaveLength(0);
+  });
 });

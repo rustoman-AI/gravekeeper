@@ -69,7 +69,7 @@ describe("ManifestPicker (Requirement 11.11)", () => {
   });
 });
 
-describe("picker inside CaretakersNotes (Requirement 11.11)", () => {
+describe("picker from the notes model (Requirement 11.11)", () => {
   function modelWithNoRoot() {
     const result = buildScanResult(manyRows(2), {
       manifestPaths: paths(3).map((c) => c.path),
@@ -80,9 +80,10 @@ describe("picker inside CaretakersNotes (Requirement 11.11)", () => {
     return buildNotesModel(outcome.result as ParsedScanResult);
   }
 
-  it("shows the picker and pushes the selected manifest", async () => {
+  it("renders the picker and pushes the selected manifest", async () => {
     const onScan = vi.fn<(url: string) => void>();
-    render(<CaretakersNotes model={modelWithNoRoot()} repoValue={REPO} onScan={onScan} />);
+    const model = modelWithNoRoot();
+    render(<ManifestPicker candidates={model.picker!.candidates} repoValue={REPO} onScan={onScan} />);
     expect(await screen.findAllByText("package.json, 100 bytes")).toHaveLength(3);
     const box = await screen.findByLabelText("packages/p1/package.json");
     await userEvent.click(box);
@@ -96,7 +97,8 @@ describe("picker inside CaretakersNotes (Requirement 11.11)", () => {
     const outcome = parseScanResponse(200, new Headers(), JSON.parse(JSON.stringify(result)));
     if (outcome.kind !== "result") throw new Error("fixture did not parse");
     const model = buildNotesModel(outcome.result as ParsedScanResult);
-    render(<CaretakersNotes model={model} repoValue={REPO} onScan={vi.fn()} />);
+    expect(model.picker).toBeNull();
+    render(<CaretakersNotes model={model} />);
     expect(screen.queryByRole("button", { name: "Scan selected manifests" })).toBeNull();
   });
 });

@@ -17,6 +17,7 @@ import { useContainerWidth } from './hooks/use-container-width';
 import { CapBanner } from './cap-banner';
 import { EmptyGraveyard } from './empty-graveyard';
 import { CaretakersNotes } from './caretakers-notes';
+import { LazyManifestPicker } from './lazy-manifest-picker';
 import { LazyDetailPanel } from './lazy-detail-panel';
 import { ResultsHeader } from './results-header';
 import { Scene } from './scene';
@@ -39,6 +40,11 @@ export interface ResultsPageProps {
 const ListView = dynamic(() => import('./list-view').then((mod) => mod.ListView), {
   loading: () => <p className="text-bone">Loading...</p>,
 });
+
+/** Height of the picker: legend, one row per candidate (label, detail line), gaps and the button. */
+function pickerReservedHeight(count: number): number {
+  return 28 + count * 76 + 12 + 44;
+}
 
 /** Requirements 3.4, 3.5, 8.3, 17.3, 17.5, 18.1: header, view toggle and the Scene. */
 export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanManifests }: ResultsPageProps) {
@@ -84,6 +90,13 @@ export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanMa
     document.getElementById('results-heading')?.focus();
   }, [result]);
 
+  // The picker loads lazily; its space is reserved so the notes below do not shift (Requirement 17.3).
+  const picker =
+    notes.picker === null ? null : (
+      <div style={{ minHeight: pickerReservedHeight(notes.picker.candidates.length) }}>
+        <LazyManifestPicker candidates={notes.picker.candidates} repoValue={header.canonicalUrl} onScan={onScanManifests} />
+      </div>
+    );
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8">
       <SceneSprites />
@@ -99,14 +112,16 @@ export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanMa
               <ListView rows={rows} onOpen={onOpenKey} />
             )}
           </div>
+          {picker}
         </>
       ) : (
         <>
           <EmptyGraveyard message={notes.empty.message} />
           <div ref={containerRef} />
+          {picker}
         </>
       )}
-      <CaretakersNotes model={notes} repoValue={header.canonicalUrl} onScan={onScanManifests} />
+      <CaretakersNotes model={notes} />
       {detail !== null ? <LazyDetailPanel model={detail} onClose={onClose} /> : null}
     </div>
   );

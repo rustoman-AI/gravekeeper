@@ -129,9 +129,10 @@ export function buildNotesModel(result: ParsedScanResult): NotesModel {
       : { message: firstMessage(notes, 'dependency-cap-exceeded') ?? CAP_TEXT, skippedCount };
 
   const noManifestsMessage = firstMessage(notes, 'no-manifests');
+  const noRootMessage = result.manifests.length === 0 ? firstMessage(notes, 'no-root-manifest') : null;
   const empty =
     noManifestsMessage !== null || result.manifests.length === 0
-      ? { message: noManifestsMessage ?? EMPTY_TEXT }
+      ? { message: noManifestsMessage ?? noRootMessage ?? EMPTY_TEXT }
       : null;
 
   let picker: PickerModel | null = null;

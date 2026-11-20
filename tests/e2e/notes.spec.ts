@@ -224,4 +224,36 @@ test.describe("manifest picker", () => {
     const last = seen[seen.length - 1] as { manifests?: string[] };
     expect(last.manifests).toEqual(["packages/a/package.json", "services/c/requirements.txt"]);
   });
+
+  test("sits under the empty graveyard, above the notes, in the first viewport, without layout shift", async ({ page }) => {
+    const body = emptyBody(
+      [noteOf("no-root-manifest", "No manifest was found at the repository root. Choose one of the manifests found in subfolders.")],
+      CANDIDATES,
+    );
+    await page.addInitScript(() => {
+      const w = window as unknown as { __cls: number };
+      w.__cls = 0;
+      new PerformanceObserver((list) => {
+        for (const e of list.getEntries()) {
+          const s = e as PerformanceEntry & { value: number; hadRecentInput: boolean };
+          if (!s.hadRecentInput) w.__cls += s.value;
+        }
+      }).observe({ type: "layout-shift", buffered: true });
+    });
+    await mockScan(page, ok(body));
+    await openResult(page, body);
+
+    const fieldset = page.getByRole("group", { name: /Choose manifests to scan/ });
+    await expect(fieldset).toBeVisible();
+    await expect(fieldset).toBeInViewport();
+    const picker = await fieldset.boundingBox();
+    const notes = await page.getByRole("heading", { name: "The caretaker's notes" }).boundingBox();
+    expect(picker).not.toBeNull();
+    expect(notes).not.toBeNull();
+    expect(picker!.y).toBeLessThan(notes!.y);
+    await expect(page.getByRole("group", { name: /Choose manifests to scan/ })).toHaveCount(1);
+    await page.evaluate(() => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))));
+    const cls = await page.evaluate(() => (window as unknown as { __cls: number }).__cls);
+    expect(cls).toBeLessThanOrEqual(0.01);
+  });
 });
