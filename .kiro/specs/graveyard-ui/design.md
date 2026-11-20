@@ -1018,6 +1018,8 @@ No property was removed. P34 is new. Each property below has exactly one propert
 
 *For any* classification with a non-empty `reasons` list, the Strongest_Reason SHALL be an element of `reasons`, SHALL not have ruleId `6.3` or `11.2` when another reason exists, and, for status DEAD, SHALL have a ruleId in `8.1`, `8.2`, `8.3`.
 
+The DEAD clause relies on core's status precedence: `statusOf` in `core/classifier/status.ts` makes any vulnerable package (reason `7.2`) HAUNTED, so a DEAD classification never carries `7.2`, which `REASON_PRIORITY` would otherwise pick first. Test generators for this property must therefore not produce DEAD classifications with `7.2`.
+
 **Validates: Requirements 7.4, 7.12**
 
 ### Property 10: Accessible labels

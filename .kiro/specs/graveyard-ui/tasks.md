@@ -101,14 +101,14 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - [x] 5.17 Implement the package rows
     - Create `view-model/package-rows.ts`: `buildPackageRows` exactly as the design "Merged classification and rows" steps 1 to 8 (it imports `uniquePackages` from `core/index.ts`, never `STATUS_RANK` or `classificationTieKey`), the display name of pypi packages (`rawName`, Requirement 7.8), the unassessed causes (DG-10) and labels, the accessible label (Requirement 7.6) and the scene order (Requirement 7.9, ghosts and restless ghosts share the rank), using `compareCodePoints` from task 5.1.
     - _Requirements: 6.8, 7.1, 7.2, 7.3, 7.6, 7.8, 7.9_
-  - [~] 5.18 Write the unit tests for the package rows
+  - [x] 5.18 Write the unit tests for the package rows
     - Create `tests/ui/view-model/package-rows.test.ts` with builders: repeated keys across scopes merge to one row, each unassessed cause and label, pypi `rawName`, a buried, forgotten, ghost, restless, lantern row each with the right kind, status word and label, scene order (ghost and restless before dead, score descending, ties by ecosystem and name), and a parity test of `compareCodePoints` with `core/internal/compare`.
     - _Requirements: 7.1, 7.2, 7.3, 7.6, 7.8, 7.9_
-  - [~] 5.19 Write the property test for one row per key
+  - [x] 5.19 Write the property test for one row per key
     - `tests/ui/view-model/rows-key-set.property.test.ts`.
     - **Property 7: One row per package key**
     - **Validates: Requirements 7.1, 7.10**
-  - [~] 5.20 Write the property test for kinds and counts
+  - [x] 5.20 Write the property test for kinds and counts
     - `tests/ui/view-model/rows-kinds.property.test.ts`, comparing every row with `uniquePackages(result.assessed)`.
     - **Property 8: Kinds and counts follow the core merge**
     - **Validates: Requirements 7.2, 7.11**
@@ -120,7 +120,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/ui/view-model/rows-graves.property.test.ts`, with ghosts that carry `8.1`, `8.2`, `8.3` in every combination.
     - **Property 13: Graves partition the dead packages and restless ghosts are haunted**
     - **Validates: Requirements 7.15, 7.16, 7.18, 7.20, 7.21**
-  - [~] 5.23 Implement the header model and the headline
+  - [x] 5.23 Implement the header model and the headline
     - Create `view-model/header.ts`: `headlineText(n, m, b, f, h)` exactly as the design (parts with count 0 omitted, `": "` only when a part is kept, `", "` separator, final `"."`), `buildHeaderModel` (N, M, B, F, H with H from `summary.counts.HAUNTED`, the "No dependencies could be assessed" sentence and "no grade" when M is 0, the grade line, the scale, the entries sentence, `notDefaultBranch`, Short_SHA, `canonicalUrl`) and `formatAge(asOfIso, nowMs)`. The components never see `Date.now`; the age is computed from a passed-in time.
     - _Requirements: 3.10, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8_
   - [~] 5.24 Write the unit tests for the header model
@@ -134,7 +134,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/ui/view-model/header-headline.property.test.ts`, with an independent oracle written as a table of the eight part combinations and restless ghosts in the generator.
     - **Property 5: Buried plus forgotten plus haunted equals the headline total, and the headline text matches**
     - **Validates: Requirements 5.2, 5.10**
-  - [~] 5.27 Implement the scene layout and keyboard navigation
+  - [x] 5.27 Implement the scene layout and keyboard navigation
     - Create `view-model/scene.ts` (`columnsFor`, `hashKey`, `sceneHeight`, `buildSceneModel`, plot tooltip lines and labels cut to `EPITAPH_MAX_CHARS`) and `view-model/scene-nav.ts` (`nextFocus`), exactly as the design "Layout algorithm" and "Keyboard navigation".
     - _Requirements: 8.1, 8.2, 8.3, 8.9, 9.6, 9.9_
   - [~] 5.28 Write the unit tests for the scene layout
