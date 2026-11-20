@@ -14,11 +14,14 @@ export interface DetailPanelProps {
   returnFocusTo?: RefObject<HTMLElement | null>;
 }
 
-function groupNotes(notes: DetailModel["notes"]): { group: string; messages: string[] }[] {
+function groupNotes(
+  notes: DetailModel["notes"],
+): { group: string; messages: string[] }[] {
   const out: { group: string; messages: string[] }[] = [];
   for (const n of notes) {
     const last = out[out.length - 1];
-    if (last !== undefined && last.group === n.group) last.messages.push(n.message);
+    if (last !== undefined && last.group === n.group)
+      last.messages.push(n.message);
     else out.push({ group: n.group, messages: [n.message] });
   }
   return out;
@@ -28,10 +31,17 @@ function groupNotes(notes: DetailModel["notes"]): { group: string; messages: str
  * Requirement 10: a custom modal (design D5), rendered in a portal on `document.body`. Every upstream
  * string is a React text node.
  */
-export function DetailPanel({ model, onClose, returnFocusTo }: DetailPanelProps) {
+export function DetailPanel({
+  model,
+  onClose,
+  returnFocusTo,
+}: DetailPanelProps) {
   const ref = useRef<HTMLDivElement>(null);
   const titleId = useId();
-  const options = returnFocusTo === undefined ? { onEscape: onClose } : { onEscape: onClose, returnFocusTo };
+  const options =
+    returnFocusTo === undefined
+      ? { onEscape: onClose }
+      : { onEscape: onClose, returnFocusTo };
   useFocusTrap(ref, options);
 
   if (typeof document === "undefined") return null;
@@ -70,7 +80,8 @@ export function DetailPanel({ model, onClose, returnFocusTo }: DetailPanelProps)
               {model.reasons.map((r, i) => (
                 <li key={`${r.ruleId}-${String(i)}`}>
                   {r.isMain ? <strong>main reason: </strong> : null}
-                  <span>{r.message}</span> <span className="gk-detail-rule">(rule {r.ruleId})</span>
+                  <span>{r.message}</span>{" "}
+                  <span className="gk-detail-rule">(rule {r.ruleId})</span>
                 </li>
               ))}
             </ul>
@@ -92,7 +103,9 @@ export function DetailPanel({ model, onClose, returnFocusTo }: DetailPanelProps)
         <section aria-labelledby={`${titleId}-version`}>
           <h3 id={`${titleId}-version`}>Version checked</h3>
           <p>{model.versionLine}</p>
-          {model.versionSpecText === "" ? null : <p>Declared as {model.versionSpecText}</p>}
+          {model.versionSpecText === "" ? null : (
+            <p>Declared as {model.versionSpecText}</p>
+          )}
           {model.versionNotes.map((m, i) => (
             <p key={i}>{m}</p>
           ))}
@@ -100,8 +113,12 @@ export function DetailPanel({ model, onClose, returnFocusTo }: DetailPanelProps)
 
         <section aria-labelledby={`${titleId}-where`}>
           <h3 id={`${titleId}-where`}>Where it is declared</h3>
-          {model.scopes.length === 0 ? null : <p>Scopes: {model.scopes.join(", ")}</p>}
-          {model.rawName === null ? null : <p>Manifest spelling: {model.rawName}</p>}
+          {model.scopes.length === 0 ? null : (
+            <p>Scopes: {model.scopes.join(", ")}</p>
+          )}
+          {model.rawName === null ? null : (
+            <p>Manifest spelling: {model.rawName}</p>
+          )}
           {model.manifestPaths.length === 0 ? null : (
             <ul>
               {model.manifestPaths.map((p) => (
@@ -134,22 +151,34 @@ export function DetailPanel({ model, onClose, returnFocusTo }: DetailPanelProps)
               {model.links.registry === null ? (
                 <span>registry page unavailable</span>
               ) : (
-                <ExternalLink href={model.links.registry}>registry page</ExternalLink>
+                <ExternalLink href={model.links.registry}>
+                  registry page
+                </ExternalLink>
               )}
             </li>
             {model.links.sourceRepo === null ? null : (
               <li>
-                <ExternalLink href={model.links.sourceRepo}>source repository (unverified)</ExternalLink>
+                <ExternalLink href={model.links.sourceRepo}>
+                  source repository (unverified)
+                </ExternalLink>
               </li>
             )}
           </ul>
         </section>
 
-        <section aria-labelledby={`${titleId}-advisories`}>
-          <h3 id={`${titleId}-advisories`}>Advisories</h3>
-          {model.advisoryEmptyText === null ? null : <p>{model.advisoryEmptyText}</p>}
-          <AdvisoryGroups groups={model.advisoryGroups} idPrefix={`${titleId}-adv`} />
-        </section>
+        {model.advisoryEmptyText === null &&
+        model.advisoryGroups.length === 0 ? null : (
+          <section aria-labelledby={`${titleId}-advisories`}>
+            <h3 id={`${titleId}-advisories`}>Advisories</h3>
+            {model.advisoryEmptyText === null ? null : (
+              <p>{model.advisoryEmptyText}</p>
+            )}
+            <AdvisoryGroups
+              groups={model.advisoryGroups}
+              idPrefix={`${titleId}-adv`}
+            />
+          </section>
+        )}
       </div>
     </div>,
     document.body,

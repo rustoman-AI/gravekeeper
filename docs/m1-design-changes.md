@@ -1,0 +1,16 @@
+- Property 9's DEAD clause relies on core's status precedence (a vulnerable package is always HAUNTED). Reason: without that precedence the clause is not true; a design note was added.
+- Scene order gets a final tiebreak on `sourceKind`. Reason: Property 16 found that packages with the same ecosystem and name but different `sourceKind` kept input order.
+- The table sort status key is status rank, then status word. Reason: the design said grave type, and the word also separates ghost from restless.
+- Scene render contingency (design item 9) applied: the synthetic-300 median at 4x CPU throttle went from 344 ms to 171.6 ms with row bands (`content-visibility: auto`), then to 85.1 ms with windowed rows. Not in the design: bands outside the initial window also mount after a timer (400 ms + 40 ms per row), so every plot ends up in the DOM. The measure covers the first frame.
+- The perf spec runs in its own Playwright project after desktop and mobile. Reason: parallel workers distorted the median (one run took 505 ms).
+- `<main>` has `min-h-dvh` so the footer starts below the fold. Reason: the footer shift at the scanning to results transition was CLS 0.03 to 0.12, and is now 0.
+- Links (`.gk-link`) are underlined. Reason: axe rule `link-in-text-block` in the detail panel.
+- Detail panel fact labels use the field names (for example `daysSinceLastRelease`). Reason: Requirement 10.4 names them that way.
+- Per-package note headings use a local table in `view-model/detail.ts` until the notes model of group 31 exists. Reason: no notes model is available yet.
+- Featured-graveyard ecosystem names are a small map in `components/featured-graveyards.tsx`. Reason: no view-model constant existed.
+- `TEXT_CONTRAST_MIN`, `NONTEXT_CONTRAST_MIN`, `SCENE_PERF_CPU_THROTTLE`, `SCENE_PERF_RUNS` and `RESULTS_CLS_MAX` are defined in the tests. Reason: the requirements table assigns them to tests.
+- The results page moves focus to the results `h1` when results arrive. Reason: the design states focus handling only for error screens.
+- `test:deep` is `scripts/test-deep.ts`. Reason: the tasks text said `.mjs`.
+- Scene labels (`.gk-plot-label`) are as wide as the plot box (`var(--w)`), wrap anywhere and clamp at two lines, at 0.75rem with line-height 1.1. Reason: the first M1 screenshots showed long names (`karma-phantomjs-launcher`, `json-stringify-safe`) overlapping their neighbours. Full names stay in the aria-label and tooltip.
+- Programmatic-focus targets (`h1`, `h2`, `main` and `[role="dialog"]` with `tabindex="-1"`) show no focus outline, and the explicit `[tabindex]` ring rule is narrowed to `[tabindex]:not([tabindex="-1"])`. Reason: the results `h1` showed a thick focus box after focus moved to it. Interactive elements keep their `:focus-visible` ring.
+- The detail panel renders the Advisories section only when there is at least one advisory group or an empty-text sentence. Reason: a package with no advisories (aws-sign2) showed an Advisories heading with nothing under it.

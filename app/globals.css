@@ -61,10 +61,22 @@
   select:focus-visible,
   textarea:focus-visible,
   summary:focus-visible,
-  [tabindex]:focus-visible {
+  [tabindex]:not([tabindex="-1"]):focus-visible {
     outline: 3px solid var(--color-focus);
     outline-offset: 2px;
   }
+}
+
+/* Programmatic-focus targets (headings, dialogs) take focus for screen readers but are not interactive: no ring. */
+h1[tabindex="-1"]:focus,
+h1[tabindex="-1"]:focus-visible,
+h2[tabindex="-1"]:focus,
+h2[tabindex="-1"]:focus-visible,
+[role="dialog"][tabindex="-1"]:focus,
+[role="dialog"][tabindex="-1"]:focus-visible,
+main[tabindex="-1"]:focus,
+main[tabindex="-1"]:focus-visible {
+  outline: none;
 }
 
 /* Fog: two layers, compositor properties only (transform, opacity). */
@@ -125,7 +137,8 @@
   height: 1.25rem;
   border-radius: 9999px;
   background: var(--color-amber);
-  box-shadow: 0 0 1.5rem 0.5rem color-mix(in srgb, var(--color-amber) 45%, transparent);
+  box-shadow: 0 0 1.5rem 0.5rem
+    color-mix(in srgb, var(--color-amber) 45%, transparent);
   animation: gk-lantern-pulse 3s ease-in-out infinite alternate;
   will-change: transform, opacity;
 }
@@ -195,17 +208,22 @@
 }
 .gk-plot-label {
   position: absolute;
-  left: 50%;
+  /* Plot box width (var(--w)), at most two lines: labels never reach a neighbour. Full name stays in aria-label and tooltip. */
+  left: 0;
   top: 100%;
-  transform: translateX(-50%);
-  max-width: 12rem;
-  margin-top: 0.125rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  width: var(--w, 80px);
+  max-height: 2.2em;
+  margin-top: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  white-space: normal;
   color: var(--color-bone);
-  font-size: 0.875rem;
-  line-height: 1.25;
+  font-size: 0.75rem;
+  line-height: 1.1;
   text-align: center;
   pointer-events: none;
   text-shadow: 0 1px 3px var(--color-night);
@@ -216,7 +234,10 @@
   left: 0;
   top: 0;
   /* Sits just under the plot and its label. */
-  transform: translate(var(--x, 0px), calc(var(--y, 0px) + var(--h, 0px) + 1.75rem));
+  transform: translate(
+    var(--x, 0px),
+    calc(var(--y, 0px) + var(--h, 0px) + 1.75rem)
+  );
   z-index: 10;
   max-width: 20rem;
   padding: 0.5rem 0.75rem;

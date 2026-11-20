@@ -144,7 +144,14 @@ test.describe("client JavaScript budget", () => {
     const initialFiles = new Set(chunks.map((c) => c.file));
 
     // List chunk: not requested on the Scene load, requested when List opens.
-    await page.getByRole("button", { name: "List", exact: true }).click();
+    const isNewChunk = (r: Response): boolean => {
+      const file = urlToNextFile(new URL(r.url()).pathname);
+      return file !== undefined && !initialFiles.has(file);
+    };
+    await Promise.all([
+      page.waitForResponse(isNewChunk),
+      page.getByRole("button", { name: "List", exact: true }).click(),
+    ]);
     await expect(page.getByRole("list").first()).toBeVisible();
     await page.waitForLoadState("networkidle");
     const listChunks = (await scripts.drain())
@@ -155,7 +162,10 @@ test.describe("client JavaScript budget", () => {
 
     // Detail chunk: not requested until a plot is opened.
     await page.getByRole("button", { name: "Scene", exact: true }).click();
-    await page.locator("button.gk-plot").first().click();
+    await Promise.all([
+      page.waitForResponse(isNewChunk),
+      page.locator("button.gk-plot").first().click(),
+    ]);
     await expect(page.getByRole("dialog")).toBeVisible();
     await page.waitForLoadState("networkidle");
     const detailChunks = (await scripts.drain())
