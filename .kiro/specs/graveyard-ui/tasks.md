@@ -43,7 +43,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 22.5, 22.6, 22.7_
 - [x] 4. Checkpoint - Pipeline field
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 5. View-model foundations
+- [x] 5. View-model foundations
   - [x] 5.1 Create the constants, types and shared helper
     - Create `view-model/constants.ts` (every constant of the requirements Constants table with Home "view-model", plus `SCENE_PADDING_PX`, `PLOT_BOX_WIDTH_PX`, `PLOT_BOX_HEIGHT_PX`, `REASON_PRIORITY`, `LINK_HOSTS`, `DEFAULT_SEVERITY` use from core, and `CLIENT_JS_BUDGET_BYTES`; import `SCAN_MAX_MANIFESTS` and `SCAN_MAX_DEPENDENCIES` from `pipeline/constants.ts`), `view-model/types.ts` (all types of the design "Types" section including `PlotKind` with six values, `StatusWord` with six words, `ParsedAdvisory`, `AdvisoryExclusion`, `HeadlineModel` with `haunted`, and `DetailModel.advisoryGroups`) and `view-model/internal/compare-code-points.ts`. Create no `index.ts` yet (task 5.40). Read `core/index.ts` and `pipeline/scan/types.ts` for the imported names. Every constant cites its requirement in a comment.
     - _Requirements: 6.1, 6.2, 6.3, 6.6, 8.1, 8.2, 8.3, 15.2, 17.2_
@@ -178,13 +178,13 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/ui/view-model/urls-links.property.test.ts`.
     - **Property 33: Built links are safe**
     - **Validates: Requirements 21.3, 21.4, 21.7**
-  - [~] 5.39 Replay the recorded fixtures through the view-model
+  - [x] 5.39 Replay the recorded fixtures through the view-model
     - Create `tests/ui/view-model/fixtures-replay.test.ts`: replay `request__request`, `revmic__canopy` and `ajeetdsouza__zoxide` through `runScan` with the wiring of `tests/pipeline/fixtures-scan.test.ts` and `parseScanResponse`, then assert that N, M, B, F and H equal values computed independently from `summary.counts` and from the ruleIds of the DEAD packages of `uniquePackages(result.assessed)`, `B + F === summary.counts.DEAD`, `H === summary.counts.HAUNTED`, and the row counts 40, 6 and 20.
     - _Requirements: 19.6, 5.2, 7.11_
-  - [~] 5.40 Create the view-model barrel
+  - [x] 5.40 Create the view-model barrel
     - Create `view-model/index.ts` exporting the public names of every module of this group (constants, types, parse-response, grave-type, reasons, glow, package-rows, header, scene, scene-nav, urls). Components import only through this file. Later groups add their own exports.
     - _Requirements: 6.1, 6.3_
-- [~] 6. Checkpoint - View-model foundations
+- [x] 6. Checkpoint - View-model foundations
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 7. Test dependencies and configuration
   - [~] 7.1 Install the pinned test dependencies
