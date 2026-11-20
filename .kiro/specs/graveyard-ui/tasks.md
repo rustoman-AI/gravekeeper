@@ -68,15 +68,15 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - [x] 5.8 Write the unit tests for the response boundary
     - Create `tests/ui/view-model/parse-response.test.ts`: a valid result, `dependencies.length` unequal to `assessed.length`, a missing `advisories`, five source keys, a 200 with an error body, a 404 with a result body, each of the nine error codes, a tenth code, `Retry-After` values (`'0'`, `'1'`, `'86400'`, `'86401'`, `'1.5'`, `'abc'`, absent), the cache header values (`hit`, `miss`, `HIT`, ` hit`, absent), facts of the wrong type become `null`, an advisory without `id` is dropped, `excluded` of each value and absent.
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.9_
-  - [~] 5.9 Write the property test for total parsing
+  - [x] 5.9 Write the property test for total parsing
     - `tests/ui/view-model/parse-response-total.property.test.ts`, arbitrary JSON (deep, huge strings, wrong types) and arbitrary statuses.
     - **Property 27: Response parsing is total**
     - **Validates: Requirements 14.1, 14.2, 14.3, 14.4, 14.7**
-  - [~] 5.10 Write the property test for the boundary round trip
+  - [x] 5.10 Write the property test for the boundary round trip
     - `tests/ui/view-model/parse-response-roundtrip.property.test.ts`, with the Scan_Result arbitrary of task 5.5 and `JSON.parse(JSON.stringify(result))`.
     - **Property 28: Valid results round trip through the boundary**
     - **Validates: Requirements 14.5, 14.8**
-  - [~] 5.11 Write the property test for the cache status
+  - [x] 5.11 Write the property test for the cache status
     - `tests/ui/view-model/parse-response-cache.property.test.ts`, arbitrary header strings (mixed case, whitespace), absent header, statuses 200 and others.
     - **Property 29: Cache status mapping**
     - **Validates: Requirements 14.9, 14.10**
@@ -86,15 +86,15 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - [x] 5.13 Write the unit tests for the kind, reason and glow tables
     - Create `tests/ui/view-model/grave-type.test.ts` and `tests/ui/view-model/reasons.test.ts`: every short form, the Reason_Priority order, the epitaph of a buried, forgotten (with and without `daysSinceLastRelease`), ghost, restless (`8.1` only, `8.2` only, both, `8.3` only stays a ghost) and lantern package, the six status words, the `unmaintained-advisory` case (`8.2`, buried), and the glow fallback chain (advisory severities, then `facts.maxSeverity`, then MEDIUM).
     - _Requirements: 7.4, 7.5, 7.7, 7.15, 7.16, 7.19, 7.20_
-  - [~] 5.14 Write the property test for the grave type and plot kind
+  - [x] 5.14 Write the property test for the grave type and plot kind
     - `tests/ui/view-model/grave-type.property.test.ts`, classifications of every status with every subset and order of ruleIds (including empty) and `null`.
     - **Property 12: Grave type and plot kind are functions of status and rule ids**
     - **Validates: Requirements 7.15, 7.16, 7.17, 7.20**
-  - [~] 5.15 Write the property test for the strongest reason
+  - [x] 5.15 Write the property test for the strongest reason
     - `tests/ui/view-model/reasons.property.test.ts`.
     - **Property 9: Strongest reason selection**
     - **Validates: Requirements 7.4, 7.12**
-  - [~] 5.16 Write the property test for the glow level
+  - [x] 5.16 Write the property test for the glow level
     - `tests/ui/view-model/glow.property.test.ts`.
     - **Property 11: Glow level is monotone in severity**
     - **Validates: Requirements 7.7, 7.14**
@@ -163,18 +163,18 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - [x] 5.34 Implement the URL state, the request body and the link builders
     - Create `view-model/urls.ts`: `parseUrlState`, `buildUrl` (`repo`, repeated `manifest`, `view`; `/` when empty), `canonicalRepoUrl` (DG-8), `buildRequestBody` (only `repoUrl` and `manifests`), `encodeManifests`, `decodeManifests`, `registryLink`, `sourceRepoLink`, `advisoryLink` with the patterns of Requirement 21, criterion 3 and `encodeURIComponent` per path segment (npm scoped names keep a literal `@`). Every link function returns `null` for a value that fails its pattern.
     - _Requirements: 3.2, 3.3, 3.4, 3.11, 3.12, 10.10, 18.1, 21.2, 21.3, 21.4_
-  - [~] 5.35 Write the unit tests for the URL module
+  - [x] 5.35 Write the unit tests for the URL module
     - Create `tests/ui/view-model/urls.test.ts`: `parseUrlState` for no query, empty `repo`, repeated `manifest`, an unknown `view`, `buildUrl` for each combination, `canonicalRepoUrl` with and without a non-default branch, `buildRequestBody` has exactly the keys `repoUrl` and optionally `manifests`, the three registry links (`@types/node`, `flask-script`, `serde`), a source repo that fails the pattern, an advisory url with `%` sequences, `javascript:` and `data:` inputs give `null`.
     - _Requirements: 3.2, 3.3, 3.4, 10.10, 21.3, 21.4_
-  - [~] 5.36 Write the property test for the canonical URL round trip
+  - [x] 5.36 Write the property test for the canonical URL round trip
     - `tests/ui/view-model/urls-canonical.property.test.ts`.
     - **Property 1: Canonical URL round trip**
     - **Validates: Requirements 3.11**
-  - [~] 5.37 Write the property test for the manifest query round trip
+  - [x] 5.37 Write the property test for the manifest query round trip
     - `tests/ui/view-model/urls-manifests.property.test.ts`, strings with `&`, `=`, `%`, `+`, `#`, spaces, empty strings and non-ASCII characters.
     - **Property 2: Manifest query round trip**
     - **Validates: Requirements 3.12**
-  - [~] 5.38 Write the property test for the safety of built links
+  - [ ] 5.38 Write the property test for the safety of built links
     - `tests/ui/view-model/urls-links.property.test.ts`.
     - **Property 33: Built links are safe**
     - **Validates: Requirements 21.3, 21.4, 21.7**
