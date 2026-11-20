@@ -3,6 +3,10 @@
     "13.2 Write the property test for the stage selection": {
       "status": "passed",
       "lastRunTimestamp": 1795138477834
+    },
+    "19.3 Write the property test for the fact formatter": {
+      "status": "passed",
+      "lastRunTimestamp": 1795140303508
     }
   },
   "executionHistory": {
@@ -1745,6 +1749,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474489
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140079550
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140235234
       }
     ],
     "19.2 Write the unit tests for the detail model and the advisory groups": [
@@ -1752,6 +1766,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474535
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140239881
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140383559
       }
     ],
     "19.3 Write the property test for the fact formatter": [
@@ -1759,6 +1783,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474600
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140240382
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140385053
       }
     ],
     "19.4 Write the property test for the detail contents": [
@@ -1766,6 +1800,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474643
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140241877
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140386057
       }
     ],
     "19.5 Write the property test for the advisory groups": [
@@ -1773,6 +1817,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474678
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140242879
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140386750
       }
     ],
     "19.6 Implement the detail panel components": [
@@ -1780,6 +1834,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474716
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140243782
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140392314
       }
     ],
     "19.7 Wire the detail panel into the scene and the list": [
@@ -1787,6 +1851,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474756
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140396266
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140541344
       }
     ],
     "19.8 Write the component tests for the detail panel": [
@@ -1794,6 +1868,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474815
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140397315
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140542349
       }
     ],
     "19.9 Write the component tests for the advisory groups": [
@@ -1801,6 +1885,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474904
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140397990
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140543847
       }
     ],
     "20. Checkpoint - Detail panel": [
@@ -1808,6 +1902,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128474967
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140544275
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140629494
       }
     ],
     "21.1 Write the end-to-end component flow test": [
@@ -2389,6 +2493,13 @@
         "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795139999059
+      }
+    ],
+    "19. Detail panel": [
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140543895
       }
     ]
   }

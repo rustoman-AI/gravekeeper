@@ -79,6 +79,14 @@ export { columnsFor, hashKey, sceneHeight, buildSceneModel } from './scene';
 export { nextFocus } from './scene-nav';
 export { buildTableModel } from './table';
 export { stageAt, stageStates } from './stages';
+export { FACT_FIELDS, formatFact } from './format-fact';
+export {
+  ALIAS_SENTENCE,
+  UNCLASSIFIED_SENTENCE,
+  buildAdvisoryGroups,
+  type AdvisoryGroupModel,
+} from './advisory-groups';
+export { buildDetailModel } from './detail';
 export {
   encodeManifests,
   decodeManifests,

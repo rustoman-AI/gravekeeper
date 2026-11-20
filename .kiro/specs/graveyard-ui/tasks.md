@@ -340,38 +340,38 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 18.2, 18.3, 18.4, 18.6, 18.7, 18.8_
 - [x] 18. Checkpoint - List view
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 19. Detail panel
-  - [~] 19.1 Implement the fact formatter, the detail model and the advisory groups
+- [x] 19. Detail panel
+  - [x] 19.1 Implement the fact formatter, the detail model and the advisory groups
     - Create `view-model/format-fact.ts` (`formatFact`), `view-model/advisory-groups.ts` (`buildAdvisoryGroups` as in the design "Advisory groups and the data gap": effective exclusion with the note-id fallback, four groups in order, empty groups omitted except "Counted as open" when `openVulnerabilityCount` is above 0, the group count texts and sentences of Requirement 10, criterion 16 and 19) and `view-model/detail.ts` (`buildDetailModel`: status word and score or unassessed label, every reason verbatim with `isMain`, seven facts in `HealthFacts` order, the version line for the four bases and `versionSpecText`, the plain messages of `pin-not-found`, `conflicting-pins`, `range-unresolved` and `no-default-version`, scopes and manifest paths, `rawName`, per-package notes grouped by Note_Group heading (DG-14), the registry and source repo links, `resurrect` equal to merged status DEAD so it is false for a restless ghost, `advisoryEmptyText`). Export all three from `view-model/index.ts`.
     - _Requirements: 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 10.10, 10.13, 10.16, 10.17, 10.18, 10.19_
-  - [~] 19.2 Write the unit tests for the detail model and the advisory groups
+  - [x] 19.2 Write the unit tests for the detail model and the advisory groups
     - Create `tests/ui/view-model/detail.test.ts` and `tests/ui/view-model/advisory-groups.test.ts` with builders: the four version lines and "not looked up", the `maxSeverity` words of Requirement 10, criterion 5, a restless ghost has `resurrect` false and a forgotten grave has it true, an advisory list with one counted, one informational, one withdrawn entry gives three labelled groups with their texts, an alias example ("2 listed, 1 counted"), a result without `excluded` puts the note-named id under "Informational, not counted" and the rest under "Not classified" with the withdrawn sentence, an empty list with `openVulnerabilityCount` above 0 gives the no-list sentence, hostile ids and urls give `href` `null`.
     - _Requirements: 10.5, 10.6, 10.13, 10.16, 10.17, 10.18, 10.19_
-  - [~] 19.3 Write the property test for the fact formatter
+  - [x] 19.3 Write the property test for the fact formatter
     - `tests/ui/view-model/format-fact.property.test.ts`.
     - **Property 19: Fact formatting**
     - **Validates: Requirements 10.4, 10.14**
-  - [~] 19.4 Write the property test for the detail contents
+  - [x] 19.4 Write the property test for the detail contents
     - `tests/ui/view-model/detail.property.test.ts`.
     - **Property 20: Detail contains every reason and fact**
     - **Validates: Requirements 10.3, 10.15**
-  - [~] 19.5 Write the property test for the advisory groups
+  - [x] 19.5 Write the property test for the advisory groups
     - `tests/ui/view-model/advisory-groups.property.test.ts`, with every mix of `excluded` values, an absent `excluded`, informational ids named by the note, hostile ids, aliases and urls.
     - **Property 21: Detail lists every advisory once, in its labelled group**
     - **Validates: Requirements 10.16, 10.18, 10.19**
-  - [~] 19.6 Implement the detail panel components
+  - [x] 19.6 Implement the detail panel components
     - Create `components/hooks/use-focus-trap.ts` (Tab trap, Escape, focus return to the opener, `inert` on the page behind), `components/external-link.tsx` (`target="_blank"`, `rel="noopener noreferrer"`, host shown as text, plain text when `href` is null), `components/advisory-groups.tsx` (one labelled section per group with its heading, count text and explanation, entries with id link, aliases and severity word) and `components/detail-panel.tsx` (custom modal `role="dialog"` `aria-modal="true"` labelled by the package name, "Close" button, status and score, reasons with the "main reason" mark, seven facts, version line, notes, links, advisory groups; every upstream string as a React text node). Load it with `next/dynamic`. The Resurrect_Slot is added by task 37.1.
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.6, 10.7, 10.8, 10.9, 10.10, 10.11, 10.12, 10.16, 10.17, 16.4, 17.7, 21.1_
-  - [~] 19.7 Wire the detail panel into the scene and the list
+  - [x] 19.7 Wire the detail panel into the scene and the list
     - In `components/graveyard-app.tsx` and `components/results-page.tsx` hold the open package key, build the `DetailModel` with `buildDetailModel`, open the panel from the scene (`onOpen`) and from the list, close it with Escape and "Close", and return focus to the opener. Opening or closing must not re-render the scene plots.
     - _Requirements: 9.5, 10.1, 17.5, 18.6_
-  - [~] 19.8 Write the component tests for the detail panel
+  - [x] 19.8 Write the component tests for the detail panel
     - Create `tests/ui/components/detail-panel.test.tsx` (jsdom, `user-event`): focus moves into the dialog, Tab stays inside, Escape closes, focus returns to the opener, "unknown" text for each Unknown_Value, the four version lines, every reason message verbatim with one "main reason", all seven fact names, the registry link and the "source repository (unverified)" link with `rel="noopener noreferrer"` and the host text, no link when a value fails its pattern, no Resurrect_Slot content for any package yet.
     - _Requirements: 10.1, 10.3, 10.4, 10.6, 10.10, 10.11, 10.12_
-  - [~] 19.9 Write the component tests for the advisory groups
+  - [x] 19.9 Write the component tests for the advisory groups
     - Create `tests/ui/components/advisory-groups.test.tsx` (jsdom): three groups with headings and "<k> listed" texts, the counted group shows "<n> counted" and the alias sentence, the informational and withdrawn groups show "not part of the <n> open vulnerabilities", a result without `excluded` shows "Not classified" with the withdrawn sentence, the empty-list sentence, advisory links go to the validated `osv.dev` URL, a hostile url renders as text.
     - _Requirements: 10.16, 10.17, 10.18, 10.19, 21.3_
-- [~] 20. Checkpoint - Detail panel
+- [x] 20. Checkpoint - Detail panel
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 21. Component test coverage for Milestone 1
   - [~] 21.1 Write the end-to-end component flow test

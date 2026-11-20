@@ -185,7 +185,7 @@ None. All 12 properties (P1 to P12) have at least one passing test.
 - scan-accuracy P3, P4 and P11 are now tagged with `// Feature: scan-accuracy` and `// Validates:` lines.
 
 ## graveyard-ui (PBT status)
-Status of the graveyard-ui property tests, recorded on 2026-11-19. "Default" is `npx vitest --run` with FC_NUM_RUNS unset. "1000 runs" is `npm run test:deep`. Each test file's `// Feature: graveyard-ui, Property <n>` tag was checked against the property number. Only properties that have a test are listed here. The remaining graveyard-ui properties (P6, P19 to P26) have no test yet, because their tasks are not done.
+Status of the graveyard-ui property tests, recorded on 2026-11-19. "Default" is `npx vitest --run` with FC_NUM_RUNS unset. "1000 runs" is `npm run test:deep`. Each test file's `// Feature: graveyard-ui, Property <n>` tag was checked against the property number. Only properties that have a test are listed here. The remaining graveyard-ui properties (P6, P22 to P26) have no test yet, because their tasks are not done.
 
 | Property | Test file | Default | 1000 runs | Date | Counterexample and fix |
 | --- | --- | --- | --- | --- | --- |
@@ -206,6 +206,9 @@ Status of the graveyard-ui property tests, recorded on 2026-11-19. "Default" is 
 | P16 | `tests/ui/view-model/scene-determinism.property.test.ts` | passed | passed after fix | 2026-11-19 | Failed at 1000 runs with seed 1457184590 (columns=4, offset=10). Two rows with the same ecosystem and name but a different sourceKind kept input order. Fixed with a sourceKind tiebreak in the scene sort of `view-model/package-rows.ts` (design step 8 updated). |
 | P17 | `tests/ui/view-model/scene-plots.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P18 | `tests/ui/view-model/scene-nav.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P19 | `tests/ui/view-model/format-fact.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P20 | `tests/ui/view-model/detail.property.test.ts` | passed | passed | 2026-11-19 | none. The 1000-run pass used `--testTimeout=600000` on the command line. The file sets no per-test timeout. |
+| P21 | `tests/ui/view-model/advisory-groups.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P27 | `tests/ui/view-model/parse-response-total.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P28 | `tests/ui/view-model/parse-response-roundtrip.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P29 | `tests/ui/view-model/parse-response-cache.property.test.ts` | passed | passed | 2026-11-19 | none |
