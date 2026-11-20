@@ -53,3 +53,47 @@ describe('core does not import the range packages', () => {
     expect(offenders).toEqual([]);
   });
 });
+
+// Requirement 19.8: the UI test tooling is pinned exactly, dev-only, and kept out of core, pipeline and adapters.
+const UI_TOOLING = [
+  '@testing-library/react',
+  '@testing-library/dom',
+  '@testing-library/user-event',
+  'jsdom',
+  '@vitejs/plugin-react',
+  'vite-tsconfig-paths',
+  '@playwright/test',
+  '@axe-core/playwright',
+];
+
+describe('UI test tooling pins', () => {
+  const manifest = readJson(join(root, 'package.json'));
+
+  it.each(UI_TOOLING)('%s is pinned exactly in devDependencies', (name) => {
+    expect(manifest.devDependencies?.[name]).toMatch(EXACT);
+  });
+
+  it.each(UI_TOOLING)('%s is not in dependencies', (name) => {
+    expect(Object.hasOwn(manifest.dependencies ?? {}, name)).toBe(false);
+  });
+
+  it('core/, pipeline/ and adapters/ import none of the UI test tooling', () => {
+    function sources(dir: string): string[] {
+      const out: string[] = [];
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        const path = join(dir, entry.name);
+        if (entry.isDirectory()) out.push(...sources(path));
+        else if (/\.(ts|tsx|js|mjs)$/.test(entry.name)) out.push(path);
+      }
+      return out;
+    }
+    const escaped = UI_TOOLING.map((n) => n.replace(/[/@.-]/g, '\\$&')).join('|');
+    const pattern = new RegExp(
+      `(?:from\\s*|import\\s*\\(?\\s*|require\\s*\\(\\s*)['"](?:${escaped})(?:/[^'"]*)?['"]`,
+    );
+    const offenders = ['core', 'pipeline', 'adapters']
+      .flatMap((dir) => sources(join(root, dir)))
+      .filter((file) => pattern.test(readFileSync(file, 'utf8')));
+    expect(offenders).toEqual([]);
+  });
+});

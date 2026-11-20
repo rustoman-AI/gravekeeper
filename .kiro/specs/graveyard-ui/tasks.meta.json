@@ -907,6 +907,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128472521
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795137209614
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795137283017
       }
     ],
     "7.3 Configure Vitest for component tests": [
@@ -914,6 +924,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128472559
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795137210609
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795137284051
       }
     ],
     "7.4 Write the DOM smoke test": [
@@ -921,6 +941,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128472593
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795137286866
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795137368790
       }
     ],
     "7.5 Adjust the TypeScript and ESLint configuration": [
@@ -928,6 +958,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128472630
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795137211139
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795137283506
       }
     ],
     "8. Checkpoint - Test dependencies and configuration": [
@@ -935,6 +975,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128472665
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795137369338
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795137435474
       }
     ],
     "9.1 Record the font licences and align the steering sentence": [
@@ -1852,6 +1902,13 @@
         "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795136449367
+      }
+    ],
+    "7. Test dependencies and configuration": [
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795137368863
       }
     ]
   }

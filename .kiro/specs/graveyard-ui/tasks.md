@@ -186,23 +186,23 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 6.1, 6.3_
 - [x] 6. Checkpoint - View-model foundations
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 7. Test dependencies and configuration
+- [x] 7. Test dependencies and configuration
   - [x] 7.1 Install the pinned test dependencies
     - For each of `@testing-library/react`, `@testing-library/dom`, `@testing-library/user-event`, `jsdom`, `@vitejs/plugin-react`, `vite-tsconfig-paths`, `@playwright/test` and `@axe-core/playwright` run `npm view <package> version` at task time, then `npm install --save-dev --save-exact <package>@<version>` with that version. Check that the installed `axe-core` (dependency of `@axe-core/playwright`) accepts the tag `wcag22aa` (read its `README` or run a one-line `axe.getRules(['wcag22aa'])` check) and, if it does not, pick the newest `@axe-core/playwright` that does and record the reason in the commit message. Check that `package.json` shows no `^` or `~` for the new packages and that `package-lock.json` is updated. Do not run `npm audit fix` and do not update other dependencies. Do not download browsers here (task 23.1).
     - _Requirements: 19.8_
-  - [~] 7.2 Update the package pin test
+  - [x] 7.2 Update the package pin test
     - Update `tests/packages.test.ts`: the eight new packages are pinned exactly in `devDependencies` (no `^`, `~`, range, tag or `*`), none of them is in `dependencies`, and `core/`, `pipeline/` and `adapters/` import none of them.
     - _Requirements: 19.8_
-  - [~] 7.3 Configure Vitest for component tests
+  - [x] 7.3 Configure Vitest for component tests
     - Read `node_modules/next/dist/docs/01-app/02-guides/testing/vitest.md`. Update `vitest.config.mts`: `include` `tests/**/*.test.{ts,tsx}`, `exclude` `tests/e2e/**` and `node_modules`, plugins `@vitejs/plugin-react` and `vite-tsconfig-paths`, keep `environment: 'node'`, `testTimeout` and `setupFiles: ['tests/support/offline-fetch.ts']`, and add a second setup file `tests/support/ui/dom-setup.ts` that registers `afterEach(cleanup)` from Testing Library only when `typeof document !== 'undefined'`. Component test files select jsdom with the docblock `// @vitest-environment jsdom` (design RK7). Keep `npx vitest --run` as the single command.
     - _Requirements: 19.3, 19.8_
-  - [~] 7.4 Write the DOM smoke test
+  - [x] 7.4 Write the DOM smoke test
     - Create `tests/ui/smoke.test.tsx` (jsdom docblock): render a small component with Testing Library, find it with `getByRole`, drive it with `user-event`, and record in a comment whether `HTMLDialogElement.prototype.showModal` exists in the installed jsdom (design RK6).
     - _Requirements: 19.3, 19.4_
-  - [~] 7.5 Adjust the TypeScript and ESLint configuration
+  - [x] 7.5 Adjust the TypeScript and ESLint configuration
     - Make `tsconfig.json` include `tests/**/*.tsx` and `playwright.config.ts` without turning off `strict`, and make `eslint.config.mjs` ignore `.next`, `playwright-report`, `test-results` and `tests/e2e/.generated` while linting the new `.tsx` tests. Run `npm run typecheck` and `npm run lint` and fix only configuration, not source rules.
     - _Requirements: 19.8_
-- [~] 8. Checkpoint - Test dependencies and configuration
+- [x] 8. Checkpoint - Test dependencies and configuration
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 9. Fonts and theme tokens
   - [~] 9.1 Record the font licences and align the steering sentence
