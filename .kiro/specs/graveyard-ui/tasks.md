@@ -562,16 +562,16 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - [x] 35.3 Write the component tests for the client failures
     - Create `tests/ui/components/client-failure.test.tsx` (jsdom, fake client and fake timers): a rejected fetch, a response that never arrives (the timeout after `CLIENT_FETCH_TIMEOUT_MS`) and a body that is not valid JSON each show their screen with the plain sentence and an enabled Retry, Retry sends the same request again and shows the scanning screen.
     - _Requirements: 13.7, 13.8, 14.1_
-- [-] 36. Checkpoint - Client failure screens
+- [x] 36. Checkpoint - Client failure screens
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 37. Resurrect placeholder
-  - [~] 37.1 Implement the Resurrect_Slot
+- [x] 37. Resurrect placeholder
+  - [x] 37.1 Implement the Resurrect_Slot
     - Create `components/resurrect-slot.tsx` (props `{ packageKey: string; displayName: string }` documented, `data-slot="resurrect"`, `data-placeholder="true"`, heading "Resurrect", text "Coming soon: suggest a maintained alternative and a manifest patch", a disabled button "Resurrect" with `aria-disabled="true"` and the accessible description "Not available yet", no request, no alternative package name) and render it in `components/detail-panel.tsx` only when `detail.resurrect` is true.
     - _Requirements: 10.13, 12.1, 12.2, 12.3, 12.4_
-  - [~] 37.2 Write the component tests for the Resurrect_Slot
+  - [x] 37.2 Write the component tests for the Resurrect_Slot
     - Create `tests/ui/components/resurrect-slot.test.tsx` (jsdom): the slot shows for a tombstone and for an overgrown grave, not for a ghost, a restless ghost, a lantern or an unmarked grave, the markup attributes, the disabled button and its description, no `fetch` call on activation, no alternative package name in the text.
     - _Requirements: 10.13, 12.1, 12.2, 12.3_
-- [~] 38. Checkpoint - Resurrect placeholder
+- [x] 38. Checkpoint - Resurrect placeholder
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 39. Remaining end-to-end and axe coverage
   - [~] 39.1 Write the error screen end-to-end spec

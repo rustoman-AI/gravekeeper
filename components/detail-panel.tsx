@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AdvisoryGroups } from "@/components/advisory-groups";
 import { ExternalLink } from "@/components/external-link";
 import { useFocusTrap } from "@/components/hooks/use-focus-trap";
+import { ResurrectSlot } from "@/components/resurrect-slot";
 import type { DetailModel } from "@/view-model";
 
 export interface DetailPanelProps {
@@ -179,6 +180,11 @@ export function DetailPanel({
             />
           </section>
         )}
+
+        {/* Requirement 10.13, 12.1: the placeholder slot for every DEAD package. */}
+        {model.resurrect ? (
+          <ResurrectSlot packageKey={model.key} displayName={model.title} />
+        ) : null}
       </div>
     </div>,
     document.body,

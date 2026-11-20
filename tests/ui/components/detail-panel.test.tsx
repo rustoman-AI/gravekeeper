@@ -224,17 +224,33 @@ describe("DetailPanel content", () => {
     expect(within(second.dialog).queryByRole("link")).toBeNull();
   });
 
-  it("shows no Resurrect_Slot content for any package yet (R10.13 deferred to Requirement 12)", () => {
+  it("shows the Resurrect_Slot only for buried and forgotten packages (R10.13, R12.1)", () => {
     const specs: RowSpec[] = [
       { name: "dead-one", kind: "buried" },
       { name: "forgotten-one", kind: "forgotten" },
       { name: "haunted-one", kind: "haunted" },
+      { name: "restless-one", kind: "restless-both" },
       { name: "alive-one", kind: "alive" },
+      { name: "mystery-one", kind: "unknown-facts" },
     ];
+    const shown = new Set(["dead-one", "forgotten-one"]);
     for (const s of specs) {
       const { dialog } = renderPanel(modelOf(specs, s.name));
-      expect(within(dialog).queryByText(/resurrect/i)).toBeNull();
-      expect(within(dialog).queryByRole("button", { name: /resurrect/i })).toBeNull();
+      const slot = dialog.querySelector('[data-slot="resurrect"]');
+      if (shown.has(s.name)) {
+        expect(slot).not.toBeNull();
+        expect(slot?.getAttribute("data-placeholder")).toBe("true");
+        expect(within(dialog).getByRole("heading", { level: 3, name: "Resurrect" })).toBeTruthy();
+        expect(within(dialog).getByText("Coming soon: suggest a maintained alternative and a manifest patch")).toBeTruthy();
+        const button = within(dialog).getByRole("button", { name: "Resurrect" });
+        expect(button.hasAttribute("disabled")).toBe(true);
+        expect(button.getAttribute("aria-disabled")).toBe("true");
+        const descId = button.getAttribute("aria-describedby") ?? "";
+        expect(document.getElementById(descId)?.textContent?.trim()).toBe("Not available yet");
+      } else {
+        expect(slot).toBeNull();
+        expect(within(dialog).queryByText(/resurrect/i)).toBeNull();
+      }
       cleanup();
     }
   });
