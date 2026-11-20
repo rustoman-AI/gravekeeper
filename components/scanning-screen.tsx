@@ -4,6 +4,8 @@ import { SCAN_SLOW_NOTICE_MS, stageAt, stageStates } from '../view-model/index';
 import { useElapsed } from './hooks/use-elapsed';
 import type { UseElapsedOptions } from './hooks/use-elapsed';
 import { useReducedMotion } from './hooks/use-reduced-motion';
+import { caretakerScene } from '../view-model/caretaker-scene';
+import { CaretakerScene } from './caretaker-scene';
 import { StageList } from './stage-list';
 
 export interface ScanningScreenProps {
@@ -48,12 +50,9 @@ export function ScanningScreen({
       >
         Cancel
       </button>
-      {still ? null : (
-        <div aria-hidden="true" className="gk-scanning-decor">
-          <div className="gk-scanning-fog" />
-          <div className="gk-scanning-lantern" />
-        </div>
-      )}
+      <div className="mt-4">
+        <CaretakerScene model={caretakerScene(stages, still)} still={still} />
+      </div>
       <div className="relative z-10 mt-6 space-y-4">
         <h1 id="scanning-heading" className="text-2xl text-bone">
           The caretaker is scanning

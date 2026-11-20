@@ -84,8 +84,8 @@ describe("app/globals.css reduced motion", () => {
       ".gk-fog",
       ".gk-fog-b",
       ".gk-scanning",
-      ".gk-scanning-fog",
-      ".gk-scanning-lantern",
+      ".gk-caretaker",
+      ".gk-stone-glow",
     ];
     for (const sel of required) {
       expect(
@@ -93,10 +93,8 @@ describe("app/globals.css reduced motion", () => {
         `reduced-motion block must disable animation and transition for ${sel}`,
       ).toBe(true);
     }
-    // Scanning descendants (decor, fog, lantern) are covered by `.gk-scanning *` or listed explicitly.
-    expect(
-      selectors.includes(".gk-scanning *") || selectors.includes(".gk-scanning-decor"),
-    ).toBe(true);
+    // Scanning descendants (caretaker scene) are covered by `.gk-scanning *`.
+    expect(selectors.includes(".gk-scanning *")).toBe(true);
   });
 
   it("every @keyframes rule animates only transform and opacity", () => {

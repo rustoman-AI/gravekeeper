@@ -247,29 +247,29 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
 - [x] 13. Checkpoint - Landing page
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 14. Scanning screen
-  - [~] 14.1 Caretaker scene model
+- [x] 14. Scanning screen
+  - [x] 14.1 Caretaker scene model
     - Create `view-model/caretaker-scene.ts` with `caretakerScene(states, still)` and `CaretakerSceneModel` (stones from `SCAN_STONE_X`, lit when `in progress` or `done`, lantern at the last lit stone, all lit and last stone when `still`).
     - Files: `view-model/caretaker-scene.ts`
     - _Requirements: 10.2, 10.3, 10.5_
-  - [~] 14.2 Write the property test for the lit stones
+  - [x] 14.2 Write the property test for the lit stones
     - `tests/ui/view-model/caretaker-scene.property.test.ts`: elapsed times from `fc.integer({ min: 0, max: 1_000_000 })`, pairs t1 ≤ t2, and the `still` case.
     - **Property 11: Lit stones grow as a prefix and the lantern follows the last lit stone (GA-P11)**
     - **Validates: Requirements 10.2, 10.3, 10.5**
-  - [~] 14.3 Caretaker scene component
+  - [x] 14.3 Caretaker scene component
     - Create `components/caretaker-scene.tsx`: `div.gk-caretaker-scene[aria-hidden="true"][data-still]` with `SceneBackdrop variant="scanning"`, an inline `svg` (viewBox `0 0 400 180`) with the path, four stones (`g.gk-stone` with `data-lit`, glow ellipse `.gk-stone-glow` with opacity from `data-lit`), the lantern `g.gk-caretaker` positioned by `style={{ "--lantern-x": x }}`, and `FogLayer`. Tokens only.
     - Files: `components/caretaker-scene.tsx`
     - _Requirements: 10.1, 10.4, 10.6_
-  - [~] 14.4 Scanning screen and styles
+  - [x] 14.4 Scanning screen and styles
     - In `components/scanning-screen.tsx` replace the CSS dot and fog decor by `CaretakerScene` fed by `caretakerScene(stages, still)`; keep Cancel first in DOM order, the h1, `StageList`, the approximate-stages note, the slow notice and the status region unchanged. In `app/globals.css` add `.gk-caretaker-scene` (`--caretaker-h` 180px), `.gk-caretaker` (`transform: translateX(calc(var(--lantern-x) * 1px))`, transition 900 ms on `transform`), `.gk-stone-glow` (opacity transition 600 ms), remove `.gk-scanning-decor`, `.gk-scanning-fog`, `.gk-scanning-lantern` and the keyframes `gk-lantern-pulse` (now unused), and add the new selectors to the reduced-motion block (`transition: none`).
     - Files: `components/scanning-screen.tsx`, `app/globals.css`
     - _Requirements: 10.2, 10.4, 10.5, 10.6, 10.7, 10.8, 12.1, 12.2_
-  - [~] 14.5 Scanning tests
+  - [x] 14.5 Scanning tests
     - Update `tests/ui/components/scanning-screen.test.tsx` and `tests/ui/components/graveyard-app-scanning.test.tsx` only where they refer to the removed decor (reason: the dot is replaced by the scene). Add `tests/ui/components/caretaker-scene.test.tsx`: `aria-hidden`, four stones, with a fake clock at 0, 2000, 6000 and 10000 ms the lit count is 1, 2, 3, 4 and the lantern is at stone 1, 2, 3, 4; `reducedMotion` shows four lit stones and `data-still="true"`; the stage list text and status region are unchanged; no `%` and no digit progress appears; Cancel is the first focusable element.
     - Files: `tests/ui/components/scanning-screen.test.tsx`, `tests/ui/components/graveyard-app-scanning.test.tsx`, `tests/ui/components/caretaker-scene.test.tsx`
     - _Requirements: 10.2, 10.3, 10.4, 10.5, 10.7, 10.8_
 
-- [~] 15. Checkpoint - Scanning screen
+- [x] 15. Checkpoint - Scanning screen
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 16. Empty states

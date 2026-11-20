@@ -114,14 +114,17 @@ describe("ScanningScreen", () => {
 
   it("has no animated element under reduced motion and keeps the text states (4.10)", () => {
     const reduced = setup(true);
+    // The old fog/lantern decor was replaced by the caretaker scene, which also renders under
+    // reduced motion, but still (data-still="true"), so nothing animates.
     expect(
       reduced.container.querySelector(
         '.gk-scanning-fog, .gk-scanning-lantern, .gk-scanning-decor, [class*="animate"]',
       ),
     ).toBeNull();
+    expect(reduced.container.querySelector(".gk-caretaker-scene")?.getAttribute("data-still")).toBe("true");
     expect(states()).toEqual(["in progress", "waiting", "waiting", "waiting"]);
     cleanup();
     const full = setup(false);
-    expect(full.container.querySelector(".gk-scanning-fog")).not.toBeNull();
+    expect(full.container.querySelector(".gk-caretaker-scene")?.getAttribute("data-still")).toBe("false");
   });
 });
