@@ -573,23 +573,23 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 10.13, 12.1, 12.2, 12.3_
 - [x] 38. Checkpoint - Resurrect placeholder
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 39. Remaining end-to-end and axe coverage
-  - [~] 39.1 Write the error screen end-to-end spec
+- [x] 39. Remaining end-to-end and axe coverage
+  - [x] 39.1 Write the error screen end-to-end spec
     - Create `tests/e2e/errors.spec.ts`: every API error code with at least one mocked response, `invalid-url` for every `details.part` (url, host, path, owner, repository, branch), `invalid-request` for every `details.reason`, `upstream-unavailable` as 503 with `Retry-After` (countdown tested with the Playwright clock, Retry enabled when it ends) and as 502 without, `too-many-manifests` and `manifest-not-found` with candidates (select paths, rescan with `manifest` values in the URL) and with an empty list, the "Scan the default branch" and "Scan the repository root" actions, and axe on every state.
     - _Requirements: 20.3, 20.5, 16.10, 13.2, 13.4, 13.15, 13.16_
-  - [~] 39.2 Write the client failure end-to-end spec
+  - [x] 39.2 Write the client failure end-to-end spec
     - Create `tests/e2e/client-failures.spec.ts`: `route.abort('failed')` gives `network-failure`, a never-answered route with the Playwright clock gives `timeout` after 30 s, a non-JSON body and a result with a missing `advisories` give `malformed-response`, Retry works, and axe on each screen.
     - _Requirements: 20.4, 20.5, 13.8, 14.2_
-  - [~] 39.3 Write the notes, empty and picker end-to-end spec
+  - [x] 39.3 Write the notes, empty and picker end-to-end spec
     - Create `tests/e2e/notes.spec.ts`: Caretaker's notes for each recorded fixture, the degraded synthetic result (partial and failed sources, cap banner), the empty graveyard (`no-manifests`), the manifest picker of `no-root-manifest` (select and rescan), "Show all", and axe on each state.
     - _Requirements: 20.2, 20.5, 11.1, 11.3, 11.5, 11.9, 11.10, 11.11_
-  - [~] 39.4 Write the remaining reduced-motion spec
+  - [x] 39.4 Write the remaining reduced-motion spec
     - Create `tests/e2e/reduced-motion-errors.spec.ts` with `reducedMotion: 'reduce'`: the error screens, the notes and the picker flows run once and no CSS animation runs on any of them.
     - _Requirements: 20.6, 16.6_
-  - [~] 39.5 Write the reflow and keyboard spec
+  - [x] 39.5 Write the reflow and keyboard spec
     - Create `tests/e2e/reflow.spec.ts`: at 320 CSS pixels and at 200 percent zoom the landing, results, list, detail and error screens have no two-dimensional scrolling and the scene reduces to `SCENE_MIN_COLUMNS` columns, and a keyboard-only run reaches the landing form, a featured link, the view toggle, one scene plot, a list sort button and the detail panel's "Close" button.
     - _Requirements: 16.4, 16.9, 9.6_
-- [~] 40. Checkpoint - Remaining end-to-end tests
+- [x] 40. Checkpoint - Remaining end-to-end tests
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run` and `npm run test:e2e`, and ensure all pass. Ask the user if questions arise.
 - [ ] 41. Remaining screenshots
   - Relationship with group 48: group 41 produces the full two-viewport set in `docs/screenshots/`. Task 48.4 (the Milestone 2 report) alone produces `docs/screenshots/m2/` (1440x900, `M2_REPORT=1`). The two sets are independent and neither task writes into the other's folder.

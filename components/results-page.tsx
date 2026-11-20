@@ -8,6 +8,7 @@ import {
   buildPackageRows,
   buildSceneModel,
   columnsFor,
+  SCENE_PADDING_PX,
   sceneHeight,
 } from '../view-model/index';
 import dynamic from 'next/dynamic';
@@ -43,7 +44,8 @@ const ListView = dynamic(() => import('./list-view').then((mod) => mod.ListView)
 export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanManifests }: ResultsPageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const width = useContainerWidth(containerRef);
-  const columns = columnsFor(width);
+  // The Scene adds SCENE_PADDING_PX on each side, so columns fit the content width (R8.1, R16.9).
+  const columns = columnsFor(width - 2 * SCENE_PADDING_PX);
 
   const rows = useMemo(() => buildPackageRows(result), [result]);
   const header = useMemo(() => buildHeaderModel(result, rows), [result, rows]);
@@ -90,7 +92,7 @@ export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanMa
       {notes.empty === null ? (
         <>
           <ViewToggle view={view} onChange={onViewChange} />
-          <div ref={containerRef} style={{ minHeight: reserved }}>
+          <div ref={containerRef} style={{ minHeight: reserved, maxWidth: '100%', overflowX: 'auto' }}>
             {view === 'scene' ? (
               <Scene scene={scene} onOpen={onOpenIndex} skipTargetId={VIEW_TOGGLE_ID} />
             ) : (
