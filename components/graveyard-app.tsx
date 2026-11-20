@@ -2,6 +2,9 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
+import { buildErrorModel } from '@/view-model';
+import type { ErrorActionId } from '@/view-model';
+import { ErrorScreen } from './error-screen';
 import { LandingPage } from './landing-page';
 import { ResultsPage } from './results-page';
 import type { ViewName } from './view-toggle';
@@ -53,7 +56,7 @@ export function GraveyardAppView({
     },
     [replaceInPlace, urlState.manifests, urlState.view, nowFn],
   );
-  const { session } = useScan(urlState, { client, onCanonical });
+  const { session, rescan } = useScan(urlState, { client, onCanonical });
 
   // The browser clock, taken once per arriving result (components below the shell never read it).
 
@@ -90,6 +93,27 @@ export function GraveyardAppView({
   // The picker model already built the URL: one history entry, a new scan for the chosen manifests.
   const onScanManifests = useCallback((url: string) => router.push(url), [router]);
 
+  const onErrorAction = useCallback(
+    (actionId: ErrorActionId, payload?: string) => {
+      switch (actionId) {
+        case 'edit-url':
+          if (payload !== undefined) push({ repo: payload, manifests: [], view: urlState.view });
+          return;
+        case 'retry':
+          rescan();
+          return;
+        case 'scan-default-branch':
+        case 'scan-root':
+        case 'scan-selected':
+          if (payload !== undefined) router.push(payload);
+          return;
+        case 'back-to-gate':
+          return; // the BackToGate link navigates to `/`, which makes the session idle
+      }
+    },
+    [push, rescan, router, urlState.view],
+  );
+
   if (session.phase === 'idle') {
     return (
       <LandingPage
@@ -122,7 +146,30 @@ export function GraveyardAppView({
       />
     );
   }
-  return <p className="px-4 py-8 text-bone">Scanning</p>;
+  const repoValue = urlState.repo ?? '';
+  const { outcome } = session;
+  const model = buildErrorModel(
+    outcome.kind === 'error'
+      ? {
+          kind: 'api',
+          status: outcome.status,
+          error: outcome.error,
+          retryAfterSeconds: outcome.retryAfterSeconds,
+          submittedValue: repoValue,
+          repoValue,
+          selectedManifests: urlState.manifests,
+        }
+      : { kind: 'client', failure: outcome.failure.kind, submittedValue: repoValue },
+  );
+  return (
+    <ErrorScreen
+      key={`${session.requestKey}@${String(session.arrivedAtMs)}`}
+      model={model}
+      arrivedAtMs={session.arrivedAtMs}
+      initialRepoValue={repoValue}
+      onAction={onErrorAction}
+    />
+  );
 }
 
 /** Production shell: `next/navigation` router and query string. Needs a Suspense boundary above. */

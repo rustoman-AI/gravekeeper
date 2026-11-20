@@ -526,31 +526,31 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 11.2, 11.3, 11.5, 11.6, 11.9, 11.10, 11.11_
 - [x] 32. Checkpoint - Caretaker's notes
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 33. Error screens and the manifest picker
-  - [~] 33.1 Implement the error model
+- [x] 33. Error screens and the manifest picker
+  - [x] 33.1 Implement the error model
     - Create `view-model/errors.ts` (`buildErrorModel` for `kind: 'api'`: the heading and actions table of the design, `plainMessage` equal to `error.message`, the HTTP status, the picker for `too-many-manifests` and `manifest-not-found` with candidates, the root scan URL, the default-branch URL without `/tree/<branch>`, the cooldown from `Retry-After` or `RETRY_FALLBACK_COOLDOWN_SECONDS`, and `retryRemainingMs`). Total for every `ScanErrorBody` shape. Export it from `view-model/index.ts`.
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.15, 13.16_
-  - [~] 33.2 Write the unit tests for the error model
+  - [x] 33.2 Write the unit tests for the error model
     - Create `tests/ui/view-model/errors.test.ts`: the nine headings and action lists, the 503 with `Retry-After` 30 gives cooldown 30, the 502 gives `RETRY_FALLBACK_COOLDOWN_SECONDS`, `invalid-url` names each part, `branch-not-found` builds the default-branch URL, the two manifest errors with and without candidates, the plain message is unchanged for a message with markup characters.
     - _Requirements: 13.1, 13.2, 13.3, 13.5, 13.6, 13.15, 13.16_
-  - [~] 33.3 Write the property test for the error model
+  - [x] 33.3 Write the property test for the error model
     - `tests/ui/view-model/errors.property.test.ts`.
     - **Property 24: Error model is total and keeps the plain message**
     - **Validates: Requirements 13.1, 13.2, 13.13**
-  - [~] 33.4 Write the property test for the retry countdown
+  - [x] 33.4 Write the property test for the retry countdown
     - `tests/ui/view-model/errors-countdown.property.test.ts`.
     - **Property 25: Retry countdown**
     - **Validates: Requirements 13.4, 13.14**
-  - [~] 33.5 Implement the error screen components
+  - [x] 33.5 Implement the error screen components
     - Create `components/hooks/use-countdown.ts` (one timer per second, announces the end once), `components/retry-button.tsx` (disabled until the cooldown ends, "You can try again in <time>" text), `components/back-to-gate.tsx` ("Back to the gate" link to `/`) and `components/error-screen.tsx` (themed heading as the focused `h1`, the plain message in its own element and never truncated, the error code and HTTP status as text, the actions of the model, the `RepoForm` for `invalid-url` with `aria-describedby` on the error text, the `ManifestPicker` for the two manifest errors). No second live region for the heading.
     - _Requirements: 13.1, 13.3, 13.4, 13.5, 13.9, 13.10, 13.11, 13.12, 13.15, 13.16_
-  - [~] 33.6 Wire the error screens into the app
+  - [x] 33.6 Wire the error screens into the app
     - In `components/graveyard-app.tsx` render `ErrorScreen` for the `failed` phase with `buildErrorModel`, and handle the actions `edit-url`, `retry` (same request, scanning screen), `scan-default-branch`, `scan-root`, `scan-selected` and `back-to-gate` through the router.
     - _Requirements: 13.2, 13.7, 13.11_
-  - [~] 33.7 Write the component tests for the error screens
+  - [x] 33.7 Write the component tests for the error screens
     - Create `tests/ui/components/error-screen.test.tsx` (jsdom, fake timers): one test for each of the nine API error codes (heading, plain message present and unchanged, code and HTTP status text, actions), the 503 countdown disables Retry until it ends and announces the end once, the 502, 504 and 500 enable Retry after `RETRY_FALLBACK_COOLDOWN_SECONDS`, focus is on the heading, "Back to the gate" is present on every error, `invalid-url` leaves the input editable and prefilled.
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.7, 13.9, 13.10, 13.11, 13.12_
-- [~] 34. Checkpoint - Error screens
+- [x] 34. Checkpoint - Error screens
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 35. Client failure screens
   - [~] 35.1 Add the client failures to the error model and the session

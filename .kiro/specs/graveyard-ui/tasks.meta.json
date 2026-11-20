@@ -2640,6 +2640,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128476928
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149003468
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149127746
       }
     ],
     "33.2 Write the unit tests for the error model": [
@@ -2647,6 +2657,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128476966
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149132783
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149237768
       }
     ],
     "33.3 Write the property test for the error model": [
@@ -2654,6 +2674,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128477005
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149133284
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149238744
       }
     ],
     "33.4 Write the property test for the retry countdown": [
@@ -2661,6 +2691,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128477046
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149134781
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149240238
       }
     ],
     "33.5 Implement the error screen components": [
@@ -2668,6 +2708,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128477084
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149135616
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149241106
       }
     ],
     "33.6 Wire the error screens into the app": [
@@ -2675,6 +2725,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128477122
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149247880
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149340789
       }
     ],
     "33.7 Write the component tests for the error screens": [
@@ -2682,6 +2742,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128477162
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149248666
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149452905
       }
     ],
     "34. Checkpoint - Error screens": [
@@ -2689,6 +2759,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128477200
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149451972
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149615855
       }
     ],
     "35.1 Add the client failures to the error model and the session": [
@@ -3137,6 +3217,13 @@
         "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795148867432
+      }
+    ],
+    "33. Error screens and the manifest picker": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795149452955
       }
     ]
   }

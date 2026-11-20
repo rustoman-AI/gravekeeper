@@ -9,13 +9,15 @@ export interface RepoFormProps {
   focusOnMount?: boolean;
   /** Called with the trimmed input, as typed, when it is not empty. */
   onSubmit: (value: string) => void;
+  /** Id of an external element (for example an error text) that describes the input. */
+  describedBy?: string;
 }
 
 const EMPTY_MESSAGE = 'Enter a repository URL';
 const MESSAGE_ID = 'repo-url-message';
 
 // Requirements 1.2 to 1.5: labelled input, "Dig up" button, empty-input message.
-export function RepoForm({ initialValue = '', focusOnMount = false, onSubmit }: RepoFormProps) {
+export function RepoForm({ initialValue = '', focusOnMount = false, onSubmit, describedBy }: RepoFormProps) {
   const [value, setValue] = useState(initialValue);
   const [message, setMessage] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -54,7 +56,9 @@ export function RepoForm({ initialValue = '', focusOnMount = false, onSubmit }: 
           spellCheck={false}
           value={value}
           onChange={(event) => setValue(event.target.value)}
-          aria-describedby={message === '' ? undefined : MESSAGE_ID}
+          aria-describedby={
+            message === '' ? describedBy : describedBy === undefined ? MESSAGE_ID : `${describedBy} ${MESSAGE_ID}`
+          }
           aria-invalid={message === '' ? undefined : true}
           placeholder="https://github.com/owner/repo"
           className="min-h-11 flex-1 rounded border border-bone-muted bg-night-raised px-3 text-bone placeholder:text-bone-muted"

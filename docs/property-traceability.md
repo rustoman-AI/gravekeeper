@@ -211,6 +211,8 @@ Status of the graveyard-ui property tests, recorded on 2026-11-19. "Default" is 
 | P21 | `tests/ui/view-model/advisory-groups.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P22 | `tests/ui/view-model/notes-groups.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P23 | `tests/ui/view-model/notes-sources.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P24 | `tests/ui/view-model/errors.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P25 | `tests/ui/view-model/errors-countdown.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P26 | `tests/ui/view-model/picker.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P27 | `tests/ui/view-model/parse-response-total.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P28 | `tests/ui/view-model/parse-response-roundtrip.property.test.ts` | passed | passed | 2026-11-19 | none |
