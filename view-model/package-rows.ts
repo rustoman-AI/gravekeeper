@@ -135,6 +135,10 @@ export function buildPackageRows(result: ParsedScanResult): readonly PackageRow[
       if (b.score === null) return -1;
       return b.score - a.score;
     }
-    return compareCodePoints(a.ecosystem, b.ecosystem) || compareCodePoints(a.name, b.name);
+    return (
+      compareCodePoints(a.ecosystem, b.ecosystem) ||
+      compareCodePoints(a.name, b.name) ||
+      compareCodePoints(a.sourceKind, b.sourceKind)
+    );
   });
 }

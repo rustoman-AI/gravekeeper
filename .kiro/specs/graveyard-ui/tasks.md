@@ -112,51 +112,51 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/ui/view-model/rows-kinds.property.test.ts`, comparing every row with `uniquePackages(result.assessed)`.
     - **Property 8: Kinds and counts follow the core merge**
     - **Validates: Requirements 7.2, 7.11**
-  - [~] 5.21 Write the property test for the accessible labels
+  - [x] 5.21 Write the property test for the accessible labels
     - `tests/ui/view-model/rows-labels.property.test.ts`.
     - **Property 10: Accessible labels**
     - **Validates: Requirements 7.6, 7.13**
-  - [~] 5.22 Write the property test for the grave partition and restless ghosts
+  - [x] 5.22 Write the property test for the grave partition and restless ghosts
     - `tests/ui/view-model/rows-graves.property.test.ts`, with ghosts that carry `8.1`, `8.2`, `8.3` in every combination.
     - **Property 13: Graves partition the dead packages and restless ghosts are haunted**
     - **Validates: Requirements 7.15, 7.16, 7.18, 7.20, 7.21**
   - [x] 5.23 Implement the header model and the headline
     - Create `view-model/header.ts`: `headlineText(n, m, b, f, h)` exactly as the design (parts with count 0 omitted, `": "` only when a part is kept, `", "` separator, final `"."`), `buildHeaderModel` (N, M, B, F, H with H from `summary.counts.HAUNTED`, the "No dependencies could be assessed" sentence and "no grade" when M is 0, the grade line, the scale, the entries sentence, `notDefaultBranch`, Short_SHA, `canonicalUrl`) and `formatAge(asOfIso, nowMs)`. The components never see `Date.now`; the age is computed from a passed-in time.
     - _Requirements: 3.10, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8_
-  - [~] 5.24 Write the unit tests for the header model
+  - [x] 5.24 Write the unit tests for the header model
     - Create `tests/ui/view-model/header.test.ts`: the four examples of Requirement 5, criterion 2 as exact strings ("31 of 40 dependencies are in the graveyard: 26 buried, 5 haunted.", "1 of 6 dependencies are in the graveyard: 1 haunted.", "9 of 20 dependencies are in the graveyard: 2 buried, 3 forgotten, 4 haunted.", "0 of 6 dependencies are in the graveyard."), one case per single-part and two-part combination, M equal to 0, a restless ghost counted in H and not in B, the grade line text, the entries sentence, the non-default branch, `formatAge` for seconds, minutes, hours and days.
     - _Requirements: 3.10, 5.1, 5.2, 5.3, 5.4, 5.5, 5.7, 5.8_
-  - [~] 5.25 Write the property test for the header numbers
+  - [x] 5.25 Write the property test for the header numbers
     - `tests/ui/view-model/header-summary.property.test.ts`.
     - **Property 4: Header numbers equal the summary numbers**
     - **Validates: Requirements 5.9**
-  - [~] 5.26 Write the property test for the headline
+  - [x] 5.26 Write the property test for the headline
     - `tests/ui/view-model/header-headline.property.test.ts`, with an independent oracle written as a table of the eight part combinations and restless ghosts in the generator.
     - **Property 5: Buried plus forgotten plus haunted equals the headline total, and the headline text matches**
     - **Validates: Requirements 5.2, 5.10**
   - [x] 5.27 Implement the scene layout and keyboard navigation
     - Create `view-model/scene.ts` (`columnsFor`, `hashKey`, `sceneHeight`, `buildSceneModel`, plot tooltip lines and labels cut to `EPITAPH_MAX_CHARS`) and `view-model/scene-nav.ts` (`nextFocus`), exactly as the design "Layout algorithm" and "Keyboard navigation".
     - _Requirements: 8.1, 8.2, 8.3, 8.9, 9.6, 9.9_
-  - [~] 5.28 Write the unit tests for the scene layout
+  - [x] 5.28 Write the unit tests for the scene layout
     - Create `tests/ui/view-model/scene.test.ts`: `columnsFor` at 0, 191, 192, 1920 and 100000 and for `NaN`, fixed `hashKey` vectors, `sceneHeight` for 0, 1 and 301 plots, a 301-row result sets `simplified`, labels longer than `EPITAPH_MAX_CHARS` end with an ellipsis, `nextFocus` for each move at the edges, a single plot and an incomplete last row.
     - _Requirements: 8.1, 8.2, 8.3, 8.9, 9.9_
-  - [~] 5.29 Write the property test for plot overlap
+  - [x] 5.29 Write the property test for plot overlap
     - `tests/ui/view-model/scene-overlap.property.test.ts`, up to 1000 rows and 2 to 20 columns.
     - **Property 14: Plots do not overlap**
     - **Validates: Requirements 8.11**
-  - [~] 5.30 Write the property test for plots inside the scene
+  - [x] 5.30 Write the property test for plots inside the scene
     - `tests/ui/view-model/scene-bounds.property.test.ts`.
     - **Property 15: Plots lie inside the scene**
     - **Validates: Requirements 8.3, 8.12**
-  - [~] 5.31 Write the property test for scene determinism
+  - [x] 5.31 Write the property test for scene determinism
     - `tests/ui/view-model/scene-determinism.property.test.ts`, with `dependencies` and `assessed` rotated together.
     - **Property 16: Scene is deterministic and independent of input order**
     - **Validates: Requirements 8.2, 8.13**
-  - [~] 5.32 Write the property test for plot completeness
+  - [x] 5.32 Write the property test for plot completeness
     - `tests/ui/view-model/scene-plots.property.test.ts`.
     - **Property 17: Every row appears once with a label**
     - **Validates: Requirements 8.14**
-  - [~] 5.33 Write the property test for keyboard navigation
+  - [x] 5.33 Write the property test for keyboard navigation
     - `tests/ui/view-model/scene-nav.property.test.ts`.
     - **Property 18: Keyboard navigation stays on the grid**
     - **Validates: Requirements 9.6, 9.9**
@@ -174,7 +174,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - `tests/ui/view-model/urls-manifests.property.test.ts`, strings with `&`, `=`, `%`, `+`, `#`, spaces, empty strings and non-ASCII characters.
     - **Property 2: Manifest query round trip**
     - **Validates: Requirements 3.12**
-  - [ ] 5.38 Write the property test for the safety of built links
+  - [x] 5.38 Write the property test for the safety of built links
     - `tests/ui/view-model/urls-links.property.test.ts`.
     - **Property 33: Built links are safe**
     - **Validates: Requirements 21.3, 21.4, 21.7**

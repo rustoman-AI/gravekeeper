@@ -174,3 +174,27 @@ describe('compareCodePoints parity with core', () => {
     expect(compareCodePoints('😀', '\uffff')).toBeGreaterThan(0);
   });
 });
+
+describe('buildPackageRows sourceKind tiebreak (design step 8)', () => {
+  it('orders rows equal in ecosystem, name, kind and score by sourceKind code point, regardless of input order', () => {
+    const base = buildScanResult([
+      { name: 'twin', kind: 'alive' },
+      { name: 'twin', kind: 'alive' },
+    ]);
+    const withKinds = (kinds: readonly ['registry' | 'git', 'registry' | 'git']): ParsedScanResult => {
+      const retag = <T extends { readonly dependency: object }>(entry: T, i: number): T => ({
+        ...entry,
+        dependency: { ...entry.dependency, sourceKind: kinds[i] },
+      });
+      return {
+        ...base,
+        dependencies: base.dependencies.map(retag),
+        assessed: base.assessed.map(retag),
+      } as unknown as ParsedScanResult;
+    };
+    const a = buildPackageRows(withKinds(['registry', 'git'])).map((r) => r.sourceKind);
+    const b = buildPackageRows(withKinds(['git', 'registry'])).map((r) => r.sourceKind);
+    expect(a).toEqual(['git', 'registry']);
+    expect(b).toEqual(['git', 'registry']);
+  });
+});
