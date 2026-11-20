@@ -286,32 +286,32 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 3.8, 4.9_
 - [x] 14. Checkpoint - Scanning state
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 15. Results page: header and scene
-  - [~] 15.1 Implement the results header components
+- [x] 15. Results page: header and scene
+  - [x] 15.1 Implement the results header components
     - Create `components/results-header.tsx`, `components/grade-line.tsx` (grade letter labelled "worst single risk", explanation, closed `<details>` scale), `components/cache-note.tsx` (age text and "from the caretaker's records" only for `hit`), `components/view-toggle.tsx` (two buttons with `aria-pressed`, query value `view`) and `components/hooks/use-container-width.ts` (`ResizeObserver` in a layout effect). The header renders the `HeaderModel` fields only: the Headline, the counts (buried, forgotten, haunted, alive, unassessed, each with its text label), the entries sentence, `time` with `dateTime`, the Short_SHA with the full SHA as description, and "(not the default branch)".
     - _Requirements: 3.10, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 18.1_
-  - [~] 15.2 Implement the scene components
+  - [x] 15.2 Implement the scene components
     - Create `components/scene.tsx` (one `role="group"` container sized from the `SceneModel`, one delegated handler for click, hover, focus and keys reading `data-index`, roving tabindex moved by ref, arrow, Home and End through `nextFocus`, `data-simplified` above `SCENE_MAX_PLOTS`), `components/scene-plot.tsx` (`React.memo`, one `<button>` per plot with `aria-label` from the model, `<svg aria-hidden><use href="#plot-<kind>[-flat]"/></svg>` and the label span, custom properties `--x`, `--y`, `--w`, `--h`, `--glow`), `components/scene-tooltip.tsx` (one `role="tooltip"`, stays while the pointer is over it, Escape hides it and keeps focus) and `components/fog-layer.tsx` (two `aria-hidden` layers). Add a `SkipLink` "Skip the graveyard scene" before the scene that moves focus to the view toggle. No `dangerouslySetInnerHTML`.
     - _Requirements: 8.4, 8.5, 8.8, 8.9, 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 16.7, 17.5_
-  - [~] 15.3 Write the scene styles
+  - [x] 15.3 Write the scene styles
     - Add to `app/globals.css` the scene rules: absolute plot placement by custom properties, fog drift, ghost drift and the pulse of ghosts, restless ghosts and lanterns as CSS keyframes on `transform` and `opacity` only with a per-plot delay from `--phase`, the static glow strength from `--glow`, the label style, the visible focus ring on a plot, `[data-simplified="true"]` rules (flat symbols, no animation, no label shadow), and the reduced-motion overrides.
     - _Requirements: 8.6, 8.7, 8.9, 9.7, 16.6, 17.4_
-  - [~] 15.4 Implement the results page and wire it into the app
+  - [x] 15.4 Implement the results page and wire it into the app
     - Create `components/results-page.tsx` (header, view toggle, `Scene`, memoised `buildPackageRows`, `buildHeaderModel` and `buildSceneModel`, container height from `sceneHeight` reserved before plots render) and update `components/graveyard-app.tsx` to render it for the `result` phase, to replace the `repo` query value with the Canonical_Repo_URL through `history.replaceState` without a new history entry, and to keep `manifest` values unchanged. Opening a plot is wired in task 19.7.
     - _Requirements: 3.4, 3.5, 8.3, 17.3, 17.5, 18.1_
-  - [~] 15.5 Write the component tests for the header
+  - [x] 15.5 Write the component tests for the header
     - Create `tests/ui/components/results-header.test.tsx` (jsdom): the headline text for the four examples of Requirement 5, criterion 2, the status counts with text labels and the buried and forgotten split, "No dependencies could be assessed" and "no grade" for M equal to 0, the grade line text, the closed scale disclosure, the entries sentence, `time` with `dateTime`, the "(not the default branch)" text, the cache note only for `hit`, the view toggle `aria-pressed`.
     - _Requirements: 3.10, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 18.1_
-  - [~] 15.6 Write the component tests for the scene
+  - [x] 15.6 Write the component tests for the scene
     - Create `tests/ui/components/scene.test.tsx` (jsdom, `user-event`): one tab stop, arrow keys, Home and End move focus by row and column, Enter and Space call `onOpen`, click calls `onOpen`, the tooltip shows on hover and on focus with name, ecosystem, status word, score and epitaph, stays while the pointer moves onto it, Escape hides it and keeps focus, every plot has an accessible name, the six kinds render the matching symbol, a restless plot has the status word "haunted, buried" in its name.
     - _Requirements: 7.6, 8.4, 8.8, 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.8_
-  - [~] 15.7 Write the render and memoisation test for the scene
+  - [x] 15.7 Write the render and memoisation test for the scene
     - Create `tests/ui/components/scene-render.test.tsx` (jsdom): 300 plots render with four nodes per plot, 301 plots set `data-simplified` and still render every plot, re-rendering with the same `SceneModel` object does not re-render any `ScenePlot` (render counter through a test-only wrapper).
     - _Requirements: 8.8, 8.9, 17.5_
-  - [~] 15.8 Write the tests for the results flow
+  - [x] 15.8 Write the tests for the results flow
     - Create `tests/ui/components/graveyard-app-results.test.tsx` (jsdom, fake client): a result replaces the `repo` value with the canonical URL without a history entry and keeps `manifest`, the view toggle writes `view` without a request, a `hit` shows the caretaker's-records text and `miss` and `unknown` show none.
     - _Requirements: 3.4, 3.10, 18.1_
-- [~] 16. Checkpoint - Results page and scene
+- [x] 16. Checkpoint - Results page and scene
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 17. List view
   - [~] 17.1 Implement the table model

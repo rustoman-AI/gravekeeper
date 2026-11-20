@@ -3,6 +3,8 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { LandingPage } from './landing-page';
+import { ResultsPage } from './results-page';
+import type { ViewName } from './view-toggle';
 import { ScanningScreen } from './scanning-screen';
 import type { ScanningScreenProps } from './scanning-screen';
 import { useScan } from './hooks/use-scan';
@@ -16,6 +18,8 @@ export interface GraveyardAppViewProps {
   readonly search: string;
   readonly history?: UrlHistory;
   readonly client?: ScanRunner;
+  /** Clock for the cache note, read once per result. Defaults to `Date.now`. */
+  readonly now?: () => number;
   /** Clock and timer injection forwarded to `ScanningScreen`, for tests. */
   readonly scanningClock?: Pick<
     ScanningScreenProps,
@@ -34,13 +38,34 @@ export function GraveyardAppView({
   history,
   client,
   scanningClock,
+  now: nowFn = Date.now,
 }: GraveyardAppViewProps) {
   const { urlState, push, replace, replaceInPlace } = useUrlStateFrom(router, search, history);
+  // The browser clock, read once when a result arrives (components below the shell never read it).
+  const [arrivalMs, setArrivalMs] = useState(0);
   const onCanonical = useCallback(
-    (url: string) => replaceInPlace({ repo: url, manifests: urlState.manifests, view: urlState.view }),
-    [replaceInPlace, urlState.manifests, urlState.view],
+    (url: string) => {
+      setArrivalMs(nowFn());
+      replaceInPlace({ repo: url, manifests: urlState.manifests, view: urlState.view });
+    },
+    [replaceInPlace, urlState.manifests, urlState.view, nowFn],
   );
   const { session } = useScan(urlState, { client, onCanonical });
+
+  // The browser clock, taken once per arriving result (components below the shell never read it).
+
+  // The view toggle writes `view` in place (D2). The override covers a query string that has not caught up.
+  const [viewOverride, setViewOverride] = useState<{ readonly base: ViewName; readonly value: ViewName } | null>(
+    null,
+  );
+  const view = viewOverride !== null && viewOverride.base === urlState.view ? viewOverride.value : urlState.view;
+  const onViewChange = useCallback(
+    (next: ViewName) => {
+      setViewOverride({ base: urlState.view, value: next });
+      replaceInPlace({ repo: urlState.repo, manifests: urlState.manifests, view: next });
+    },
+    [replaceInPlace, urlState.repo, urlState.manifests, urlState.view],
+  );
 
   // Set by Cancel: the landing page then shows the last value and focuses the input.
   const [cancelled, setCancelled] = useState<{ readonly repo: string | null } | null>(null);
@@ -76,6 +101,17 @@ export function GraveyardAppView({
         repoLabel={urlState.repo ?? undefined}
         onCancel={onCancel}
         {...scanningClock}
+      />
+    );
+  }
+  if (session.phase === 'result') {
+    return (
+      <ResultsPage
+        result={session.result}
+        cache={session.cache}
+        nowMs={arrivalMs}
+        view={view}
+        onViewChange={onViewChange}
       />
     );
   }
