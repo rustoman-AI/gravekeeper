@@ -1,4 +1,4 @@
-﻿# Property traceability
+# Property traceability
 
 Maps every design property of the `scan-pipeline`, `dependency-graveyard-core` and `scan-accuracy` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 2449 passed and 26 skipped (the live tests, skipped without `GRAVEKEEPER_LIVE_TESTS`), 162 test files passed and 6 skipped. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
 
@@ -185,7 +185,7 @@ None. All 12 properties (P1 to P12) have at least one passing test.
 - scan-accuracy P3, P4 and P11 are now tagged with `// Feature: scan-accuracy` and `// Validates:` lines.
 
 ## graveyard-ui (PBT status)
-Status of the graveyard-ui property tests, recorded on 2026-11-19. "Default" is `npx vitest --run` with FC_NUM_RUNS unset. "1000 runs" is `npm run test:deep`. Each test file's `// Feature: graveyard-ui, Property <n>` tag was checked against the property number. Only properties that have a test are listed here. The remaining graveyard-ui properties (P6, P22 to P26) have no test yet, because their tasks are not done.
+Status of the graveyard-ui property tests, recorded on 2026-11-19. "Default" is `npx vitest --run` with FC_NUM_RUNS unset. "1000 runs" is `npm run test:deep`. Each test file's `// Feature: graveyard-ui, Property <n>` tag was checked against the property number. Only properties that have a test are listed here. The remaining graveyard-ui properties (P6) has no test yet, because its task is not done.
 
 | Property | Test file | Default | 1000 runs | Date | Counterexample and fix |
 | --- | --- | --- | --- | --- | --- |
@@ -201,14 +201,17 @@ Status of the graveyard-ui property tests, recorded on 2026-11-19. "Default" is 
 | P11 | `tests/ui/view-model/glow.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P12 | `tests/ui/view-model/grave-type.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P13 | `tests/ui/view-model/rows-graves.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P14 | `tests/ui/view-model/scene-overlap.property.test.ts` | passed | passed | 2026-11-19 | none. Rectangles are half-open, so plots with touching edges do not overlap. |
-| P15 | `tests/ui/view-model/scene-bounds.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P14 | `tests/ui/view-model/scene-overlap.property.test.ts` | passed | passed | 2026-11-19 | none. Rectangles are half-open, so plots with touching edges do not overlap. Now includes label rectangles (30.4, passed at 1000 runs on 2026-11-19). |
+| P15 | `tests/ui/view-model/scene-bounds.property.test.ts` | passed | passed | 2026-11-19 | none. Now includes label rectangles (30.4, passed at 1000 runs on 2026-11-19). |
 | P16 | `tests/ui/view-model/scene-determinism.property.test.ts` | passed | passed after fix | 2026-11-19 | Failed at 1000 runs with seed 1457184590 (columns=4, offset=10). Two rows with the same ecosystem and name but a different sourceKind kept input order. Fixed with a sourceKind tiebreak in the scene sort of `view-model/package-rows.ts` (design step 8 updated). |
 | P17 | `tests/ui/view-model/scene-plots.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P18 | `tests/ui/view-model/scene-nav.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P19 | `tests/ui/view-model/format-fact.property.test.ts` | passed | passed | 2026-11-19 | none |
-| P20 | `tests/ui/view-model/detail.property.test.ts` | passed | passed | 2026-11-19 | none. The 1000-run pass used `--testTimeout=600000` on the command line. The file sets no per-test timeout. |
+| P20 | `tests/ui/view-model/detail.property.test.ts` | passed | passed | 2026-11-19 | none. The 1000-run pass used `--testTimeout=600000` on the command line. The file sets no per-test timeout. Now includes labels (30.2, passed at 1000 runs on 2026-11-19). |
 | P21 | `tests/ui/view-model/advisory-groups.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P22 | `tests/ui/view-model/notes-groups.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P23 | `tests/ui/view-model/notes-sources.property.test.ts` | passed | passed | 2026-11-19 | none |
+| P26 | `tests/ui/view-model/picker.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P27 | `tests/ui/view-model/parse-response-total.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P28 | `tests/ui/view-model/parse-response-roundtrip.property.test.ts` | passed | passed | 2026-11-19 | none |
 | P29 | `tests/ui/view-model/parse-response-cache.property.test.ts` | passed | passed | 2026-11-19 | none |

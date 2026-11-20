@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useMemo, useState } from "react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -225,7 +225,7 @@ describe("graveyard end-to-end component flow", () => {
       await user.click(plot);
       const dialog = await screen.findByRole("dialog");
       expect(dialog.getAttribute("aria-labelledby")).not.toBeNull();
-      expect(screen.getByRole("heading", { level: 2 }).textContent).toContain(row.name);
+      expect(within(dialog).getByRole("heading", { level: 2 }).textContent).toContain(row.name);
       expect(dialog.textContent).toContain(row.statusWord);
 
       await user.click(screen.getByRole("button", { name: "Close" }));
@@ -251,8 +251,8 @@ describe("graveyard end-to-end component flow", () => {
     await screen.findByRole("table");
     const opener = screen.getByRole("button", { name: ghost.name });
     await user.click(opener);
-    await screen.findByRole("dialog");
-    expect(screen.getByRole("heading", { level: 2 }).textContent).toContain(ghost.name);
+    const ghostDialog = await screen.findByRole("dialog");
+    expect(within(ghostDialog).getByRole("heading", { level: 2 }).textContent).toContain(ghost.name);
     await user.click(screen.getByRole("button", { name: "Close" }));
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     expect(document.activeElement).toBe(opener);

@@ -2487,6 +2487,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128476461
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148276717
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148426841
       }
     ],
     "31.2 Write the unit tests for the notes and picker models": [
@@ -2494,6 +2504,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128476513
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148431560
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148550545
       }
     ],
     "31.3 Write the property test for the note groups": [
@@ -2501,6 +2521,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128476562
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148432568
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148551529
       }
     ],
     "31.4 Write the property test for the source list": [
@@ -2508,6 +2538,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128476607
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148434007
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148552534
       }
     ],
     "31.5 Write the property test for the picker": [
@@ -2515,6 +2555,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128476713
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148434504
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148553528
       }
     ],
     "31.6 Implement the notes components and the manifest picker": [
@@ -2522,6 +2572,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128476770
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148435447
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148554142
       }
     ],
     "31.7 Wire the notes into the results page": [
@@ -2529,6 +2589,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128476809
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148559175
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148867381
       }
     ],
     "31.8 Write the component tests for the notes": [
@@ -2536,6 +2606,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128476848
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148559938
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148747664
       }
     ],
     "32. Checkpoint - Caretaker's notes": [
@@ -2543,6 +2623,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128476889
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148868196
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148992670
       }
     ],
     "33.1 Implement the error model": [
@@ -2993,6 +3083,11 @@
         "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795147869493
+      },
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148266393
       }
     ],
     "48.1 Write the Milestone 2 report screenshot specification": [
@@ -3028,6 +3123,20 @@
         "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795147367876
+      }
+    ],
+    "30. Milestone 1 follow-ups (approved)": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148266519
+      }
+    ],
+    "31. Caretaker's notes (Milestone 2)": [
+      {
+        "executionId": "614c73b9-96f9-4d2d-a78c-53607568aeef",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795148867432
       }
     ]
   }

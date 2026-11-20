@@ -1,43 +1,19 @@
 import { buildAdvisoryGroups } from './advisory-groups';
 import { FACT_LABELS } from './fact-labels';
 import { FACT_FIELDS, formatFact } from './format-fact';
+import { NOTE_SECTIONS, OTHER_NOTES_TITLE } from './notes';
 import { unassessedLabelOf } from './package-rows';
 import type { DetailModel, PackageKeyString, PackageRow, ParsedScanResult } from './types';
 import { registryLink, sourceRepoLink } from './urls';
 
 type Note = ParsedScanResult['notes'][number];
 
-const OTHER_HEADING = 'Other notes';
+const OTHER_HEADING = OTHER_NOTES_TITLE;
 
-/**
- * Requirement 10.9: themed heading per note code, in display order. The Notes_Model (Requirement 11.7)
- * uses the same codes; unknown codes go to "Other notes".
- */
-const NOTE_HEADINGS: readonly (readonly [code: string, heading: string])[] = [
-  ['github-token-missing', 'The caretaker has no key to the GitHub gate'],
-  ['github-budget-low', 'The caretaker is running low on GitHub visits'],
-  ['dependency-cap-exceeded', 'The caretaker stopped counting graves'],
-  ['scan-deadline-reached', 'The night ran short'],
-  ['source-partial', 'A record office answered in part'],
-  ['source-failed', 'A record office did not answer'],
-  ['batch-fallback', 'The caretaker took the slow road'],
-  ['package-not-found', 'No record of this package'],
-  ['no-default-version', 'No default version on record'],
-  ['pin-not-found', 'The pinned version is not on record'],
-  ['conflicting-pins', 'The manifests disagree on the version'],
-  ['range-unresolved', 'The version range could not be resolved'],
-  ['advisory-details-incomplete', 'The advisory records are incomplete'],
-  ['osv-pagination-ignored', 'More advisories may exist'],
-  ['maintainers-lower-bound', 'The maintainer count may be low'],
-  ['source-repo-unverified', 'A source repository, unverified'],
-  ['informational-advisory-excluded', 'Informational advisories, not counted'],
-  ['unmaintained-advisory', 'Flagged as unmaintained'],
-  ['tree-truncated', 'The plot map is cut short'],
-  ['no-manifests', 'No manifests on the plot map'],
-  ['no-root-manifest', 'No manifest at the root'],
-  ['manifest-too-large', 'A manifest is too large to read'],
-  ['manifest-fetch-failed', 'A manifest could not be fetched'],
-];
+/** Requirement 10.9: themed heading per note code, in the display order of NOTE_SECTIONS (the one table). */
+const NOTE_HEADINGS: readonly (readonly [code: string, heading: string])[] = NOTE_SECTIONS.flatMap(
+  (s) => s.codes,
+);
 const HEADING_BY_CODE = new Map(NOTE_HEADINGS);
 const HEADING_RANK = new Map(NOTE_HEADINGS.map(([code], i) => [code, i] as const));
 const VERSION_NOTE_CODES: ReadonlySet<string> = new Set([

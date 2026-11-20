@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   buildDetailModel,
   buildHeaderModel,
+  buildNotesModel,
   buildPackageRows,
   buildSceneModel,
   columnsFor,
@@ -12,6 +13,9 @@ import {
 import dynamic from 'next/dynamic';
 import type { CacheStatus, PackageKeyString, ParsedScanResult } from '../view-model/index';
 import { useContainerWidth } from './hooks/use-container-width';
+import { CapBanner } from './cap-banner';
+import { EmptyGraveyard } from './empty-graveyard';
+import { CaretakersNotes } from './caretakers-notes';
 import { LazyDetailPanel } from './lazy-detail-panel';
 import { ResultsHeader } from './results-header';
 import { Scene } from './scene';
@@ -26,6 +30,8 @@ export interface ResultsPageProps {
   nowMs: number;
   view: ViewName;
   onViewChange: (view: ViewName) => void;
+  /** Called with the picker's scan URL (Requirement 11.11). */
+  onScanManifests: (url: string) => void;
 }
 
 // Loaded only when the list view is chosen (Requirements 16.7, 17.7).
@@ -34,13 +40,14 @@ const ListView = dynamic(() => import('./list-view').then((mod) => mod.ListView)
 });
 
 /** Requirements 3.4, 3.5, 8.3, 17.3, 17.5, 18.1: header, view toggle and the Scene. */
-export function ResultsPage({ result, cache, nowMs, view, onViewChange }: ResultsPageProps) {
+export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanManifests }: ResultsPageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const width = useContainerWidth(containerRef);
   const columns = columnsFor(width);
 
   const rows = useMemo(() => buildPackageRows(result), [result]);
   const header = useMemo(() => buildHeaderModel(result, rows), [result, rows]);
+  const notes = useMemo(() => buildNotesModel(result), [result]);
   const scene = useMemo(() => buildSceneModel(rows, columns), [rows, columns]);
   // Reserved before any plot renders, so the page does not shift (Requirement 17.3).
   const reserved = sceneHeight(rows.length, columns);
@@ -79,14 +86,25 @@ export function ResultsPage({ result, cache, nowMs, view, onViewChange }: Result
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8">
       <SceneSprites />
       <ResultsHeader header={header} cache={cache} nowMs={nowMs} />
-      <ViewToggle view={view} onChange={onViewChange} />
-      <div ref={containerRef} style={{ minHeight: reserved }}>
-        {view === 'scene' ? (
-          <Scene scene={scene} onOpen={onOpenIndex} skipTargetId={VIEW_TOGGLE_ID} />
-        ) : (
-          <ListView rows={rows} onOpen={onOpenKey} />
-        )}
-      </div>
+      {notes.capBanner === null ? null : <CapBanner banner={notes.capBanner} />}
+      {notes.empty === null ? (
+        <>
+          <ViewToggle view={view} onChange={onViewChange} />
+          <div ref={containerRef} style={{ minHeight: reserved }}>
+            {view === 'scene' ? (
+              <Scene scene={scene} onOpen={onOpenIndex} skipTargetId={VIEW_TOGGLE_ID} />
+            ) : (
+              <ListView rows={rows} onOpen={onOpenKey} />
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <EmptyGraveyard message={notes.empty.message} />
+          <div ref={containerRef} />
+        </>
+      )}
+      <CaretakersNotes model={notes} repoValue={header.canonicalUrl} onScan={onScanManifests} />
       {detail !== null ? <LazyDetailPanel model={detail} onClose={onClose} /> : null}
     </div>
   );

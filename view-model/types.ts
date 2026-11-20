@@ -338,6 +338,9 @@ export interface NotesModel {
 export interface PickerModel {
   readonly candidates: readonly {
     readonly path: string;
+    /** Manifest format and size: only for the picker of a `no-root-manifest` note (Requirement 11.11). */
+    readonly format?: string;
+    readonly sizeBytes?: number | null;
     readonly checked: boolean;
     readonly disabled: boolean;
   }[];

@@ -88,6 +88,8 @@ export {
   type AdvisoryGroupModel,
 } from './advisory-groups';
 export { buildDetailModel } from './detail';
+export { NOTE_SECTIONS, OTHER_NOTES_TITLE, buildNotesModel } from './notes';
+export { buildPickerModel } from './picker';
 export {
   encodeManifests,
   decodeManifests,

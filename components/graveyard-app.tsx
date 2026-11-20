@@ -87,6 +87,9 @@ export function GraveyardAppView({
     [push],
   );
 
+  // The picker model already built the URL: one history entry, a new scan for the chosen manifests.
+  const onScanManifests = useCallback((url: string) => router.push(url), [router]);
+
   if (session.phase === 'idle') {
     return (
       <LandingPage
@@ -115,6 +118,7 @@ export function GraveyardAppView({
         nowMs={arrivalMs}
         view={view}
         onViewChange={onViewChange}
+        onScanManifests={onScanManifests}
       />
     );
   }

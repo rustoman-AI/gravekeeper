@@ -467,7 +467,7 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - [x] 29.4 Capture the screenshots, measure and write the report
     - Run `npm run build`, then `npx playwright test tests/e2e/m1-report.spec.ts tests/e2e/scene-perf.spec.ts tests/e2e/js-budget.spec.ts`, then `npm run report:m1`, and check that `docs/screenshots/m1/` has the six PNG files at 1440x900 and that `docs/milestone-1-report.md` shows the render time for `request/request`, the gzipped client JavaScript against `CLIENT_JS_BUDGET_BYTES`, and the axe result of each of the five screens. Look at each screenshot. If a screen is visibly broken, fix it before the report is accepted. **EXECUTION STOPS AFTER THIS TASK.** Do not start group 31 or any later task. Report the numbers and the screenshot paths to the user and wait for the user's decision.
     - _Requirements: 17.1, 17.2, 20.10, 20.11, 16.10_
-- [~] 30. Milestone 1 follow-ups (approved)
+- [x] 30. Milestone 1 follow-ups (approved)
   - Milestone 1 is complete after the report of task 29.4. Do not execute any task numbered 31 or higher until the user has reviewed the Milestone 1 report and approves Milestone 2. Tasks 30.1 to 30.7 are the approved follow-ups to Milestone 1 (human fact labels, scene row spacing, the live production scan test, the session log) and are the only tasks that may run before that approval. Execution stops after task 30.7.
   - [x] 30.1 Add the KIRO_LOG Session 16 entry
     - Documentation task: add the Session 16 entry to `KIRO_LOG.md` (what was changed in this follow-up: fact labels, scene row spacing, the live scan spec, and the reason). No requirement changes.
@@ -493,38 +493,38 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - [x] 30.6 Re-capture the Milestone 1 screenshots and regenerate the report
     - Run `npm run build`, then `npx playwright test tests/e2e/m1-report.spec.ts tests/e2e/scene-perf.spec.ts tests/e2e/js-budget.spec.ts`, then `npm run report:m1`. Check that `docs/screenshots/m1/` has the six PNG files at 1440x900, that `docs/milestone-1-report.md` is regenerated and that the detail panel screenshots show the labels and the scene screenshots show two-line labels clear of the plots below. Look at each screenshot.
     - _Requirements: 20.10, 20.11, 17.1, 17.2, 16.10_
-  - [-] 30.7 Checkpoint - Milestone 1 follow-ups, commit and push
+  - [x] 30.7 Checkpoint - Milestone 1 follow-ups, commit and push
     - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build`, `npm run check:bundle` and `npm run test:e2e`, and ensure all pass. Commit the follow-ups and, with the user's approval (ask the orchestrator first), run `git push origin main`. Do not force-push. **EXECUTION STOPS AFTER THIS TASK.** Do not start group 31 until the user approves Milestone 2.
-- [ ] 31. Caretaker's notes (Milestone 2)
+- [x] 31. Caretaker's notes (Milestone 2)
   - Constraint for all of Milestone 2 (groups 31 to 48): do not change the scene art or the colour palette yet (user instruction). Changes to `components/scene-sprites.tsx` art and to the theme colour tokens are out of scope until the user lifts this.
-  - [~] 31.1 Implement the notes model and the picker model
+  - [x] 31.1 Implement the notes model and the picker model
     - Create `view-model/notes.ts` (`buildNotesModel`: the six sources in fixed order with names, status words, distinct symbols and alert lines, `NOTE_SECTIONS` with the four sections and the "Other notes" section for unknown codes, groups by `code` with counts and `previewCount` of at most 5, `capBanner`, `empty`, `manifestWarnings`, the discovery note and the picker for the `no-root-manifest` note) and `view-model/picker.ts` (`buildPickerModel(candidates, selected, repoValue)`: every candidate once in order, at most `SCAN_MAX_MANIFESTS` selectable and the rest disabled with "limit reached", `scanUrl` null while nothing is selected, built with `buildUrl`). Export both from `view-model/index.ts`.
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.7, 11.8, 11.9, 11.10, 11.11, 11.12, 11.13_
-  - [~] 31.2 Write the unit tests for the notes and picker models
+  - [x] 31.2 Write the unit tests for the notes and picker models
     - Create `tests/ui/view-model/notes.test.ts` and `tests/ui/view-model/picker.test.ts`: every code of the section table lands in its section, an unknown code lands in "Other notes", 40 notes of one code give count 40 and `previewCount` 5, the three source statuses have three symbols, the alert line text, the cap banner count, the empty state for `no-manifests`, the discovery fallback text "The manifest list may be incomplete", manifest warnings, the picker limit of `SCAN_MAX_MANIFESTS`, an empty candidate list gives no picker.
     - _Requirements: 11.2, 11.3, 11.5, 11.7, 11.8, 11.9, 11.10, 11.12, 13.15, 13.16_
-  - [~] 31.3 Write the property test for the note groups
+  - [x] 31.3 Write the property test for the note groups
     - `tests/ui/view-model/notes-groups.property.test.ts`, with known and unknown codes.
     - **Property 22: Every note lands in exactly one group**
     - **Validates: Requirements 11.4, 11.7, 11.8, 11.14**
-  - [~] 31.4 Write the property test for the source list
+  - [x] 31.4 Write the property test for the source list
     - `tests/ui/view-model/notes-sources.property.test.ts`.
     - **Property 23: Sources are listed once each**
     - **Validates: Requirements 11.2, 11.15**
-  - [~] 31.5 Write the property test for the picker
+  - [x] 31.5 Write the property test for the picker
     - `tests/ui/view-model/picker.property.test.ts`, candidate lists with duplicates and hostile characters, selections of at most `SCAN_MAX_MANIFESTS` paths.
     - **Property 26: Picker lists candidates and encodes the selection**
     - **Validates: Requirements 11.11, 13.15, 13.17**
-  - [~] 31.6 Implement the notes components and the manifest picker
+  - [x] 31.6 Implement the notes components and the manifest picker
     - Create `components/caretakers-notes.tsx`, `components/note-group-section.tsx` (themed heading, count, the plain message of the first note always visible, the first 5 and a "Show all <count>" button, every plain message in its own element), `components/source-status-list.tsx` (status word plus symbol, alert lines linked to the matching note), `components/cap-banner.tsx`, `components/empty-graveyard.tsx` and `components/manifest-picker.tsx` (labelled `fieldset` of checkboxes, "limit reached", "Scan selected manifests" disabled while nothing is selected). Load `ManifestPicker` with `next/dynamic`.
     - _Requirements: 11.1, 11.2, 11.3, 11.5, 11.6, 11.9, 11.10, 11.11, 11.13, 15.6, 17.7_
-  - [~] 31.7 Wire the notes into the results page
+  - [x] 31.7 Wire the notes into the results page
     - In `components/results-page.tsx` render the `CaretakersNotes`, the cap banner, the empty graveyard (no scene) and the picker for `no-root-manifest`, and in `components/graveyard-app.tsx` handle "Scan selected manifests" by pushing the URL of the picker model.
     - _Requirements: 11.1, 11.9, 11.10, 11.11_
-  - [~] 31.8 Write the component tests for the notes
+  - [x] 31.8 Write the component tests for the notes
     - Create `tests/ui/components/caretakers-notes.test.tsx` and `tests/ui/components/manifest-picker.test.tsx` (jsdom): the six sources with status text and symbol, the alert line for `partial` and `failed`, the plain message of the first note of each group without a click, "Show all 40" reveals the rest and the heading keeps the full count, the cap banner, the empty state, the picker limit and the disabled button, the pushed URL.
     - _Requirements: 11.2, 11.3, 11.5, 11.6, 11.9, 11.10, 11.11_
-- [~] 32. Checkpoint - Caretaker's notes
+- [x] 32. Checkpoint - Caretaker's notes
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 33. Error screens and the manifest picker
   - [~] 33.1 Implement the error model
