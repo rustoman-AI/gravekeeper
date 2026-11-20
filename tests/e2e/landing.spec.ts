@@ -3,7 +3,8 @@ import { expectNoA11yViolations } from "./support/a11y";
 import { hang, mockScan, respondWithFixture } from "./support/mock-scan";
 import { expect, test } from "./support/test";
 
-// Requirements 1.2, 1.3, 1.5, 2.3, 16.10, 20.2, 20.5.
+// Requirements 1.2, 1.3, 1.5, 2.3, 16.10, 20.2, 20.5; graveyard-art 13.6, 18.5.
+// graveyard-art R8, R10, R11: nothing here asserts the removed lantern dot, "NO GRADE" or a visible "(rule ...)".
 
 const FEATURED: ReadonlyArray<{ repo: string; ecosystem: string; fixture: FixtureName }> = [
   { repo: "request/request", ecosystem: "npm", fixture: "request" },

@@ -1175,6 +1175,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177524282
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795217531235
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795217595999
       }
     ],
     "18.2 Final reduced-motion style test": [
@@ -1182,6 +1192,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177524313
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795217531892
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795217596221
       }
     ],
     "18.3 Art end-to-end spec": [
@@ -1189,6 +1209,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177524347
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795217599626
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795217694523
       }
     ],
     "18.4 Update the flow specs and add axe for the new screens": [
@@ -1196,6 +1226,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177524380
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795217694805
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795217791022
       }
     ],
     "18.5 Update the motion, reflow and layout-shift specs": [
@@ -1203,6 +1243,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177524414
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795217791915
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795217867928
       }
     ],
     "18.6 Performance and size gates": [
@@ -1210,6 +1260,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177524449
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795217872517
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795218348150
       }
     ],
     "19. Checkpoint - End-to-end, axe and performance": [
@@ -1217,6 +1277,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177524483
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795218351382
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795218517970
       }
     ],
     "20.1 Traceability test for this spec": [
@@ -1392,6 +1462,13 @@
         "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795217408415
+      }
+    ],
+    "18. End-to-end, axe, style and performance updates": [
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795218348193
       }
     ]
   }

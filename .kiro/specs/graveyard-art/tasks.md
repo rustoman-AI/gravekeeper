@@ -301,33 +301,33 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
 - [x] 17. Checkpoint - Empty states
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 18. End-to-end, axe, style and performance updates
-  - [~] 18.1 Art style test
+- [x] 18. End-to-end, axe, style and performance updates
+  - [x] 18.1 Art style test
     - Create `tests/ui/art-css.test.ts` parsing `app/globals.css` (comments stripped): horizon heights 240 and 150 with the 640 breakpoint; fog opacities equal `FOG_OPACITY_LOW` and `FOG_OPACITY_HIGH`; the keyframes used by the fog declare only `transform`; `gk-lantern-flicker` declares only `opacity`; `rotate` and `scale` on `.gk-plot-art`; the headline `clamp` bounds are 32 and 56 px (2rem and 3.5rem); no `filter`, `backdrop-filter` or `mask` declaration anywhere in the file; no decorative token in a `color` declaration or `text-` rule; every new `animation` or `transition` selector is in the reduced-motion block.
     - Files: `tests/ui/art-css.test.ts`
     - _Requirements: 1.4, 2.2, 2.3, 5.1, 12.1, 12.4, 12.5, 13.7_
-  - [~] 18.2 Final reduced-motion style test
+  - [x] 18.2 Final reduced-motion style test
     - Extend `tests/ui/reduced-motion-css.test.ts` so that every selector that has an `animation` or `transition` declaration anywhere in `app/globals.css` (outside the media block) also appears in the reduced-motion block with `animation: none` or `transition: none`. Do not weaken an existing assertion.
     - Files: `tests/ui/reduced-motion-css.test.ts`
     - _Requirements: 12.2, 12.6_
-  - [~] 18.3 Art end-to-end spec
+  - [x] 18.3 Art end-to-end spec
     - Create `tests/e2e/art.spec.ts` (mocked `/api/scan`, desktop and mobile): the scene stage is as wide as the viewport, exactly one `svg.gk-backdrop` exists on the results scene, two fog layers have computed opacity 0.25 and 0.35, stone plots carry `--tilt` within −6 and 6 and back-row plots have a smaller `--depth-scale` than front-row plots, no layout box of a plot changes between two loads, and with `emulateMedia({ reducedMotion: 'reduce' })` the computed `animation-name` is `none` for the fog, ghost, lantern and caretaker elements. Use `expectNoA11yViolations` on the results scene.
     - Files: `tests/e2e/art.spec.ts`
     - _Requirements: 1.2, 2.2, 2.4, 2.7, 3.6, 12.2, 13.6, 18.5_
-  - [~] 18.4 Update the flow specs and add axe for the new screens
+  - [x] 18.4 Update the flow specs and add axe for the new screens
     - Update `tests/e2e/results.spec.ts`, `tests/e2e/detail.spec.ts`, `tests/e2e/landing.spec.ts` and `tests/e2e/scanning.spec.ts` where they assert removed text or markup (the lantern dot, "NO GRADE", `(rule ...)` visible without opening the disclosure; reason: R8, R10, R11); add axe checks for the landing page, the four scanning stages, the results scene (request and zoxide) and the detail panel (uuid and aws-sign2 in the request fixture) in both projects, and assertions that the epitaph appears first in the panel and that "Show the rule" reveals the exact core message.
     - Files: `tests/e2e/results.spec.ts`, `tests/e2e/detail.spec.ts`, `tests/e2e/landing.spec.ts`, `tests/e2e/scanning.spec.ts`
     - _Requirements: 7.1, 8.5, 9.1, 10.2, 11.1, 13.6, 18.5_
-  - [~] 18.5 Update the motion, reflow and layout-shift specs
+  - [x] 18.5 Update the motion, reflow and layout-shift specs
     - Update `tests/e2e/reduced-motion.spec.ts` (hero static, four stones lit, fog static), `tests/e2e/layout-shift.spec.ts` (landing, scanning and results CLS within the graveyard-ui R17.3 limit with the new stage, hero and caretaker scene) and `tests/e2e/reflow.spec.ts` (no horizontal overflow at 320 px with the full-width stage and the hero).
     - Files: `tests/e2e/reduced-motion.spec.ts`, `tests/e2e/layout-shift.spec.ts`, `tests/e2e/reflow.spec.ts`
     - _Requirements: 9.8, 9.9, 10.5, 14.7, 14.8_
-  - [~] 18.6 Performance and size gates
+  - [x] 18.6 Performance and size gates
     - In `tests/e2e/scene-perf.spec.ts` add the baseline check (median at most baseline + `GA_RENDER_REGRESSION_MAX_MS` using the numbers recorded in `docs/milestone-1-report.md`, read at test time or a named constant `M1_SCENE_BASELINE_MS = 65.4` in the spec) and, only when `M3_REPORT=1`, write `scenePerf` (request and synthetic-300 medians and runs) into `test-results/m3-measurements.json`, keeping other keys. In `tests/e2e/js-budget.spec.ts` add the soft ceiling `GA_CLIENT_JS_SOFT_CEILING_BYTES` check and, when `M3_REPORT=1`, write `jsBudget` (total, budget, margin). Add a case to `tests/ui/check-client-js-budget.test.ts` only if the gate script itself changes (it does not here).
     - Files: `tests/e2e/scene-perf.spec.ts`, `tests/e2e/js-budget.spec.ts`
     - _Requirements: 14.1, 14.2, 14.3, 19.3_
 
-- [~] 19. Checkpoint - End-to-end, axe and performance
+- [x] 19. Checkpoint - End-to-end, axe and performance
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run` and `npm run test:e2e` (the mocked projects and the perf project), and ensure all pass. Ask the user if questions arise.
 
 - [ ] 20. Traceability and documents

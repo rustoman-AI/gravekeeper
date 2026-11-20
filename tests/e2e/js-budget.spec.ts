@@ -16,6 +16,13 @@ const MEASUREMENTS_FILE = path.join(
   "test-results",
   "m1-measurements.json",
 );
+// Graveyard art Requirements 14.3, 19.3: soft ceiling below the hard budget (requirements table: tests).
+const GA_CLIENT_JS_SOFT_CEILING_BYTES = 180000;
+const M3_MEASUREMENTS_FILE = path.join(
+  process.cwd(),
+  "test-results",
+  "m3-measurements.json",
+);
 const FEATURED: FixtureName = "request";
 
 // Same method as scripts/check-client-js-budget.ts (that module uses import.meta, which the
@@ -161,9 +168,32 @@ test.describe("client JavaScript budget", () => {
     mkdirSync(path.dirname(MEASUREMENTS_FILE), { recursive: true });
     writeFileSync(MEASUREMENTS_FILE, `${JSON.stringify(existing, null, 2)}\n`);
 
+    if (process.env.M3_REPORT === "1") {
+      let m3: Record<string, unknown> = {};
+      try {
+        const parsed: unknown = JSON.parse(readFileSync(M3_MEASUREMENTS_FILE, "utf8"));
+        if (parsed !== null && typeof parsed === "object" && !Array.isArray(parsed)) {
+          m3 = parsed as Record<string, unknown>;
+        }
+      } catch {
+        m3 = {};
+      }
+      m3.jsBudget = {
+        total,
+        budget: CLIENT_JS_BUDGET_BYTES,
+        margin: verdict.margin,
+        softCeiling: GA_CLIENT_JS_SOFT_CEILING_BYTES,
+      };
+      mkdirSync(path.dirname(M3_MEASUREMENTS_FILE), { recursive: true });
+      writeFileSync(M3_MEASUREMENTS_FILE, `${JSON.stringify(m3, null, 2)}\n`);
+    }
     expect(total, budgetMessage(verdict, chunks)).toBeLessThanOrEqual(
       CLIENT_JS_BUDGET_BYTES,
     );
+    expect(
+      total,
+      `Client JS ${total} B gzip exceeds GA_CLIENT_JS_SOFT_CEILING_BYTES ${GA_CLIENT_JS_SOFT_CEILING_BYTES} B`,
+    ).toBeLessThanOrEqual(GA_CLIENT_JS_SOFT_CEILING_BYTES);
 
     const initialFiles = new Set(chunks.map((c) => c.file));
 
@@ -208,7 +238,7 @@ test.describe("client JavaScript budget", () => {
     await expect(page.locator(".gk-scene")).toBeVisible();
     await page.waitForLoadState("networkidle");
     // A normal result shows no picker.
-    await expect(page.getByText("No manifest at the root")).toHaveCount(0);
+    await expect(page.getByText("No manifest was found at the repository root")).toHaveCount(0);
     const seenFiles = new Set((await scripts.drain()).map((f) => f.file));
 
     // A no-root-manifest result renders the picker, which loads its own chunk.
@@ -223,7 +253,8 @@ test.describe("client JavaScript budget", () => {
       page.waitForResponse(isNewChunk),
       page.goto(`/?repo=${encodeURIComponent(repoUrlOf(FEATURED))}`),
     ]);
-    await expect(page.getByText("No manifest at the root").first()).toBeVisible();
+    // R11.6: message shown once (the notes group heading no longer repeats it), in the empty graveyard.
+    await expect(page.getByText("No manifest was found at the repository root")).toBeVisible();
     await page.waitForLoadState("networkidle");
     const pickerChunks = (await scripts.drain())
       .map((f) => f.file)

@@ -5,7 +5,9 @@ import { loadScan, type FixtureName } from "./support/fixtures";
 import { mockScan, respondWithFixture } from "./support/mock-scan";
 import { expect, test } from "./support/test";
 
-// Requirements 20.2, 20.5, 3.5, 3.8, 5.2, 8.9, 18.1, 16.10.
+// Requirements 20.2, 20.5, 3.5, 3.8, 5.2, 8.9, 18.1, 16.10; graveyard-art 11.1, 13.6, 18.5.
+// graveyard-art R8, R10, R11: no assertion in this file depends on the removed lantern dot, "NO GRADE" or
+// a visible "(rule ...)" text; the headline helper already reads the renamed `emptySentence` (R11).
 
 const RECORDED: readonly FixtureName[] = ["request", "canopy", "zoxide", "synthetic-restless"];
 

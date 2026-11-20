@@ -97,6 +97,39 @@ describe("app/globals.css reduced motion", () => {
     expect(selectors.includes(".gk-scanning *")).toBe(true);
   });
 
+  it("every selector with an animation or transition outside the media block is disabled inside it (graveyard-art R12.2, R12.6)", () => {
+    const disabledRules = parseBlocks(mediaBlocks[0].body).filter((r) => {
+      const d = declarations(r.body);
+      return isNone(d.get("animation")) || isNone(d.get("transition"));
+    });
+    // Attribute values are ignored so `[data-kind]` covers `[data-kind="ghost"]`.
+    const norm = (s: string) =>
+      s.replace(/\[([^\]=\s]+)\s*[~|^$*]?=\s*[^\]]*\]/g, "[$1]").replace(/\s+/g, " ").trim();
+    const disabled = new Set(
+      disabledRules.flatMap((r) => r.prelude.split(",").map((s) => norm(s))),
+    );
+
+    const motion: string[] = [];
+    const collect = (blocks: Block[]) => {
+      for (const b of blocks) {
+        if (/^@media/i.test(b.prelude)) {
+          if (!mediaBlocks.includes(b)) collect(parseBlocks(b.body));
+          continue;
+        }
+        if (b.prelude.startsWith("@")) continue; // @keyframes, @theme, ...
+        const hasMotion = [...declarations(b.body)].some(
+          ([name, value]) => /^(animation|transition)(-|$)/.test(name) && !isNone(value),
+        );
+        if (hasMotion) motion.push(...b.prelude.split(",").map((s) => s.trim()));
+      }
+    };
+    collect(topLevel);
+
+    expect(motion.length).toBeGreaterThan(0);
+    const uncovered = motion.filter((s) => !disabled.has(norm(s)));
+    expect(uncovered, "selectors with animation/transition missing from the reduced-motion block").toEqual([]);
+  });
+
   it("every @keyframes rule animates only transform and opacity", () => {
     const keyframes = topLevel.filter((b) => /^@keyframes\s+/i.test(b.prelude));
     expect(keyframes.length).toBeGreaterThan(0);

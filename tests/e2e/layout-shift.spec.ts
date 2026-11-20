@@ -1,8 +1,9 @@
+import type { Page } from "@playwright/test";
 import { loadScan, type FixtureName } from "./support/fixtures";
-import { mockScan, respondWithFixture } from "./support/mock-scan";
+import { mockScan, respondWithFixture, withDelay } from "./support/mock-scan";
 import { expect, test } from "./support/test";
 
-// Requirements 17.3, 17.6, 20.7: cumulative layout shift of the rendered results.
+// Requirements 17.3, 17.6, 20.7: cumulative layout shift of the rendered results.\n// graveyard-art 9.9, 14.7: landing (hero), scanning (caretaker scene) and results stay within the same limit.
 
 // Test-owned constant (requirements table: tests).
 const RESULTS_CLS_MAX = 0.01;
@@ -41,13 +42,7 @@ function rowCountOf(name: FixtureName): number {
   ).size;
 }
 
-test.describe("results layout shift", () => {
-  test.setTimeout(90_000);
-
-  for (const fixture of FIXTURES) {
-    test(`${fixture} results shift at most RESULTS_CLS_MAX`, async ({
-      page,
-    }, testInfo) => {
+async function observeShifts(page: Page): Promise<void> {
       await page.addInitScript(() => {
         window.__gkShifts = [];
         new PerformanceObserver((list) => {
@@ -72,6 +67,24 @@ test.describe("results layout shift", () => {
           }
         }).observe({ type: "layout-shift", buffered: true });
       });
+}
+
+async function settle(page: Page): Promise<number> {
+  await page.evaluate(() => document.fonts.ready.then(() => undefined));
+  await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  await page.waitForTimeout(500);
+  const shifts = await page.evaluate(() => window.__gkShifts ?? []);
+  return shifts.reduce((sum, s) => sum + s.value, 0);
+}
+
+test.describe("results layout shift", () => {
+  test.setTimeout(90_000);
+
+  for (const fixture of FIXTURES) {
+    test(`${fixture} results shift at most RESULTS_CLS_MAX`, async ({
+      page,
+    }, testInfo) => {
+      await observeShifts(page);
       await mockScan(page, respondWithFixture(fixture));
       await page.goto(`/?repo=${encodeURIComponent(repoUrlOf(fixture))}`);
 
@@ -103,4 +116,29 @@ test.describe("results layout shift", () => {
       ).toBeLessThanOrEqual(RESULTS_CLS_MAX);
     });
   }
+});
+
+test.describe("landing and scanning layout shift", () => {
+  test("landing (hero) shifts at most RESULTS_CLS_MAX", async ({ page }) => {
+    await observeShifts(page);
+    await page.goto("/");
+    await expect(page.locator(".gk-hero")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Dig up" })).toBeVisible();
+    const total = await settle(page);
+    expect(total, `landing CLS ${total}`).toBeLessThanOrEqual(RESULTS_CLS_MAX);
+  });
+
+  test("scanning (caretaker scene) and results shift at most RESULTS_CLS_MAX", async ({ page }) => {
+    await observeShifts(page);
+    await mockScan(page, withDelay(1500, respondWithFixture("request")));
+    await page.goto("/");
+    await page.getByLabel("GitHub repository URL").fill("https://github.com/request/request");
+    await page.getByRole("button", { name: "Dig up" }).click();
+    await expect(page.locator(".gk-caretaker-scene")).toBeVisible();
+    const scanning = await settle(page);
+    expect(scanning, `scanning CLS ${scanning}`).toBeLessThanOrEqual(RESULTS_CLS_MAX);
+    await expect(page.locator("button.gk-plot").first()).toBeVisible({ timeout: 30_000 });
+    const total = await settle(page);
+    expect(total, `landing+scanning+results CLS ${total}`).toBeLessThanOrEqual(RESULTS_CLS_MAX);
+  });
 });

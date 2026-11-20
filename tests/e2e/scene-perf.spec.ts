@@ -11,6 +11,15 @@ import { expect, test } from "./support/test";
 // Test-owned constants (requirements table: tests).
 const SCENE_PERF_CPU_THROTTLE = 4;
 const SCENE_PERF_RUNS = 5;
+// Graveyard art Requirements 14.1, 14.2: the 300-plot (synthetic) median must stay within
+// GA_RENDER_REGRESSION_MAX_MS of the Milestone 1 median (docs/milestone-1-report.md, 65.4 ms).
+const M1_SCENE_BASELINE_MS = 65.4;
+const GA_RENDER_REGRESSION_MAX_MS = 15;
+const M3_MEASUREMENTS_FILE = path.join(
+  process.cwd(),
+  "test-results",
+  "m3-measurements.json",
+);
 
 const MEASUREMENTS_FILE = path.join(
   process.cwd(),
@@ -81,6 +90,26 @@ async function measureRuns(
   };
 }
 
+/** Merges `scenePerf` into test-results/m3-measurements.json, keeping other keys. */
+function writeM3ScenePerf(): void {
+  let existing: Record<string, unknown> = {};
+  try {
+    const parsed: unknown = JSON.parse(readFileSync(M3_MEASUREMENTS_FILE, "utf8"));
+    if (parsed !== null && typeof parsed === "object" && !Array.isArray(parsed)) {
+      existing = parsed as Record<string, unknown>;
+    }
+  } catch {
+    existing = {};
+  }
+  existing.scenePerf = {
+    baselineMs: M1_SCENE_BASELINE_MS,
+    regressionMaxMs: GA_RENDER_REGRESSION_MAX_MS,
+    ...measured,
+  };
+  mkdirSync(path.dirname(M3_MEASUREMENTS_FILE), { recursive: true });
+  writeFileSync(M3_MEASUREMENTS_FILE, `${JSON.stringify(existing, null, 2)}\n`);
+}
+
 test.describe("scene render budget", () => {
   test.describe.configure({ mode: "serial" });
   test.setTimeout(180_000);
@@ -104,6 +133,10 @@ test.describe("scene render budget", () => {
       result.medianMs,
       `median of ${SCENE_PERF_RUNS} runs at ${SCENE_PERF_CPU_THROTTLE}x CPU slowdown, runs ${JSON.stringify(result.runsMs)}`,
     ).toBeLessThanOrEqual(SCENE_RENDER_BUDGET_MS);
+    expect(
+      result.medianMs,
+      `median ${result.medianMs} ms exceeds the Milestone 1 baseline ${M1_SCENE_BASELINE_MS} ms by more than GA_RENDER_REGRESSION_MAX_MS (${GA_RENDER_REGRESSION_MAX_MS} ms), runs ${JSON.stringify(result.runsMs)}`,
+    ).toBeLessThanOrEqual(M1_SCENE_BASELINE_MS + GA_RENDER_REGRESSION_MAX_MS);
   });
 
   test("the 40-plot request scene is measured and recorded", async ({
@@ -141,5 +174,6 @@ test.describe("scene render budget", () => {
     existing.sceneRender = { ...previous, ...measured };
     mkdirSync(path.dirname(MEASUREMENTS_FILE), { recursive: true });
     writeFileSync(MEASUREMENTS_FILE, `${JSON.stringify(existing, null, 2)}\n`);
+    if (process.env.M3_REPORT === "1") writeM3ScenePerf();
   });
 });

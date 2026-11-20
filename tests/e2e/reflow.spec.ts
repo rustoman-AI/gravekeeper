@@ -1,9 +1,9 @@
 import type { Page } from "@playwright/test";
 import { columnsFor, SCENE_MIN_COLUMNS } from "../../view-model";
-import { mockScan, respondWithError, respondWithFixture } from "./support/mock-scan";
+import { mockScan, respondWithError, respondWithFixture, withDelay } from "./support/mock-scan";
 import { expect, test } from "./support/test";
 
-// Requirements 16.4, 16.9, 9.6.
+// Requirements 16.4, 16.9, 9.6; graveyard-art 9.9, 14.7 (hero and full-width stage).
 //
 // Zoom emulation: browser zoom to 200 percent on a 1280 CSS px window leaves a layout
 // viewport of 640 CSS px, so "200 percent zoom" is a 640 x 400 viewport here. The 320 CSS px
@@ -84,7 +84,19 @@ for (const vp of VIEWPORTS) {
     test("landing has no horizontal page scrolling", async ({ page }) => {
       await page.goto("/");
       await expect(page.getByLabel("GitHub repository URL")).toBeVisible();
+      await expect(page.locator(".gk-hero")).toBeVisible();
       await expectNoPageScrollX(page, `landing @${vp.width}`);
+      const hero = await page.locator(".gk-hero").boundingBox();
+      expect((hero?.x ?? 0) + (hero?.width ?? 0), "hero right edge").toBeLessThanOrEqual(vp.width + 0.5);
+    });
+
+    test("scanning stage has no horizontal page scrolling", async ({ page }) => {
+      await mockScan(page, withDelay(3000, respondWithFixture("request")));
+      await page.goto(`/?repo=${encodeURIComponent(REPO)}`);
+      await expect(page.locator(".gk-caretaker-scene")).toBeVisible();
+      await expectNoPageScrollX(page, `scanning @${vp.width}`);
+      const stage = await page.locator(".gk-caretaker-scene").boundingBox();
+      expect((stage?.x ?? 0) + (stage?.width ?? 0), "stage right edge").toBeLessThanOrEqual(vp.width + 0.5);
     });
 
     test("results Scene has no horizontal page scrolling and reflows its columns", async ({ page }) => {

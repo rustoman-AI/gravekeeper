@@ -3,7 +3,7 @@ import { expectNoA11yViolations } from "./support/a11y";
 import { hang, mockScan } from "./support/mock-scan";
 import { expect, test } from "./support/test";
 
-// Requirements 4.1, 4.6, 4.9, 16.10, 20.2, 20.5.
+// Requirements 4.1, 4.6, 4.9, 16.10, 20.2, 20.5; graveyard-art 9.1, 18.5.
 
 const REPO_URL = "https://github.com/request/request";
 const STAGES = [
@@ -81,12 +81,17 @@ test.describe("scanning screen", () => {
     expect(new URL(page.url()).search).toBe("");
   });
 
-  test("has no axe violations", async ({ page }) => {
-    await startHangingScan(page);
-    await page.clock.runFor(3000);
-    await expectStage(page, 1);
-    // axe schedules its own timers, so let the fake clock run in real time again.
-    await page.clock.resume();
-    await expectNoA11yViolations(page, "scanning", test.info().project.name);
-  });
+  // graveyard-art R9.1, R18.5: the scanning screen now carries the caretaker scene, so every stage is checked.
+  // Elapsed time (ms) that lands 100 ms into each stage, leaving the rest of the stage for axe's real-time run.
+  const STAGE_ELAPSED = [100, 2100, 6100, 10100] as const;
+  for (let stage = 0; stage < STAGES.length; stage++) {
+    test(`has no axe violations in stage ${String(stage + 1)} (${STAGES[stage]})`, async ({ page }) => {
+      await startHangingScan(page);
+      await page.clock.runFor(STAGE_ELAPSED[stage]!);
+      await expectStage(page, stage);
+      // axe schedules its own timers, so let the fake clock run in real time again.
+      await page.clock.resume();
+      await expectNoA11yViolations(page, `scanning-stage-${String(stage + 1)}`, test.info().project.name);
+    });
+  }
 });
