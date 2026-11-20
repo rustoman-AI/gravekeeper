@@ -383,37 +383,37 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
   - [x] 21.3 Write the reduced-motion style test
     - Create `tests/ui/reduced-motion-css.test.ts`: `app/globals.css` has one `@media (prefers-reduced-motion: reduce)` block that disables animation and transition for the scene, the fog and the scanning classes, and every `@keyframes` rule in the file animates only `transform` and `opacity`.
     - _Requirements: 8.6, 8.7, 16.6, 17.4_
-- [-] 22. Checkpoint - Component tests
+- [x] 22. Checkpoint - Component tests
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 23. Playwright setup, mocked API and Milestone 1 flows with axe
-  - [~] 23.1 Configure Playwright
+- [x] 23. Playwright setup, mocked API and Milestone 1 flows with axe
+  - [x] 23.1 Configure Playwright
     - Read `node_modules/next/dist/docs/01-app/02-guides/testing/playwright.md` first. Run `npx playwright install chromium`. Create `playwright.config.ts` at the repository root: Chromium only, projects `desktop` (1280x800) and `mobile` (390x844), `webServer` running `npm run build && npm run start -- -p 3100` (`reuseExistingServer` false in CI), `testDir` `tests/e2e`, a `baseURL` that the environment variable `E2E_BASE_URL` can override, in which case `webServer` is omitted (used by tasks 28.4 and 29.1). Add `tests/e2e/.generated`, `playwright-report` and `test-results` to `.gitignore` (keep the existing lines, `tests/repo-config.test.ts` stays green) and add the scripts `"e2e:fixtures": "tsx scripts/export-scan-fixtures.ts"` and `"test:e2e": "npm run e2e:fixtures && playwright test"` to `package.json`.
     - _Requirements: 20.1, 20.11_
-  - [~] 23.2 Create the fixture exporter
+  - [x] 23.2 Create the fixture exporter
     - Create `scripts/export-scan-fixtures.ts`: replay `tests/fixtures/request__request`, `revmic__canopy` and `ajeetdsouza__zoxide` through `runScan` with the wiring of `tests/pipeline/fixtures-scan.test.ts` and write `tests/e2e/.generated/scan-request.json`, `scan-canopy.json` and `scan-zoxide.json`, and write from the builders of task 5.5 `scan-synthetic-restless.json` (a restless ghost, a ghost, a buried, a forgotten, a lantern and an unmarked grave, with an advisory list of every `excluded` value), `scan-synthetic-300.json`, `scan-synthetic-301.json`. The script makes no network request and imports nothing from `app/`, `components/` or `client/`.
     - _Requirements: 20.1, 19.5_
-  - [~] 23.3 Write the test for the exporter
+  - [x] 23.3 Write the test for the exporter
     - Create `tests/ui/export-scan-fixtures.test.ts`: run the exporter's pure function into a temporary directory, parse every written file with `parseScanResponse(200, headers, body)` and assert a result outcome, the three recorded files have 40, 6 and 20 unique packages, the 300 and 301 files have that many.
     - _Requirements: 20.1, 19.6_
-  - [~] 23.4 Create the end-to-end helpers
+  - [x] 23.4 Create the end-to-end helpers
     - Create `tests/e2e/support/mock-scan.ts` (`mockScan(page, handler)` using `page.route('**/api/scan', ...)`, helpers to answer with a generated file, a delay, a status with headers such as `X-Gravekeeper-Cache` and `Retry-After`, an abort), `tests/e2e/support/a11y.ts` (`expectNoA11yViolations(page)` with `AxeBuilder` tags `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`, printing rule id and node target, and recording the per-screen result for task 29) and `tests/e2e/support/fixtures.ts` (loads the generated files). Every test fails on a request to any host other than the test server.
     - _Requirements: 20.1, 20.5, 16.10_
-  - [~] 23.5 Write the landing page end-to-end spec
+  - [x] 23.5 Write the landing page end-to-end spec
     - Create `tests/e2e/landing.spec.ts`: the landing page, typing a URL and activating "Dig up", each featured link starts a scan of the mocked result, the empty input message, axe on the landing page (Requirement 16, criterion 10).
     - _Requirements: 20.2, 20.5, 1.2, 1.3, 1.5, 2.3_
-  - [~] 23.6 Write the scanning end-to-end spec
+  - [x] 23.6 Write the scanning end-to-end spec
     - Create `tests/e2e/scanning.spec.ts`: a delayed mock with the Playwright clock shows the stage text changing at 2000, 6000 and 10000 ms, the slow notice at 15000 ms, Cancel returns to the landing page with the input value and focus, axe on the scanning screen.
     - _Requirements: 20.2, 20.5, 4.1, 4.6, 4.9_
-  - [~] 23.7 Write the results end-to-end spec
+  - [x] 23.7 Write the results end-to-end spec
     - Create `tests/e2e/results.spec.ts`: the results of each recorded fixture in Scene and List view show the headline text computed from the generated file, reload of `/?repo=...` gives the same result, Back and Forward between two results, the synthetic 301-package result renders every plot, the restless ghost is drawn and labelled "haunted, buried", axe on the Scene view and on the List view for each recorded fixture.
     - _Requirements: 20.2, 20.5, 3.5, 3.8, 5.2, 8.9, 18.1_
-  - [~] 23.8 Write the detail panel end-to-end spec
+  - [x] 23.8 Write the detail panel end-to-end spec
     - Create `tests/e2e/detail.spec.ts`: open and close the detail panel by mouse and by keyboard (Enter, Escape, focus return) for a tombstone, a forgotten grave, a ghost, a restless ghost and a lantern, the advisory groups show the three labelled groups for the synthetic package, axe with the panel open for each.
     - _Requirements: 20.2, 20.5, 10.1, 10.16, 16.4_
-  - [~] 23.9 Write the reduced-motion end-to-end spec
+  - [x] 23.9 Write the reduced-motion end-to-end spec
     - Create `tests/e2e/reduced-motion.spec.ts` with `reducedMotion: 'reduce'`: the landing, scanning, results and detail flows run once, the scanning screen has no animated element, and `document.getAnimations()` returns no running CSS animation inside the scene.
     - _Requirements: 20.6, 4.10, 8.7, 16.6_
-- [~] 24. Checkpoint - End-to-end tests
+- [x] 24. Checkpoint - End-to-end tests
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run` and `npm run test:e2e`, and ensure all pass. Ask the user if questions arise.
 - [ ] 25. Scene render time and client JavaScript size
   - [~] 25.1 Add the inert performance hook

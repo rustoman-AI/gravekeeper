@@ -15,7 +15,9 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest --run",
-    "test:deep": "tsx scripts/test-deep.ts"
+    "test:deep": "tsx scripts/test-deep.ts",
+    "e2e:fixtures": "tsx scripts/export-scan-fixtures.ts",
+    "test:e2e": "npm run e2e:fixtures && playwright test"
   },
   "dependencies": {
     "@renovatebot/pep440": "5.0.1",

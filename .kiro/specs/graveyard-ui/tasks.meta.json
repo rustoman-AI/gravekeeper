@@ -1975,6 +1975,11 @@
         "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795140779050
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140836939
       }
     ],
     "23.1 Configure Playwright": [
@@ -1982,6 +1987,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128475247
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140845168
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140930492
       }
     ],
     "23.2 Create the fixture exporter": [
@@ -1989,6 +2004,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128475309
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140845273
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140931110
       }
     ],
     "23.3 Write the test for the exporter": [
@@ -1996,6 +2021,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128475351
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140934915
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141020135
       }
     ],
     "23.4 Create the end-to-end helpers": [
@@ -2003,6 +2038,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128475392
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795140935572
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141020287
       }
     ],
     "23.5 Write the landing page end-to-end spec": [
@@ -2010,6 +2055,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128475449
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141024365
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141107214
       }
     ],
     "23.6 Write the scanning end-to-end spec": [
@@ -2017,6 +2072,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128475492
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141108691
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141529307
       }
     ],
     "23.7 Write the results end-to-end spec": [
@@ -2024,6 +2089,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128475532
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141109688
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141529549
       }
     ],
     "23.8 Write the detail panel end-to-end spec": [
@@ -2031,6 +2106,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128475570
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141110688
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141614346
       }
     ],
     "23.9 Write the reduced-motion end-to-end spec": [
@@ -2038,6 +2123,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128475611
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141111564
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141529736
       }
     ],
     "24. Checkpoint - End-to-end tests": [
@@ -2045,6 +2140,16 @@
         "executionId": "541f46b0-1f79-46af-9db6-59132dc4d5a9",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795128475655
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141614947
+      },
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141697091
       }
     ],
     "25.1 Add the inert performance hook": [
@@ -2542,6 +2647,13 @@
         "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795140778611
+      }
+    ],
+    "23. Playwright setup, mocked API and Milestone 1 flows with axe": [
+      {
+        "executionId": "f545e8a6-d9c4-481c-ba93-1018b8d9a2d0",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795141614412
       }
     ]
   }

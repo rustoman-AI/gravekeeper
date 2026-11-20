@@ -331,4 +331,6 @@
 }
 .gk-link {
   color: var(--color-spectral);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
