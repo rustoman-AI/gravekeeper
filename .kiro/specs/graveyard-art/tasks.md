@@ -94,58 +94,58 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
 - [x] 5. Checkpoint - Scene atmosphere
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 6. Sprite variety and tone
-  - [~] 6.1 Variant, tilt and symbol-id functions
+- [x] 6. Sprite variety and tone
+  - [x] 6.1 Variant, tilt and symbol-id functions
     - Create `view-model/variants.ts` with `SPRITE_VARIANTS`, `STONE_KINDS`, `variantOf`, `tiltOf` and `symbolIdOf` exactly as in the design (`hashKey("variant:" + key)` and `hashKey("tilt:" + key)`).
     - Files: `view-model/variants.ts`
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.6, 3.8_
-  - [~] 6.2 Write the property test for variant choice
+  - [x] 6.2 Write the property test for variant choice
     - `tests/ui/view-model/variant-choice.property.test.ts`: random keys (strings including unicode and the empty string) and kinds; also scenes built at two column counts and rotated row order.
     - **Property 1: Variant choice is a deterministic function of kind and key (GA-P1)**
     - **Validates: Requirements 3.2, 3.3, 3.4**
-  - [~] 6.3 Write the property test for tilt
+  - [x] 6.3 Write the property test for tilt
     - `tests/ui/view-model/tilt.property.test.ts`.
     - **Property 2: Tilt stays within the range and only stones lean (GA-P2)**
     - **Validates: Requirements 3.6, 3.8**
-  - [~] 6.4 Variant, symbol id and tilt on the plot model
+  - [x] 6.4 Variant, symbol id and tilt on the plot model
     - Add `variant`, `symbolId` and `tilt` to `PlotModel` (`view-model/types.ts`) and set them in `plotOf` (`view-model/scene.ts`). Add `tests/ui/view-model/variants.test.ts`: fixed-key examples, restless equals tombstone for one key, and the reachability check of R3.5 (keys `npm:name-0:registry` to `npm:name-999:registry`, each variant of both lists chosen for at least 5 percent).
     - Files: `view-model/types.ts`, `view-model/scene.ts`, `tests/ui/view-model/variants.test.ts`
     - _Requirements: 3.5, 3.8_
-  - [~] 6.5 Stone symbols: tombstones and overgrown graves
+  - [x] 6.5 Stone symbols: tombstones and overgrown graves
     - Create `components/scene-sprite-stones.tsx` returning the shared shapes (`shape-stone-rounded`, `-cross`, `-obelisk`, `-slab`, `shape-ivy-light`, `-medium`, `-heavy`) and the symbols `plot-tombstone-<v>`, `plot-overgrown-ivy-<level>` and their `-flat` twins, on the `0 0 80 104` viewBox, root `<g style={{ opacity: "var(--depth-bright, 1)" }}>` in every non-flat and flat symbol, colours by Tokens only, no filter, no mask. Remove the built-in `rotate(-9)` of the old overgrown symbol (Tilt supplies the lean). Each variant has a different outline. Add `tests/ui/components/sprites-stones.test.tsx` (ids from `SPRITE_VARIANTS`, flat twins, distinct markup per symbol).
     - Files: `components/scene-sprite-stones.tsx`, `tests/ui/components/sprites-stones.test.tsx`
     - _Requirements: 3.1, 4.7, 4.9_
-  - [~] 6.6 Ghost and restless symbols
+  - [x] 6.6 Ghost and restless symbols
     - Create `components/scene-sprite-ghosts.tsx`: `shape-ghost-wisp` (narrow head, body filled with `ghost-body-gradient` fading into a trailing tail with two curls, two hollow dark eyes, no mouth, thin low-opacity bone stroke), the glow shape using `--glow`, symbols `plot-ghost-wisp`, `plot-restless-<v>` (the wisp rising from its own stone, tail overlapping the stone top; stone shapes imported by reference `#shape-stone-<v>`) and flat twins. The `ghost-body-gradient` is defined in this file's own `<defs>` fragment. Add `tests/ui/components/sprites-ghosts.test.tsx` (no `ellipse` mouth shape, two eye shapes, gradient fill, restless uses the stone shape of its variant, flat twins).
     - Files: `components/scene-sprite-ghosts.tsx`, `tests/ui/components/sprites-ghosts.test.tsx`
     - _Requirements: 4.1, 4.2, 4.3, 4.7, 4.9_
-  - [~] 6.7 Lantern and unmarked symbols
+  - [x] 6.7 Lantern and unmarked symbols
     - Create `components/scene-sprite-props.tsx`: `lantern-pool-gradient`, symbol `plot-lantern-iron` (Light_Pool ellipse on the ground line, short crooked post of two bent segments, hook, iron lantern with cap and cage bars, amber glass, flame) and `plot-unmarked-mound` (low mound, small wooden marker of two planks), plus flat twins (the flat lantern has no pool gradient). Add `tests/ui/components/sprites-props.test.tsx` (pool ellipse only in the non-flat lantern, marker shapes present, distinct markup).
     - Files: `components/scene-sprite-props.tsx`, `tests/ui/components/sprites-props.test.tsx`
     - _Requirements: 2.10, 2.11, 4.4, 4.6, 4.7, 4.9_
-  - [~] 6.8 Assemble the sprite sheet and use the symbol id
+  - [x] 6.8 Assemble the sprite sheet and use the symbol id
     - Rebuild `components/scene-sprites.tsx` from `SceneDefs`, the three sprite files and the existing `plot-glow-gradient`; remove the old `plot-<kind>` symbols. In `components/scene-plot.tsx` render `<use href={"#" + plot.symbolId + (simplified ? "-flat" : "")} />`.
     - Files: `components/scene-sprites.tsx`, `components/scene-plot.tsx`
     - _Requirements: 4.7, 4.10, 14.4_
-  - [~] 6.9 Write the property test for symbol ids and the sheet test
+  - [x] 6.9 Write the property test for symbol ids and the sheet test
     - `tests/ui/view-model/symbol-ids.property.test.ts`: for generated scenes, every plot `symbolId` is in the table, per-kind id sets are disjoint, no duplicate id in the table; a unit assertion renders `SceneSprites` and checks that every id of the table and its `-flat` twin exist as `<symbol id>` and that no two symbols of one form serialize identically. Update `tests/ui/components/scene-sprites.test.tsx` (reason: the symbol ids changed from `plot-<kind>` to `plot-<kind>-<variant>`).
     - **Property 10: Every plot resolves to one existing, kind-unique symbol (GA-P10)**
     - **Validates: Requirements 4.7, 4.8**
     - Files: `tests/ui/view-model/symbol-ids.property.test.ts`, `tests/ui/components/scene-sprites.test.tsx`
-  - [~] 6.10 Tilt, flicker and motion styles
+  - [x] 6.10 Tilt, flicker and motion styles
     - In `app/globals.css` add `rotate: var(--tilt, 0deg)` to `.gk-plot-art`; replace the lantern plot animation by keyframes `gk-lantern-flicker` (opacity only, 1 to 0.8, 2.4 s, `phase` delay); remove the keyframes `gk-lantern-pulse` only if no selector uses it after this task (the scanning dot is removed in task 14.4, so keep it until then); extend the reduced-motion block with every new selector. Update `tests/ui/reduced-motion-css.test.ts` only where its selector list must include the new selectors (reason: the legitimately added animations; the assertion that every animation is disabled stays). In `components/scene-plot.tsx` write `--tilt` (as `<n>deg`) on the button when `plot.tilt` is not 0; task 6.8 finished editing this file in an earlier wave.
     - Files: `app/globals.css`, `components/scene-plot.tsx`, `tests/ui/reduced-motion-css.test.ts`
     - _Requirements: 3.7, 4.5, 12.1, 12.2, 12.4_
-  - [~] 6.11 Update the scene tests for the new art
+  - [x] 6.11 Update the scene tests for the new art
     - Update `tests/ui/components/scene.test.tsx` and `tests/ui/components/scene-render.test.tsx` where they assert symbol hrefs (`#plot-<kind>` becomes `#plot-<kind>-<variant>`, `-flat` kept in the simplified form; reason: GA-D7) and add an assertion that a stone plot carries `--tilt` when its tilt is not 0.
     - Files: `tests/ui/components/scene.test.tsx`, `tests/ui/components/scene-render.test.tsx`
     - _Requirements: 3.7, 4.7, 17.2_
-  - [~] 6.12 Measure the render time and the bundle after the sprites
+  - [x] 6.12 Measure the render time and the bundle after the sprites
     - Run `npm run build`, `npm run check:bundle` and the perf spec (`npx playwright test tests/e2e/scene-perf.spec.ts --project=perf`). Record the 300-plot median and the gzip total in the task result and compare them with 65.4 ms and 156353 bytes. If the median exceeds baseline plus 15 ms or the total exceeds 180000 bytes, apply the contingencies of the design in order and re-measure. This task changes no file unless a contingency is applied; if one is, name the files in the result.
     - Files: none (measurement); contingency files only if needed: `components/scene-sprite-ghosts.tsx`, `components/scene-sprite-props.tsx`
     - _Requirements: 14.1, 14.2, 14.3_
 
-- [~] 7. Checkpoint - Sprites
+- [x] 7. Checkpoint - Sprites
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 8. Results header

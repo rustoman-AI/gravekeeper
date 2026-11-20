@@ -2,8 +2,10 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { SceneSprites } from "../../../components/scene-sprites";
+import { SPRITE_VARIANTS, symbolIdOf } from "../../../view-model/variants";
+import type { PlotKind } from "../../../view-model/types";
 
-const KINDS = ["tombstone", "overgrown", "ghost", "restless", "lantern", "unmarked"];
+const KINDS = Object.keys(SPRITE_VARIANTS) as PlotKind[];
 const COLOUR_PROPS = ["fill", "stroke", "stop-color", "color"];
 const ALLOWED = [/^var\(--color-[a-z0-9-]+\)$/, /^url\(#[\w-]+\)$/, /^none$/, /^currentColor$/i, /^transparent$/];
 
@@ -13,13 +15,15 @@ function sheet() {
 }
 
 describe("SceneSprites", () => {
-  it("defines the six symbols and their -flat variants", () => {
+  it("defines every table symbol and its -flat twin", () => {
     const svg = sheet();
     for (const kind of KINDS) {
-      for (const id of [`plot-${kind}`, `plot-${kind}-flat`]) {
+      for (const v of SPRITE_VARIANTS[kind]) {
+        for (const id of [symbolIdOf(kind, v, false), symbolIdOf(kind, v, true)]) {
         const el = svg.querySelector(`[id="${id}"]`);
         expect(el, id).not.toBeNull();
         expect(el?.tagName.toLowerCase()).toBe("symbol");
+        }
       }
     }
   });
@@ -50,7 +54,7 @@ describe("SceneSprites", () => {
 
   it("declares shared defs", () => {
     const svg = sheet();
-    for (const id of ["plot-glow-gradient", "shape-tombstone", "shape-ghost", "shape-glow"]) {
+    for (const id of ["plot-glow-gradient", "shape-stone-rounded", "shape-ghost-wisp", "shape-ghost-glow", "shape-lantern-body", "shape-unmarked-mound"]) {
       expect(svg.querySelector(`[id="${id}"]`), id).not.toBeNull();
     }
   });

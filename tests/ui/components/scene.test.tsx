@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { Scene } from "../../../components/scene";
 import { buildPackageRows } from "../../../view-model/package-rows";
 import { buildSceneModel } from "../../../view-model/scene";
+import { symbolIdOf, variantOf } from "../../../view-model/variants";
 import type { ParsedScanResult, PlotKind, SceneModel } from "../../../view-model/types";
 import { buildScanResult } from "../../support/ui/scan-result-builder";
 import type { RowSpec } from "../../support/ui/scan-result-builder";
@@ -174,7 +175,13 @@ describe("Scene", () => {
       const kind = scene.plots[i].kind;
       kinds.add(kind);
       expect(p.getAttribute("data-kind")).toBe(kind);
-      expect(p.querySelector("use")?.getAttribute("href")).toBe(`#plot-${kind}`);
+      // graveyard-art GA-D7: the href carries the variant, `#plot-<kind>-<variant>`.
+      const plot = scene.plots[i];
+      expect(p.querySelector("use")?.getAttribute("href")).toBe(
+        "#" + symbolIdOf(kind, variantOf(kind, plot.key), false),
+      );
+      // graveyard-art Requirement 3.7: `--tilt` is written only when the tilt is not 0.
+      expect(p.style.getPropertyValue("--tilt")).toBe(plot.tilt !== 0 ? `${plot.tilt}deg` : "");
     });
     expect(Array.from(kinds).sort()).toEqual(Object.keys(WORDS).sort());
   });

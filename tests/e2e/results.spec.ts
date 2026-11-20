@@ -116,6 +116,6 @@ test.describe("results", () => {
     await expect(restless).toHaveCount(1);
     await expect(restless).toBeVisible();
     await expect(restless).toHaveAttribute("aria-label", /haunted, buried/);
-    await expect(restless.locator("svg use")).toHaveAttribute("href", /#plot-restless/);
+    await expect(restless.locator("svg use")).toHaveAttribute("href", /#plot-restless-(rounded|cross|obelisk|slab)$/);
   });
 });

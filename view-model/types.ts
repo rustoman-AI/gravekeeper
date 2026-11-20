@@ -154,6 +154,12 @@ export interface PlotModel {
   readonly depthScale: number;
   /** graveyard-art Requirement 2.6: opacity of the plot art by row, in [DEPTH_BRIGHTNESS_BACK, 1]. */
   readonly depthBrightness: number;
+  /** graveyard-art Requirement 3.2: sprite variant, a function of kind and key only. */
+  readonly variant: string;
+  /** graveyard-art Requirement 4.7: sprite symbol id `plot-<kind>-<variant>` (no `-flat`). */
+  readonly symbolId: string;
+  /** graveyard-art Requirement 3.6: lean in whole degrees; 0 for non-stone kinds. */
+  readonly tilt: number;
 }
 export interface SceneModel {
   readonly columns: number;

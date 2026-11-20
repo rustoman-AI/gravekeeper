@@ -36,6 +36,7 @@ import { SCENE_MAX_PLOTS } from "../../../view-model";
 import { buildPackageRows } from "../../../view-model/package-rows";
 import { parseScanResponse } from "../../../view-model/parse-response";
 import { buildSceneModel } from "../../../view-model/scene";
+import { symbolIdOf, variantOf } from "../../../view-model/variants";
 import type { SceneModel } from "../../../view-model";
 import type { ScanResult } from "../../../pipeline/scan/types";
 import { result300, result301 } from "../../support/ui/scan-result-builder";
@@ -80,7 +81,17 @@ describe("Scene render", () => {
     const root = container.querySelector(".gk-scene") as HTMLElement;
     expect(root.getAttribute("data-simplified")).toBe("true");
     expect(root.querySelectorAll("button.gk-plot").length).toBe(301);
-    expect(root.querySelector("use")?.getAttribute("href")).toMatch(/-flat$/);
+    // graveyard-art GA-D7: the simplified form keeps `-flat` after the variant.
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>("button.gk-plot"));
+    buttons.forEach((b, i) => {
+      const plot = scene.plots[i];
+      expect(b.querySelector("use")?.getAttribute("href")).toBe(
+        "#" + symbolIdOf(plot.kind, variantOf(plot.kind, plot.key), true),
+      );
+      // graveyard-art Requirement 3.7: `--tilt` only when the tilt is not 0.
+      expect(b.style.getPropertyValue("--tilt")).toBe(plot.tilt !== 0 ? `${plot.tilt}deg` : "");
+    });
+    expect(scene.plots.some((p) => p.tilt !== 0)).toBe(true);
   });
 
   it("does not re-render any plot when the same SceneModel object is passed again", () => {

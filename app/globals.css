@@ -263,6 +263,8 @@ main[tabindex="-1"]:focus-visible {
   /* graveyard-art Requirement 2.9: back rows are smaller; brightness is applied inside the sprite symbols. */
   transform-origin: 50% 100%;
   scale: var(--depth-scale, 1);
+  /* graveyard-art Requirement 3.7: stones lean by --tilt (set only when not 0). */
+  rotate: var(--tilt, 0deg);
 }
 .gk-plot-label {
   position: absolute;
@@ -324,8 +326,18 @@ main[tabindex="-1"]:focus-visible {
 }
 
 .gk-plot[data-kind="lantern"] .gk-plot-art {
-  animation: gk-lantern-pulse 3s ease-in-out infinite alternate;
-  animation-delay: calc(var(--phase, 0) * -3s);
+  /* graveyard-art Requirement 4.5: the lantern flickers. Document selectors do not reach into the <use> shadow tree, so the whole art flickers (opacity only). */
+  animation: gk-lantern-flicker 2.4s ease-in-out infinite alternate;
+  animation-delay: calc(var(--phase, 0) * -2.4s);
+}
+
+@keyframes gk-lantern-flicker {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.8;
+  }
 }
 
 @keyframes gk-ghost-drift {

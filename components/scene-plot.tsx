@@ -21,6 +21,8 @@ function ScenePlotImpl({ plot, tabbable, simplified }: ScenePlotProps) {
   // Brightness is applied inside the sprite symbols (opacity: var(--depth-bright)); the label is not dimmed or scaled.
   if (plot.depthScale !== 1) style["--depth-scale"] = plot.depthScale;
   if (plot.depthBrightness !== 1) style["--depth-bright"] = plot.depthBrightness;
+  // graveyard-art Requirement 3.7: tilt is written only when not 0.
+  if (plot.tilt !== 0) style["--tilt"] = `${plot.tilt}deg`;
   return (
     <button
       type="button"
@@ -32,7 +34,7 @@ function ScenePlotImpl({ plot, tabbable, simplified }: ScenePlotProps) {
       style={style as CSSProperties}
     >
       <svg className="gk-plot-art" aria-hidden="true" focusable="false">
-        <use href={`#plot-${plot.kind}${simplified ? "-flat" : ""}`} />
+        <use href={"#" + plot.symbolId + (simplified ? "-flat" : "")} />
       </svg>
       <span className="gk-plot-label">{plot.label}</span>
     </button>

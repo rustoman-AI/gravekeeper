@@ -13,6 +13,7 @@ import {
 } from './constants';
 import { depthOf } from './depth';
 import { hashKey } from './hash';
+import { symbolIdOf, tiltOf, variantOf } from './variants';
 import type { PackageRow, PlotModel, SceneModel } from './types';
 
 const JITTER_RANGE = 2 * PLOT_JITTER_MAX_PX + 1;
@@ -65,6 +66,7 @@ function plotOf(row: PackageRow, i: number, cols: number, rowCount: number): Plo
   // graveyard-art Requirements 2.6, 2.8: depth never touches x, y, width, height or phase.
   const depth = depthOf(r, rowCount);
   const c = i % cols;
+  const variant = variantOf(row.kind, row.key);
   const h = hashKey(row.key);
   const jx = (h % JITTER_RANGE) - PLOT_JITTER_MAX_PX;
   const jy = ((h >>> 8) % JITTER_RANGE) - PLOT_JITTER_MAX_PX;
@@ -90,6 +92,10 @@ function plotOf(row: PackageRow, i: number, cols: number, rowCount: number): Plo
     phase: (h >>> 16) / 65535,
     depthScale: depth.scale,
     depthBrightness: depth.brightness,
+    // graveyard-art Requirements 3.2, 3.6, 4.7: salted hashes, so x, y and phase stay unchanged.
+    variant,
+    symbolId: symbolIdOf(row.kind, variant, false),
+    tilt: tiltOf(row.kind, row.key),
   };
 }
 

@@ -1,30 +1,32 @@
+import { SPRITE_VARIANTS, symbolIdOf } from '@/view-model/variants';
+
 // Requirement 1.7: six legend entries, each a drawing and a visible text label.
 const LEGEND_ENTRIES = [
   {
-    symbol: 'plot-tombstone',
+    symbol: symbolIdOf('tombstone', SPRITE_VARIANTS.tombstone[0], false),
     text: 'Tombstone: DEAD and buried, archived or deprecated',
   },
   {
-    symbol: 'plot-overgrown',
+    symbol: symbolIdOf('overgrown', SPRITE_VARIANTS.overgrown[0], false),
     text: 'Overgrown grave: DEAD and forgotten, no recent release or commit, may be finished or abandoned',
   },
   {
-    symbol: 'plot-ghost',
+    symbol: symbolIdOf('ghost', 'wisp', false),
     text: 'Ghost: HAUNTED, has open vulnerabilities',
   },
   {
-    symbol: 'plot-restless',
+    symbol: symbolIdOf('restless', SPRITE_VARIANTS.restless[0], false),
     text: 'Restless ghost: HAUNTED and buried, has open vulnerabilities and is also archived or deprecated',
   },
   {
-    symbol: 'plot-lantern',
+    symbol: symbolIdOf('lantern', 'iron', false),
     text: 'Lantern: ALIVE, no risk signal strong enough to matter',
   },
   {
-    symbol: 'plot-unmarked',
+    symbol: symbolIdOf('unmarked', 'mound', false),
     text: 'Unmarked grave: not assessed',
   },
-] as const;
+];
 
 export function Legend() {
   return (
