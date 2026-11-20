@@ -1,26 +1,133 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Design tokens (graveyard-ui design, "Design tokens", R15.2).
+ * This is the only place that holds literal colours.
+ * Contrast on --color-night (WCAG 2.2): bone 15.22, bone-muted 9.55, amber 10.14,
+ * spectral 12.57, stone 7.20, moss 7.64, focus 13.13.
+ */
+@theme {
+  --color-night: #0b1020; /* page background */
+  --color-night-raised: #151c31; /* panels */
+  --color-bone: #ece6d8; /* text */
+  --color-bone-muted: #b4b8c4; /* secondary text */
+  --color-amber: #f2b24c; /* lanterns, primary button */
+  --color-spectral: #6fe3f2; /* ghosts, glow */
+  --color-stone: #9aa0aa; /* tombstones */
+  --color-moss: #86b073; /* overgrown graves, accents */
+  --color-focus: #ffd166; /* focus ring */
+  --color-moss-deep: #2f4a33; /* DECORATIVE ONLY: ivy shading, contrast 1.94, never conveys information */
 }
 
+/* Font variables are set by next/font in app/layout.tsx (IM Fell English SC, Atkinson Hyperlegible). */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-im-fell), serif;
+  --font-sans: var(--font-atkinson), system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    background-color: var(--color-night);
+    color: var(--color-bone);
+  }
+
+  body {
+    background-color: var(--color-night);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+  }
+
+  /* The display face has one weight (400); a heavier weight would be synthesised. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .gk-wordmark {
+    font-family: var(--font-display);
+    font-weight: 400;
+  }
+
+  /* Visible focus ring on every focusable element (R16.5). */
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  summary:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Fog: two layers, compositor properties only (transform, opacity). */
+.gk-fog {
+  position: absolute;
+  inset: -20% -50%;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--color-bone-muted) 22%, transparent) 0%,
+    transparent 65%
+  );
+  opacity: 0.6;
+  animation: gk-fog-drift 60s linear infinite alternate;
+}
+
+.gk-fog-b {
+  opacity: 0.4;
+  animation-duration: 90s;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes gk-fog-drift {
+  from {
+    transform: translate3d(-8%, 0, 0);
+    opacity: 0.35;
+  }
+  to {
+    transform: translate3d(8%, 0, 0);
+    opacity: 0.65;
+  }
+}
+
+/* Scanning screen: CSS-only fog and lantern, carries no information (R4.11). */
+.gk-scanning-fog {
+  animation: gk-fog-drift 40s linear infinite alternate;
+}
+
+.gk-scanning-lantern {
+  animation: gk-lantern-pulse 3s ease-in-out infinite;
+}
+
+@keyframes gk-lantern-pulse {
+  from {
+    opacity: 0.55;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gk-scene,
+  .gk-scene *,
+  .gk-fog,
+  .gk-fog-b,
+  .gk-scanning,
+  .gk-scanning *,
+  .gk-scanning-fog,
+  .gk-scanning-lantern {
+    animation: none;
+    transition: none;
+  }
 }

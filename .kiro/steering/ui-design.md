@@ -17,7 +17,7 @@
 - All art is original SVG or CSS made in this repo.
 - No third-party images, no icons with unclear licences, no copyrighted characters.
 - Fonts load through next/font and come from OFL-licensed families only.
-- Use one gothic display face for headings and one highly readable sans for data.
+- Use one period display face for headings and one highly readable sans for data.
 
 ## Voice
 - Themed copy (for example "The caretaker found...") wraps the plain API message. It never replaces it.

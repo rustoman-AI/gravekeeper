@@ -204,29 +204,29 @@ Implementation language: TypeScript (strict). The project root is the `gravekeep
     - _Requirements: 19.8_
 - [x] 8. Checkpoint - Test dependencies and configuration
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-- [ ] 9. Fonts and theme tokens
-  - [~] 9.1 Record the font licences and align the steering sentence
+- [x] 9. Fonts and theme tokens
+  - [x] 9.1 Record the font licences and align the steering sentence
     - Re-run the two licence checks of design.md "Font licence evidence" (fetch `https://raw.githubusercontent.com/google/fonts/main/ofl/imfellenglishsc/METADATA.pb` and `OFL.txt`, and `https://raw.githubusercontent.com/google/fonts/main/ofl/atkinsonhyperlegible/METADATA.pb`) and confirm `license: "OFL"` for both and the presence of both names in `node_modules/next/dist/compiled/@next/font/dist/google/font-data.json`. If either check fails, stop and report instead of continuing. Create `docs/font-licences.md` with both fonts, designers, the licence name and version, the source URLs and the copyright lines, and the full text of the SIL Open Font License 1.1 once. In `.kiro/steering/ui-design.md` change "one gothic display face" to "one period display face" and change nothing else.
     - _Requirements: 15.3_
-  - [~] 9.2 Create the site shell components
+  - [x] 9.2 Create the site shell components
     - Create `components/site-header.tsx` (`<header>` with the wordmark as a link, not a heading), `components/site-footer.tsx` (`<footer>` with the text "Fonts: SIL Open Font License 1.1, see docs/font-licences.md") and `components/skip-link.tsx` (skip link to `#main`). One component per file, no default exports.
     - _Requirements: 1.9, 15.3, 15.8, 16.4_
-  - [~] 9.3 Define the design tokens and base styles
+  - [x] 9.3 Define the design tokens and base styles
     - Read `node_modules/next/dist/docs/01-app/01-getting-started/13-fonts.md` and `font.md` first. Replace `app/globals.css` with the Tailwind import, the `@theme` token block of the design (night, night-raised, bone, bone-muted, amber, spectral, stone, moss, focus, moss-deep, and the two font variables), base typography (display font only on headings and the wordmark, weight 400 only, body in the sans font), a visible focus ring from `--color-focus` on every focusable element, and the `@media (prefers-reduced-motion: reduce)` block that sets `animation: none` and `transition: none` on the scene, the fog and the scanning animation classes. No literal colour outside the token block.
     - _Requirements: 15.1, 15.2, 16.2, 16.5, 16.6_
-  - [~] 9.4 Replace the root layout and the fonts
+  - [x] 9.4 Replace the root layout and the fonts
     - Rewrite `app/layout.tsx`: `import { IM_Fell_English_SC, Atkinson_Hyperlegible } from 'next/font/google'` with `subsets: ['latin']`, `weight: '400'` for the display font, weights `['400', '700']` for the sans font, `variable` CSS variables and default `adjustFontFallback`; remove the Geist fonts; `export const metadata` with the title "Gravekeeper" and Gravekeeper's own description; `<html lang="en">` with both variable classes; `SkipLink`, `SiteHeader`, `<main id="main">` and `SiteFooter`.
     - _Requirements: 15.3, 15.8, 17.6, 1.9_
-  - [~] 9.5 Write the token contrast test
+  - [x] 9.5 Write the token contrast test
     - Create `tests/ui/tokens.test.ts`: parse `app/globals.css`, read the declared token pairs, compute the WCAG 2.2 contrast ratio and fail below `TEXT_CONTRAST_MIN` for text pairs (bone, bone-muted, amber, spectral, stone, moss on night and on night-raised) and below `NONTEXT_CONTRAST_MIN` for shape and focus pairs; assert that `--color-moss-deep` is declared as decorative only.
     - _Requirements: 15.2, 16.2_
-  - [~] 9.6 Write the layout test
+  - [x] 9.6 Write the layout test
     - Create `tests/ui/layout.test.ts`: `app/layout.tsx` imports exactly `IM_Fell_English_SC` and `Atkinson_Hyperlegible` from `next/font/google` and no other font, contains `lang="en"`, exports `metadata` whose title is not the starter text, and has no import of `Geist` or `Pirata_One`; `docs/font-licences.md` names both fonts and the text "SIL Open Font License".
     - _Requirements: 15.3, 15.8_
-  - [~] 9.7 Write the component test for the site shell
+  - [x] 9.7 Write the component test for the site shell
     - Create `tests/ui/components/site-shell.test.tsx` (jsdom): the header, main-adjacent skip link and footer landmarks render, the wordmark is a link and not a heading, the footer contains the licence text.
     - _Requirements: 1.9, 16.4_
-- [~] 10. Checkpoint - Fonts and theme
+- [x] 10. Checkpoint - Fonts and theme
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 - [ ] 11. Scan client, URL state, first-pass art and landing page
   - [~] 11.1 Implement the Scan_Client
