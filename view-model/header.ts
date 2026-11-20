@@ -1,7 +1,7 @@
 import type { Grade } from '../core';
 import { GRADE_A_MAX, GRADE_B_MAX, GRADE_C_MAX, GRADE_D_MAX } from '../core';
 import { SHORT_SHA_LENGTH } from './constants';
-import type { HeaderModel, PackageRow, ParsedScanResult } from './types';
+import type { HeaderModel, PackageRow, ParsedScanResult, StatusChipModel } from './types';
 import { canonicalRepoUrl } from './urls';
 
 const NO_ASSESSED_TEXT = 'No dependencies could be assessed';
@@ -44,6 +44,23 @@ function explanationOf(result: ParsedScanResult): string {
     return NO_GRADE_TEXT;
   }
   return `Graded on the riskiest package, ${s.maxScorePackage.name} (score ${s.maxScore}), not on the average (${s.averageScore})`;
+}
+
+/** Graveyard-art Requirements 5.4, 5.5, 5.9: the four chips; counts come from the summary and the row split. */
+function buildChips(
+  dead: number,
+  buried: number,
+  forgotten: number,
+  haunted: number,
+  alive: number,
+  unassessed: number,
+): readonly StatusChipModel[] {
+  return [
+    { status: 'dead', iconSymbolId: 'plot-tombstone-rounded', text: `${dead} dead (${buried} buried, ${forgotten} forgotten)` },
+    { status: 'haunted', iconSymbolId: 'plot-ghost-wisp', text: `${haunted} haunted` },
+    { status: 'alive', iconSymbolId: 'plot-lantern-iron', text: `${alive} alive` },
+    { status: 'unassessed', iconSymbolId: 'plot-unmarked-mound', text: `${unassessed} unassessed` },
+  ];
 }
 
 /** Requirements 5.1 to 5.8. Pure: no clock, no DOM. */
@@ -97,6 +114,10 @@ export function buildHeaderModel(result: ParsedScanResult, rows: readonly Packag
       entries > summary.total
         ? `${entries} dependency entries across ${result.manifests.length} manifests, ${summary.total} unique packages`
         : null,
+    // Graveyard-art Requirements 5.4, 5.5, 5.9: no chips when nothing was assessed.
+    chips: noneAssessed
+      ? []
+      : buildChips(summary.counts.DEAD, buried, forgotten, haunted, summary.counts.ALIVE, summary.unassessed),
   };
 }
 

@@ -222,6 +222,13 @@ export interface HeadlineModel {
   /** Built by `headlineText(n, m, buried, forgotten, haunted)` (Requirement 5.2). */
   readonly text: string;
 }
+/** Graveyard-art Requirements 5.4, 5.5, 5.9: one status chip of the results header. */
+export interface StatusChipModel {
+  readonly status: 'dead' | 'haunted' | 'alive' | 'unassessed';
+  readonly iconSymbolId: string;
+  readonly text: string;
+}
+
 export interface HeaderModel {
   readonly repoName: string;
   /** Canonical_Repo_URL (DG-8). Used to rewrite the query, never as a link target (Requirement 21.2). */
@@ -252,6 +259,8 @@ export interface HeaderModel {
   };
   /** "<entries> dependency entries across <manifests> manifests, <total> unique packages", or null (Requirement 5.7). */
   readonly entriesSentence: string | null;
+  /** Four status chips; [] when summary.assessed is 0 (Requirements 5.4, 5.5, 5.9). */
+  readonly chips: readonly StatusChipModel[];
 }
 
 // ---- detail (Requirement 10) -------------------------------------------------------------------

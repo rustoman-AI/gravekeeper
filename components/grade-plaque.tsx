@@ -1,17 +1,20 @@
 import type { HeaderModel } from '../view-model';
 
-export interface GradeLineProps {
+export interface GradePlaqueProps {
   grade: HeaderModel['grade'];
 }
 
-/** Requirements 5.4 to 5.6: grade letter ("no grade" when null), explanation, closed scale disclosure. */
-export function GradeLine({ grade }: GradeLineProps) {
+/**
+ * Graveyard-art Requirements 5.2, 5.8: the grade as a carved plaque (letter and caption), then the
+ * explanation and the closed "Grade scale" disclosure below the figure (content of the former GradeLine).
+ */
+export function GradePlaque({ grade }: GradePlaqueProps) {
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-bone">
-        <span className="text-bone-muted">Grade ({grade.label}): </span>
-        <strong className="font-display text-2xl">{grade.letter ?? 'no grade'}</strong>
-      </p>
+      <figure className="gk-plaque">
+        <strong className="gk-plaque-letter">{grade.letter ?? 'no grade'}</strong>
+        <figcaption>{grade.label}</figcaption>
+      </figure>
       <p className="text-bone-muted">{grade.explanation}</p>
       <details>
         <summary className="min-h-6 cursor-pointer text-bone">Grade scale</summary>

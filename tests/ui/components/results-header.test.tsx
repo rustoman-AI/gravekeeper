@@ -3,6 +3,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { CacheNote } from "../../../components/cache-note";
+import { GradePlaque } from "../../../components/grade-plaque";
 import { ResultsHeader } from "../../../components/results-header";
 import { ViewToggle } from "../../../components/view-toggle";
 import { buildHeaderModel } from "../../../view-model/header";
@@ -76,8 +77,13 @@ describe("grade line (Requirements 5.5, 5.6)", () => {
     const parsed = parsedOf({ buried: 1, alive: 2 });
     renderHeader(parsed);
     const { summary } = parsed;
-    const label = screen.getByText(/Grade \(worst single risk\):/);
-    expect(label.parentElement?.textContent).toBe(`Grade (worst single risk): ${summary.grade}`);
+    const caption = screen.getByText("worst single risk");
+    expect(caption.tagName).toBe("FIGCAPTION");
+    const figure = caption.closest("figure") as HTMLElement;
+    const letter = figure.querySelector("strong") as HTMLElement;
+    expect(letter.textContent).toBe(summary.grade);
+    expect(figure.contains(letter)).toBe(true);
+    expect(figure.textContent).toBe(`${summary.grade}worst single risk`);
     expect(
       screen.getByText(
         `Graded on the riskiest package, ${summary.maxScorePackage?.name} (score ${summary.maxScore}), not on the average (${summary.averageScore})`,
@@ -175,5 +181,29 @@ describe("view toggle (Requirement 18.1)", () => {
     render(<ViewToggle view="scene" onChange={onChange} />);
     await user.click(screen.getByRole("button", { name: "List" }));
     expect(onChange).toHaveBeenCalledWith("list");
+  });
+});
+
+describe("grade plaque component (Requirements 5.2, 5.8)", () => {
+  it("renders the letter and caption in one figure, then the explanation and the closed scale", () => {
+    const parsed = parsedOf({ buried: 1, alive: 2 });
+    const header = headerOf(parsed);
+    const { container } = render(<GradePlaque grade={header.grade} />);
+    const figure = container.querySelector("figure") as HTMLElement;
+    expect(figure.querySelector("strong")?.textContent).toBe(header.grade.letter);
+    expect(figure.querySelector("figcaption")?.textContent).toBe("worst single risk");
+    expect(figure.nextElementSibling?.textContent).toBe(header.grade.explanation);
+    const details = container.querySelector("details") as HTMLDetailsElement;
+    expect(details.open).toBe(false);
+    expect(figure.contains(details)).toBe(false);
+    for (const entry of header.grade.scale) {
+      expect(details.textContent).toContain(`${entry.letter}: ${entry.range}`);
+    }
+  });
+
+  it("shows 'no grade' as the letter when nothing was assessed", () => {
+    const header = headerOf(parsedOf({}));
+    const { container } = render(<GradePlaque grade={header.grade} />);
+    expect(container.querySelector("figure strong")?.textContent).toBe("no grade");
   });
 });

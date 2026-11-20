@@ -514,6 +514,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522933
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795179770409
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795179839108
       }
     ],
     "8.2 Status chip and grade plaque components": [
@@ -521,6 +531,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522966
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795179843968
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795179916039
       }
     ],
     "8.3 Results header layout and styles": [
@@ -528,6 +548,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522996
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795179920602
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180033664
       }
     ],
     "8.4 Update the header tests": [
@@ -535,6 +565,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523028
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180038522
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180220663
       }
     ],
     "9. Checkpoint - Results header": [
@@ -542,6 +582,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177523071
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180221641
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180271179
       }
     ],
     "10.1 Humanised durations": [
@@ -955,6 +1005,13 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795179639549
+      }
+    ],
+    "8. Results header": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795180220700
       }
     ]
   }

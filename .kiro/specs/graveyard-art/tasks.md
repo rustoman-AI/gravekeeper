@@ -148,25 +148,25 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
 - [x] 7. Checkpoint - Sprites
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [ ] 8. Results header
-  - [~] 8.1 Header model: chips and meta line
+- [x] 8. Results header
+  - [x] 8.1 Header model: chips and meta line
     - In `view-model/types.ts` add `StatusChipModel` and `chips` to `HeaderModel`; in `view-model/header.ts` build the four chips (texts and icon symbol ids of the design) when `assessed >= 1`, keep every existing field. The grade stays non-null here (task 16.1 changes it).
     - Files: `view-model/types.ts`, `view-model/header.ts`
     - _Requirements: 5.4, 5.5, 5.9_
-  - [~] 8.2 Status chip and grade plaque components
+  - [x] 8.2 Status chip and grade plaque components
     - Create `components/status-chip.tsx` (`li.gk-chip` with an `aria-hidden` `svg > use` icon and a text span) and `components/grade-plaque.tsx` (`figure.gk-plaque` with the letter and `figcaption` "worst single risk"; the explanation paragraph and the closed "Grade scale" `details` follow the figure, as `GradeLine` did). Delete `components/grade-line.tsx` and move its test cases to the new component's test in task 8.4.
     - Files: `components/status-chip.tsx`, `components/grade-plaque.tsx`, `components/grade-line.tsx`
     - _Requirements: 5.2, 5.4, 5.5, 5.8_
-  - [~] 8.3 Results header layout and styles
+  - [x] 8.3 Results header layout and styles
     - Rewrite `components/results-header.tsx`: h1 repo name (kept id, `tabIndex`), headline paragraph `.gk-headline`, a row with `GradePlaque` and the chip list (`ul` with `aria-label="Status counts"`), the small muted meta line (commit abbr, branch, as-of time, `CacheNote`), the `entriesSentence`. In `app/globals.css` add `.gk-headline` (display font, `font-size: clamp(2rem, 5vw + 0.5rem, 3.5rem)`, line-height 1.1), `.gk-plaque` (gradient and border from `--color-plaque` and `--color-stone`, carved text shadow from tokens via `color-mix`, no filter), `.gk-plaque-letter` (display font, about 4.5rem) and `.gk-chip`.
     - Files: `components/results-header.tsx`, `app/globals.css`
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.6, 5.7, 5.8_
-  - [~] 8.4 Update the header tests
+  - [x] 8.4 Update the header tests
     - Update `tests/ui/components/results-header.test.tsx` (reason: headline, plaque, chips and meta line replace the old list and the `GradeLine` text), add the former `GradeLine` cases (explanation, closed scale, scale content) for `GradePlaque`, and add `tests/ui/view-model/header-chips.test.ts` (chip texts and order for a fixed result, counts equal the summary).
     - Files: `tests/ui/components/results-header.test.tsx`, `tests/ui/view-model/header-chips.test.ts`
     - _Requirements: 5.1, 5.2, 5.4, 5.5, 5.6, 5.7, 5.8_
 
-- [~] 9. Checkpoint - Results header
+- [x] 9. Checkpoint - Results header
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 10. Human epitaphs and plain-language reasons
