@@ -11,6 +11,8 @@ import {
   SCENE_MIN_COLUMNS,
   SCENE_PADDING_PX,
 } from './constants';
+import { depthOf } from './depth';
+import { hashKey } from './hash';
 import type { PackageRow, PlotModel, SceneModel } from './types';
 
 const JITTER_RANGE = 2 * PLOT_JITTER_MAX_PX + 1;
@@ -33,15 +35,7 @@ export function columnsFor(containerWidthPx: number): number {
   );
 }
 
-/** FNV-1a, 32 bit, over UTF-16 code units. */
-export function hashKey(key: string): number {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < key.length; i++) {
-    h ^= key.charCodeAt(i);
-    h = Math.imul(h, 0x01000193);
-  }
-  return h >>> 0;
-}
+export { hashKey };
 
 /** rows * PLOT_CELL_HEIGHT_PX + 2 * SCENE_PADDING_PX (R8.3). */
 export function sceneHeight(plotCount: number, columns: number): number {
@@ -66,8 +60,10 @@ function cutLabel(text: string): string {
   return points.slice(0, EPITAPH_MAX_CHARS - 1).join('') + ELLIPSIS;
 }
 
-function plotOf(row: PackageRow, i: number, cols: number): PlotModel {
+function plotOf(row: PackageRow, i: number, cols: number, rowCount: number): PlotModel {
   const r = Math.floor(i / cols);
+  // graveyard-art Requirements 2.6, 2.8: depth never touches x, y, width, height or phase.
+  const depth = depthOf(r, rowCount);
   const c = i % cols;
   const h = hashKey(row.key);
   const jx = (h % JITTER_RANGE) - PLOT_JITTER_MAX_PX;
@@ -92,18 +88,21 @@ function plotOf(row: PackageRow, i: number, cols: number): PlotModel {
     width: PLOT_BOX_WIDTH_PX,
     height: PLOT_BOX_HEIGHT_PX,
     phase: (h >>> 16) / 65535,
+    depthScale: depth.scale,
+    depthBrightness: depth.brightness,
   };
 }
 
 /** Rows are already in scene order; plot i sits in cell (floor(i / columns), i % columns). */
 export function buildSceneModel(rows: readonly PackageRow[], columns: number): SceneModel {
   const cols = clampColumns(columns);
+  const rowCount = Math.ceil(rows.length / cols);
   return {
     columns: cols,
-    rows: Math.ceil(rows.length / cols),
+    rows: rowCount,
     width: cols * PLOT_CELL_WIDTH_PX + 2 * SCENE_PADDING_PX,
     height: sceneHeight(rows.length, cols),
     simplified: rows.length > SCENE_MAX_PLOTS,
-    plots: rows.map((row, i) => plotOf(row, i, cols)),
+    plots: rows.map((row, i) => plotOf(row, i, cols, rowCount)),
   };
 }

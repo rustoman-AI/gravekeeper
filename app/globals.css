@@ -5,6 +5,9 @@
  * This is the only place that holds literal colours.
  * Contrast on --color-night (WCAG 2.2): bone 15.22, bone-muted 9.55, amber 10.14,
  * spectral 12.57, stone 7.20, moss 7.64, focus 13.13.
+ * graveyard-art tokens (sky-low, ground, plaque): text tokens must reach 4.5 and focus 3
+ * on each of them, and bone must reach 4.5 on mist at FOG_OPACITY_HIGH over night
+ * (all checked in tests/ui/tokens.test.ts, R13.1 to R13.4).
  */
 @theme {
   --color-night: #0b1020; /* page background */
@@ -17,6 +20,13 @@
   --color-moss: #86b073; /* overgrown graves, accents */
   --color-focus: #ffd166; /* focus ring */
   --color-moss-deep: #2f4a33; /* DECORATIVE ONLY: ivy shading, contrast 1.94, never conveys information */
+  --color-sky-low: #1c2750; /* brightest sky colour near the horizon, hero text backdrop (text sits on it) */
+  --color-moon: #efe9d2; /* DECORATIVE ONLY: moon disc, never conveys information */
+  --color-ground: #101728; /* ground at the horizon (label text sits on it) */
+  --color-hill: #151d36; /* DECORATIVE ONLY: distant hill fill, never conveys information */
+  --color-iron: #2a3350; /* DECORATIVE ONLY: tree and fence silhouettes, epitaph border */
+  --color-mist: #9aa6c0; /* DECORATIVE ONLY: fog tint, bone is tested over its highest composite */
+  --color-plaque: #252c40; /* plaque, epitaph block, headstone cards (text sits on it) */
 }
 
 /* Font variables are set by next/font in app/layout.tsx (IM Fell English SC, Atkinson Hyperlegible). */
@@ -79,37 +89,82 @@ main[tabindex="-1"]:focus-visible {
   outline: none;
 }
 
-/* Fog: two layers, compositor properties only (transform, opacity). */
+/*
+ * Stage (graveyard-art R1.2, R1.4, R2.1): page-wide ground under the horizon backdrop.
+ * --horizon-h is the backdrop height; the rows start below it.
+ */
+.gk-stage {
+  --horizon-h: 240px;
+  position: relative;
+  padding-top: var(--horizon-h);
+  background: linear-gradient(
+    to bottom,
+    var(--color-ground) 0%,
+    var(--color-night) 100%
+  );
+}
+
+@media (max-width: 639px) {
+  .gk-stage {
+    --horizon-h: 150px;
+  }
+}
+
+.gk-stage > .gk-backdrop {
+  position: absolute;
+  inset: 0 0 auto 0;
+  width: 100%;
+  height: var(--horizon-h);
+}
+
+/*
+ * Fog (R2.2 to R2.5): two soft low-mist layers in front of the rows, over the lower
+ * part of the Scene. Edges are soft because the mist token fades to transparent in a
+ * gradient (no filter). Opacity is constant (the contrast test bounds the worst case);
+ * only transform animates.
+ */
 .gk-fog {
   position: absolute;
-  inset: -20% -50%;
+  top: 0;
+  right: -50%;
+  bottom: 0;
+  left: -50%;
+  z-index: 1;
   pointer-events: none;
-  background: radial-gradient(
-    ellipse at center,
-    color-mix(in srgb, var(--color-bone-muted) 22%, transparent) 0%,
-    transparent 65%
-  );
-  opacity: 0.6;
-  animation: gk-fog-drift 60s linear infinite alternate;
+  /* One mist puff per row cell, hugging the ground at the bottom of the cell (under the labels). */
+  background-image:
+    radial-gradient(
+      ellipse 60% 24% at 50% 68%,
+      var(--color-mist) 0%,
+      color-mix(in srgb, var(--color-mist) 45%, transparent) 60%,
+      transparent 100%
+    );
+  background-size: 18% var(--cell-h, 156px);
+  background-repeat: repeat;
+  animation: gk-fog-drift 70s linear infinite alternate;
+  will-change: transform;
 }
 
+.gk-fog-low {
+  opacity: 0.25;
+}
+
+.gk-fog-high,
 .gk-fog-b {
-  opacity: 0.4;
-  animation-duration: 90s;
+  opacity: 0.35;
+  background-position: 9% 0;
+  background-size: 26% var(--cell-h, 156px);
+  animation-duration: 110s;
   animation-direction: alternate-reverse;
 }
-
 @keyframes gk-fog-drift {
   from {
     transform: translate3d(-8%, 0, 0);
-    opacity: 0.35;
   }
   to {
     transform: translate3d(8%, 0, 0);
-    opacity: 0.65;
   }
 }
-
 /* Scanning screen: CSS-only fog and lantern, carries no information (R4.11). */
 .gk-scanning-decor {
   position: absolute;
@@ -205,6 +260,9 @@ main[tabindex="-1"]:focus-visible {
   height: 100%;
   overflow: visible;
   pointer-events: none;
+  /* graveyard-art Requirement 2.9: back rows are smaller; brightness is applied inside the sprite symbols. */
+  transform-origin: 50% 100%;
+  scale: var(--depth-scale, 1);
 }
 .gk-plot-label {
   position: absolute;
@@ -299,7 +357,6 @@ main[tabindex="-1"]:focus-visible {
 
 .gk-scene[data-simplified="true"] .gk-fog,
 .gk-scene[data-simplified="true"] .gk-fog-b {
-  opacity: 0.3;
   transform: none;
 }
 
@@ -312,6 +369,8 @@ main[tabindex="-1"]:focus-visible {
   .gk-scene,
   .gk-scene *,
   .gk-fog,
+  .gk-fog-low,
+  .gk-fog-high,
   .gk-fog-b,
   .gk-scanning,
   .gk-scanning *,

@@ -8,6 +8,8 @@
  * set on the plot button; custom properties inherit into the <use> tree.
  */
 
+import { SceneDefs } from "./scene-defs";
+
 const GLOW_OPACITY = "calc(var(--glow, 2) / 4)";
 
 const VIEW_BOX = "0 0 80 104";
@@ -16,6 +18,7 @@ export function SceneSprites() {
   return (
     <svg width="0" height="0" aria-hidden="true" focusable="false" style={{ position: "absolute" }}>
       <defs>
+        <SceneDefs />
         <radialGradient id="plot-glow-gradient" cx="50%" cy="50%" r="50%">
           <stop offset="0" stopColor="var(--color-spectral)" stopOpacity="0.9" />
           <stop offset="0.6" stopColor="var(--color-spectral)" stopOpacity="0.3" />

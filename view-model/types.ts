@@ -150,6 +150,10 @@ export interface PlotModel {
   readonly height: number;
   /** Deterministic 0..1 value from the key hash, used for animation delay. */
   readonly phase: number;
+  /** graveyard-art Requirement 2.6: scale of the plot art by row, in [DEPTH_SCALE_BACK, 1]. */
+  readonly depthScale: number;
+  /** graveyard-art Requirement 2.6: opacity of the plot art by row, in [DEPTH_BRIGHTNESS_BACK, 1]. */
+  readonly depthBrightness: number;
 }
 export interface SceneModel {
   readonly columns: number;

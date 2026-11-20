@@ -92,3 +92,28 @@ export const LINK_HOSTS: readonly string[] = [
   'github.com',
   'osv.dev',
 ];
+
+// graveyard-art Requirement 3.1, 3.3: tombstone silhouettes (also used by restless plots).
+export const TOMBSTONE_VARIANTS = ['rounded', 'cross', 'obelisk', 'slab'] as const;
+// graveyard-art Requirement 3.1, 3.4: overgrown graves differ in the amount of ivy.
+export const OVERGROWN_VARIANTS = ['ivy-light', 'ivy-medium', 'ivy-heavy'] as const;
+// graveyard-art Requirement 3.6: maximum tilt of a stone in degrees, either direction.
+export const TILT_MAX_DEG = 6;
+// graveyard-art Requirement 2.6: scale of the back row relative to the front row.
+export const DEPTH_SCALE_BACK = 0.88;
+// graveyard-art Requirement 2.6: brightness (opacity) of the back row relative to the front row.
+export const DEPTH_BRIGHTNESS_BACK = 0.7;
+// graveyard-art Requirement 2.2, 13.3: opacity of the low and the high fog layer (equal to the CSS values).
+export const FOG_OPACITY_LOW = 0.25;
+export const FOG_OPACITY_HIGH = 0.35;
+// graveyard-art Requirement 6.3: durations below this many days are written in days.
+export const DURATION_DAYS_MAX_EXCLUSIVE = 60;
+// graveyard-art Requirement 6.3: durations below this many days are written in months.
+export const DURATION_MONTHS_MAX_EXCLUSIVE = 730;
+// graveyard-art Requirement 6.3: days per month and per year in duration text.
+export const DAYS_PER_MONTH_TEXT = 30;
+export const DAYS_PER_YEAR_TEXT = 365;
+// graveyard-art Requirement 10.1: stones on the scanning screen; equals SCAN_STAGES.length.
+export const SCAN_STONE_COUNT = 4;
+// graveyard-art Requirement 10.1: x position of each stone in the scanning scene viewBox.
+export const SCAN_STONE_X = [50, 150, 250, 350] as const;

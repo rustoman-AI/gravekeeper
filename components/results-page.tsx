@@ -21,6 +21,7 @@ import { LazyManifestPicker } from './lazy-manifest-picker';
 import { LazyDetailPanel } from './lazy-detail-panel';
 import { ResultsHeader } from './results-header';
 import { Scene } from './scene';
+import { SceneStage } from './scene-stage';
 import { SceneSprites } from './scene-sprites';
 import { VIEW_TOGGLE_ID, ViewToggle } from './view-toggle';
 import type { ViewName } from './view-toggle';
@@ -48,7 +49,12 @@ function pickerReservedHeight(count: number): number {
 
 /** Requirements 3.4, 3.5, 8.3, 17.3, 17.5, 18.1: header, view toggle and the Scene. */
 export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanManifests }: ResultsPageProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const rows = useMemo(() => buildPackageRows(result), [result]);
+  const notes = useMemo(() => buildNotesModel(result), [result]);
+  // The scene view measures the column inside the stage; the list and empty states measure their own div.
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const otherRef = useRef<HTMLDivElement>(null);
+  const containerRef = view === 'scene' && notes.empty === null ? sceneRef : otherRef;
   // -1 marks the unmeasured first pass (one column, one band per plot). The Scene waits for the layout
   // effect in the hook so its first commit already uses the real column count.
   const width = useContainerWidth(containerRef, -1);
@@ -56,9 +62,7 @@ export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanMa
   // The Scene adds SCENE_PADDING_PX on each side, so columns fit the content width (R8.1, R16.9).
   const columns = columnsFor(width - 2 * SCENE_PADDING_PX);
 
-  const rows = useMemo(() => buildPackageRows(result), [result]);
   const header = useMemo(() => buildHeaderModel(result, rows), [result, rows]);
-  const notes = useMemo(() => buildNotesModel(result), [result]);
   const scene = useMemo(() => buildSceneModel(rows, columns), [rows, columns]);
   // Reserved before any plot renders, so the page does not shift (Requirement 17.3).
   const reserved = sceneHeight(rows.length, columns);
@@ -100,34 +104,41 @@ export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanMa
         <LazyManifestPicker candidates={notes.picker.candidates} repoValue={header.canonicalUrl} onScan={onScanManifests} />
       </div>
     );
+  const column = 'mx-auto flex w-full max-w-6xl flex-col gap-6 px-4';
+  const showScene = notes.empty === null && view === 'scene';
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8">
-      <SceneSprites />
-      <ResultsHeader header={header} cache={cache} nowMs={nowMs} />
-      {notes.capBanner === null ? null : <CapBanner banner={notes.capBanner} />}
-      {notes.empty === null ? (
-        <>
+    <div className="flex w-full flex-col">
+      <div className={`${column} pt-8 pb-6`}>
+        <SceneSprites />
+        <ResultsHeader header={header} cache={cache} nowMs={nowMs} />
+        {notes.capBanner === null ? null : <CapBanner banner={notes.capBanner} />}
+        {notes.empty === null ? (
           <ViewToggle view={view} onChange={onViewChange} />
-          <div ref={containerRef} style={{ minHeight: reserved, maxWidth: '100%', overflowX: 'auto' }}>
-            {view === 'scene' ? (
-              measured ? (
-                <Scene scene={scene} onOpen={onOpenIndex} skipTargetId={VIEW_TOGGLE_ID} />
-              ) : null
-            ) : (
-              <ListView rows={rows} onOpen={onOpenKey} />
-            )}
+        ) : (
+          <>
+            <EmptyGraveyard message={notes.empty.message} />
+            <div ref={otherRef} />
+            {picker}
+          </>
+        )}
+        {notes.empty === null && !showScene ? (
+          <div ref={otherRef} style={{ minHeight: reserved, maxWidth: '100%', overflowX: 'auto' }}>
+            <ListView rows={rows} onOpen={onOpenKey} />
           </div>
-          {picker}
-        </>
-      ) : (
-        <>
-          <EmptyGraveyard message={notes.empty.message} />
-          <div ref={containerRef} />
-          {picker}
-        </>
-      )}
-      <CaretakersNotes model={notes} />
-      {detail !== null ? <LazyDetailPanel model={detail} onClose={onClose} /> : null}
+        ) : null}
+      </div>
+      {showScene ? (
+        <SceneStage>
+          <div ref={sceneRef} style={{ minHeight: reserved, maxWidth: '100%', overflowX: 'auto' }}>
+            {measured ? <Scene scene={scene} onOpen={onOpenIndex} skipTargetId={VIEW_TOGGLE_ID} /> : null}
+          </div>
+        </SceneStage>
+      ) : null}
+      <div className={`${column} py-8`}>
+        {notes.empty === null ? picker : null}
+        <CaretakersNotes model={notes} />
+        {detail !== null ? <LazyDetailPanel model={detail} onClose={onClose} /> : null}
+      </div>
     </div>
   );
 }

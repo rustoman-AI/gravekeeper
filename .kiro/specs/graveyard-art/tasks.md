@@ -45,53 +45,53 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
 - [x] 2. Checkpoint - Housekeeping
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass and that the vitest output has no `vite-tsconfig-paths` warning. This group can be committed alone. Ask the user if questions arise.
 
-- [ ] 3. Foundation: constants, hash module and tokens
-  - [~] 3.1 Add the art constants and move `hashKey`
+- [x] 3. Foundation: constants, hash module and tokens
+  - [x] 3.1 Add the art constants and move `hashKey`
     - In `view-model/constants.ts` add the constants of design "Constants (additions)": `TOMBSTONE_VARIANTS`, `OVERGROWN_VARIANTS`, `TILT_MAX_DEG`, `DEPTH_SCALE_BACK`, `DEPTH_BRIGHTNESS_BACK`, `FOG_OPACITY_LOW`, `FOG_OPACITY_HIGH`, `DURATION_DAYS_MAX_EXCLUSIVE`, `DURATION_MONTHS_MAX_EXCLUSIVE`, `DAYS_PER_MONTH_TEXT`, `DAYS_PER_YEAR_TEXT`, `SCAN_STONE_COUNT` (assert in a comment that it equals `SCAN_STAGES.length`) and `SCAN_STONE_X`, each with a requirement comment. Create `view-model/hash.ts` with `hashKey` (FNV-1a exactly as in `scene.ts`) and make `view-model/scene.ts` import it and re-export it (`export { hashKey } from './hash'`), so every existing import keeps working and the hash values do not change.
     - Add `tests/ui/view-model/art-constants.test.ts`: the variant lists have 4 and 3 entries, `SCAN_STONE_COUNT` equals `SCAN_STAGES.length` and `SCAN_STONE_X.length`, the depth constants are in (0, 1), and `hashKey("request:1")` equals the value computed by an inline copy of the FNV-1a loop (guards the move).
     - Files: `view-model/constants.ts`, `view-model/hash.ts`, `view-model/scene.ts`, `tests/ui/view-model/art-constants.test.ts`
     - _Requirements: 2.6, 3.1, 3.3, 3.4, 6.3, 10.1_
-  - [~] 3.2 Add the new colour tokens and extend the token test
+  - [x] 3.2 Add the new colour tokens and extend the token test
     - In the `@theme` block of `app/globals.css` add `--color-sky-low`, `--color-moon`, `--color-ground`, `--color-hill`, `--color-iron`, `--color-mist`, `--color-plaque` with the values of the design table (adjust a hex only if the test below fails) and a comment on each; mark `moon`, `hill`, `iron`, `mist` with `DECORATIVE ONLY`. Update the contrast comment above the block. Extend `tests/ui/tokens.test.ts`: the seven tokens exist with 6-digit hex values; the decorative marks exist; each text token (`bone`, `bone-muted`, `amber`, `spectral`, `stone`, `moss`) has contrast at least 4.5 on `sky-low`, `ground` and `plaque`; `focus` has at least 3 on the same three; `bone` has at least 4.5 on `mist` at `FOG_OPACITY_HIGH` composited over `night`; the CSS fog opacities (added later) are checked in task 18.1. Keep every existing assertion.
     - Files: `app/globals.css`, `tests/ui/tokens.test.ts`
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 9.7_
 
-- [ ] 4. Scene atmosphere
-  - [~] 4.1 Backdrop, shared defs and the night landscape
+- [x] 4. Scene atmosphere
+  - [x] 4.1 Backdrop, shared defs and the night landscape
     - Create `components/scene-defs.tsx` (gradients `sky-gradient` from `--color-night` at the top to `--color-sky-low` at the bottom, `moon-halo-gradient`, and the `fence-pattern`; colours by `var(--color-...)` in `stopColor` and `fill`), rendered inside the `<defs>` of `components/scene-sprites.tsx` (one added line; the rest of the sheet is unchanged here). Create `components/scene-backdrop.tsx` (`SceneBackdrop({ variant: 'stage' | 'hero' | 'scanning' })`, one `svg.gk-backdrop`, `aria-hidden="true"`, `focusable="false"`, viewBoxes and layers of the design, `STAR_COUNT` = 24 stars from a constant table, three bare trees, hills, fence, ground band; no filter, no mask, no text, no colour literal) and `components/night-landscape.tsx` (`NightLandscape({ variant, children? })` = `SceneBackdrop` plus `FogLayer`).
     - Add `tests/ui/components/scene-backdrop.test.tsx`: one `svg` per render, `aria-hidden`, 24 star circles, no `filter`, `mask`, `text` or `title` element, two renders have identical markup, each variant has its viewBox.
     - Files: `components/scene-defs.tsx`, `components/scene-backdrop.tsx`, `components/night-landscape.tsx`, `components/scene-sprites.tsx`, `tests/ui/components/scene-backdrop.test.tsx`
     - _Requirements: 1.1, 1.3, 1.5, 1.6, 1.7_
-  - [~] 4.2 Stage, ground and fog styles; fog layer names
+  - [x] 4.2 Stage, ground and fog styles; fog layer names
     - In `app/globals.css` add `.gk-stage` (padding-top `var(--horizon-h)`, `--horizon-h` 240px and 150px under 640px, Ground gradient from `--color-ground` to `--color-night`), `.gk-stage > .gk-backdrop` (absolute, full width, `--horizon-h` high), `.gk-fog-low` and `.gk-fog-high` (opacity 0.25 and 0.35 constant, `transform`-only keyframes `gk-fog-drift` of 70 s and 110 s, positioned over the lower part of the Scene, `pointer-events: none`), static fog under `.gk-scene[data-simplified="true"]` and in the reduced-motion block. Change the keyframes `gk-fog-drift` to `transform` only. Keep the old `.gk-fog`, `.gk-fog-b` as base class and alias so `fog-layer.tsx` renders `gk-fog gk-fog-low` and `gk-fog gk-fog-high`; update `components/fog-layer.tsx`.
     - Files: `app/globals.css`, `components/fog-layer.tsx`
     - _Requirements: 1.3, 1.4, 2.1, 2.2, 2.3, 2.4, 2.5, 12.1_
-  - [~] 4.3 Scene stage and the results page layout
+  - [x] 4.3 Scene stage and the results page layout
     - Create `components/scene-stage.tsx` (`SceneStage({ children })`: `div.gk-stage` with `SceneBackdrop variant="stage"` and an inner `div.gk-stage-inner.mx-auto.w-full.max-w-6xl.px-4`). In `components/results-page.tsx` render the scene view as `SceneStage` around the existing `containerRef` div (the measured width and `columnsFor(width - 2 * SCENE_PADDING_PX)` stay unchanged), keep the list view and the empty-graveyard branch inside the `max-w-6xl` container without a stage, and keep the view toggle, the cap banner and the notes in the container. Reserved height stays `sceneHeight(rows.length, columns)`.
     - Files: `components/scene-stage.tsx`, `components/results-page.tsx`
     - _Requirements: 1.2, 1.8, 14.8_
-  - [~] 4.4 Depth in the view-model
+  - [x] 4.4 Depth in the view-model
     - Create `view-model/depth.ts` (`depthOf(row, rowCount)` as in the design, three decimals, clamped `t`). Add `depthScale` and `depthBrightness` to `PlotModel` in `view-model/types.ts` and set them in `plotOf` of `view-model/scene.ts` (`r = floor(i / cols)`, `rowCount = ceil(rows.length / cols)`); `x`, `y`, `width`, `height`, `phase` keep their formulas and the `hashKey(row.key)` input.
     - Files: `view-model/depth.ts`, `view-model/types.ts`, `view-model/scene.ts`
     - _Requirements: 2.6, 2.7, 2.8_
-  - [~] 4.5 Write the property test for depth monotonicity
+  - [x] 4.5 Write the property test for depth monotonicity
     - `tests/ui/view-model/depth.property.test.ts`: pairs r1 ≤ r2 below n, and scenes built with the shared arbitrary (`tests/support/ui/`) with columns 2 to 20.
     - **Property 3: Depth is monotone by row and stays in range (GA-P3)**
     - **Validates: Requirements 2.6, 2.7**
-  - [~] 4.6 Write the property test for layout independence
+  - [x] 4.6 Write the property test for layout independence
     - `tests/ui/view-model/depth-geometry.property.test.ts`: recompute the cell formula in the test (own copy of the jitter arithmetic, using `hashKey`) and compare `x`, `y`, `width`, `height` of every plot; also call the existing P14 and P15 checks (import the helpers of the graveyard-ui property files if exported, else repeat the rectangle test inline) on the same input.
     - **Property 4: Depth does not change any layout box (GA-P4)**
     - **Validates: Requirements 2.8, 17.1**
-  - [~] 4.7 Apply depth to the plot and style the plot art
+  - [x] 4.7 Apply depth to the plot and style the plot art
     - In `components/scene-plot.tsx` write `--depth-scale` and `--depth-bright` on the button only when different from 1. In `app/globals.css` add to `.gk-plot-art`: `transform-origin: 50% 100%; scale: var(--depth-scale, 1);` (the `rotate` for tilt is added in task 6.10). Make no change to `.gk-plot-label` (labels are not dimmed or scaled).
     - Files: `components/scene-plot.tsx`, `app/globals.css`
     - _Requirements: 2.9, 14.6_
-  - [~] 4.8 Component tests for the stage and the plot
+  - [x] 4.8 Component tests for the stage and the plot
     - Update `tests/ui/components/scene.test.tsx` and `tests/ui/components/scene-render.test.tsx` only where they count plot children or inspect style strings (reason: the plot style gains `--depth-*` values; assertions keep their intent). Add `tests/ui/components/scene-stage.test.tsx`: the stage contains exactly one `svg.gk-backdrop`, the scene view of `ResultsPage` renders a stage, the list view and the empty graveyard render none, each plot still has four elements (button, svg, use, label), the label has no `opacity` style.
     - Files: `tests/ui/components/scene.test.tsx`, `tests/ui/components/scene-render.test.tsx`, `tests/ui/components/scene-stage.test.tsx`
     - _Requirements: 1.2, 1.8, 2.9, 14.4_
 
-- [~] 5. Checkpoint - Scene atmosphere
+- [x] 5. Checkpoint - Scene atmosphere
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 6. Sprite variety and tone

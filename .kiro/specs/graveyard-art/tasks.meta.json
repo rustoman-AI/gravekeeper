@@ -1,5 +1,10 @@
 {
-  "pbtResults": {},
+  "pbtResults": {
+    "4.6 Write the property test for layout independence": {
+      "status": "passed",
+      "lastRunTimestamp": 1795178159498
+    }
+  },
   "executionHistory": {
     "1.1 Run the Deployed_Project with one worker": [
       {
@@ -91,6 +96,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522090
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177782978
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177883006
       }
     ],
     "3.2 Add the new colour tokens and extend the token test": [
@@ -98,6 +113,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522124
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177783307
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177883426
       }
     ],
     "4.1 Backdrop, shared defs and the night landscape": [
@@ -105,6 +130,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522162
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177888401
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178040340
       }
     ],
     "4.2 Stage, ground and fog styles; fog layer names": [
@@ -112,6 +147,26 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522195
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178044922
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178169562
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178590928
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178866976
       }
     ],
     "4.3 Scene stage and the results page layout": [
@@ -119,6 +174,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522226
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178173939
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178322866
       }
     ],
     "4.4 Depth in the view-model": [
@@ -126,6 +191,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522257
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177888793
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178039786
       }
     ],
     "4.5 Write the property test for depth monotonicity": [
@@ -133,6 +208,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522289
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178045965
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178167992
       }
     ],
     "4.6 Write the property test for layout independence": [
@@ -140,6 +225,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522323
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178046594
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178169000
       }
     ],
     "4.7 Apply depth to the plot and style the plot art": [
@@ -147,6 +242,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522362
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178180492
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178323531
       }
     ],
     "4.8 Component tests for the stage and the plot": [
@@ -154,6 +259,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522418
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178327896
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178400390
       }
     ],
     "5. Checkpoint - Scene atmosphere": [
@@ -161,6 +276,16 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177522448
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178400932
+      },
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178867964
       }
     ],
     "6.1 Variant, tilt and symbol-id functions": [
@@ -679,6 +804,20 @@
         "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795177723909
+      }
+    ],
+    "3. Foundation: constants, hash module and tokens": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795177883456
+      }
+    ],
+    "4. Scene atmosphere": [
+      {
+        "executionId": "a0c83766-8ea7-4d7c-855d-1bb0218b2811",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795178400431
       }
     ]
   }

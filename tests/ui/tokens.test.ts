@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { FOG_OPACITY_HIGH } from "../../view-model/constants";
 
 // Thresholds are owned by tests (graveyard-ui requirements.md, constants table).
 const TEXT_CONTRAST_MIN = 4.5; // WCAG 2.2 SC 1.4.3, R16.2
@@ -66,5 +67,50 @@ describe("design token contrast (R15.2, R16.2)", () => {
 
   it("declares --color-moss-deep as decorative only", () => {
     expect(tokenLine("moss-deep")).toMatch(/DECORATIVE ONLY/);
+  });
+});
+
+// graveyard-art R13.1 to R13.4, R9.7
+const ART_TOKENS = ["sky-low", "moon", "ground", "hill", "iron", "mist", "plaque"];
+const ART_DECORATIVE = ["moon", "hill", "iron", "mist"];
+const ART_BACKGROUNDS = ["sky-low", "ground", "plaque"];
+
+function hexToRgb(hex: string): number[] {
+  return [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+}
+
+function composite(fg: string, bg: string, alpha: number): string {
+  const f = hexToRgb(fg);
+  const b = hexToRgb(bg);
+  const out = f.map((c, i) => Math.round(c * alpha + b[i] * (1 - alpha)));
+  return `#${out.map((c) => c.toString(16).padStart(2, "0")).join("")}`;
+}
+
+describe("graveyard-art landscape tokens (R13)", () => {
+  for (const name of ART_TOKENS) {
+    it(`${name} exists with a 6-digit hex value`, () => {
+      expect(tokenHex(name)).toMatch(/^#[0-9a-fA-F]{6}$/);
+    });
+  }
+  for (const name of ART_DECORATIVE) {
+    it(`${name} is marked DECORATIVE ONLY`, () => {
+      expect(tokenLine(name)).toMatch(/DECORATIVE ONLY/);
+    });
+  }
+  for (const bg of ART_BACKGROUNDS) {
+    for (const fg of TEXT_TOKENS) {
+      it(`${fg} on ${bg} is at least ${TEXT_CONTRAST_MIN}`, () => {
+        expect(contrast(tokenHex(fg), tokenHex(bg))).toBeGreaterThanOrEqual(TEXT_CONTRAST_MIN);
+      });
+    }
+    for (const fg of NONTEXT_TOKENS) {
+      it(`${fg} on ${bg} is at least ${NONTEXT_CONTRAST_MIN}`, () => {
+        expect(contrast(tokenHex(fg), tokenHex(bg))).toBeGreaterThanOrEqual(NONTEXT_CONTRAST_MIN);
+      });
+    }
+  }
+  it("bone on mist at FOG_OPACITY_HIGH over night is at least 4.5", () => {
+    const fog = composite(tokenHex("mist"), tokenHex("night"), FOG_OPACITY_HIGH);
+    expect(contrast(tokenHex("bone"), fog)).toBeGreaterThanOrEqual(TEXT_CONTRAST_MIN);
   });
 });

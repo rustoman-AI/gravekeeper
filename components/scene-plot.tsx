@@ -17,6 +17,10 @@ function ScenePlotImpl({ plot, tabbable, simplified }: ScenePlotProps) {
     "--phase": plot.phase,
   };
   if (plot.glow !== null) style["--glow"] = plot.glow;
+  // graveyard-art Requirement 2.9: depth values are written only when they differ from 1.
+  // Brightness is applied inside the sprite symbols (opacity: var(--depth-bright)); the label is not dimmed or scaled.
+  if (plot.depthScale !== 1) style["--depth-scale"] = plot.depthScale;
+  if (plot.depthBrightness !== 1) style["--depth-bright"] = plot.depthBrightness;
   return (
     <button
       type="button"
