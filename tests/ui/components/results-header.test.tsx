@@ -40,7 +40,7 @@ describe("headline (Requirement 5.2 examples)", () => {
       { buried: 26, haunted: 5, alive: 9 },
       "31 of 40 dependencies are in the graveyard: 26 buried, 5 haunted.",
     ],
-    [{ haunted: 1, alive: 5 }, "1 of 6 dependencies are in the graveyard: 1 haunted."],
+    [{ haunted: 1, alive: 5 }, "1 of 6 dependencies is in the graveyard: 1 haunted."],
     [
       { buried: 2, forgotten: 3, haunted: 4, alive: 11 },
       "9 of 20 dependencies are in the graveyard: 2 buried, 3 forgotten, 4 haunted.",

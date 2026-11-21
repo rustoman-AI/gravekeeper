@@ -75,6 +75,7 @@ export { strongestReason, shortForm, epitaphOf } from './reasons';
 export { DEFAULT_SEVERITY, maxSeverityOf, glowOf } from './glow';
 export { unassessedLabelOf, buildPackageRows } from './package-rows';
 export { headlineText, buildHeaderModel, formatAge } from './header';
+export { plural } from './plural';
 export { columnsFor, hashKey, sceneHeight, buildSceneModel } from './scene';
 export { nextFocus } from './scene-nav';
 export { buildTableModel } from './table';

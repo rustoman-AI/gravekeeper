@@ -18,7 +18,7 @@ const headerOf = (specs: readonly RowSpec[], options?: ResultOptions) => {
 describe('headlineText (R5.2)', () => {
   it('matches the four examples of the requirement', () => {
     expect(headlineText(31, 40, 26, 0, 5)).toBe('31 of 40 dependencies are in the graveyard: 26 buried, 5 haunted.');
-    expect(headlineText(1, 6, 0, 0, 1)).toBe('1 of 6 dependencies are in the graveyard: 1 haunted.');
+    expect(headlineText(1, 6, 0, 0, 1)).toBe('1 of 6 dependencies is in the graveyard: 1 haunted.');
     expect(headlineText(9, 20, 2, 3, 4)).toBe('9 of 20 dependencies are in the graveyard: 2 buried, 3 forgotten, 4 haunted.');
     expect(headlineText(0, 6, 0, 0, 0)).toBe('0 of 6 dependencies are in the graveyard.');
   });

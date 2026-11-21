@@ -1,3 +1,4 @@
+import { plural } from './plural';
 import { advisoryLink } from './urls';
 import type { AdvisoryExclusion, DetailModel, ParsedAdvisory } from './types';
 
@@ -57,7 +58,7 @@ export function buildAdvisoryGroups(
       explanation =
         openVulnerabilityCount === null
           ? 'not part of the open vulnerability count (unknown)'
-          : `not part of the ${countWord} open vulnerabilities`;
+          : `not part of the ${countWord} open ${plural(openVulnerabilityCount, 'vulnerability', 'vulnerabilities')}`;
     }
     groups.push({
       exclusion,

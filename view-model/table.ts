@@ -1,4 +1,5 @@
 import { compareCodePoints } from './internal/compare-code-points';
+import { plural } from './plural';
 import type {
   PackageRow,
   PlotKind,
@@ -111,7 +112,7 @@ export function buildTableModel(rows: readonly PackageRow[], sort: TableSort | n
     });
   }
   return {
-    caption: `Dependencies, ${rows.length} unique packages`,
+    caption: `Dependencies, ${rows.length} unique ${plural(rows.length, 'package', 'packages')}`,
     columns: COLUMNS.map((c) => ({
       key: c.key,
       label: c.label,

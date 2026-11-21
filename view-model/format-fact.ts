@@ -1,4 +1,5 @@
 import type { HealthFactField } from '../core';
+import { plural } from './plural';
 
 /** The seven facts in the order of core `HealthFacts` (Requirements 10.4, 10.15). */
 export const FACT_FIELDS: readonly HealthFactField[] = [
@@ -30,7 +31,7 @@ export function formatFact(field: HealthFactField, value: unknown): string {
   switch (field) {
     case 'daysSinceLastRelease':
     case 'daysSinceLastCommit':
-      return isDays(value) ? `${String(value)} days` : UNKNOWN;
+      return isDays(value) ? `${String(value)} ${plural(value, 'day', 'days')}` : UNKNOWN;
     case 'archived':
     case 'deprecated':
       return typeof value === 'boolean' ? (value ? 'yes' : 'no') : UNKNOWN;

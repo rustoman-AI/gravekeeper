@@ -58,7 +58,8 @@ const TAILS: Readonly<Record<string, (b: number, f: number, h: number) => string
 
 function oracle(n: number, m: number, b: number, f: number, h: number): string {
   const key = `${b > 0 ? 1 : 0}${f > 0 ? 1 : 0}${h > 0 ? 1 : 0}`;
-  return `${n} of ${m} dependencies are in the graveyard${TAILS[key](b, f, h)}`;
+  // R20: the noun agrees with m and the verb with n; only 1 takes the singular (is / dependency).
+  return `${n} of ${m} ${m === 1 ? 'dependency' : 'dependencies'} ${n === 1 ? 'is' : 'are'} in the graveyard${TAILS[key](b, f, h)}`;
 }
 
 describe('P5: Buried plus forgotten plus haunted equals the headline total, and the headline text matches', () => {

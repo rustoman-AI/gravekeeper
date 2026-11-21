@@ -2,6 +2,7 @@
 // Pure and total: the line is chosen from the ruleId table; numbers come only from the
 // reason facts. The core message is never read and the ruleId is never interpolated.
 import type { Reason } from '../core/model/types';
+import { plural } from './plural';
 
 const SEVERITIES: readonly string[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
 
@@ -37,7 +38,7 @@ function vulnerabilityLine(reason: Reason): string {
   const count = countFact(reason);
   const severity = severityFact(reason);
   if (count === null) return 'It has open vulnerabilities.';
-  const noun = count === 1 ? '1 open vulnerability' : `${String(count)} open vulnerabilities`;
+  const noun = `${String(count)} open ${plural(count, 'vulnerability', 'vulnerabilities')}`;
   return severity === null
     ? `It has ${noun}.`
     : `It has ${noun}, the worst of severity ${severity}.`;

@@ -65,7 +65,7 @@ describe('GA-P12 The header shows either a verdict or one empty sentence', () =>
           expect(h.emptySentence).toBe('This repository declares no dependencies, so there is nothing to grade.');
         } else {
           expect(h.emptySentence).toBe(
-            `The caretaker could not assess any of the ${parsed.summary.total} dependencies, so there is no grade.`,
+            `The caretaker could not assess any of the ${parsed.summary.total} ${parsed.summary.total === 1 ? 'dependency' : 'dependencies'}, so there is no grade.`, // R20
           );
         }
         for (const s of headerStrings(h)) {

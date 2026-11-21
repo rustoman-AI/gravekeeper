@@ -42,8 +42,8 @@ describe('buildAdvisoryGroups (R10.16)', () => {
     ]);
     expect(groups.map((g) => g.countText)).toEqual(['1 listed, 1 counted', '1 listed', '1 listed']);
     expect(groups[0]!.explanation).toBe(ALIAS_TEXT);
-    expect(groups[1]!.explanation).toBe('not part of the 1 open vulnerabilities');
-    expect(groups[2]!.explanation).toBe('not part of the 1 open vulnerabilities');
+    expect(groups[1]!.explanation).toBe('not part of the 1 open vulnerability'); // R20
+    expect(groups[2]!.explanation).toBe('not part of the 1 open vulnerability'); // R20
     expect(groups[0]!.entries.map((e) => e.id)).toEqual(['C-1']);
     expect(groups[1]!.entries[0]!.severityText).toBe('severity unknown');
     expect(groups[2]!.entries[0]!.severityText).toBe('LOW');

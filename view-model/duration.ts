@@ -4,6 +4,7 @@ import {
   DURATION_DAYS_MAX_EXCLUSIVE,
   DURATION_MONTHS_MAX_EXCLUSIVE,
 } from './constants';
+import { plural } from './plural';
 
 export type DurationUnit = 'none' | 'lessThanDay' | 'days' | 'months' | 'years';
 
@@ -35,10 +36,10 @@ export function humanizeDays(days: number): string {
     case 'lessThanDay':
       return 'less than a day';
     case 'days':
-      return count === 1 ? '1 day' : `${count} days`;
+      return `${count} ${plural(count, 'day', 'days')}`;
     case 'months':
-      return `${count} months`;
+      return `${count} ${plural(count, 'month', 'months')}`;
     case 'years':
-      return `${count} years`;
+      return `${count} ${plural(count, 'year', 'years')}`;
   }
 }

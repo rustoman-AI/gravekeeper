@@ -1,6 +1,7 @@
 import type { Classification, Reason, RuleId } from '../core';
 import { REASON_PRIORITY } from './constants';
 import { plotKindOf, statusWordOf } from './grave-type';
+import { plural } from './plural';
 import type { PlotKind } from './types';
 
 export { REASON_PRIORITY, statusWordOf };
@@ -36,7 +37,7 @@ export function shortForm(reason: Reason): string {
   if (reason.ruleId !== '7.2') return SHORT_FORMS[reason.ruleId];
   const count = factValue(reason, 'openVulnerabilityCount');
   const severity = factValue(reason, 'maxSeverity');
-  const n = typeof count === 'number' ? `${String(count)} open vulnerabilities` : 'open vulnerabilities';
+  const n = typeof count === 'number' ? `${String(count)} open ${plural(count, 'vulnerability', 'vulnerabilities')}` : 'open vulnerabilities';
   return typeof severity === 'string' ? `${n} (${severity})` : n;
 }
 
@@ -47,7 +48,7 @@ export function epitaphOf(name: string, c: Classification | null): string {
   if (kind === 'overgrown') {
     const reason = c.reasons.find((r) => r.ruleId === '8.3');
     const days = reason === undefined ? null : factValue(reason, 'daysSinceLastRelease');
-    const tail = typeof days === 'number' && Number.isFinite(days) ? `, last release ${String(days)} days ago` : '';
+    const tail = typeof days === 'number' && Number.isFinite(days) ? `, last release ${String(days)} ${plural(days, 'day', 'days')} ago` : '';
     return `${name} may be finished or abandoned${tail}`;
   }
   const strongest = strongestReason(c);

@@ -2,17 +2,18 @@ import type { Grade } from '../core';
 import { GRADE_A_MAX, GRADE_B_MAX, GRADE_C_MAX, GRADE_D_MAX } from '../core';
 import { SHORT_SHA_LENGTH } from './constants';
 import type { HeaderModel, PackageRow, ParsedScanResult, StatusChipModel } from './types';
+import { plural } from './plural';
 import { canonicalRepoUrl } from './urls';
 
 
-/** Requirement 5.2: the Headline. Parts with count 0 are omitted; the colon only when a part is kept. */
+/** Requirement 5.2: the Headline. The verb agrees with n and the noun with m (graveyard-art R20). Parts with count 0 are omitted; the colon only when a part is kept. */
 export function headlineText(n: number, m: number, b: number, f: number, h: number): string {
   const parts: string[] = [];
   if (b > 0) parts.push(`${b} buried`);
   if (f > 0) parts.push(`${f} forgotten`);
   if (h > 0) parts.push(`${h} haunted`);
   const tail = parts.length > 0 ? `: ${parts.join(', ')}` : '';
-  return `${n} of ${m} dependencies are in the graveyard${tail}.`;
+  return `${n} of ${m} ${plural(m, 'dependency', 'dependencies')} ${plural(n, 'is', 'are')} in the graveyard${tail}.`;
 }
 
 // Requirement 5.6: the scale from the core grade bounds (DI-7).
@@ -49,7 +50,7 @@ function emptySentenceOf(result: ParsedScanResult): string | null {
   const { summary, manifests } = result;
   if (summary.assessed > 0 || manifests.length === 0) return null;
   if (summary.total === 0) return 'This repository declares no dependencies, so there is nothing to grade.';
-  return `The caretaker could not assess any of the ${summary.total} dependencies, so there is no grade.`;
+  return `The caretaker could not assess any of the ${summary.total} ${plural(summary.total, 'dependency', 'dependencies')}, so there is no grade.`;
 }
 
 /** Graveyard-art Requirements 5.4, 5.5, 5.9: the four chips; counts come from the summary and the row split. */
@@ -120,7 +121,7 @@ export function buildHeaderModel(result: ParsedScanResult, rows: readonly Packag
         },
     entriesSentence:
       entries > summary.total
-        ? `${entries} dependency entries across ${result.manifests.length} manifests, ${summary.total} unique packages`
+        ? `${entries} dependency ${plural(entries, 'entry', 'entries')} across ${result.manifests.length} ${plural(result.manifests.length, 'manifest', 'manifests')}, ${summary.total} unique ${plural(summary.total, 'package', 'packages')}`
         : null,
     // Graveyard-art Requirements 5.4, 5.5, 5.9: no chips when nothing was assessed.
     chips: noneAssessed
@@ -134,7 +135,7 @@ const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
 
 function unit(count: number, word: string): string {
-  return `${count} ${word}${count === 1 ? '' : 's'}`;
+  return `${count} ${plural(count, word, `${word}s`)}`;
 }
 
 /** Requirement 3.10: "scanned 3 hours ago". `nowMs` is passed in; this module never reads the clock. */

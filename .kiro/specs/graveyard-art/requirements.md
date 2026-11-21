@@ -398,3 +398,28 @@ Two housekeeping items come first in the task order: the deployed Playwright pro
 6. THE report writer SHALL print "not measured" for a missing measurement, and SHALL read or print no environment variable and no token.
 7. THE unit test `tests/ui/write-m3-report.test.ts` SHALL check the section order, the "not measured" fallback, the screenshot list and the credits line.
 8. WHEN the Milestone 3 report is written, THE workflow SHALL stop and SHALL start no further task.
+
+### Requirement 20: Count sentences agree in number
+
+**User Story:** As a visitor, I want every sentence with a count to read correctly, so that "1 manifests" and similar slips do not make the product look careless.
+
+#### Acceptance Criteria
+
+1. WHEN the Gravekeeper_UI builds a user-visible sentence from a count of 1, THE Gravekeeper_UI SHALL use the singular noun form in that sentence.
+2. WHEN the Gravekeeper_UI builds a user-visible sentence from a count of 0 or from a count above 1, THE Gravekeeper_UI SHALL use the plural noun form in that sentence.
+3. WHEN the results header meta line reports 1 manifest, THE Results_Header SHALL show "1 manifest" and not "1 manifests" (known defect: "22 dependency entries across 1 manifests, 20 unique packages").
+4. THE Gravekeeper_UI SHALL apply criteria 1 and 2 to the Results_Header lines, the headline, the chips, the Caretaker's notes, the cap banner, the manifest picker, the empty sentences, the epitaph (for example "1 open vulnerability"), the facts of the Detail_Panel, the Scanning_Screen and the list view.
+5. THE Gravekeeper_UI SHALL keep every other word of each count sentence unchanged.
+6. THE Gravekeeper_Tests SHALL render each count sentence of criterion 4 with the counts 0, 1 and 2 and SHALL check the noun form for each count.
+
+### Requirement 21: Layout-shift measurement is stable
+
+**User Story:** As a maintainer, I want the layout-shift check to measure the settled page, so that the result does not depend on when the display font arrives.
+
+#### Acceptance Criteria
+
+1. THE layout-shift spec SHALL start measuring CLS after `document.fonts.ready` has resolved.
+2. THE headline font SHALL keep `font-display: swap`.
+3. THE layout-shift spec SHALL measure a CLS of at most 0.01 on 10 of 10 repeats on the `mobile` project with retries off, and in one run on the `desktop` project.
+4. THE Results_Header SHALL keep the sizes and positions of the settled layout identical to the layout before this change.
+5. THE Gravekeeper_UI SHALL accept the known gap that, when the headline font loads late on a real device, the content below the headline can shift by about 0.025 CLS. The measured case is the `ajeetdsouza/zoxide` fixture on `mobile` with the font files delayed by 900 ms: the headline wraps to 4 lines in the fallback font and to 5 lines in IM Fell English SC, which moves the content below it down by 28.9 px. This gap is accepted so that the display font and the art stay unchanged.

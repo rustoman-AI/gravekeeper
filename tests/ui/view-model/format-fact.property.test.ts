@@ -65,7 +65,8 @@ describe('P19: Fact formatting', () => {
       fc.property(dayField, naturals, (f, n) => {
         const text = formatFact(f, n);
         expectValid(text);
-        expect(text).toBe(`${String(n)} days`);
+        // R20: 1 reads "1 day".
+        expect(text).toBe(`${String(n)} ${n === 1 ? 'day' : 'days'}`);
       }),
       cfg(),
     );

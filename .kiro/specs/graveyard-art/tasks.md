@@ -409,11 +409,33 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
     - Files: `docs/milestone-3-report.md`
     - _Requirements: 19.4, 19.5_
 
-- [~] 28. Milestone 3 ends here
+- [x] 28. Milestone 3 ends here
   - STOP. Do not start any further task, group, refactor or deploy. Report to the user: the screenshot paths, the measured render times against the budget, the JavaScript size against the budget, the axe result per screen, the design changes, the known gaps and the credits line, all as written in `docs/milestone-3-report.md`.
   - _Requirements: 19.8_
 
+- [x] 29. Post-Milestone 3 fixes
+  - [x] 29.1 Commit housekeeping
+    - Orchestrator-only: commit the pending `tasks.md` and `tasks.meta.json` status update together with tasks 29.2 to 29.4. No coding agent edits a file in this task.
+    - Files: none
+  - [x] 29.2 Singular and plural in count sentences
+    - Use one shared `plural(n, singular, plural)` helper in `view-model` (reuse an existing one if grep finds it). Replace every hand-built count sentence in the header lines, headline, chips, notes, cap banner, picker, empty sentences, epitaph, detail facts, scanning screen and list view. Fix "1 manifests" in the results header meta line. Create `tests/ui/view-model/plural-sentences.test.ts`, which renders each count sentence with n = 0, 1 and 2. Update existing tests only where they assert the wrong plural.
+    - Files: the view-model and component files that build count text (found by grep), `tests/ui/view-model/plural-sentences.test.ts`, existing tests only where they assert the wrong plural
+    - _Requirements: R20_
+  - [x] 29.3 Reserve the chips row space
+    - Find the cause first (font swap of the chip text, `<svg><use>` icon sizing before the sprite sheet mounts, or the row mounting late), then fix it with explicit width and height on the chip icons, a `min-height` on the row, or `size-adjust` or metric-compatible fallback font settings. Class names and attributes only; no text or order changes, no new Token, no animation, and the settled layout stays identical.
+    - Files: `app/globals.css`, `components/status-chip.tsx`, `components/results-header.tsx`
+    - _Requirements: R21_
+  - [x] 29.4 Layout-shift stability run
+    - Run `npx playwright test tests/e2e/layout-shift.spec.ts --project=mobile --retries=0 --repeat-each=10 --reporter=list` and report pass or fail per run, with the CLS values for any failing run. Run the same spec once on `--project=desktop` and report the result.
+    - Files: none
+    - _Requirements: R21_
+
+- [x] 30. Checkpoint - Post-Milestone 3 fixes
+  - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build`, `npm run check:bundle` and `npm run test:e2e`, and ensure all pass. Ask the user if questions arise.
+
 ## Notes
+
+- Group 29 and task 30 are added after Milestone 3 and are the only tasks to run after task 28.
 
 - Property tests are mandatory in this plan (no `*`): each property is its own sub-task and sits next to the code it validates.
 - Requirement numbers are criterion numbers of `.kiro/specs/graveyard-art/requirements.md`. Property numbers are from `.kiro/specs/graveyard-art/design.md`; the heading "Property N" and the tag `GA-PN` always use the same N.
@@ -475,7 +497,10 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
     { "id": 45, "tasks": ["25.2"] },
     { "id": 46, "tasks": ["26.1", "27.1"] },
     { "id": 47, "tasks": ["26.2", "27.2"] },
-    { "id": 48, "tasks": ["27.3"] }
+    { "id": 48, "tasks": ["27.3"] },
+    { "id": 49, "tasks": ["29.1", "29.2"] },
+    { "id": 50, "tasks": ["29.3"] },
+    { "id": 51, "tasks": ["29.4"] }
   ]
 }
 ```

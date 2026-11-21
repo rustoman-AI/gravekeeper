@@ -1,4 +1,5 @@
 import { humanizeDays } from './duration';
+import { plural } from './plural';
 import { unassessedLabelOf } from './package-rows';
 import type { PackageRow } from './types';
 
@@ -22,7 +23,7 @@ function ghostSentence(row: PackageRow): string {
   const severity = row.facts.maxSeverity;
   const severityText = typeof severity === 'string' ? ` of severity ${severity}` : '';
   if (count === null) return `It is haunted by open vulnerabilities${severityText}.`;
-  const noun = count === 1 ? 'open vulnerability' : 'open vulnerabilities';
+  const noun = `open ${plural(count, 'vulnerability', 'vulnerabilities')}`;
   return `It is haunted by ${count} ${noun}${severityText}.`;
 }
 

@@ -720,3 +720,21 @@ The Backdrop uses constant tables, never randomness. The report spec uses `page.
 | ENOENT collision in the deployed project | A flaky failure with two workers | `workers: 1` in config and in the deploy commands |
 | Plugin removal | Alias resolution breaks | Task starts by checking the Vite version and by running the whole suite after the change; the plugin is kept if the option is unavailable |
 | Credits and time | The pass is large | Groups are ordered by the user's priority and each ends with a checkpoint, so the first groups ship value even if later groups are cut |
+
+---
+
+## Post-Milestone 3 fixes
+
+### Count sentences agree in number (R20)
+
+Use one shared `plural(n, singular, plural)` helper in `view-model`. If a helper with this purpose already exists, reuse it and do not add a second one. Every view-model and component file that builds count text calls it instead of appending an "s" by hand. The files are found by grep for count words such as "manifests", "entries", "packages", "vulnerabilities", "advisories", "versions" and "years". A new unit test `tests/ui/view-model/plural-sentences.test.ts` renders each count sentence with n = 0, 1 and 2 and checks the noun form (singular only for 1). Existing tests change only where they assert the wrong plural.
+
+### Layout-shift measurement is stable (R21)
+
+Cause (found by task 29.3): the chips row and the icons never change size. The CLS of 0.0248 on mobile zoxide happens only when IM Fell English SC loads late. With the font files delayed by 900 ms, the headline wraps to 4 lines in the fallback font and to 5 lines in IM Fell, a 28.9 px increase that pushes the content below it down. With normal font loading, CLS is 0 on 15 of 15 runs at 4x throttle.
+
+Decision: keep `font-display: swap`, so IM Fell always shows in the end and the art is unchanged. `tests/e2e/layout-shift.spec.ts` waits for `document.fonts.ready` before it starts measuring CLS, so the measurement covers the settled layout only.
+
+Known gap: on a real device where the font loads late, the content below the headline can still shift by about 0.025 CLS. This is accepted to keep the display font.
+
+Task 29.3 keeps its title in tasks.md, but it now changes `tests/e2e/layout-shift.spec.ts` (the wait for `document.fonts.ready`) and reverts `app/layout.tsx` to its state before the font experiments. No chip, icon or header CSS changes. The stability run of task 29.4 (10 repeats on `mobile` with retries off, one on `desktop`) is the check.
