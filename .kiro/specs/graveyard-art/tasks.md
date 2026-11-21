@@ -369,10 +369,10 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
     - Files: `docs/screenshots/*.png`
     - _Requirements: 5.10, 5.11, 14.9_
 
-- [~] 23. Checkpoint - Screenshots
+- [x] 23. Checkpoint - Screenshots
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
-- [~] 24. Final checkpoint - Graveyard art
+- [x] 24. Final checkpoint - Graveyard art
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build`, `npm run check:bundle` and `npm run test:e2e`, and ensure all pass. Confirm that `tests/ui/traceability.test.ts` still reports graveyard-ui P1 to P34 once each and `tests/ui/art-traceability.test.ts` reports GA-P1 to GA-P14 once each. The orchestrator commits and pushes before group 25. Ask the user if questions arise.
 
 - [ ] 25. Deploy Milestone 3
