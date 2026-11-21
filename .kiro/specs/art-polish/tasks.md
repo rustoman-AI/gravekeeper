@@ -1,4 +1,4 @@
-# Implementation Plan: art-polish
+﻿# Implementation Plan: art-polish
 
 ## Overview
 
@@ -8,7 +8,7 @@ Implementation language: TypeScript (strict), CSS and SVG. The project root is t
 
 Rules for every task:
 
-- One owner per file per task: a file named in a task is edited by that task only, and tasks that name the same file are in different waves of the dependency graph. `app/globals.css` is edited by tasks 1.3, 3.1, 5.1, 7.1 and 7.4 (one wave each). `tests/ui/art-css.test.ts` is edited by tasks 3.2, 5.2 and 7.2 (one wave each).
+- One owner per file per task: a file named in a task is edited by that task only, and tasks that name the same file are in different waves of the dependency graph. `app/globals.css` is edited by tasks 1.3, 3.1, 5.1, 7.1, 7.4 and 7.5 (one wave each). `tests/ui/art-css.test.ts` is edited by tasks 3.2, 5.2 and 7.2 (one wave each).
 - Property tests use `cfg()` from `tests/support/fc-config.ts`, carry the tag comment `// Feature: art-polish, Property AP-P<n>: <title>` and a `// Validates: Requirements <list>` line, hold one property per file, and have titles that start with `AP-P<n>`. Never set `FC_NUM_RUNS` in the shell. Deep runs use `npm run test:deep -- <files>`.
 - Tasks marked **orchestrator-only** are done by the orchestrator (they run `git commit` and `git push` or use the network). A coding sub-agent does not start them.
 - **Visual tasks** (marked "Visual") require the sub-agent to take screenshots, open the images, and report in its result what it sees, in plain words: what stands in front of what, whether any fog edge or stripe is visible, whether the first row stands on the ground, whether labels are readable, whether the ghost is above its stone. Preview screenshots are taken with `$env:POLISH_REPORT = '1'; $env:POLISH_OUT_DIR = 'test-results/polish-preview'; npx playwright test tests/e2e/polish-report.spec.ts --project=desktop` (task 1.5) and are not committed. A visual task that cannot open the images reports that and stops.
@@ -84,23 +84,28 @@ Rules for every task:
     - Stage by name the files of group 5 and commit with the subject `art-polish: feathered fog with alternating row offsets (group 5)`. Push. Record the hash.
     - _Requirements: 10.6_
 
-- [ ] 7. Headline and header
-  - [~] 7.1 Set the headline clamp at 1280 px and wider
+- [x] 7. Headline and header
+  - [x] 7.1 Set the headline clamp at 1280 px and wider
     - In `app/globals.css` add `@media (min-width: 1280px) { .gk-headline { font-size: clamp(1.75rem, 2.2vw + 0.5rem, 2.5rem); } }` after the existing headline rules, with a comment citing Requirement 5.1 and the unchanged bounds below 1280 px. Leave the 26 px to 56 px and 32 px to 56 px rules as they are. `.gk-headline-empty` is unchanged.
     - _Requirements: 5.1, 5.2_
-  - [~] 7.2 Test the headline clamps
+  - [x] 7.2 Test the headline clamps
     - In `tests/ui/art-css.test.ts` keep the two existing headline tests and add: a rule in a `(min-width: 1280px)` media block sets `.gk-headline` `font-size` to a `clamp` whose lower bound is 28 px (1.75 rem) and upper bound 40 px (2.5 rem); the preferred value is `2.2vw + 0.5rem`.
     - _Requirements: 5.1, 5.2, 5.5_
-  - [~] 7.3 Add the headline line-count end-to-end spec
+  - [x] 7.3 Add the headline line-count end-to-end spec
     - Create `tests/e2e/headline-lines.spec.ts` (desktop project; request fixture mocked; reduced motion; fonts ready): at 1280x720 and 1440x760 the number of distinct `top` values (rounded) of `Range.getClientRects()` over the `.gk-headline` text is at most 2, the Plaque shares a grid row with the Headline, and the computed font size is between 28 and 40 px; at 1920x1080 the font size is 40 px and the line count is at most 2. Also assert the headline text equals the header model sentence ("31 of 40 dependencies are in the graveyard: 6 buried, 20 forgotten, 5 haunted.").
     - _Requirements: 5.3, 5.4_
-  - [~] 7.4 Measure the targets and compact the header only if needed (Visual)
+  - [x] 7.4 Measure the targets and compact the header only if needed (Visual)
     - Run `npx playwright test tests/e2e/above-fold.spec.ts tests/e2e/headline-lines.spec.ts --project=desktop --project=mobile` and record the measured numbers (bottom of the lowest first-row label, top of the second-row art, header height, headline lines) for 1440x760, 1280x720 and 390x700. Open preview screenshots of the three sizes and report what is visible without scrolling. If every test passes, change nothing. If a target is missed, apply the ladder of the design's Header section one step at a time in `app/globals.css` (step 1: `.gk-results-header` `row-gap` to 0; step 2: only if a class for the results page container already exists, reduce its top padding; step 3: `.gk-plaque-letter` to 3 rem from 1024 px), rerunning and recording before and after for each step. The Plaque stays beside the Headline; DOM order, text and accessible names do not change. If the ladder is exhausted, stop and report the numbers instead of changing the art.
     - _Requirements: 2.1, 2.2, 2.3, 2.5, 2.6, 2.7_
+  - [x] 7.5 Mobile header steps (Visual)
+    - Context: task 7.4 measured the desktop sizes as met (1440x760 and 1280x720: first-row label bottom 587, second-row art top 602.5, headline 2 lines) and 390x700 as missed after step 1 (`row-gap: 0`): first-row label bottom 755.25 against at most 700 (55 px short). The Plaque beside the headline squeezes it to 6 lines at 27.5 px, and there are three rows of status chips. Apply the design's mobile steps in `app/globals.css`, inside the `max-width: 639px` media block only, one at a time, measuring before and after each: step 4 places the Plaque in the first grid row beside the repository name (`h1`) with a compact letter of about 2 rem, so the headline spans the full width (CSS grid placement only; DOM order, text, heading levels and accessible names unchanged; from 640 px the Plaque stays beside the headline); step 5 tightens the status chips (smaller vertical padding and gap) while each chip keeps a touch target of at least 24x24 CSS px and the text size stays unchanged. Cite Requirement 2.6 in a comment above each rule. No rule outside the media block changes.
+    - If the first-row label bottom at 390x700 is still above 700 after step 5, stop and report the numbers; do not change the art or the DOM.
+    - Visual: take preview screenshots at 390x700 and 320x700 (reflow), open the images and report: the Plaque position, the number of headline lines, the chips (readable, not overlapping, touch targets measured), whether any horizontal scrolling appears at 320 px, and whether the first row is fully visible at 390x700. Run `above-fold`, `reflow`, `layout-shift`, `results`, `art` and the axe-bearing specs (`polish-report.spec.ts` preview, the accessibility specs) and record the measured numbers for each step.
+    - _Requirements: 2.3, 2.6, 2.7, 9.6_
 
-- [ ] 8. Checkpoint - Headline and header
+- [x] 8. Checkpoint - Headline and header
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 8.1 Commit and push the headline group (orchestrator-only)
+  - [x] 8.1 Commit and push the headline group (orchestrator-only)
     - Stage by name the files of group 7 and commit with the subject `art-polish: two-line headline at 1280 px and wider (group 7)`. Push. Record the hash and the measured numbers of task 7.4.
     - _Requirements: 10.6, 10.7_
 
@@ -212,23 +217,24 @@ Rules for every task:
     { "id": 9, "tasks": ["7.1"] },
     { "id": 10, "tasks": ["7.2", "7.3"] },
     { "id": 11, "tasks": ["7.4"] },
-    { "id": 12, "tasks": ["8.1"] },
-    { "id": 13, "tasks": ["9.1"] },
-    { "id": 14, "tasks": ["9.2"] },
-    { "id": 15, "tasks": ["9.3", "9.4", "9.5"] },
-    { "id": 16, "tasks": ["10.1"] },
-    { "id": 17, "tasks": ["11.1"] },
-    { "id": 18, "tasks": ["11.2"] },
-    { "id": 19, "tasks": ["12.1"] },
-    { "id": 20, "tasks": ["13.1", "13.2"] },
-    { "id": 21, "tasks": ["14.1"] },
-    { "id": 22, "tasks": ["15.1"] },
-    { "id": 23, "tasks": ["15.2"] },
-    { "id": 24, "tasks": ["15.3"] },
-    { "id": 25, "tasks": ["15.4"] },
-    { "id": 26, "tasks": ["15.5"] },
-    { "id": 27, "tasks": ["15.6"] },
-    { "id": 28, "tasks": ["15.7"] }
+    { "id": 12, "tasks": ["7.5"] },
+    { "id": 13, "tasks": ["8.1"] },
+    { "id": 14, "tasks": ["9.1"] },
+    { "id": 15, "tasks": ["9.2"] },
+    { "id": 16, "tasks": ["9.3", "9.4", "9.5"] },
+    { "id": 17, "tasks": ["10.1"] },
+    { "id": 18, "tasks": ["11.1"] },
+    { "id": 19, "tasks": ["11.2"] },
+    { "id": 20, "tasks": ["12.1"] },
+    { "id": 21, "tasks": ["13.1", "13.2"] },
+    { "id": 22, "tasks": ["14.1"] },
+    { "id": 23, "tasks": ["15.1"] },
+    { "id": 24, "tasks": ["15.2"] },
+    { "id": 25, "tasks": ["15.3"] },
+    { "id": 26, "tasks": ["15.4"] },
+    { "id": 27, "tasks": ["15.5"] },
+    { "id": 28, "tasks": ["15.6"] },
+    { "id": 29, "tasks": ["15.7"] }
   ]
 }
 ```

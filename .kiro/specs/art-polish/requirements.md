@@ -34,7 +34,7 @@ Read from the repository before this spec was written:
 | Horizon heights | 240 px and 150 px stay. `tests/ui/art-css.test.ts` keeps its horizon test and gains tests for the lead. |
 | Ground | A decorative full-bleed `.gk-stage::after` layer: a dark mossy gradient plus a repeating grass strip, one strip per row, at the row's base. No DOM per row. |
 | Fog technique | Radial gradients that end in `transparent`, in a 200 %-wide layer, with a vertical tile of two rows. Even rows and odd rows use different horizontal centres. No `mask`, no `filter`. |
-| Header | The Plaque stays beside the headline. Only the headline clamp at 1280 px and wider changes (28 px to 40 px). Further compaction is CSS-only (spacing), DOM order unchanged, and is used only if a measurement shows it is needed. |
+| Header | The Plaque stays beside the headline from 640 px. Only the headline clamp at 1280 px and wider changes (28 px to 40 px). Further compaction is CSS-only, DOM order unchanged, and is used only if a measurement shows it is needed. Under 640 px the compaction may also place the Plaque in the first grid row beside the repository name and tighten the status chips (task 7.5, after a measurement at 390x700 showed the spacing steps are not enough). |
 | Coffin variant | The id `slab` stays. Only its drawing changes. Variant choice and symbol ids are therefore unchanged and `GA-P1` and `GA-P10` keep their meaning. |
 | Restless arrangement | Stone at 50 % scale anchored at its feet, wisp at 85 % of a normal ghost drawn after the stone with its top 10 px above the symbol box, eyes above the stone top, overlap at most 40 % of the stone height. |
 | New tokens | `--color-ground-moss` and `--color-grass`, both text-bearing (labels sit on them) and contrast-tested. No new token for the Hero (existing `--color-iron`, `--color-hill`). |
@@ -91,7 +91,7 @@ Read from the repository before this spec was written:
 3. WHILE the viewport is 390x700, THE Gravekeeper SHALL show all Plot boxes and labels of at least one full row inside the viewport, with the page not scrolled.
 4. THE above-the-fold test SHALL use exactly these three sizes and SHALL replace the sizes 1440x900, 1280x800 and 390x844.
 5. THE Results_Header SHALL keep the Plaque beside the Headline in the same grid row at 1280 px and wider.
-6. IF the targets of criteria 1 to 3 are not met after Requirement 5 and Requirement 1 are applied, THEN THE Results_Header SHALL reduce only its CSS spacing (gaps, paddings, font sizes of secondary lines), SHALL keep the DOM order, the heading levels, the text and the accessible names unchanged, and SHALL record each change and its measured effect in the report.
+6. IF the targets of criteria 1 to 3 are not met after Requirement 5 and Requirement 1 are applied, THEN THE Results_Header SHALL reduce only its CSS spacing (gaps, paddings, font sizes of secondary lines) and, WHILE the viewport is under 640 px, MAY also change the CSS grid placement of the Plaque (first grid row beside the repository name, compact letter) and tighten the status chip padding with each chip keeping a touch target of at least 24x24 CSS px, SHALL keep the DOM order, the heading levels, the text and the accessible names unchanged, and SHALL record each change and its measured effect in the report.
 7. THE Gravekeeper SHALL meet the cumulative layout shift limit of 0.01 on the landing page and on the results page.
 
 ### Requirement 3: Ground tokens and label contrast

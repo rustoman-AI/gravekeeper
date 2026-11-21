@@ -566,6 +566,13 @@ main[tabindex="-1"]:focus-visible {
   }
 }
 
+/* art-polish R5.1, R5.2: from 1280 px the headline is 28 to 40 px (two lines beside the plaque); the bounds below 1280 px stay as above. */
+@media (min-width: 1280px) {
+  .gk-headline {
+    font-size: clamp(1.75rem, 2.2vw + 0.5rem, 2.5rem);
+  }
+}
+
 /*
  * R5.10 to R5.13: compact header. A two-column grid puts the plaque beside the headline; the
  * wrapper divs use display: contents so the DOM order and accessible names stay as they are.
@@ -575,7 +582,7 @@ main[tabindex="-1"]:focus-visible {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   column-gap: 1rem;
-  row-gap: 0.25rem;
+  row-gap: 0;
   align-items: start;
 }
 .gk-results-header > h1,
@@ -655,6 +662,28 @@ main[tabindex="-1"]:focus-visible {
   }
   .gk-results-header .gk-plaque figcaption {
     font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 639px) {
+  /* art-polish R2.6 (step 4): the plaque sits in the first grid row beside the repo name; the headline spans the full width. Grid placement only. */
+  .gk-results-header > h1 {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+  }
+  .gk-results-header .gk-plaque {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 4rem;
+    padding: 0.125rem 0.5rem 0.25rem;
+  }
+  .gk-results-header .gk-plaque-letter {
+    font-size: 2rem;
+  }
+  .gk-results-header > .gk-headline {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
 }
 

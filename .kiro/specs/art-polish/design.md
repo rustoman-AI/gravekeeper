@@ -231,7 +231,14 @@ The old `.gk-stage` `background` is removed. The grass layers are two or three `
 
 ### Header
 
-At 1280 px and wider only the Headline clamp changes (AP-D7). The grid (`1fr auto` below 1024 px, `auto 1fr auto` from 1024 px) and the Plaque position stay. If a measurement at 1440x760 or 1280x720 shows that the second-row target is missed (R2.6), the task applies, in this order and one at a time, each with a before and after measurement: (1) reduce `.gk-results-header` `row-gap` from 0.125 rem to 0; (2) reduce the vertical padding of the results page container (class on `results-page.tsx` is not touched: use a CSS rule on `.gk-results-header` parent via `main > section:first-child` only if a class already exists; otherwise stop and report); (3) reduce `.gk-plaque-letter` from 3.5 rem to 3 rem. Hiding, moving or reordering content is not allowed.
+At 1280 px and wider only the Headline clamp changes (AP-D7). The grid (`1fr auto` below 1024 px, `auto 1fr auto` from 1024 px) and the Plaque position stay. If a measurement at 1440x760 or 1280x720 shows that the second-row target is missed (R2.6), the task applies, in this order and one at a time, each with a before and after measurement: (1) reduce `.gk-results-header` `row-gap` from 0.125 rem to 0; (2) reduce the vertical padding of the results page container (class on `results-page.tsx` is not touched: use a CSS rule on `.gk-results-header` parent via `main > section:first-child` only if a class already exists; otherwise stop and report); (3) reduce `.gk-plaque-letter` from 3.5 rem to 3 rem. Hiding or reordering content is not allowed.
+
+**Mobile steps (under 640 px only; added after the measurement of task 7.4).** On the desktop sizes the ladder met the targets (1440x760 and 1280x720: first-row label bottom 587, second-row art top 602.5, headline 2 lines). At 390x700 it was exhausted after step 1: first-row label bottom 755.25 against a target of at most 700 (55 px short). The cause is the Plaque beside the headline, which squeezes the headline to 6 lines at 27.5 px, plus three rows of status chips. Task 7.5 therefore adds two steps inside the `max-width: 639px` media block of `app/globals.css`, applied one at a time with a measurement before and after each:
+
+- Step 4: place the Plaque in the first grid row beside the repository name (the `h1`) instead of beside the headline, with a compact letter (about 2 rem), so the headline spans the full width. This is CSS grid placement only (`grid-row` and `grid-column` of the Plaque and the headline). DOM order, text, heading levels and accessible names stay unchanged. From 640 px the Plaque stays beside the headline as before.
+- Step 5: tighten the status chips (smaller vertical padding and gap). Each chip keeps a touch target of at least 24x24 CSS px (WCAG 2.2 target size, 2.5.8) and the chip text size is unchanged.
+
+If the target is still missed after step 5, the task stops and reports the numbers. The measurements are recorded in the report (R2.6).
 
 ### Tests (new and changed)
 
