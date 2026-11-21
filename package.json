@@ -19,6 +19,7 @@
     "test": "vitest --run",
     "report:m1": "tsx scripts/write-m1-report.ts",
     "report:m2": "tsx scripts/write-m2-report.ts",
+    "report:m3": "tsx scripts/write-m3-report.ts",
     "test:deep": "tsx scripts/test-deep.ts",
     "e2e:fixtures": "tsx scripts/export-scan-fixtures.ts",
     "test:e2e": "npm run e2e:fixtures && playwright test"

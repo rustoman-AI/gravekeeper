@@ -375,36 +375,36 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
 - [x] 24. Final checkpoint - Graveyard art
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture`, `npx vitest --run`, `npm run build`, `npm run check:bundle` and `npm run test:e2e`, and ensure all pass. Confirm that `tests/ui/traceability.test.ts` still reports graveyard-ui P1 to P34 once each and `tests/ui/art-traceability.test.ts` reports GA-P1 to GA-P14 once each. The orchestrator commits and pushes before group 25. Ask the user if questions arise.
 
-- [ ] 25. Deploy Milestone 3
-  - [~] 25.1 Verify the deployment
+- [x] 25. Deploy Milestone 3
+  - [x] 25.1 Verify the deployment
     - After the orchestrator has pushed to `main` and the deployment finished, run `npm run verify:deploy` (it polls `https://gravekeeper-chi.vercel.app`). Report the result. Print no environment variable and no token.
     - Files: none
     - _Requirements: 19.1_
-  - [~] 25.2 Run the deployed specs with one worker
+  - [x] 25.2 Run the deployed specs with one worker
     - Run `$env:E2E_BASE_URL='https://gravekeeper-chi.vercel.app'; npx playwright test tests/e2e/deployed.spec.ts tests/e2e/live-scan.spec.ts --project=deployed --workers=1` (the live-scan spec uses the deployed server's own GitHub access and needs no local token; never read, print or write a token). Report pass or fail per spec and the live-scan status and timings. If a spec fails because of the new art, fix it in the file that the failure names in a separate follow-up task and re-run; do not edit specs of other groups here.
     - Files: none
     - _Requirements: 15.4, 19.1_
 
-- [ ] 26. Milestone 3 report spec
-  - [~] 26.1 Write the report spec
+- [x] 26. Milestone 3 report spec
+  - [x] 26.1 Write the report spec
     - Create `tests/e2e/m3-report.spec.ts`, modelled on `tests/e2e/m2-report.spec.ts`: runs only when `M3_REPORT=1` and only in the `desktop` project, `/api/scan` always mocked, `page.emulateMedia({ reducedMotion: 'reduce' })`, fixed clock, fonts ready, and for the scene screenshots a wait until the number of `.gk-plot` buttons equals the number of rows. Captured at 1440x900 into `docs/screenshots/m3/`: `landing.png`, `scanning.png` (stage 3, so three stones are lit before the reduced-motion override is turned off for this one image; use `reducedMotion: 'no-preference'` with the clock paused at 7 s), `results-scene-request.png`, `results-scene-zoxide.png`, `detail-uuid.png`, `detail-aws-sign2.png`; and `results-scene-request-mobile.png` at 390x844. Each screen runs axe (WCAG 2.2 A and AA) and the spec writes `m3A11y` (violation count and rule ids per screen) into `test-results/m3-measurements.json`, keeping other keys, and a `README.md` in `docs/screenshots/m3/` listing the files. The results scene shots (`results-scene-request.png`, `results-scene-zoxide.png`, `results-scene-request-mobile.png`) must show plots above the fold without scrolling, and the spec asserts it (the top of the art box of the first `.gk-plot` is smaller than the viewport height before each shot).
     - Files: `tests/e2e/m3-report.spec.ts`
     - _Requirements: 19.2, 19.3, 14.9_
-  - [~] 26.2 Run the report spec, the perf spec and the bundle gate
+  - [x] 26.2 Run the report spec, the perf spec and the bundle gate
     - Run, in order: `$env:M3_REPORT='1'; npx playwright test tests/e2e/scene-perf.spec.ts --project=perf`, then `npx playwright test tests/e2e/js-budget.spec.ts --project=desktop`, then `npx playwright test tests/e2e/m3-report.spec.ts --project=desktop` (all with `M3_REPORT=1`, mocked API only, local production build). Look at each PNG. Confirm `test-results/m3-measurements.json` has `scenePerf`, `jsBudget` and `m3A11y`.
     - Files: `docs/screenshots/m3/*.png`, `docs/screenshots/m3/README.md`
     - _Requirements: 19.2, 19.3_
 
-- [ ] 27. Milestone 3 report writer
-  - [~] 27.1 Write the report writer
+- [x] 27. Milestone 3 report writer
+  - [x] 27.1 Write the report writer
     - Create `scripts/write-m3-report.ts` modelled on `scripts/write-m2-report.ts` and add `"report:m3": "tsx scripts/write-m3-report.ts"` to `package.json`. It reads `test-results/m3-measurements.json`, lists `docs/screenshots/m3/`, reads `docs/m3-design-changes.md` and writes `docs/milestone-3-report.md` with these sections in this order: Screenshots (image links), Render time (request and 300-plot synthetic median against `SCENE_RENDER_BUDGET_MS` with the five runs), Client JavaScript (total against `CLIENT_JS_BUDGET_BYTES`, margin), Accessibility (axe) (a table of the six screens and the mobile shot), Deploy check (URL, verify:deploy, deployed spec, live scan), Design changes (from the file), Known gaps (a fixed list in the script: screenshots use reduced motion so fog and flicker are not visible in them; the render time comes from a local production build, not from the deployed site; tilt and depth need CSS `rotate` and `scale`; axe cannot judge contrast through gradients, the token test does), Credits (the exact line "Credit usage cannot be seen from here, so the credits spent on Milestone 3 are not reported."). The Deploy check section takes its values from the command-line flags `--verify=<pass|fail>`, `--deployed=<pass|fail>`, `--live-status=<n>` and `--live-ms=<n>`; a missing flag prints "not measured". A missing measurement prints "not measured". The script reads and prints no environment variable and no token.
     - Files: `scripts/write-m3-report.ts`, `package.json`
     - _Requirements: 19.4, 19.5, 19.6_
-  - [~] 27.2 Test the report writer
+  - [x] 27.2 Test the report writer
     - Create `tests/ui/write-m3-report.test.ts` (pattern of `tests/ui/write-m2-report.test.ts`): the section order, "not measured" for an absent file or key, the screenshot list from a temp directory, the render times and budgets text, the credits line exactly, the flag parsing (present and missing flags), and a check that the script source contains no `process.env` (it must not read the environment at all).
     - Files: `tests/ui/write-m3-report.test.ts`
     - _Requirements: 19.4, 19.5, 19.6, 19.7_
-  - [~] 27.3 Generate the report
+  - [x] 27.3 Generate the report
     - Run `npm run report:m3` and read `docs/milestone-3-report.md`. Confirm all seven screenshot links resolve to files in `docs/screenshots/m3/`, the numbers match `test-results/m3-measurements.json`, and the deploy section reflects the results of tasks 25.1 and 25.2: run the writer as `npm run report:m3 -- --verify=<pass|fail> --deployed=<pass|fail> --live-status=<n> --live-ms=<n>` with the values reported by those tasks.
     - Files: `docs/milestone-3-report.md`
     - _Requirements: 19.4, 19.5_
