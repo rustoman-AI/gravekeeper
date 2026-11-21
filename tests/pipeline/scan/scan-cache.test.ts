@@ -248,6 +248,16 @@ describe('createScanCache', () => {
     expect(isScanResult(makeResult())).toBe(true);
   });
 
+  it('accepts a pyproject.toml manifest and rejects an unknown format (R10.2)', () => {
+    const withFormat = (format: string): ScanResult =>
+      ({
+        ...makeResult(),
+        manifests: [{ path: 'pyproject.toml', format, warnings: [] }],
+      }) as unknown as ScanResult;
+    expect(isScanResult(withFormat('pyproject.toml'))).toBe(true);
+    expect(isScanResult(withFormat('setup.py'))).toBe(false);
+  });
+
   it('reads back a stored result with advisories and rejects an entry without them', async () => {
     const { runtime, store } = setup();
     const cache = createScanCache(store);

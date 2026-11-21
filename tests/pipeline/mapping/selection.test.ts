@@ -28,6 +28,27 @@ describe('selectManifests', () => {
     });
   });
 
+  it('selects a root pyproject.toml and requirements.txt together, in code point order (R9.3)', () => {
+    const r = run(['requirements.txt', 'pyproject.toml', 'sub/pyproject.toml'], []);
+    expect(r).toEqual({
+      ok: true,
+      value: { selected: ['pyproject.toml', 'requirements.txt'], noRootManifest: false },
+    });
+  });
+
+  it('accepts an explicit nested pyproject.toml path (R9.4)', () => {
+    const r = run([], ['a/pyproject.toml'], ['a/pyproject.toml']);
+    expect(r).toEqual({ ok: true, value: { selected: ['a/pyproject.toml'], noRootManifest: false } });
+  });
+
+  it('rejects a path with another file name as manifest-not-found (R9.4)', () => {
+    const tree = ['a/pyproject.toml.bak', 'a/setup.py'];
+    for (const p of tree) {
+      const r = run([], [p], tree);
+      expect(!r.ok && r.error.code).toBe('manifest-not-found');
+    }
+  });
+
   it('has no cap on default root manifests', () => {
     const r = run(['package.json', 'requirements.txt', 'Cargo.toml'], []);
     expect(r.ok && r.value.selected.length).toBe(3);

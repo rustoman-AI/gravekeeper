@@ -14,6 +14,7 @@ import {
   type FixtureMetadata,
 } from './fixtures/fixture-set';
 import { missingPreconditions } from './fixtures/preconditions';
+import { matchesRepo, parseRecorderTarget, replayVerdict } from './fixtures/record-options';
 import {
   buildScanDeps,
   buildSourcesOver,
@@ -33,6 +34,8 @@ interface RepoSpec {
   readonly kind: 'npm' | 'python' | 'rust';
   readonly owner: string;
   readonly repo: string;
+  /** alse: the set has no archived or deprecated dependency (pyproject R12.4). */
+  readonly requiresFlagged?: boolean;
 }
 
 /** The three fixture repositories of the design ("The three fixture repositories"). */
@@ -46,7 +49,10 @@ function stagingPath(label: string): string {
   return join(FIXTURES_ROOT, `.recording-${label}`);
 }
 
-/** R23.4 replay check of a staged set: `ok` true, nothing missing, one archived or deprecated dependency. */
+/**
+ * R23.4 replay check of a staged set: `ok` true, nothing missing, one archived or deprecated dependency.
+ * With `requiresFlagged` false (pyproject R12.4) only `ok` and one dependency are required.
+ */
 async function replayCheck(stagingDir: string, repo: RepoSpec, asOf: string): Promise<string | null> {
   const config = recordingConfig();
   const client = new FixtureHttpClient(stagingDir);
@@ -64,11 +70,7 @@ async function replayCheck(stagingDir: string, repo: RepoSpec, asOf: string): Pr
   );
   const first = client.misses[0];
   if (first !== undefined) return `replay missed a request (source ${first.source}, ${first.method})`;
-  if (!outcome.ok) return `replay scan failed with ${outcome.error.code}`;
-  const flagged = outcome.value.result.dependencies.some(
-    (d) => d.facts.archived === true || d.facts.deprecated === true,
-  );
-  return flagged ? null : 'replay scan has no dependency with archived or deprecated true (R23.4)';
+  return replayVerdict(outcome, repo.requiresFlagged);
 }
 
 /** Replaces the previous set by the staged one (size and replay checks have passed). */
@@ -106,6 +108,7 @@ async function recordRepo(spec: RepoSpec, token: string | null): Promise<string 
       asOf,
       manifestPaths: result.manifests.map((m) => m.path),
       recorderVersion: RECORDER_VERSION,
+      ...(spec.requiresFlagged === false ? { requiresFlaggedDependency: false } : {}),
     };
     const staged = stageFixtureSet(stagingDir, metadata, stack.recorder.responses(), token);
     const targetDir = join(FIXTURES_ROOT, label);
@@ -191,14 +194,29 @@ async function main(): Promise<number> {
     console.error(`fixtures:record refused. Missing or invalid: ${missing.join(', ')}.`);
     return 1;
   }
+  const target = parseRecorderTarget(process.argv.slice(2));
+  if (target.kind === 'invalid') {
+    console.error(`fixtures:record refused. ${target.message}.`);
+    return 1;
+  }
+  const repos =
+    target.kind === 'all'
+      ? REPOS
+      : target.kind === 'repo'
+        ? REPOS.filter((r) => matchesRepo(r, target.owner, target.repo))
+        : [];
+  if (target.kind === 'repo' && repos.length === 0) {
+    console.error(`fixtures:record refused. ${target.owner}/${target.repo} is not in the repository list.`);
+    return 1;
+  }
   const failures: string[] = [];
-  // `--only supplementary` records just the supplementary sets (repo sets stay untouched).
-  const onlySupplementary = process.argv.slice(2).join(' ').includes('--only supplementary');
-  for (const spec of onlySupplementary ? [] : REPOS) {
+  // `--only supplementary` records just the supplementary sets; `--only <owner/repo>` just that
+  // repository (R12.3). The other sets stay untouched.
+  for (const spec of repos) {
     const problem = await recordRepo(spec, token);
     if (problem !== null) failures.push(problem);
   }
-  for (const spec of SUPPLEMENTARY_SPECS) {
+  for (const spec of target.kind === 'all' || target.kind === 'supplementary' ? SUPPLEMENTARY_SPECS : []) {
     const problem = await recordSupplementary(spec.name, token);
     if (problem !== null) failures.push(problem);
   }

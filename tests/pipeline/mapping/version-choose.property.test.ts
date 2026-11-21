@@ -90,7 +90,11 @@ describe('Property 7: Resolution is total and falls back with one note', () => {
     fc.assert(
       fc.property(ecosystem, fc.array(anySpec, { maxLength: 6 }), versionList, defaultVersion, (eco, specs, versions, def) => {
         const result = chooseVersion(eco, specs, versions, def);
-        const trimmed = specs.filter((s) => exactPin(s, eco) === null && s.trim() !== '').map((s) => s.trim());
+        // Requirement 10.5 (pyproject): for pypi, `*` is no Declared_Range, so it never yields a note.
+        // The generator still produces `*`; only the oracle for the expected ranges skips it for pypi.
+        const trimmed = specs
+          .filter((s) => exactPin(s, eco) === null && s.trim() !== '' && !(eco === 'pypi' && s.trim() === '*'))
+          .map((s) => s.trim());
         const hasPin = specs.some((s) => exactPin(s, eco) !== null);
         const ranges = [...new Set(trimmed)].sort(compareCodePoints);
         const unresolved = !hasPin && ranges.length > 0 && resolveRange(eco, ranges, versions).kind === 'unresolved';

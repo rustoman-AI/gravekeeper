@@ -18,9 +18,12 @@ export const REQUEST_BODY_MAX_BYTES = 65536;
 export const DAY_MS = 86400000;
 
 // Discovery and selection (Requirements 4, 5)
+// pyproject spec R9.1: pyproject.toml is a discoverable manifest, ordered
+// after requirements.txt and before Cargo.toml.
 export const DISCOVERY_MANIFEST_NAMES: readonly string[] = [
   "package.json",
   "requirements.txt",
+  "pyproject.toml",
   "Cargo.toml",
 ];
 export const DISCOVERY_SKIP_DIRS: readonly string[] = [
@@ -78,7 +81,9 @@ export const PARTIAL_SCAN_TTL_SECONDS = 600;
 export const L2_OPERATION_TIMEOUT_MS = 300;
 export const L2_MAX_SCAN_BYTES = 1000000;
 export const L2_MAX_BODY_BYTES = 262144;
-export const CACHE_KEY_VERSION = 2;
+// pyproject spec R10.1: bumped to 3 so scans cached before pyproject.toml
+// support are not reused.
+export const CACHE_KEY_VERSION = 3;
 
 export const REDIRECT_MAX_HOPS = 3;
 

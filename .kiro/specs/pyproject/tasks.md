@@ -20,120 +20,124 @@ Rules for every task:
 
 ## Tasks
 
-- [ ] 1. Core: format registration, PEP 508 reader, Poetry translator
-  - [~] 1.1 Register the format in the Core tables
+- [x] 1. Core: format registration, PEP 508 reader, Poetry translator
+  - [x] 1.1 Register the format in the Core tables
     - In `core/model/types.ts` add `'pyproject.toml'` to `ManifestFormat`. In `core/formats/manifest-format.ts` add it to `MANIFEST_FORMATS` (order: `package.json`, `requirements.txt`, `pyproject.toml`, `Cargo.toml`), to `ECOSYSTEM_BY_FORMAT` (`pypi`) and to `SCOPES_BY_FORMAT` (`runtime`, `dev`, `optional`). Change no other model type. Do not edit `core/serializers/index.ts` (the missing writer already gives `unsupported-format`).
     - _Requirements: 1.1, 1.2, 1.3, 1.5, 1.7_
-  - [~] 1.2 Update the Core tests that list the formats
+  - [x] 1.2 Update the Core tests that list the formats
     - Find them with `Select-String -Path tests/core,tests/support -Pattern "Cargo.toml|ManifestFormat" -Recurse`. Update `tests/core/formats/formats.test.ts` (list, `ecosystemOf`, `supportedScopes`), `tests/core/serializers/serialize-manifest.test.ts` (add: `serializeManifest([], 'pyproject.toml')` returns `err({ kind: 'unsupported-format', format: '"pyproject.toml"' })` and does not throw), `tests/core/parsers/parse-manifest.test.ts` (an over-long text for the new format gives the existing warning), `tests/core/public-api.test.ts` when it lists the union, and the generators or oracles in `tests/support/arbitraries/dependencies.ts` and `tests/support/oracles/manifest-model.ts` only where they enumerate formats so that the existing serializer properties keep their meaning (the new format has no writer; the round-trip properties of the other three formats are unchanged).
     - _Requirements: 1.1, 1.2, 1.3, 1.7, 1.8, 1.9_
-  - [~] 1.3 Implement the PEP 508 entry reader
+  - [x] 1.3 Implement the PEP 508 entry reader
     - Create `core/parsers/pep508.ts` with `parsePep508(entry: string): Pep508Result` as in the design: name token, skipped `[extras]`, `@ <target>` direct reference (`git+` gives `git`; `file:`, `./`, `../`, `/` give `path`; marker cut at whitespace followed by `;`), registry rest cut at the first `;` (empty gives `*`), backslash result, no comment stripping, no option lines, bare `#egg=` references are `cannot-parse`. Reuse `isNameToken`, `isRegistryRest` and `directReferenceKind` from `core/formats/requirements-lexical.ts`. Linear scans only. Total: never throws. Run `npm run check:core`.
     - _Requirements: 3.4, 3.5, 3.6, 3.8_
-  - [~] 1.4 Write unit tests for the PEP 508 reader
+  - [x] 1.4 Write unit tests for the PEP 508 reader
     - Create `tests/core/parsers/pep508.test.ts`: `requests>=2,<3`, `Requests[socks] >= 2 ; python_version >= "3.8"`, empty rest gives `*`, `pkg @ git+https://example.org/p.git#egg=pkg` (git, `#` kept), `pkg @ ./local` (path), `pkg @ https://example.org/p.whl` (cannot parse), `git+https://x#egg=y` bare (cannot parse), a backslash, a name with a leading dot, an empty string, a 10000-character string.
     - _Requirements: 3.4, 3.5, 3.6, 3.8_
-  - [~] 1.5 Implement the Poetry constraint translator
+  - [x] 1.5 Implement the Poetry constraint translator
     - Create `core/formats/poetry-constraint.ts` with `poetryToPep440(constraint: string): PoetryTranslation` by the table and the algorithm of the design: caret and tilde with 1 to 3 parts and same-length upper bounds, `V.*` to `==V.*`, `*` terms dropped, bare to `==V`, comparison and `~=` pass-through, tokens split at commas and whitespace, operator-only tokens joined to the next token, parts of 1 to 9 digits, `|` anywhere gives `alternatives`, anything else `unsupported`, output joined by `,`. No regex with nested quantifiers. Total. Run `npm run check:core`.
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9_
-  - [~] 1.6 Write the Poetry reference oracle and its generators
+  - [x] 1.6 Write the Poetry reference oracle and its generators
     - Create `tests/support/oracles/poetry-reference.ts` (structured terms, prefix-equality semantics of the design, zero-padded tuple comparison, plus an independent evaluator of the PEP 440 term text that supports `>=`, `>`, `<=`, `<`, `==`, `==V.*`, `!=`, `!=V.*`, `~=`; it imports neither the translator nor `@renovatebot/pep440`) and `tests/support/arbitraries/poetry.ts` (generators for terms of every kind with parts in `0..5`, lengths within the allowed ones, joined by comma, space or comma and space, a text renderer, generated release versions of 1 to 4 parts, version lists with prereleases and junk).
     - _Requirements: 11.3, 6.10, 6.11_
-  - [~] 1.7 Write unit tests for the translator
+  - [x] 1.7 Write unit tests for the translator
     - Create `tests/core/formats/poetry-constraint.test.ts`: every example of Requirement 6 and of the design table (`^1.2.3`, `^0.2.3`, `^0.0.3`, `^1.2`, `^0.0`, `^0`, `^1`, `~1.2.3`, `~1.2`, `~1`, `~0`, `1.*`, `1.2.*`, `*`, `1.2.3`, `1.2`, `>= 1.2, < 2.0`, `>=1.2 <2.0`, `!=1.2.*`, `~=1.4.0`, `^1.2, !=1.2.5`), the `alternatives` outcomes (`^1 || ^2`, `^1 | ^2`), and the `unsupported` outcomes (empty term, `,`, trailing comma, `v1`, `1.x`, `>=1.*`, `^1.2.3rc1`, `^1.2.3.4`, `~=1`, a ten-digit part, a lone operator). A test that every `ok` output (other than `*`) is accepted by `pepRange` of `pipeline/mapping/range-pep440.ts` is not placed here (core must not import pipeline); it is part of task 4.8.
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9_
-  - [~] 1.8 Write the property test for the Poetry translation
+  - [x] 1.8 Write the property test for the Poetry translation
     - `tests/core/formats/poetry-constraint.property.test.ts`, with the oracle and generators of task 1.6.
     - **Property 3: Poetry translation accepts exactly the versions Poetry accepts (PY-P3)**
     - **Validates: Requirements 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.10**
 
-- [ ] 2. Core: the pyproject.toml parser
-  - [~] 2.1 Implement the PEP 621 and PEP 735 collectors
+- [x] 2. Core: the pyproject.toml parser
+  - [x] 2.1 Implement the PEP 621 and PEP 735 collectors
     - Create `core/parsers/pyproject-collector.ts` (the `Collector` and `PyprojectContext` types, the `isTable` and `ownValue` helpers, the bounded `quoted` helper of 60 code points, the lone-surrogate test) and `core/parsers/pyproject-pep.ts` with `collectPep621` (`[project].dependencies` to `runtime`, `[project.optional-dependencies].<extra>` to `optional`) and `collectPep735` (`[dependency-groups].<group>` to `dev`; `include-group` entries skipped with the warning of Requirement 4.2, other tables and non-strings skipped with the warning of 4.3). Use `parsePep508`, `normalizePypiName`, the Self_Reference rule and the warning texts of the design. Ranks and `where` labels follow the design table. Read only with `Object.hasOwn` and `Object.entries`. Run `npm run check:core`.
     - _Requirements: 3.1, 3.2, 3.3, 3.5, 3.6, 3.7, 4.1, 4.2, 4.3, 4.4, 7.1, 7.2, 7.3, 8.1, 8.2_
-  - [~] 2.2 Implement the Poetry collector
+  - [x] 2.2 Implement the Poetry collector
     - Create `core/parsers/pyproject-poetry.ts` with `collectPoetry(poetry, out)`: `[tool.poetry.dependencies]` (`runtime`, `optional` for `optional = true`), `[tool.poetry.group.<name>.dependencies]` (`dev`), `[tool.poetry.dev-dependencies]` (`dev`); skip the `python` key; string, table and array-of-tables values; `version`, `git`, `path`, `url` keys (`url` gives `git`); other keys ignored; `poetryToPep440` for registry entries, with the warnings of Requirements 6.7 and 6.8 and `versionSpec` `*` for `alternatives` and `unsupported`; invalid key and wrong value type warnings (5.9, 5.10); ranks with the extra element number for arrays. Run `npm run check:core`.
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 5.10, 6.7, 6.8, 6.9, 7.1, 7.2, 7.3, 8.1, 8.2_
-  - [~] 2.3 Implement the parser entry and register it
+  - [x] 2.3 Implement the parser entry and register it
     - Create `core/parsers/pyproject-toml.ts` with `parsePyprojectToml(text): RawParse` (`parseToml`, the TOML-error warning with the optional line, project name for Self_Reference, Dependency_Table_Present including `dynamic` dependencies, the collectors in table order, the no-tables warning). Register `'pyproject.toml': parsePyprojectToml` in `core/parsers/index.ts`. Run `npm run check:core`.
     - _Requirements: 1.4, 1.6, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 8.2, 8.3, 8.4, 8.5, 8.6_
-  - [~] 2.4 Write the pyproject writer and generators
+  - [x] 2.4 Write the pyproject writer and generators
     - Create `tests/support/oracles/pyproject-writer.ts` (PEP 621 style and Poetry style of Requirement 11.2, TOML string escaping, a deterministic layout) and `tests/support/arbitraries/pyproject.ts` (Dependency lists without repeated `(name, scope)`, names with mixed case and separator runs, restricted `versionSpec` forms of the design section "Round trip", table fragments and hostile TOML-shaped texts for PY-P1, groups with Include_Entries for PY-P7, Poetry tables with `optional` flags for PY-P6).
     - _Requirements: 11.2, 8.9_
-  - [~] 2.5 Write unit tests for the parser
+  - [x] 2.5 Write unit tests for the parser
     - Create `tests/core/parsers/pyproject-toml.test.ts`: the `psf/requests` file text as an inline string (runtime four, optional `socks` and `use_chardet_on_py3`, empty `security`, groups with the self reference `requests[socks]` skipped with its warning), a Poetry file with caret, tilde, wildcard, bare, table forms (`optional`, `extras`, `markers`, `python`), the multiple-constraint array (one kept, duplicate warnings), `git`, `path` and `url` sources, the `python` key, the legacy `dev-dependencies`, a `||` constraint (kept with `*` and its warning), an untranslatable constraint, `include-group` entries, PEP 621 and Poetry duplicates (PEP 621 wins, one warning), the same name in two scopes, a file with `[tool.ruff]` only, an empty file, `dynamic` dependencies, invalid TOML with and without a line, wrong table types, a 200-character name in a warning, and `parseManifest` dispatch through `finish`.
     - _Requirements: 1.4, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 3.3, 3.6, 3.7, 4.2, 4.3, 5.4, 5.6, 5.7, 5.8, 5.9, 5.10, 5.11, 6.7, 6.8, 6.9, 8.2, 8.3, 8.4_
-  - [~] 2.6 Write the property test for totality
+  - [x] 2.6 Write the property test for totality
     - `tests/core/parsers/pyproject-never-throws.property.test.ts`: arbitrary strings and generated TOML-shaped texts through `parseManifest`.
     - **Property 1: Parsing never throws (PY-P1)**
     - **Validates: Requirements 2.1, 2.2, 2.4, 2.6, 2.7**
-  - [~] 2.7 Write the property test for the round trip
+  - [x] 2.7 Write the property test for the round trip
     - `tests/core/parsers/pyproject-roundtrip.property.test.ts`, with the writer of task 2.4 in both styles.
     - **Property 2: The normalized set round-trips through a pyproject writer (PY-P2)**
     - **Validates: Requirements 8.9, 5.5, 5.7, 3.1, 3.2, 4.1**
-  - [~] 2.8 Write the property test for determinism and order
+  - [x] 2.8 Write the property test for determinism and order
     - `tests/core/parsers/pyproject-determinism.property.test.ts`.
     - **Property 4: Output is deterministic, sorted and free of repeated keys (PY-P4)**
     - **Validates: Requirements 8.2, 8.3, 8.5, 8.6, 8.7**
-  - [~] 2.9 Write the property test for names
+  - [x] 2.9 Write the property test for names
     - `tests/core/parsers/pyproject-names.property.test.ts`.
     - **Property 5: Names are PEP 503 normalized and rawName is kept (PY-P5)**
     - **Validates: Requirements 7.1, 7.2, 7.3, 7.4**
-  - [~] 2.10 Write the property test for scope mapping
+  - [x] 2.10 Write the property test for scope mapping
     - `tests/core/parsers/pyproject-scopes.property.test.ts`.
     - **Property 6: Scope mapping is total (PY-P6)**
     - **Validates: Requirements 8.1, 8.8, 3.1, 3.2, 4.1, 5.1, 5.2, 5.3**
-  - [~] 2.11 Write the property test for include-group
+  - [x] 2.11 Write the property test for include-group
     - `tests/core/parsers/pyproject-include-group.property.test.ts`.
     - **Property 7: include-group entries are skipped with one warning and never resolved (PY-P7)**
     - **Validates: Requirements 4.2, 4.4, 4.5**
-  - [~] 2.12 Write the property test for PEP 508 agreement
+  - [x] 2.12 Write the property test for PEP 508 agreement
     - `tests/core/parsers/pep508.property.test.ts`, using the generators of `tests/support/arbitraries/requirements.ts` restricted to lines without whitespace followed by `#` and not starting with `-`; compare the Pyproject_Parser (entry in a PEP 621 `dependencies` array) with `parseManifest(line, 'requirements.txt')`.
     - **Property 8: PEP 508 entries agree with the requirements.txt grammar (PY-P8)**
     - **Validates: Requirements 3.4, 3.5, 3.9**
 
 - [ ] 3. Checkpoint - Core
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 3.1 Commit and push the core group (orchestrator-only)
+  - [-] 3.1 Commit and push the core group (orchestrator-only)
     - After the checkpoint is green, stage by name the files of groups 1 and 2 and commit with the subject `pyproject: core parser, Poetry translator and properties (groups 1-2)`. Push. Record the hash for the report (task 12.4).
     - _Requirements: 15.6_
 
-- [ ] 4. Pipeline: names, cache key, message, validator, `*` rule
-  - [~] 4.1 Change the pipeline constants
+- [x] 4. Pipeline: names, cache key, message, validator, `*` rule
+  - [x] 4.1 Change the pipeline constants
     - In `pipeline/constants.ts` set `DISCOVERY_MANIFEST_NAMES` to `package.json`, `requirements.txt`, `pyproject.toml`, `Cargo.toml` and `CACHE_KEY_VERSION` to 3. Define no other `UPPER_SNAKE` constant.
     - _Requirements: 9.1, 10.1_
-  - [~] 4.2 Update the constants tests
+  - [x] 4.2 Update the constants tests
     - In `tests/pipeline/constants.test.ts` check the four names in order and `CACHE_KEY_VERSION` equal to 3, keeping the consistency rule (positive integer greater than 1) as its own test case. This task owns only that file.
     - _Requirements: 9.1, 10.1_
-  - [~] 4.3 Change the `no-manifests` message and the spec table that holds it
+  - [x] 4.3 Change the `no-manifests` message and the spec table that holds it
     - In `pipeline/scan/messages.ts` set the text of `no-manifests` to `No package.json, requirements.txt, pyproject.toml or Cargo.toml was found in this repository.` In `.kiro/specs/scan-pipeline/requirements.md` change the same cell of the User-facing messages table (line of the row `no-manifests`). Update `tests/pipeline/scan/notes.test.ts` and `tests/pipeline/scan/messages.property.test.ts` only if they repeat the old text. No em dash.
     - _Requirements: 9.5, 9.6_
-  - [~] 4.4 Accept the format in the stored-result validator and update the key tests
+  - [x] 4.4 Accept the format in the stored-result validator and update the key tests
     - In `pipeline/scan/scan-cache.ts` extend `isManifestFormat` with `'pyproject.toml'`. Find the tests that cover `isScanResult` and the key prefix with `Select-String -Path tests -Pattern "isScanResult|scanCacheKey|CACHE_KEY_VERSION|gravekeeper:v" -Recurse` (excluding `tests/pipeline/constants.test.ts`, which task 4.2 owns). Add a case: a stored result whose manifest has format `pyproject.toml` is accepted; an unknown format is rejected; keys built with version 3 differ from version 2 keys for equal parts. Update any test that hard-codes `v2`.
     - _Requirements: 10.1, 10.2_
-  - [~] 4.5 Treat `*` as no constraint for pypi in `chooseVersion`
+  - [x] 4.5 Treat `*` as no constraint for pypi in `chooseVersion`
     - In `pipeline/mapping/version-choose.ts`, when the ecosystem is `pypi`, drop a `versionSpec` equal to `*` after `trim` from the Declared_Ranges (like an empty one). Leave `npm` and `cargo` unchanged. Cite Requirement 10.5 in a comment. Update `tests/pipeline/mapping/version-choose.test.ts` (pypi `*` alone gives `default`, no note; pypi `*` with a range resolves the range; npm `*` still resolves to the highest stable version) and the generators of `tests/pipeline/mapping/version-choose.property.test.ts` and `tests/pipeline/mapping/version-select.property.test.ts` where an arbitrary `*` for `pypi` would now give no note (keep their tags and titles; the property still holds for every other string). Do not edit `range-resolve.ts`.
     - _Requirements: 10.5_
-  - [~] 4.6 Update the discovery and selection tests and generators
+  - [x] 4.6 Update the discovery and selection tests and generators
     - Update `tests/pipeline/mapping/discovery.test.ts` (a `pyproject.toml` at the root and nested is listed with `format` `pyproject.toml`; one under `node_modules` is not), `tests/pipeline/mapping/selection.test.ts` (default selection with `pyproject.toml` and `requirements.txt` at the root returns both in code point order; an explicit nested `pyproject.toml` path is accepted; a path with another file name gives `manifest-not-found`), and the name lists of `tests/pipeline/mapping/selection.property.test.ts`, `discovery.property.test.ts`, `mappers.property.test.ts` and `tests/pipeline/scan/stage-discovery.test.ts` where they list the three names. Keep their tags.
     - _Requirements: 9.1, 9.2, 9.3, 9.4_
-  - [~] 4.7 Write the property test for discovery and root selection
+  - [x] 4.7 Write the property test for discovery and root selection
     - `tests/pipeline/mapping/pyproject-discovery.property.test.ts`: generated trees with the four names, other names, skip directories and depths; oracle written independently of `discoverManifests`.
     - **Property 9: Discovery and root selection treat pyproject.toml like every manifest (PY-P9)**
     - **Validates: Requirements 9.1, 9.2, 9.3, 9.8**
-  - [~] 4.8 Write the property test for translated ranges and the resolver
+  - [x] 4.8 Write the property test for translated ranges and the resolver
     - `tests/pipeline/mapping/poetry-resolve.property.test.ts`: generated Poetry_Constraints (parseable) and version lists; compare `resolveRange('pypi', [poetryToPep440 result], versions)` with the highest stable version that the Poetry_Reference accepts. Also assert in this file (one of its tests, titled with `PY-P10`) that every non-`*` translation is accepted by `pepRange`.
     - **Property 10: Translated ranges resolve to the highest accepted version (PY-P10)**
     - **Validates: Requirements 6.11, 10.4**
-  - [~] 4.9 Update the manifest stage test
+  - [x] 4.9 Update the manifest stage test
     - In `tests/pipeline/scan/stage-manifests.test.ts` add a nested `sub/pyproject.toml` that is fetched and parsed with the Pyproject_Parser (format taken from the last path segment), and a root pair `pyproject.toml` and `requirements.txt` that are both fetched in code point order.
     - _Requirements: 9.3, 9.7_
-  - [~] 4.10 Write the scripted scan test
+  - [x] 4.10 Write the scripted scan test
     - Create `tests/pipeline/scan/run-scan-pyproject.test.ts` in the style of `tests/pipeline/scan/run-scan-cases.test.ts` (scripted sources): a repository with a root `pyproject.toml` (PEP 621 runtime, an extra, a Poetry-style caret, a git entry, a bare Poetry version) and a root `requirements.txt` listing one of the same packages with a pin. Assert: one Lookup_Target for the shared package and the pin wins (`versionBasis` `pinned`), the caret range resolves (`resolved`), a `*` dependency has `default` and no `range-unresolved` note, the git entry is unassessed with `non-registry-source`, and `manifests[].warnings` carries the parser warnings unchanged. Include the `CACHE_KEY_VERSION` effect: the scan cache key of the same repository differs from the version 2 key.
     - _Requirements: 10.3, 10.4, 10.5, 10.6, 10.7, 10.8_
+  - [x] 4.11 Zero-pad candidates for PEP 440 prefix matches
+    - Fixes the defect that PY-P10 found in task 4.8 (task 4.8 is blocked on this fix and is re-run after 4.11). In `pepSatisfies` of `pipeline/mapping/range-pep440.ts`, when a specifier clause is a prefix match (`==V.*` or `!=V.*`) and the candidate's release segment has fewer parts than `V`, pad the candidate's release with zeros before matching. Inspect the specifier text by splitting at commas and by linear scans, with no new regex with nested quantifiers. Keep `@renovatebot/pep440` confined to this file. The rule applies to every pypi range. Cite Requirement 10.9 in a comment above the rule.
+    - Create `tests/pipeline/mapping/range-pep440.test.ts` (no test file for `range-pep440` exists) with these cases: `1` vs `==1.0.*` is true; `1` vs `!=1.0.*` is false; `1.1` vs `==1.0.*` is false; `1.0.0` vs `==1.0.*` is true; prereleases are unchanged; npm and cargo are untouched.
+    - _Requirements: 10.9_
 
-- [ ] 5. Copy and documentation text
-  - [~] 5.1 Update the user-visible lists of formats
+- [x] 5. Copy and documentation text
+  - [x] 5.1 Update the user-visible lists of formats
     - Edit `.kiro/steering/product.md` (line "The app reads dependency manifests") to list `package.json, requirements.txt, pyproject.toml, Cargo.toml`. In `tests/e2e/support/bodies.ts` and `tests/e2e/notes.spec.ts` change the repeated `no-manifests` text to the new message. Run `Select-String -Path app,components,view-model,README.md -Pattern "requirements\.txt|Cargo\.toml" -Recurse` and record that the landing copy, legend and how-it-decides copy list no formats; if a list is found, add `pyproject.toml` to it and update its test, without any change of art, palette or layout.
     - _Requirements: 9.5, 9.6_
 
@@ -144,10 +148,10 @@ Rules for every task:
     - _Requirements: 15.6_
 
 - [ ] 7. Probe, fixture and end-to-end test
-  - [~] 7.1 Extend the live report script
+  - [x] 7.1 Extend the live report script
     - In `scripts/live-report.ts` add the arguments `--title "<text>"` (default `Scan accuracy live report`, used for the `#` heading) and `--per-package <owner/repo>` (default `request/request`, replaces the constant `PER_PACKAGE_REPO`), and a section `### Manifests read` per repository (path, format, dependency count from `result.manifests` and `result.dependencies`). Keep all existing output, the token guard and the `GRAVEKEEPER_LIVE_TESTS=1` gate. Update `tests/scripts` only if a test covers the script (none did when this plan was written).
     - _Requirements: 14.1, 14.2, 14.5_
-  - [~] 7.2 Extend the recorder for one repository and the flag
+  - [x] 7.2 Extend the recorder for one repository and the flag
     - In `scripts/fixtures/fixture-set.ts` add the optional boolean `requiresFlaggedDependency` to `FixtureMetadata`. In `scripts/record-fixtures.ts` add the argument `--only <owner/repo>` (records that repository only, no supplementary set, other sets untouched), the optional `requiresFlagged` of `RepoSpec`, writing `requiresFlaggedDependency: false` into the metadata when it is false, and a `replayCheck` that requires only `ok` and at least one dependency in that case (otherwise unchanged). Update or add the unit tests of the recorder helpers (find them with `Select-String -Path tests -Pattern "fixture-set|record-fixtures" -Recurse`).
     - _Requirements: 12.3, 12.4_
   - [~] 7.3 Run the Probe (orchestrator-only)
@@ -181,7 +185,7 @@ Rules for every task:
     - _Requirements: 13.2, 13.5, 13.6_
 
 - [ ] 10. Traceability
-  - [~] 10.1 Write the traceability test
+  - [x] 10.1 Write the traceability test
     - Create `tests/ui/py-traceability.test.ts` in the pattern of `tests/ui/art-traceability.test.ts` (tag regex `Feature:\s*pyproject,\s*Property\s+PY-P(\d+)`, property count 10, three tests titled `PY-trace ...`): each number 1 to 10 appears in exactly one tag, every tagged file has a `// Validates:` line, every test title of a tagged file starts with its `PY-P` number.
     - _Requirements: 15.1_
   - [~] 10.2 Update the traceability document
@@ -228,7 +232,7 @@ Rules for every task:
 {
   "waves": [
     { "id": 0, "tasks": ["1.1", "1.3", "1.5", "4.1", "4.3", "4.5", "7.1"] },
-    { "id": 1, "tasks": ["1.2", "1.4", "1.6", "1.7", "2.1", "4.2", "4.4", "4.6", "5.1", "7.2"] },
+    { "id": 1, "tasks": ["1.2", "1.4", "1.6", "1.7", "2.1", "4.2", "4.4", "4.6", "4.11", "5.1", "7.2"] },
     { "id": 2, "tasks": ["1.8", "2.2", "4.7", "4.8"] },
     { "id": 3, "tasks": ["2.3"] },
     { "id": 4, "tasks": ["2.4", "2.5", "2.12", "4.9", "4.10"] },

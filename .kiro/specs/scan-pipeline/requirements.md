@@ -292,7 +292,7 @@ Placeholder keys: `{path}` is `path`, `{name}` is `name`, `{pinned}` is `pinned`
 | Code | Condition | Text |
 |---|---|---|
 | `tree-truncated` | note | `GitHub returned a partial file tree for this repository, so the manifest list may be incomplete.` |
-| `no-manifests` | note | `No package.json, requirements.txt or Cargo.toml was found in this repository.` |
+| `no-manifests` | note | `No package.json, requirements.txt, pyproject.toml or Cargo.toml was found in this repository.` |
 | `no-root-manifest` | note | `No manifest was found at the repository root. Choose one of the manifests found in subfolders.` |
 | `manifest-too-large` | note | `The manifest {path} is too large to read and was skipped.` |
 | `manifest-fetch-failed` | note | `The manifest {path} could not be downloaded and was skipped.` |

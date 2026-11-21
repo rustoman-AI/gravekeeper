@@ -1,11 +1,30 @@
 {
-  "pbtResults": {},
+  "pbtResults": {
+    "1.8 Write the property test for the Poetry translation": {
+      "status": "passed",
+      "lastRunTimestamp": 1795230891131
+    },
+    "2.8 Write the property test for determinism and order": {
+      "status": "passed",
+      "lastRunTimestamp": 1795231587978
+    }
+  },
   "executionHistory": {
     "1.1 Register the format in the Core tables": [
       {
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208127
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230227947
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230355766
       }
     ],
     "1.2 Update the Core tests that list the formats": [
@@ -13,6 +32,26 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208172
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230415367
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230567464
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231190777
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231239604
       }
     ],
     "1.3 Implement the PEP 508 entry reader": [
@@ -20,6 +59,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208221
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230228138
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230356724
       }
     ],
     "1.4 Write unit tests for the PEP 508 reader": [
@@ -27,6 +76,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208264
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230416855
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230568048
       }
     ],
     "1.5 Implement the Poetry constraint translator": [
@@ -34,6 +93,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208304
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230228514
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230358218
       }
     ],
     "1.6 Write the Poetry reference oracle and its generators": [
@@ -41,6 +110,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208351
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230417865
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230569332
       }
     ],
     "1.7 Write unit tests for the translator": [
@@ -48,6 +127,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208403
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230418859
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230569845
       }
     ],
     "1.8 Write the property test for the Poetry translation": [
@@ -55,6 +144,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208443
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230839549
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230957483
       }
     ],
     "2.1 Implement the PEP 621 and PEP 735 collectors": [
@@ -62,6 +161,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208486
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230419422
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230570701
       }
     ],
     "2.2 Implement the Poetry collector": [
@@ -69,6 +178,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208533
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230840555
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230958068
       }
     ],
     "2.3 Implement the parser entry and register it": [
@@ -76,6 +195,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208581
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231076639
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231190586
       }
     ],
     "2.4 Write the pyproject writer and generators": [
@@ -83,6 +212,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208626
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231240610
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231485864
       }
     ],
     "2.5 Write unit tests for the parser": [
@@ -90,6 +229,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208679
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231242100
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231486092
       }
     ],
     "2.6 Write the property test for totality": [
@@ -97,6 +246,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208730
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231492276
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231625580
       }
     ],
     "2.7 Write the property test for the round trip": [
@@ -104,6 +263,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208779
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231493274
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231626149
       }
     ],
     "2.8 Write the property test for determinism and order": [
@@ -111,6 +280,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208827
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231494886
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231627643
       }
     ],
     "2.9 Write the property test for names": [
@@ -118,6 +297,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208876
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231495773
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231628639
       }
     ],
     "2.10 Write the property test for scope mapping": [
@@ -125,6 +314,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208920
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231496711
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231629656
       }
     ],
     "2.11 Write the property test for include-group": [
@@ -132,6 +331,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230208966
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231630315
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231678284
       }
     ],
     "2.12 Write the property test for PEP 508 agreement": [
@@ -139,6 +348,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209014
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231243099
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231486688
       }
     ],
     "3.1 Commit and push the core group (orchestrator-only)": [
@@ -146,6 +365,11 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209059
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231688385
       }
     ],
     "4.1 Change the pipeline constants": [
@@ -153,6 +377,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209103
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230229084
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230358721
       }
     ],
     "4.2 Update the constants tests": [
@@ -160,6 +394,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209145
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230574489
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230831952
       }
     ],
     "4.3 Change the `no-manifests` message and the spec table that holds it": [
@@ -167,6 +411,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209193
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230368067
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230411220
       }
     ],
     "4.4 Accept the format in the stored-result validator and update the key tests": [
@@ -174,6 +428,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209238
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230575490
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230832457
       }
     ],
     "4.5 Treat `*` as no constraint for pypi in `chooseVersion`": [
@@ -181,6 +445,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209282
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230229547
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230359666
       }
     ],
     "4.6 Update the discovery and selection tests and generators": [
@@ -188,6 +462,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209328
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230576989
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230833799
       }
     ],
     "4.7 Write the property test for discovery and root selection": [
@@ -195,6 +479,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209394
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230842046
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230958466
       }
     ],
     "4.8 Write the property test for translated ranges and the resolver": [
@@ -202,6 +496,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209518
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230842617
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231072871
       }
     ],
     "4.9 Update the manifest stage test": [
@@ -209,6 +513,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209631
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231244599
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231487502
       }
     ],
     "4.10 Write the scripted scan test": [
@@ -216,6 +530,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209680
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231245010
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231488270
       }
     ],
     "5.1 Update the user-visible lists of formats": [
@@ -223,6 +547,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209729
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230577486
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230834790
       }
     ],
     "6.1 Commit and push the pipeline group (orchestrator-only)": [
@@ -237,6 +571,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209822
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230368309
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230411666
       }
     ],
     "7.2 Extend the recorder for one repository and the flag": [
@@ -244,6 +588,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209867
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230578271
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230835458
       }
     ],
     "7.3 Run the Probe (orchestrator-only)": [
@@ -307,6 +661,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230210290
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231688818
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231834516
       }
     ],
     "10.2 Update the traceability document": [
@@ -363,6 +727,51 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230210705
+      }
+    ],
+    "5. Copy and documentation text": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230834858
+      }
+    ],
+    "1. Core: format registration, PEP 508 reader, Poetry translator": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230957554
+      }
+    ],
+    "4.11 Zero-pad candidates for PEP 440 prefix matches": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231005397
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231009211
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231071839
+      }
+    ],
+    "4. Pipeline: names, cache key, message, validator, `*` rule": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231488327
+      }
+    ],
+    "2. Core: the pyproject.toml parser": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231678338
       }
     ]
   }

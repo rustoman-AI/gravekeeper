@@ -67,7 +67,7 @@ export function degradedBody(): ScanOkBody {
 }
 
 export const NO_MANIFESTS_MESSAGE =
-  "No package.json, requirements.txt or Cargo.toml was found in this repository.";
+  "No package.json, requirements.txt, pyproject.toml or Cargo.toml was found in this repository.";
 
 export const PICKER_CANDIDATES = [
   { path: "packages/a/package.json", format: "package.json", depth: 2, sizeBytes: 1200 },

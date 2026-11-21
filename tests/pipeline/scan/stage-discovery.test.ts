@@ -24,7 +24,7 @@ const RESET_ISO = '2023-11-14T22:13:20Z';
 const LIMITS: DiscoveryLimits = {
   maxDepth: 4,
   maxManifests: 50,
-  manifestNames: ['package.json', 'requirements.txt', 'Cargo.toml'],
+  manifestNames: ['package.json', 'requirements.txt', 'pyproject.toml', 'Cargo.toml'],
   skipDirs: ['node_modules'],
 };
 

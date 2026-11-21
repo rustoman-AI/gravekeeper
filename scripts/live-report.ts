@@ -18,7 +18,8 @@ import type { Deferrer } from '../pipeline/ports/runtime';
 
 const DEFAULT_REPOS = ['request/request', 'expressjs/express', 'psf/requests', 'BurntSushi/ripgrep'];
 const DEFAULT_OUT = 'docs/scan-accuracy-live-report.md';
-const PER_PACKAGE_REPO = 'request/request';
+const DEFAULT_PER_PACKAGE_REPO = 'request/request';
+const DEFAULT_TITLE = 'Scan accuracy live report';
 const L1_KEYS = [
   Symbol.for('gravekeeper.l1.upstream-cache'),
   Symbol.for('gravekeeper.l1.scan-cache'),
@@ -286,6 +287,15 @@ function perPackageTable(result: ScanResult): string {
   return table(['name', 'status', 'score', 'ruleIds', 'checked version', 'versionBasis'], rows);
 }
 
+function manifestsSection(result: ScanResult): string {
+  const rows = result.manifests.map((m) => [
+    m.path,
+    m.format,
+    result.dependencies.filter((d) => d.manifestPath === m.path).length,
+  ]);
+  return ['### Manifests read\n', table(['path', 'format', 'dependencies'], rows)].join('\n');
+}
+
 function repoSection(run: RepoRun, withPackages: boolean): string {
   const out: string[] = [`## ${run.repo}\n`];
   const body = run.cold.body;
@@ -335,6 +345,8 @@ function repoSection(run: RepoRun, withPackages: boolean): string {
       ],
     ),
   );
+
+  out.push(manifestsSection(result));
 
   out.push('### Source statuses\n');
   out.push(table(['source', 'status'], SOURCES.map((s) => [s, result.sources[s]])));
@@ -400,16 +412,29 @@ function summaryRequestTable(runs: readonly RepoRun[]): string {
 
 // --- Main ---------------------------------------------------------------------------------
 
-function parseArgs(argv: readonly string[]): { out: string; repos: string[] } {
+interface Args {
+  readonly out: string;
+  readonly repos: string[];
+  readonly title: string;
+  readonly perPackage: string;
+}
+
+function parseArgs(argv: readonly string[]): Args {
   let out = DEFAULT_OUT;
+  let title = DEFAULT_TITLE;
+  let perPackage = DEFAULT_PER_PACKAGE_REPO;
   const repos: string[] = [];
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i] ?? '';
     if (arg === '--out') out = argv[++i] ?? DEFAULT_OUT;
     else if (arg.startsWith('--out=')) out = arg.slice('--out='.length);
+    else if (arg === '--title') title = argv[++i] ?? DEFAULT_TITLE;
+    else if (arg.startsWith('--title=')) title = arg.slice('--title='.length);
+    else if (arg === '--per-package') perPackage = argv[++i] ?? DEFAULT_PER_PACKAGE_REPO;
+    else if (arg.startsWith('--per-package=')) perPackage = arg.slice('--per-package='.length);
     else if (/^[\w.-]+\/[\w.-]+$/.test(arg)) repos.push(arg);
   }
-  return { out, repos: repos.length > 0 ? repos : DEFAULT_REPOS };
+  return { out, repos: repos.length > 0 ? repos : DEFAULT_REPOS, title, perPackage };
 }
 
 async function main(): Promise<number> {
@@ -419,7 +444,7 @@ async function main(): Promise<number> {
     );
     return 1;
   }
-  const { out, repos } = parseArgs(process.argv.slice(2));
+  const { out, repos, title, perPackage } = parseArgs(process.argv.slice(2));
   process.env.GRAVEKEEPER_RUNTIME_CACHE = 'off';
 
   const counts = { current: new Map<string, number>() as Counts };
@@ -436,12 +461,12 @@ async function main(): Promise<number> {
   }
 
   const doc = [
-    '# Scan accuracy live report\n',
+    `# ${title}\n`,
     `Generated ${new Date().toISOString()} with the production stack, the L2 cache off and empty L1 caches before each cold scan. Request counts are taken at \`fetch\` (method, host and path pattern only).\n`,
     `Pipeline limits: at most ${SCAN_MAX_MANIFESTS} manifests and ${SCAN_MAX_DEPENDENCIES} dependencies per scan.\n`,
     '## Requests per source and endpoint (cold scans)\n',
     summaryRequestTable(runs),
-    ...runs.map((r) => repoSection(r, r.repo === PER_PACKAGE_REPO)),
+    ...runs.map((r) => repoSection(r, r.repo === perPackage)),
   ].join('\n');
 
   const token = readGithubToken();

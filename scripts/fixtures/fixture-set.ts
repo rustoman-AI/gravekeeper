@@ -24,6 +24,8 @@ export interface FixtureMetadata {
   readonly asOf: string;
   readonly manifestPaths: readonly string[];
   readonly recorderVersion: string;
+  /** Pyproject R12.4: `false` replaces the archived/deprecated replay rule by "ok and a dependency". */
+  readonly requiresFlaggedDependency?: boolean;
 }
 
 /** A rejected fixture: where it came from (source and path only) and why. Never the token. */

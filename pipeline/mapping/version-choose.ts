@@ -27,7 +27,13 @@ export function chooseVersion(
     for (const spec of specs) {
       const pin = exactPin(spec, ecosystem);
       if (pin !== null) pins.push(pin);
-      else if (typeof spec === 'string' && spec.trim() !== '') rangeSet.add(spec.trim());
+      else if (typeof spec === 'string' && spec.trim() !== '') {
+        const text = spec.trim();
+        // Requirement 10.5 (pyproject): for pypi, `*` is no Declared_Range, like an empty spec.
+        // npm and cargo keep `*` as a range.
+        if (ecosystem === 'pypi' && text === '*') continue;
+        rangeSet.add(text);
+      }
     }
     if (pins.length > 0) return selectVersion(pins, versions, defaultVersion);
     const ranges = [...rangeSet].sort(compareCodePoints);

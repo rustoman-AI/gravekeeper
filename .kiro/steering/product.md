@@ -4,7 +4,7 @@ Gravekeeper is a web app for the Kiroween 2026 hackathon (Costume Contest catego
 
 ## What it does
 - The user pastes a public GitHub repo URL.
-- The app reads dependency manifests: package.json, requirements.txt, Cargo.toml.
+- The app reads dependency manifests: package.json, requirements.txt, pyproject.toml, Cargo.toml.
 - It gathers health data for each dependency from public sources only:
   - OSV.dev: known vulnerabilities.
   - deps.dev: project metadata.

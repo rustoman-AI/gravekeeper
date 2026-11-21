@@ -27,7 +27,8 @@ export const WEB_HOST_PLACEHOLDER = '<web host>';
 export const NOTE_MESSAGES: { readonly [C in NoteCode]: string } = {
   'tree-truncated':
     'GitHub returned a partial file tree for this repository, so the manifest list may be incomplete.',
-  'no-manifests': 'No package.json, requirements.txt or Cargo.toml was found in this repository.',
+  'no-manifests':
+    'No package.json, requirements.txt, pyproject.toml or Cargo.toml was found in this repository.',
   'no-root-manifest':
     'No manifest was found at the repository root. Choose one of the manifests found in subfolders.',
   'manifest-too-large': 'The manifest {path} is too large to read and was skipped.',

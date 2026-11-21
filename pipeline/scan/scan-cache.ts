@@ -66,7 +66,10 @@ const isArr = (v: unknown): v is readonly unknown[] => Array.isArray(v);
 const isStrArr = (v: unknown): boolean => isArr(v) && v.every(isStr);
 const isEcosystem = (v: unknown): boolean => v === 'npm' || v === 'pypi' || v === 'cargo';
 const isFormat = (v: unknown): boolean =>
-  v === 'package.json' || v === 'requirements.txt' || v === 'Cargo.toml';
+  v === 'package.json' ||
+  v === 'requirements.txt' ||
+  v === 'Cargo.toml' ||
+  v === 'pyproject.toml'; // R10.2
 const isScope = (v: unknown): boolean =>
   v === 'runtime' || v === 'dev' || v === 'build' || v === 'optional' || v === 'peer';
 const isSourceKind = (v: unknown): boolean => v === 'registry' || v === 'git' || v === 'path';

@@ -165,7 +165,7 @@ test.describe("note groups", () => {
 
 test.describe("empty graveyard", () => {
   test("shows the no-manifests message and no scene", async ({ page }) => {
-    const message = "No package.json, requirements.txt or Cargo.toml was found in this repository.";
+    const message = "No package.json, requirements.txt, pyproject.toml or Cargo.toml was found in this repository.";
     const body = emptyBody([noteOf("no-manifests", message)], []);
     await mockScan(page, ok(body));
     await openResult(page, body);

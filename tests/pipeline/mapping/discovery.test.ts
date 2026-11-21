@@ -45,6 +45,20 @@ describe('discoverManifests', () => {
     expect(v.countLimited).toBe(false);
   });
 
+  it('lists a root and a nested pyproject.toml with format pyproject.toml (R9.2)', () => {
+    const v = run([blob('a/b/pyproject.toml', { size: 7 }), blob('pyproject.toml', { size: 3 })]);
+    expect(v.candidates).toEqual([
+      { path: 'pyproject.toml', format: 'pyproject.toml', depth: 0, sizeBytes: 3 },
+      { path: 'a/b/pyproject.toml', format: 'pyproject.toml', depth: 2, sizeBytes: 7 },
+    ]);
+  });
+
+  it('does not list a pyproject.toml under node_modules (R9.2)', () => {
+    const v = run([blob('node_modules/pyproject.toml'), blob('a/node_modules/b/pyproject.toml')]);
+    expect(v.candidates).toEqual([]);
+    expect(v.depthLimited).toBe(false);
+  });
+
   it('skips manifests under skip directories without marking them limited', () => {
     const v = run([
       ...DISCOVERY_SKIP_DIRS.map((d) => blob(`${d}/package.json`)),

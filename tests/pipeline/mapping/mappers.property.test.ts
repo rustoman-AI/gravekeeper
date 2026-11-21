@@ -1,4 +1,4 @@
-﻿import * as fc from 'fast-check';
+import * as fc from 'fast-check';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   assembleFacts,
@@ -417,7 +417,7 @@ const BATCH: GraphqlBatch = {
 const LIMITS: DiscoveryLimits = {
   maxDepth: 4,
   maxManifests: 10,
-  manifestNames: ['package.json', 'requirements.txt', 'Cargo.toml'],
+  manifestNames: ['package.json', 'requirements.txt', 'pyproject.toml', 'Cargo.toml'],
   skipDirs: ['node_modules'],
 };
 

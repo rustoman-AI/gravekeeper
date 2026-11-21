@@ -15,6 +15,12 @@ import {
   type FixtureMetadata,
 } from '../../scripts/fixtures/fixture-set';
 import { missingPreconditions } from '../../scripts/fixtures/preconditions';
+import {
+  matchesRepo,
+  parseRecorderTarget,
+  replayVerdict,
+  type ReplayOutcome,
+} from '../../scripts/fixtures/record-options';
 import { RecordingHttpClient } from '../../scripts/fixtures/recording-http-client';
 
 // Requirement 23.6, 23.7, 23.10, 23.16, 20.13
@@ -205,5 +211,69 @@ describe('rejection leaves previous fixtures unchanged (R23.6, R23.16)', () => {
     expect(existsSync(join(target, 'old.json'))).toBe(false);
     expect(existsSync(join(target, 'metadata.json'))).toBe(true);
     expect(existsSync(`${target}.replaced`)).toBe(false);
+  });
+});
+
+describe('--only argument (pyproject R12.3)', () => {
+  it('records everything without the argument', () => {
+    expect(parseRecorderTarget([])).toEqual({ kind: 'all' });
+  });
+
+  it('keeps --only supplementary', () => {
+    expect(parseRecorderTarget(['--only', 'supplementary'])).toEqual({ kind: 'supplementary' });
+  });
+
+  it('reads --only owner/repo, also with =', () => {
+    expect(parseRecorderTarget(['--only', 'psf/requests'])).toEqual({ kind: 'repo', owner: 'psf', repo: 'requests' });
+    expect(parseRecorderTarget(['--only=pallets/flask'])).toEqual({ kind: 'repo', owner: 'pallets', repo: 'flask' });
+  });
+
+  it('rejects a missing or malformed value', () => {
+    expect(parseRecorderTarget(['--only']).kind).toBe('invalid');
+    expect(parseRecorderTarget(['--only', '--other']).kind).toBe('invalid');
+    expect(parseRecorderTarget(['--only', 'noslash']).kind).toBe('invalid');
+    expect(parseRecorderTarget(['--only', 'a/b/c']).kind).toBe('invalid');
+  });
+
+  it('matches a repository ignoring case', () => {
+    expect(matchesRepo({ owner: 'psf', repo: 'requests' }, 'PSF', 'Requests')).toBe(true);
+    expect(matchesRepo({ owner: 'psf', repo: 'requests' }, 'psf', 'flask')).toBe(false);
+  });
+});
+
+describe('replay verdict and requiresFlaggedDependency (pyproject R12.4)', () => {
+  const outcome = (flags: readonly { archived?: boolean; deprecated?: boolean }[]): ReplayOutcome => ({
+    ok: true,
+    value: { result: { dependencies: flags.map((facts) => ({ facts })) } },
+  });
+  const failed: ReplayOutcome = { ok: false, error: { code: 'X' } };
+
+  it('keeps the archived or deprecated rule when the flag is absent or true', () => {
+    for (const flag of [undefined, true]) {
+      expect(replayVerdict(outcome([{ archived: true }]), flag)).toBeNull();
+      expect(replayVerdict(outcome([{ deprecated: true }]), flag)).toBeNull();
+      expect(replayVerdict(outcome([{}]), flag)).toContain('R23.4');
+      expect(replayVerdict(outcome([]), flag)).toContain('R23.4');
+    }
+  });
+
+  it('requires only ok and one dependency when the flag is false', () => {
+    expect(replayVerdict(outcome([{}]), false)).toBeNull();
+    expect(replayVerdict(outcome([]), false)).toContain('no dependency');
+  });
+
+  it('fails a failed scan in every case', () => {
+    for (const flag of [undefined, true, false]) {
+      expect(replayVerdict(failed, flag)).toBe('replay scan failed with X');
+    }
+  });
+
+  it('writes the optional metadata field', async () => {
+    const recorder = await record(okClient({}), ['a']);
+    const dir = join(root, 'flag');
+    stageFixtureSet(dir, { ...metadata, requiresFlaggedDependency: false }, recorder.responses(), null);
+    expect(JSON.parse(readFileSync(join(dir, 'metadata.json'), 'utf8'))).toMatchObject({
+      requiresFlaggedDependency: false,
+    });
   });
 });

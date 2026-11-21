@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { CACHE_KEY_VERSION } from '../../../pipeline/constants';
+import { canonicalJson } from '../../../pipeline/ports/request-key';
 import { scanCacheKey, type ScanCacheKeyParts } from '../../../pipeline/scan/cache-keys';
 
 const base: ScanCacheKeyParts = {
@@ -43,6 +45,24 @@ describe('scanCacheKey', () => {
     const paths = ['z.json', 'a.json'];
     scanCacheKey({ ...base, manifestPaths: paths });
     expect(paths).toEqual(['z.json', 'a.json']);
+  });
+
+  it('keys built with version 3 differ from version 2 keys for equal parts (R10.1)', () => {
+    const build = (version: number): string =>
+      canonicalJson([
+        'scan',
+        version,
+        base.webHost,
+        base.owner,
+        base.repo,
+        base.branch,
+        base.defaultBranch,
+        base.commitSha,
+        [...base.manifestPaths].sort(),
+      ]);
+    expect(build(3)).not.toBe(build(2));
+    expect(scanCacheKey(base)).toBe(build(CACHE_KEY_VERSION));
+    expect(scanCacheKey(base)).not.toBe(build(2));
   });
 
   it('cannot take a token as input', () => {

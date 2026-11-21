@@ -24,7 +24,7 @@ import {
 
 const WEB_HOST = 'github.com';
 const SHA = 'c'.repeat(40);
-const NAMES = ['package.json', 'requirements.txt', 'Cargo.toml'];
+const NAMES = ['package.json', 'requirements.txt', 'pyproject.toml', 'Cargo.toml'];
 const DISCOVERY_LIMITS: DiscoveryLimits = {
   maxDepth: 4,
   maxManifests: 50,
@@ -371,6 +371,48 @@ describe('runManifestStage', () => {
     expect(result.value.manifests.map((m) => m.path)).toEqual(['Cargo.toml']);
     expect(result.value.notes).toEqual([manifestFetchFailedNote('package.json')]);
     expect(s.ledger.entries[1]?.outcome).toEqual({ ok: false, reason: 'deadline' });
+  });
+
+  // pyproject Requirements 9.3, 9.7
+  it('fetches and parses a nested pyproject.toml with the format of its last path segment (R9.7)', async () => {
+    const text = '[project]\nname = "demo"\ndependencies = ["requests>=2"]\n';
+    const s = setup(discovered([{ path: 'sub/pyproject.toml' }]), ['sub/pyproject.toml'], () =>
+      Promise.resolve(okText(text)),
+    );
+    const result = await s.run();
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const expected = parseManifest(text, 'pyproject.toml');
+    expect(expected.dependencies).toHaveLength(1);
+    expect(s.fetched).toEqual(['sub/pyproject.toml']);
+    expect(result.value.manifests).toEqual([
+      {
+        path: 'sub/pyproject.toml',
+        format: 'pyproject.toml',
+        warnings: expected.warnings,
+        dependencies: expected.dependencies,
+      },
+    ]);
+    expect(result.value.manifests[0]?.dependencies[0]?.ecosystem).toBe('pypi');
+  });
+
+  it('fetches a root pyproject.toml and requirements.txt in code point order (R9.3)', async () => {
+    const pyText = '[project]\ndependencies = ["flask"]\n';
+    const s = setup(
+      discovered([{ path: 'requirements.txt' }, { path: 'pyproject.toml' }]),
+      [],
+      (p) => Promise.resolve(okText(p === 'pyproject.toml' ? pyText : REQ)),
+    );
+    const result = await s.run();
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.selected).toEqual(['pyproject.toml', 'requirements.txt']);
+    expect(s.fetched).toEqual(['pyproject.toml', 'requirements.txt']);
+    expect(result.value.manifests.map((m) => [m.path, m.format])).toEqual([
+      ['pyproject.toml', 'pyproject.toml'],
+      ['requirements.txt', 'requirements.txt'],
+    ]);
+    expect(result.value.notes).toEqual([]);
   });
 
   describe('notes of the selection', () => {

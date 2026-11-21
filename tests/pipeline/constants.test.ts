@@ -201,6 +201,19 @@ describe('constant consistency rules', () => {
     expect(num('CACHE_KEY_VERSION')).toBeGreaterThan(1);
   });
 
+  it('DISCOVERY_MANIFEST_NAMES is exactly package.json, requirements.txt, pyproject.toml, Cargo.toml in order', () => {
+    expect(names('DISCOVERY_MANIFEST_NAMES')).toEqual([
+      'package.json',
+      'requirements.txt',
+      'pyproject.toml',
+      'Cargo.toml',
+    ]);
+  });
+
+  it('CACHE_KEY_VERSION equals 3', () => {
+    expect(num('CACHE_KEY_VERSION')).toBe(3);
+  });
+
   it('RANGE_MAX_LENGTH is a positive integer', () => {
     expect(isPositiveInteger(num('RANGE_MAX_LENGTH'))).toBe(true);
   });

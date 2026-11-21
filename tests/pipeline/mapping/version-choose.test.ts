@@ -19,6 +19,31 @@ describe('chooseVersion', () => {
     });
   });
 
+  it('treats * as no constraint for pypi (Requirement 10.5)', () => {
+    expect(chooseVersion('pypi', ['*'], VERSIONS, '2.0.0')).toEqual({
+      selected: '2.0.0',
+      basis: 'default',
+      notes: [],
+    });
+    expect(chooseVersion('pypi', [' * '], VERSIONS, '2.0.0').notes).toEqual([]);
+  });
+
+  it('ignores * next to a range for pypi', () => {
+    expect(chooseVersion('pypi', ['*', '>=1.0,<1.3'], VERSIONS, '2.0.0')).toEqual({
+      selected: '1.2.0',
+      basis: 'resolved',
+      notes: [],
+    });
+  });
+
+  it('keeps * as a range for npm', () => {
+    expect(chooseVersion('npm', ['*'], VERSIONS, '1.0.0')).toEqual({
+      selected: '2.0.0',
+      basis: 'resolved',
+      notes: [],
+    });
+  });
+
   it('prefers an exact pin over a range', () => {
     expect(chooseVersion('npm', ['^1.0.0', '1.2.0'], VERSIONS, '2.0.0')).toEqual({
       selected: '1.2.0',

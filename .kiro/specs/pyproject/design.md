@@ -323,6 +323,12 @@ Reflection done before writing the list: every testable criterion of the prework
 
 **Validates: Requirements 6.11, 10.4**
 
+### Finding from PY-P10: zero padding of prefix matches
+
+PY-P10 found a defect in the existing range code. `@renovatebot/pep440` does not zero-pad the candidate version for prefix matches: `pepSatisfies('1', '==1.0.*')` returns false, although PEP 440 (version matching with zero padding) and Poetry both treat `1` as `1.0`. So `resolveRange('pypi', ['==1.0.*'], ['1'])` gives `unresolved` when it should resolve `1`. Shrunk counterexamples: constraint `1.0.*` with versions `["1"]` (seed -444692813, path `17:0:2:3:2:2:4`), and in a deep run `5.0.*,>=0` with versions `["5"]` (seed -710714697). The same gap affects `!=V.*` clauses that users write in `requirements.txt`.
+
+Fix location: `pepSatisfies` in `pipeline/mapping/range-pep440.ts`, covered by Requirement 10.9 and task 4.11. When a clause of the specifier text is a prefix match (`==V.*` or `!=V.*`) and the candidate's release segment has fewer parts than `V`, the candidate's release is padded with zeros before the library is called. The padding is a pre-check on the specifier text: the text is split at commas and each clause is inspected by linear scans. No new regex with nested quantifiers is added. `@renovatebot/pep440` stays the only importer of that package, confined to `range-pep440.ts`. The change applies to every pypi range, so `requirements.txt` benefits too. Prereleases, npm and cargo are unchanged.
+
 ## Error Handling
 
 | Situation | Behavior |
