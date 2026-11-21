@@ -364,7 +364,7 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
     - Create `tests/e2e/above-fold.spec.ts` with the request fixture and a mocked `/api/scan`: at 1440x900 and 1280x800 (desktop) and at 390x844 (mobile), the top of the art box of the first `.gk-plot` is smaller than the viewport height. Run the existing header unit tests (`tests/ui/components/results-header.test.tsx`) and `tests/ui/art-css.test.ts`. Edit `tests/ui/art-css.test.ts` only to add the mobile clamp lower bound (26 px under 640 px); keep the 32 and 56 px desktop check unchanged.
     - Files: `tests/e2e/above-fold.spec.ts`, `tests/ui/art-css.test.ts` (only if a mobile clamp bound is added)
     - _Requirements: 5.10, 5.11, 5.12, 5.14_
-  - [~] 22.5 Regenerate the screenshots again after the compact header
+  - [x] 22.5 Regenerate the screenshots again after the compact header
     - Regenerate the same 50-file set as task 22.2 plus any other image that changes because of the compact header, with the same rules: the images are SHA-identical across two runs, `docs/screenshots/m1/` and `m2/` do not change, and each image is viewed with any clipped or overlapping text reported.
     - Files: `docs/screenshots/*.png`
     - _Requirements: 5.10, 5.11, 14.9_
