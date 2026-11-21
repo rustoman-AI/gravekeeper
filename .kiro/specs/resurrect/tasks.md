@@ -237,10 +237,10 @@ Rules for every task:
   - [x] 14.2 Take the screenshots and write the slot sections of the report (orchestrator-only)
     - Run `$env:RS_REPORT = '1'; npx playwright test tests/e2e/resurrect-report.spec.ts --project=desktop` (after `npm run e2e:fixtures`). Check that the three 1440x900 PNGs exist under `docs/screenshots/resurrect/` and that each shows the slot (open the images). Append to `docs/resurrect-report.md` the section `## What the slot shows` with one subsection each for `request` (stating that it is not a dependency of `request/request` and showing the synthetic row, labelled synthetic), `har-validator`, `phantomjs-prebuilt`, `aws-sign2` and `uuid`, taking the text from `test-results/resurrect-slot-text.json` (sections, hint text and label, curated suggestions, commands; the uuid subsection says that the notice of `uuid@3.4.0` is on its own version document and therefore not shown, Decision D3), the section `## Screenshots` that embeds the three PNGs, the axe counts, and the section `## Findings` (client budget numbers from task 9.4, the number of kept and dropped curated entries, hints present in each fixture, anything surprising). The report holds no token; grep it for `ghp_`, `gho_` and `github_pat_`.
     - _Requirements: 16.1, 16.2, 16.3, 16.5, 16.7_
-  - [~] 14.3 Commit and push the report (orchestrator-only)
+  - [x] 14.3 Commit and push the report (orchestrator-only)
     - Stage `docs/resurrect-report.md` and `docs/screenshots/resurrect/*.png` by name, commit with the subject `resurrect: report and screenshots`, push, and record the hash.
     - _Requirements: 16.5, 16.6_
-  - [~] 14.4 Append the commits with their CI status (orchestrator-only)
+  - [-] 14.4 Append the commits with their CI status (orchestrator-only)
     - Collect the commits of this spec (the hashes recorded in tasks 2.1, 4.1, 7.1, 10.1, 12.2, 13.3 and 14.3, plus any fix commit) with `git log --oneline`, and their CI run status with `gh run list --limit 20` (workflow `ci.yml`, status and conclusion per commit; `pending` for a run that has not finished). Append the section `## Commits and CI` to `docs/resurrect-report.md` as a table (hash, subject, CI status), commit it with the subject `resurrect: report commits and CI status` and push. The CI status of this last commit is written as `pending`.
     - _Requirements: 16.6_
 

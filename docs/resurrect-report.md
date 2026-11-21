@@ -187,3 +187,25 @@ Total: 0.
 - Hints present per fixture: request/request has them for har-validator, phantomjs-prebuilt, karma-phantomjs-launcher and codecov; zoxide has the bincode advisory; psf/requests and canopy have none.
 - Several npm sources are raw registry JSON (`registry.npmjs.org/<name>/latest`). They state the notice but are not friendly pages.
 - The 600-code-point cap cuts nothing for bincode (425 characters).
+
+## Deploy check
+
+- `npm run verify:deploy`: pass on 7d07ef5 (Vercel status success).
+- Production `POST /api/scan` for request/request: HTTP 200 in 0.68 s (cached under cache key version 4). Hints returned: har-validator "this library is no longer supported", phantomjs-prebuilt "this package is now deprecated", karma-phantomjs-launcher "PhantomJS development have stopped, use puppeteer or similar", codecov (its notice is a URL, shown as plain text).
+
+## Commits and CI
+
+Commit 12b0e06 failed CI on a test bug in RS-P3: the generator produced the hostile name `--save-dev`, which is also the fixed npm flag the builder correctly adds for a dev dependency (seed 1515876375). Commit 7d07ef5 narrowed the check to name positions and CI passed.
+
+| hash | subject | CI |
+| --- | --- | --- |
+| d49bad1 | spec: resurrect (requirements, design, tasks) | success |
+| 87dd26b | resurrect: upstream hints, cache key 4, compact OSV keeps summary/details (group 1) | success |
+| 5694815 | resurrect: pyproject tool detection, stored-result round trip (group 3) | success |
+| 8aa8773 | resurrect: curated replacements, names, loader, live contract test (groups 5-6) | success |
+| d18b79f | resurrect: slot model, commands, component, style (groups 8-9) | success |
+| 7363311 | resurrect: fixtures re-export, end-to-end and report specs (group 11) | success |
+| 817c1bd | resurrect: traceability test and document (group 13) | success |
+| 12b0e06 | resurrect: report and screenshots | failure |
+| 7d07ef5 | test(resurrect): RS-P3 checks name positions, not fixed flags (CI counterexample seed 1515876375) | success |
+| (this commit) | resurrect: report commits and CI status | pending |
