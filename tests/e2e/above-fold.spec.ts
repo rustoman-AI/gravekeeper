@@ -1,9 +1,11 @@
-import type { Page } from "@playwright/test";
+﻿import type { Page } from "@playwright/test";
 import { loadScan } from "./support/fixtures";
 import { mockScan, respondWithFixture } from "./support/mock-scan";
 import { expect, test } from "./support/test";
 
-// graveyard-art Requirements 5.10, 5.11, 5.12, 5.14: the first plot's art starts above the fold.
+// art-polish Requirements 2.1 to 2.5: the first row with its labels (and the top of the second row on desktop) is above the fold.
+// Rows come from the plot's `--y` (px): y = SCENE_PADDING_PX (16) + row * PLOT_CELL_HEIGHT_PX (156) + 8 + jitter (-8..8), so row = floor((y - 16) / 156).
+// Expected to fail at 1280x720 and 390x700 until task 7.4 (headline and header).
 
 function resultPath(): string {
   const { repo } = loadScan("request") as unknown as { repo: { owner: string; repo: string } };
@@ -26,22 +28,44 @@ async function openResults(page: Page): Promise<void> {
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
 }
 
-async function measureArt(page: Page) {
+
+interface RowMeasure {
+  viewport: number;
+  firstRowLabelBottom: number;
+  secondRowArtTop: number | null;
+  secondRowArtVisible: number | null;
+}
+
+async function measureRows(page: Page): Promise<RowMeasure> {
   const scrollY = await page.evaluate(() => window.scrollY);
   expect(scrollY, "the page must not be scrolled before measuring").toBe(0);
   // Ghost drift animates the art box; measure the resting layout.
   await page.addStyleTag({ content: ".gk-plot-art{animation:none !important}" });
-  const art = page.locator("button.gk-plot .gk-plot-art").first();
-  await expect(art).toBeAttached();
-  return art.evaluate((el) => {
-    const r = el.getBoundingClientRect();
-    return { top: r.top, bottom: r.bottom, height: r.height, viewport: window.innerHeight };
+  return page.evaluate(() => {
+    const plots = Array.from(document.querySelectorAll<HTMLElement>("button.gk-plot")).map((el) => {
+      const y = parseFloat(el.style.getPropertyValue("--y"));
+      return {
+        row: Math.floor((y - 16) / 156),
+        art: el.querySelector(".gk-plot-art")!.getBoundingClientRect(),
+        label: el.querySelector(".gk-plot-label")!.getBoundingClientRect(),
+      };
+    });
+    const first = plots.filter((p) => p.row === 0);
+    const second = plots.filter((p) => p.row === 1);
+    const viewport = window.innerHeight;
+    const secondTop = second.length > 0 ? Math.min(...second.map((p) => p.art.top)) : null;
+    return {
+      viewport,
+      firstRowLabelBottom: Math.max(...first.map((p) => p.label.bottom)),
+      secondRowArtTop: secondTop,
+      secondRowArtVisible: secondTop === null ? null : viewport - secondTop,
+    };
   });
 }
 
 const DESKTOP_SIZES = [
-  { width: 1440, height: 900 },
-  { width: 1280, height: 800 },
+  { width: 1440, height: 760 },
+  { width: 1280, height: 720 },
 ];
 
 test.describe("above the fold", () => {
@@ -49,13 +73,14 @@ test.describe("above the fold", () => {
     test.describe(`desktop ${size.width}x${size.height}`, () => {
       test.use({ viewport: size });
 
-      test("the whole first art box is inside the viewport", async ({ page }) => {
+      test("the first row with labels is in view and 40 px of the second row show", async ({ page }) => {
         test.skip(test.info().project.name !== "desktop", "desktop project only");
         await openResults(page);
-        const m = await measureArt(page);
+        const m = await measureRows(page);
         expect(m.viewport).toBe(size.height);
-        expect(m.top, JSON.stringify(m)).toBeLessThan(m.viewport);
-        expect(m.bottom, JSON.stringify(m)).toBeLessThanOrEqual(m.viewport);
+        expect(m.firstRowLabelBottom, JSON.stringify(m)).toBeLessThanOrEqual(m.viewport);
+        expect(m.secondRowArtVisible, JSON.stringify(m)).not.toBeNull();
+        expect(m.secondRowArtVisible!, JSON.stringify(m)).toBeGreaterThanOrEqual(40);
       });
 
       test("the plaque sits in the same row as the headline", async ({ page }) => {
@@ -74,13 +99,15 @@ test.describe("above the fold", () => {
     });
   }
 
-  test("mobile 390x844: the first art box starts in view and at least half is visible", async ({ page }) => {
-    test.skip(test.info().project.name !== "mobile", "mobile project only");
-    await openResults(page);
-    const m = await measureArt(page);
-    expect(m.viewport).toBe(844);
-    expect(m.top, JSON.stringify(m)).toBeLessThan(m.viewport);
-    const visible = Math.min(m.bottom, m.viewport) - m.top;
-    expect(visible, JSON.stringify(m)).toBeGreaterThanOrEqual(m.height / 2);
+  test.describe("mobile 390x700", () => {
+    test.use({ viewport: { width: 390, height: 700 } });
+
+    test("the first row with labels is in view", async ({ page }) => {
+      test.skip(test.info().project.name !== "mobile", "mobile project only");
+      await openResults(page);
+      const m = await measureRows(page);
+      expect(m.viewport).toBe(700);
+      expect(m.firstRowLabelBottom, JSON.stringify(m)).toBeLessThanOrEqual(m.viewport);
+    });
   });
 });

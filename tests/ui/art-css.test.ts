@@ -125,6 +125,55 @@ describe("app/globals.css art style", () => {
     expect(small[0].decls.get("--horizon-h")).toBe("150px");
   });
 
+  // art-polish task 3.2 (R1.1, R1.2, R1.5, R1.6, R1.7, R9.7, R9.8)
+  it("the Stage lead lifts the Scene by 136px below the horizon height (art-polish R1.1)", () => {
+    const stage = topLevel.filter((b) => norm(b.prelude) === ".gk-stage");
+    expect(stage).toHaveLength(1);
+    const d = declarations(stage[0].body);
+    expect(d.get("--stage-lead")).toBe("calc(var(--horizon-h) - 136px)");
+    expect(d.get("padding-top")).toBe("var(--stage-lead)");
+  });
+
+  it("the Backdrop sits behind the rows with z-index -1 (art-polish R1.2)", () => {
+    const rule = ruleFor(".gk-stage > .gk-backdrop");
+    expect(rule?.decls.get("z-index")).toBe("-1");
+  });
+
+  /** Merged declarations of every rule whose selector list contains `selector`. */
+  const merged = (selector: string) => {
+    const rs = rulesWith(selector);
+    expect(rs.length, `${selector} must exist`).toBeGreaterThan(0);
+    const decls = new Map<string, string>();
+    for (const r of rs) for (const [k, v] of r.decls) decls.set(k, v);
+    return { decls, text: rs.map((r) => r.body).join("\n") };
+  };
+
+  it.each([".gk-stage::before", ".gk-stage::after"])(
+    "%s is an inert full-bleed layer from 14px above the horizon (art-polish R1.5, R1.6, R9.8)",
+    (selector) => {
+      const { decls, text } = merged(selector);
+      expect(decls.get("pointer-events")).toBe("none");
+      expect(decls.get("top")).toBe("calc(var(--horizon-h) - 14px)");
+      expect(text).not.toMatch(/url\(/i);
+      expect(text).not.toMatch(/mask/i);
+      // Colours come from tokens only (R9.7).
+      expect(text).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i);
+    },
+  );
+
+  it("the ground gradient runs ground, moss, night (art-polish R1.5)", () => {
+    const bg = merged(".gk-stage::before").decls.get("background") ?? "";
+    expect(bg).toContain("--color-ground)");
+    expect(bg).toContain("--color-ground-moss");
+    expect(bg).toContain("--color-night");
+  });
+
+  it("the grass tiles use the row cell height (art-polish R1.6)", () => {
+    const d = merged(".gk-stage::after").decls;
+    expect(d.get("background-size")).toContain("var(--cell-h, 156px)");
+    expect(d.get("background-image")).toContain("--color-grass");
+  });
+
   it("fog opacities equal FOG_OPACITY_LOW and FOG_OPACITY_HIGH (R2.2)", () => {
     const low = rulesWith(".gk-fog-low").find((r) => r.decls.has("opacity"));
     const high = rulesWith(".gk-fog-high").find((r) => r.decls.has("opacity"));

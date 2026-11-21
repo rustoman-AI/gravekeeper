@@ -93,18 +93,17 @@ main[tabindex="-1"]:focus-visible {
 }
 
 /*
- * Stage (graveyard-art R1.2, R1.4, R2.1): page-wide ground under the horizon backdrop.
- * --horizon-h is the backdrop height; the rows start below it.
+ * Stage (graveyard-art R1.2, R1.4, R2.1; art-polish R1.1 to R1.9): page-wide ground under the
+ * horizon backdrop. --horizon-h is the backdrop height. The Backdrop stays full height but sits
+ * behind the rows (z-index -1); the Stage lead lifts the Scene by 136px so the first row's feet
+ * land 8px below the fence base. Plot boxes do not move relative to the Scene.
  */
 .gk-stage {
   --horizon-h: 240px;
+  --stage-lead: calc(var(--horizon-h) - 136px);
   position: relative;
-  padding-top: var(--horizon-h);
-  background: linear-gradient(
-    to bottom,
-    var(--color-ground) 0%,
-    var(--color-night) 100%
-  );
+  isolation: isolate;
+  padding-top: var(--stage-lead);
 }
 
 @media (max-width: 639px) {
@@ -116,10 +115,62 @@ main[tabindex="-1"]:focus-visible {
 .gk-stage > .gk-backdrop {
   position: absolute;
   inset: 0 0 auto 0;
+  z-index: -1;
   width: 100%;
   height: var(--horizon-h);
 }
 
+/*
+ * Ground (R1.4 to R1.9): decorative pseudo-elements, no DOM per row, no pointer events.
+ * ::before is the mossy gradient, ::after the grass strips (one 14px strip per 156px row
+ * cell, gradients only). Both start 14px above the Backdrop bottom, covering its ground band,
+ * and run to the bottom of the Stage whatever the plot count.
+ */
+.gk-stage::before,
+.gk-stage::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--horizon-h) - 14px);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.gk-stage::before {
+  background: linear-gradient(
+    to bottom,
+    var(--color-ground) 0,
+    var(--color-ground) 14px,
+    var(--color-ground-moss) 220px,
+    color-mix(in srgb, var(--color-ground-moss) 55%, var(--color-night)) calc(100% - 160px),
+    var(--color-night) 100%
+  );
+}
+
+.gk-stage::after {
+  background-image:
+    radial-gradient(ellipse 3px 14px at 3px 14px, var(--color-grass) 96%, transparent 100%),
+    radial-gradient(ellipse 4px 11px at 8px 14px, var(--color-grass) 96%, transparent 100%),
+    radial-gradient(ellipse 3px 9px at 5px 14px, var(--color-grass) 96%, transparent 100%),
+    repeating-linear-gradient(
+      to bottom,
+      var(--color-grass) 0 5px,
+      transparent 5px var(--cell-h, 156px)
+    );
+  background-size:
+    11px var(--cell-h, 156px),
+    17px var(--cell-h, 156px),
+    23px var(--cell-h, 156px),
+    100% var(--cell-h, 156px);
+  background-repeat: repeat;
+  background-position: 0 0, 0 0, 0 0, 0 9px;
+}
+
+.gk-stage-inner {
+  z-index: 1;
+}
 /*
  * Fog (R2.2 to R2.5): two soft low-mist layers in front of the rows, over the lower
  * part of the Scene. Edges are soft because the mist token fades to transparent in a

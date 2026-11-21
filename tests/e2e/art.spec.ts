@@ -69,6 +69,25 @@ test.describe("art", () => {
     await expect(page.locator("svg.gk-backdrop")).toHaveCount(1);
   });
 
+  // art-polish Requirements 1.1, 1.2: the first plots overlap the Backdrop and stand in front of it.
+  test("the first plot overlaps the backdrop and the backdrop sits behind the plot", async ({ page }) => {
+    await openResults(page);
+    // Ghost drift animates the art box; measure the resting layout.
+    await page.addStyleTag({ content: ".gk-plot-art{animation:none !important}" });
+    const backdrop = await page.locator(".gk-backdrop").first().boundingBox();
+    const art = await page.locator("button.gk-plot .gk-plot-art").first().boundingBox();
+    expect(backdrop).not.toBeNull();
+    expect(art).not.toBeNull();
+    expect(art!.y, `art ${JSON.stringify(art)} backdrop ${JSON.stringify(backdrop)}`).toBeLessThan(
+      backdrop!.y + backdrop!.height,
+    );
+    const zIndex = await page.locator(".gk-backdrop").first().evaluate((el) => getComputedStyle(el).zIndex);
+    expect(zIndex).toBe("-1");
+    const width = page.viewportSize()!.width;
+    const padTop = await page.locator(".gk-stage").first().evaluate((el) => getComputedStyle(el).paddingTop);
+    expect(padTop, `viewport width ${width}`).toBe(width >= 1000 ? "104px" : "14px");
+  });
+
   test("two fog layers have opacity 0.25 and 0.35", async ({ page }) => {
     await openResults(page);
     const opacity = (sel: string) =>

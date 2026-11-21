@@ -48,29 +48,29 @@ Rules for every task:
     - Stage by name the files of group 1 and commit with the subject `art-polish: constants, ground tokens, contrast helper, report spec (group 1)`. Push. Record the hash for the report.
     - _Requirements: 10.6_
 
-- [ ] 3. Stage and ground
-  - [~] 3.1 Remove the empty band and draw the ground (Visual)
+- [x] 3. Stage and ground
+  - [x] 3.1 Remove the empty band and draw the ground (Visual)
     - In `app/globals.css` change `.gk-stage` to the design: `--stage-lead: calc(var(--horizon-h) - 136px)`, `padding-top: var(--stage-lead)`, `isolation: isolate`, remove its `background`; the Backdrop rule gets `z-index: -1`; add `.gk-stage::before` (ground gradient from `--color-ground` through `--color-ground-moss` to `--color-night`) and `.gk-stage::after` (grass strips: radial-gradient blades with px radii in tiles `Wpx x var(--cell-h, 156px)` plus a `repeating-linear-gradient` base bar, strip height at most 14 px, colour `--color-grass` only), both full-bleed from `top: calc(var(--horizon-h) - 14px)` to the bottom, `z-index: 0`, `pointer-events: none`; add `.gk-stage-inner { z-index: 1 }`. Keep `--horizon-h` 240 px and 150 px. No `url()`, `mask` or `filter`. Keep the header comment of the block and cite Requirements 1.1 to 1.9.
     - Take a preview screenshot (see the rules) of the results scene at 1440x760 and 390x700, open both images and report: whether the first row stands on the ground in front of the fence, whether any empty band is left between the fence and the first row, whether the grass strip is visible at each row base and looks like grass, whether the labels are readable, and whether the moon and the trees are still visible. Adjust only the grass radii, the gradient stops and the 14 px lip until the images look right, and keep the constraints.
     - _Requirements: 1.1, 1.2, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9_
-  - [~] 3.2 Update the art style test for the stage and the ground
+  - [x] 3.2 Update the art style test for the stage and the ground
     - In `tests/ui/art-css.test.ts` keep the horizon test unchanged and add: `.gk-stage` declares `--stage-lead` equal to `calc(var(--horizon-h) - 136px)` and `padding-top: var(--stage-lead)`; the Backdrop rule has `z-index: -1`; `.gk-stage::before` and `.gk-stage::after` exist, are `pointer-events: none`, have `top: calc(var(--horizon-h) - 14px)`, contain no `url(` and no `mask`; the `::before` gradient mentions `--color-ground`, `--color-ground-moss` and `--color-night`; the `::after` tiles use `var(--cell-h, 156px)`; no rule other than the `@theme` block declares a colour literal for these layers. List any other changed assertion with old and new values in the task result.
     - _Requirements: 1.1, 1.2, 1.5, 1.6, 1.7, 9.7, 9.8_
-  - [~] 3.3 Assert the overlap in the art end-to-end spec
+  - [x] 3.3 Assert the overlap in the art end-to-end spec
     - In `tests/e2e/art.spec.ts` add one test: on the request fixture the top of the first plot's art box is above the bottom of the Backdrop box (`.gk-backdrop` bounding box), the Backdrop box is behind the plot (computed `z-index` of the Backdrop is `-1`), and the `.gk-stage` `padding-top` equals 104 px at 1440 px width and 14 px at 390 px width. Edit nothing else in the file.
     - _Requirements: 1.1, 1.2_
-  - [~] 3.4 Update the above-the-fold spec to the new viewports
+  - [x] 3.4 Update the above-the-fold spec to the new viewports
     - In `tests/e2e/above-fold.spec.ts` replace the sizes 1440x900, 1280x800 and 390x844 with 1440x760, 1280x720 (desktop project) and 390x700 (mobile project, set through `test.use({ viewport })`). Desktop test: the bottom of the lowest label of the first row (the plots whose top is within one cell height, 156 px, of the first plot's top) is at most the viewport height, and the first plot of the second row has at least 40 px of its art box inside the viewport. Mobile test: the bottom of the lowest label of the first row is at most the viewport height. Keep the "plaque sits in the same row as the headline" test for both desktop sizes, the reduced-motion emulation, the font wait and the "not scrolled" check. Update the file comment to cite Requirements 2.1 to 2.5. This test is expected to fail until task 7.4; note that in the result.
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
-- [ ] 4. Checkpoint - Stage and ground
+- [x] 4. Checkpoint - Stage and ground
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 4.1 Commit and push the stage group (orchestrator-only)
+  - [x] 4.1 Commit and push the stage group (orchestrator-only)
     - Stage by name the files of group 3 and commit with the subject `art-polish: graves stand in the landscape, ground and grass (group 3)`. Push. Record the hash.
     - _Requirements: 10.6_
 
 - [ ] 5. Fog without hard edges
-  - [~] 5.1 Feather the fog (Visual)
+  - [-] 5.1 Feather the fog (Visual)
     - In `app/globals.css` replace the `.gk-fog` background by the design's two radial-gradient bands (`ellipse 28% 14% at 40% 34%` and `at 60% 84%`, colour stops `var(--color-mist) 0%`, a `color-mix` 45 % stop at 55 %, `transparent 100%`), `background-size: 100% calc(var(--cell-h, 156px) * 2)`, `background-repeat: repeat-y`, `background-position: 0 16px`; make `.gk-fog-high` and `.gk-fog-b` use the swapped centres (60 % and 40 %) and `ellipse 24% 14%`, and remove their old `background-position` and `background-size`. Keep opacity 0.25 and 0.35, `top/right/bottom/left`, `animation` (transform only), the simplified-mode and the reduced-motion rules. Constants must equal those of `view-model/fog.ts`. No `mask`, no `filter`, no `url()`. The Hero uses the same classes.
     - Visual: take preview screenshots of the results scene at 1440x760 and of the landing at 1440x760 (reduced motion, so the fog is static), open the images and report: whether any fog band shows a hard edge on any side, whether rows 1 and 2 show bands at different horizontal positions, whether any stripe or tile seam is visible, whether labels under fog are still readable. Tune only the colour stop positions inside the constraints; a change of the numbers in `view-model/fog.ts` is allowed only together with the CSS in this task and with the constants test updated (report it).
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8_
