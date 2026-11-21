@@ -329,6 +329,18 @@ PY-P10 found a defect in the existing range code. `@renovatebot/pep440` does not
 
 Fix location: `pepSatisfies` in `pipeline/mapping/range-pep440.ts`, covered by Requirement 10.9 and task 4.11. When a clause of the specifier text is a prefix match (`==V.*` or `!=V.*`) and the candidate's release segment has fewer parts than `V`, the candidate's release is padded with zeros before the library is called. The padding is a pre-check on the specifier text: the text is split at commas and each clause is inspected by linear scans. No new regex with nested quantifiers is added. `@renovatebot/pep440` stays the only importer of that package, confined to `range-pep440.ts`. The change applies to every pypi range, so `requirements.txt` benefits too. Prereleases, npm and cargo are unchanged.
 
+#### Second finding: zero padding for every clause
+
+The deep run of PY-P10 (task 12.2) found that the gap is not limited to prefix matches. `@renovatebot/pep440` gives `satisfies('2.0', '~=2.0.0.0') === false` and `satisfies('2.0.0.0', '~=2.0.0.0') === true`, although PEP 440 treats `2.0` and `2.0.0.0` as equal. Shrunk counterexample: the Poetry term `~=2.0.0.0` with versions `["2.0"]` (seed 1855169442, path `263:6:9`). The fix of task 4.11 covered only `==V.*` and `!=V.*`.
+
+Generalised fix, still in `pepSatisfies` of `pipeline/mapping/range-pep440.ts` (Requirement 10.10, task 4.12):
+
+- Before the clauses go to the library, the candidate's release segment is zero-padded to the longest release length among the versions in the specifier's clauses. The candidate's epoch, pre, post, dev and local parts are kept unchanged.
+- The padded string is used only for the check. The original candidate string is the one returned and selected.
+- When the specifier contains a `===` clause (arbitrary equality, a string match), no padding is applied.
+- The prefix logic of task 4.11 is kept.
+- The specifier text is inspected as before, by splitting at commas and linear scans, with no new regex with nested quantifiers.
+
 ## Error Handling
 
 | Situation | Behavior |

@@ -229,6 +229,7 @@ No other constant is added. Constant consistency rules of the pipeline spec stay
 7. THE Pipeline SHALL pass the warnings of the Pyproject_Parser to the Scan_Result `manifests[].warnings` unchanged, so that the UI shows them under "Manifest warnings".
 8. WHEN a repository has a root `pyproject.toml` and a root `requirements.txt` that list the same package, THE Pipeline SHALL create one Lookup_Target for it, and an Exact_Pin of one manifest SHALL win over a range of the other (existing `chooseVersion` behavior).
 9. WHEN a pypi range contains a prefix clause `==V.*` or `!=V.*` and a candidate version has fewer release parts than `V`, THE range evaluation SHALL zero-pad the candidate's release segment before matching (PEP 440 zero padding). This corrects scan-accuracy behavior: `@renovatebot/pep440` returns false for `1` against `==1.0.*`, so `resolveRange('pypi', ['==1.0.*'], ['1'])` was `unresolved`. The rule applies to every pypi range, including those of `requirements.txt`.
+10. WHEN a candidate version has fewer release parts than a version in a pypi range clause, THE range evaluation SHALL compare as if the candidate were zero-padded (PEP 440 release padding), except for `===` clauses. This generalises criterion 9: `@renovatebot/pep440` returns false for `2.0` against `~=2.0.0.0`, although PEP 440 treats `2.0` and `2.0.0.0` as equal. The selected version string stays the original candidate.
 
 ### Requirement 11: Property tests and the test-only writer
 

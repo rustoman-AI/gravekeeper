@@ -135,6 +135,11 @@ Rules for every task:
     - Fixes the defect that PY-P10 found in task 4.8 (task 4.8 is blocked on this fix and is re-run after 4.11). In `pepSatisfies` of `pipeline/mapping/range-pep440.ts`, when a specifier clause is a prefix match (`==V.*` or `!=V.*`) and the candidate's release segment has fewer parts than `V`, pad the candidate's release with zeros before matching. Inspect the specifier text by splitting at commas and by linear scans, with no new regex with nested quantifiers. Keep `@renovatebot/pep440` confined to this file. The rule applies to every pypi range. Cite Requirement 10.9 in a comment above the rule.
     - Create `tests/pipeline/mapping/range-pep440.test.ts` (no test file for `range-pep440` exists) with these cases: `1` vs `==1.0.*` is true; `1` vs `!=1.0.*` is false; `1.1` vs `==1.0.*` is false; `1.0.0` vs `==1.0.*` is true; prereleases are unchanged; npm and cargo are untouched.
     - _Requirements: 10.9_
+  - [x] 4.12 Zero-pad candidates for every PEP 440 clause
+    - Fixes the second zero-padding defect that the deep run of PY-P10 found in task 12.2: `satisfies('2.0', '~=2.0.0.0')` is false in `@renovatebot/pep440`, although PEP 440 treats `2.0` as `2.0.0.0` (shrunk counterexample: Poetry term `~=2.0.0.0`, versions `["2.0"]`, seed 1855169442, path `263:6:9`). In `pepSatisfies` of `pipeline/mapping/range-pep440.ts`, before the clauses are evaluated through the library, zero-pad the candidate's release segment to the longest release length among the versions of the specifier's clauses. Keep the candidate's epoch, pre, post, dev and local parts. Use the padded form only for the check; return and select the original candidate string. Do not pad when the specifier contains `===`. Keep the prefix logic of task 4.11. Use splitting at commas and linear scans, with no new regex with nested quantifiers. Cite Requirement 10.10 in a comment above the rule.
+    - Extend `tests/pipeline/mapping/range-pep440.test.ts` (created by task 4.11) with these cases: `2.0` vs `~=2.0.0.0` is true; `2` vs `>=2.0.0` is true; `2` vs `<2.0.1` is true; `1.9` vs `~=2.0.0.0` is false; `2.0` vs `===2.0.0.0` is false; `2.0rc1` keeps the prerelease rules; the selected version string stays the original (`resolveRange('pypi', ['~=2.0.0.0'], ['2.0'])` returns `2.0`, not `2.0.0.0`).
+    - Re-run note: after 4.12, task 12.2 re-runs the ten deep property runs.
+    - _Requirements: 10.10_
 
 - [x] 5. Copy and documentation text
   - [x] 5.1 Update the user-visible lists of formats
@@ -202,10 +207,10 @@ Rules for every task:
     - _Requirements: 15.6_
 
 - [ ] 12. Report
-  - [~] 12.1 Run the live scan and write the report (orchestrator-only)
+  - [x] 12.1 Run the live scan and write the report (orchestrator-only)
     - With `GRAVEKEEPER_LIVE_TESTS=1` and `GITHUB_TOKEN` in the environment, run `npm run live:report -- <owner>/<repo> --out docs/pyproject-report.md --title "pyproject live report" --per-package <owner>/<repo>` for the chosen repository. Check that the file states the grade and counts, the manifests read, the HAUNTED packages with advisory ids, the `versionBasis` counts, the notes by code, the duration and the cache header values, and that it holds no token. Append the section `## Featured comparison` copied from `docs/pyproject-probe.md` (Requirement 13.1 table and decision sentence) and a short `## Findings` list of what the scan showed about the feature (for example a `range-unresolved` note count, warnings of the parser, unassessed git entries).
     - _Requirements: 14.1, 14.2, 14.5, 13.1, 13.4_
-  - [~] 12.2 Run the deep property tests and append them (orchestrator-only)
+  - [-] 12.2 Run the deep property tests and append them (orchestrator-only)
     - Run `npm run test:deep -- <file>` for each of the ten property files (`tests/core/formats/poetry-constraint.property.test.ts`, `tests/core/parsers/pyproject-never-throws.property.test.ts`, `pyproject-roundtrip.property.test.ts`, `pyproject-determinism.property.test.ts`, `pyproject-names.property.test.ts`, `pyproject-scopes.property.test.ts`, `pyproject-include-group.property.test.ts`, `pep508.property.test.ts`, `tests/pipeline/mapping/pyproject-discovery.property.test.ts`, `poetry-resolve.property.test.ts`). Never set `FC_NUM_RUNS` in the shell. Append to `docs/pyproject-report.md` the section `## Properties` with one row per property: number, title, test file, result and, for a failure, the shrunk counterexample and seed from the output (or the text "no counterexample found"). A failing property is reported, not hidden; fix the cause in a separate commit if it is a code defect.
     - _Requirements: 14.3, 11.5_
   - [~] 12.3 Remove the probe file, commit and push the report (orchestrator-only)
@@ -233,7 +238,7 @@ Rules for every task:
   "waves": [
     { "id": 0, "tasks": ["1.1", "1.3", "1.5", "4.1", "4.3", "4.5", "7.1"] },
     { "id": 1, "tasks": ["1.2", "1.4", "1.6", "1.7", "2.1", "4.2", "4.4", "4.6", "4.11", "5.1", "7.2"] },
-    { "id": 2, "tasks": ["1.8", "2.2", "4.7", "4.8"] },
+    { "id": 2, "tasks": ["1.8", "2.2", "4.7", "4.8", "4.12"] },
     { "id": 3, "tasks": ["2.3"] },
     { "id": 4, "tasks": ["2.4", "2.5", "2.12", "4.9", "4.10"] },
     { "id": 5, "tasks": ["2.6", "2.7", "2.8", "2.9", "2.10", "2.11"] },
