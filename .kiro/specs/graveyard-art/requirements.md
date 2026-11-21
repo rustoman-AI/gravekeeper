@@ -186,7 +186,7 @@ Two housekeeping items come first in the task order: the deployed Playwright pro
 
 #### Acceptance Criteria
 
-1. THE Results_Header SHALL show the headline sentence in the display font at a size from `HEADLINE_FONT_MIN_PX` to `HEADLINE_FONT_MAX_PX`, scaling with the viewport width.
+1. THE Results_Header SHALL show the headline sentence in the display font at a size from `HEADLINE_FONT_MIN_PX` to `HEADLINE_FONT_MAX_PX`, scaling with the viewport width, except that criterion 14 sets a lower mobile bound under 640 px.
 2. THE Results_Header SHALL show the grade letter in a large display font on a Plaque, with the words "worst single risk" directly under the letter.
 3. THE Plaque SHALL be drawn with CSS only (gradient, border and carved-text shadow, no filter) and SHALL take its colours from Tokens.
 4. THE Results_Header SHALL show the status counts as Status_Chips, each with the plot icon of its status and a text label with the count, in this order: dead (with the buried and forgotten counts), haunted, alive, unassessed.
@@ -195,6 +195,11 @@ Two housekeeping items come first in the task order: the deployed Playwright pro
 7. THE Results_Header SHALL keep the repository name as the `h1` of the page, with `id="results-heading"` and `tabIndex={-1}`.
 8. THE Results_Header SHALL keep the grade explanation and the closed "Grade scale" disclosure of graveyard-ui R5.5 and R5.6.
 9. **[PBT]** FOR ALL Scan_Results with at least one assessed package, THE counts of the Status_Chips SHALL equal `summary.counts.DEAD`, the buried and forgotten counts of the Header_Model, `summary.counts.HAUNTED`, `summary.counts.ALIVE` and `summary.unassessed`, and the headline text SHALL equal the headline of graveyard-ui R5.2 (GA-P12).
+10. WHILE the viewport width is at least 1024 px, THE Results_Header SHALL place the Plaque beside the headline in the same row and SHALL lay out the grade explanation line, the Status_Chips and the meta line as a compact block, so that on the request fixture at 1440x900 and at 1280x800 the top of at least one plot row of the scene is visible within the viewport without scrolling.
+11. WHILE the viewport width is 390 px, THE Results_Header SHALL reduce the lower bound of the headline clamp and the size of the Plaque so that, on the request fixture at 390x844, the top of the art box of at least one plot is visible within the viewport without scrolling.
+12. THE Results_Header SHALL keep the DOM order, the heading level, the text content, the accessible names and all status text labels unchanged by the compact layout, and only CSS layout and sizes SHALL change.
+13. THE Results_Header SHALL keep the headline in the display font and SHALL keep the desktop clamp bounds `HEADLINE_FONT_MIN_PX` (32 px) and `HEADLINE_FONT_MAX_PX` (56 px) for viewport widths of 640 px and above.
+14. WHILE the viewport width is under 640 px, THE Results_Header SHALL use a headline lower bound of 26 px, SHALL keep text contrast at WCAG 2.2 AA and SHALL reflow without horizontal scrolling at a viewport width of 320 px.
 
 ### Requirement 6: Humanised durations
 

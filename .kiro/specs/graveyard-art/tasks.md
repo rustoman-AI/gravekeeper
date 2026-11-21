@@ -348,14 +348,26 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
 
 - [ ] 22. Screenshots of the graveyard-ui set (only if the art changed)
-  - [~] 22.1 Decide which screenshots changed
+  - [x] 22.1 Decide which screenshots changed
     - Run `tests/e2e/screenshots.spec.ts` and list the screenshot names whose assertions or committed pictures no longer match because the art changed (expected: landing, scanning stages, results scene, results empty, detail panels; not expected: errors, picker, notes, list views). Update `tests/e2e/screenshots.spec.ts` only where an assertion depends on removed markup; keep the file list unchanged.
     - Files: `tests/e2e/screenshots.spec.ts`
     - _Requirements: 14.9, 17.2_
-  - [~] 22.2 Regenerate the changed screenshots
+  - [x] 22.2 Regenerate the changed screenshots
     - Regenerate only the images named in task 22.1 under `docs/screenshots/` (desktop and mobile), with the documented command of the spec, and update `docs/screenshots/README.md` only if it lists them. Do not touch `docs/screenshots/m1/` or `m2/`. Look at each new image and report any with clipped text or overlapping labels.
     - Files: `docs/screenshots/*.png` (only those named in task 22.1), `docs/screenshots/README.md`
     - _Requirements: 14.9_
+  - [~] 22.3 Compact results header layout
+    - In `app/globals.css`, make `.gk-results-header` a CSS grid from 1024 px (headline and plaque in one row, explanation, chips and meta as a compact block under it), and under 640 px lower the headline clamp bound to 26 px and shrink the plaque. In `components/results-header.tsx` add wrapper class names only; make no text change, no order change, no heading-level change and no accessible-name change. Keep the desktop clamp bounds (32 and 56 px), the display font and the Token colours; add no Token, no filter and no animation. Keep the existing header unit tests and `tests/ui/art-css.test.ts` passing.
+    - Files: `app/globals.css`, `components/results-header.tsx`
+    - _Requirements: 5.1, 5.10, 5.11, 5.12, 5.13, 5.14_
+  - [~] 22.4 Above-the-fold test
+    - Create `tests/e2e/above-fold.spec.ts` with the request fixture and a mocked `/api/scan`: at 1440x900 and 1280x800 (desktop) and at 390x844 (mobile), the top of the art box of the first `.gk-plot` is smaller than the viewport height. Run the existing header unit tests (`tests/ui/components/results-header.test.tsx`) and `tests/ui/art-css.test.ts`. Edit `tests/ui/art-css.test.ts` only to add the mobile clamp lower bound (26 px under 640 px); keep the 32 and 56 px desktop check unchanged.
+    - Files: `tests/e2e/above-fold.spec.ts`, `tests/ui/art-css.test.ts` (only if a mobile clamp bound is added)
+    - _Requirements: 5.10, 5.11, 5.12, 5.14_
+  - [~] 22.5 Regenerate the screenshots again after the compact header
+    - Regenerate the same 50-file set as task 22.2 plus any other image that changes because of the compact header, with the same rules: the images are SHA-identical across two runs, `docs/screenshots/m1/` and `m2/` do not change, and each image is viewed with any clipped or overlapping text reported.
+    - Files: `docs/screenshots/*.png`
+    - _Requirements: 5.10, 5.11, 14.9_
 
 - [~] 23. Checkpoint - Screenshots
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
@@ -375,7 +387,7 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
 
 - [ ] 26. Milestone 3 report spec
   - [~] 26.1 Write the report spec
-    - Create `tests/e2e/m3-report.spec.ts`, modelled on `tests/e2e/m2-report.spec.ts`: runs only when `M3_REPORT=1` and only in the `desktop` project, `/api/scan` always mocked, `page.emulateMedia({ reducedMotion: 'reduce' })`, fixed clock, fonts ready, and for the scene screenshots a wait until the number of `.gk-plot` buttons equals the number of rows. Captured at 1440x900 into `docs/screenshots/m3/`: `landing.png`, `scanning.png` (stage 3, so three stones are lit before the reduced-motion override is turned off for this one image; use `reducedMotion: 'no-preference'` with the clock paused at 7 s), `results-scene-request.png`, `results-scene-zoxide.png`, `detail-uuid.png`, `detail-aws-sign2.png`; and `results-scene-request-mobile.png` at 390x844. Each screen runs axe (WCAG 2.2 A and AA) and the spec writes `m3A11y` (violation count and rule ids per screen) into `test-results/m3-measurements.json`, keeping other keys, and a `README.md` in `docs/screenshots/m3/` listing the files.
+    - Create `tests/e2e/m3-report.spec.ts`, modelled on `tests/e2e/m2-report.spec.ts`: runs only when `M3_REPORT=1` and only in the `desktop` project, `/api/scan` always mocked, `page.emulateMedia({ reducedMotion: 'reduce' })`, fixed clock, fonts ready, and for the scene screenshots a wait until the number of `.gk-plot` buttons equals the number of rows. Captured at 1440x900 into `docs/screenshots/m3/`: `landing.png`, `scanning.png` (stage 3, so three stones are lit before the reduced-motion override is turned off for this one image; use `reducedMotion: 'no-preference'` with the clock paused at 7 s), `results-scene-request.png`, `results-scene-zoxide.png`, `detail-uuid.png`, `detail-aws-sign2.png`; and `results-scene-request-mobile.png` at 390x844. Each screen runs axe (WCAG 2.2 A and AA) and the spec writes `m3A11y` (violation count and rule ids per screen) into `test-results/m3-measurements.json`, keeping other keys, and a `README.md` in `docs/screenshots/m3/` listing the files. The results scene shots (`results-scene-request.png`, `results-scene-zoxide.png`, `results-scene-request-mobile.png`) must show plots above the fold without scrolling, and the spec asserts it (the top of the art box of the first `.gk-plot` is smaller than the viewport height before each shot).
     - Files: `tests/e2e/m3-report.spec.ts`
     - _Requirements: 19.2, 19.3, 14.9_
   - [~] 26.2 Run the report spec, the perf spec and the bundle gate
@@ -456,11 +468,14 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
     { "id": 38, "tasks": ["20.1", "20.2", "20.3"] },
     { "id": 39, "tasks": ["22.1"] },
     { "id": 40, "tasks": ["22.2"] },
-    { "id": 41, "tasks": ["25.1"] },
-    { "id": 42, "tasks": ["25.2"] },
-    { "id": 43, "tasks": ["26.1", "27.1"] },
-    { "id": 44, "tasks": ["26.2", "27.2"] },
-    { "id": 45, "tasks": ["27.3"] }
+    { "id": 41, "tasks": ["22.3"] },
+    { "id": 42, "tasks": ["22.4"] },
+    { "id": 43, "tasks": ["22.5"] },
+    { "id": 44, "tasks": ["25.1"] },
+    { "id": 45, "tasks": ["25.2"] },
+    { "id": 46, "tasks": ["26.1", "27.1"] },
+    { "id": 47, "tasks": ["26.2", "27.2"] },
+    { "id": 48, "tasks": ["27.3"] }
   ]
 }
 ```
