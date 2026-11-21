@@ -209,6 +209,7 @@ async function scan(input: ScanInput, deps: ScanDeps): Promise<Result<ScanOutcom
       for (const target of targets) {
         const key = targetKey(target.ecosystem, target.name);
         const npmLatest = fetchedOf(registries?.npmLatest.get(key));
+        const npmVersion = versions?.npmVersions.get(key);
         let maintainers: Fetched<unknown> = { state: 'unavailable' };
         if (target.ecosystem === 'npm') maintainers = npmLatest;
         else if (target.ecosystem === 'cargo') maintainers = fetchedOf(registries?.cratesOwners.get(key));
@@ -219,6 +220,8 @@ async function scan(input: ScanInput, deps: ScanDeps): Promise<Result<ScanOutcom
           versionSpecs: target.versionSpecs,
           depsdevPackage: fetchedOf(registries?.depsdevPackages.get(key)),
           npmLatest,
+          // resurrect-upgrade R1.5: the Version_Document, only when its request was sent.
+          ...(npmVersion === undefined ? {} : { npmVersion }),
           maintainers,
           osv: advisories?.osv.get(key) ?? {
             queryResult: versions?.osv.get(key) ?? 'unavailable',
@@ -245,11 +248,12 @@ async function scan(input: ScanInput, deps: ScanDeps): Promise<Result<ScanOutcom
 
     // S6: version choice, Source_Repo, OSV ids, PyPI maintainers.
     const versions = await runVersionStage({
-      sources: { depsdev: sources.depsdev, osv: sources.osv, pypi: sources.pypi },
+      sources: { depsdev: sources.depsdev, npm: sources.npm, osv: sources.osv, pypi: sources.pypi },
       runner,
       ctx,
       targets,
       depsdevPackages: registries.depsdevPackages,
+      npmLatest: registries.npmLatest,
       webHost,
     });
     raw = rawOf(registries, versions, null, null);

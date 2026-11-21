@@ -9,7 +9,7 @@ import type { Result } from '../internal/result';
 import { assembleFacts } from '../mapping/assemble';
 import { compareCodePoints } from '../mapping/compare-code-points';
 import type { AssembledFacts, DiscoveryResult, RawTargetInputs, TargetNote } from '../mapping';
-import type { UpstreamHint } from '../mapping/types';
+import type { UpstreamHint, UpgradeSuggestion } from '../mapping/types';
 import { renderErrorMessage } from './messages';
 import {
   conflictingPinsNote,
@@ -146,6 +146,8 @@ interface TargetOutcome {
   readonly notes: readonly ScanNote[];
   /** Resurrect R4.2, R4.3. */
   readonly hints: readonly UpstreamHint[];
+  /** resurrect-upgrade R4.7, R5.1. */
+  readonly upgrade: UpgradeSuggestion | null;
 }
 
 /** R13.14, R17.7: a throwing assembly turns the facts of that target all-null; the scan goes on. */
@@ -159,9 +161,17 @@ function assembleTarget(raw: RawTargetInputs, asOf: string): TargetOutcome {
         selection: assembled.selection,
         notes: assembled.notes.map(toScanNote),
         hints: assembled.hints,
+        upgrade: assembled.upgrade,
       };
     },
-    (): TargetOutcome => ({ facts: NULL_FACTS(), advisories: [], selection: NO_SELECTION, notes: [], hints: [] }),
+    (): TargetOutcome => ({
+      facts: NULL_FACTS(),
+      advisories: [],
+      selection: NO_SELECTION,
+      notes: [],
+      hints: [],
+      upgrade: null,
+    }),
   );
 }
 
@@ -232,6 +242,8 @@ export function assembleResult(input: AssembleInput): ScanResult {
         facts: outcome.facts,
         advisories: outcome.advisories,
         hints: outcome.hints,
+        // resurrect-upgrade R4.7, R5.1: equal for every dependency of the target; key absent when null.
+        ...(outcome.upgrade !== null ? { upgrade: { ...outcome.upgrade } } : {}),
       });
       assessed.push({ dependency, classification: classified.get(key) ?? null });
     }

@@ -46,7 +46,7 @@ function replaceAfter(segs: string[], keyword: string, label: string): void {
   if (i >= 0 && i + 1 < segs.length) segs[i + 1] = label;
 }
 
-function patternOf(source: Source, host: string, path: string): string {
+export function patternOf(source: Source, host: string, path: string): string {
   const segs = path.split('/').filter((s) => s !== '');
   switch (source) {
     case 'github': {
@@ -77,7 +77,9 @@ function patternOf(source: Source, host: string, path: string): string {
       const scoped = segs[0]?.startsWith('@') === true && !segs[0].includes('%');
       const nameLen = scoped ? 2 : 1;
       const rest = segs.slice(nameLen);
-      return `/{package}${rest.length > 0 ? `/{version}` : ''}`;
+      // resurrect-upgrade R3.3: the /latest document and a version document are separate rows.
+      if (rest.length === 0) return '/{package}';
+      return rest[0] === 'latest' ? '/{package}/latest' : '/{package}/{version}';
     }
     case 'cratesio': {
       replaceAfter(segs, 'crates', '{crate}');
@@ -376,7 +378,7 @@ function repoSection(run: RepoRun, withPackages: boolean): string {
   return out.join('\n');
 }
 
-function requestRows(counts: Counts): (string | number)[][] {
+export function requestRows(counts: Counts): (string | number)[][] {
   const rows: (string | number)[][] = [];
   for (const [key, n] of [...counts].sort(([a], [b]) => (a < b ? -1 : 1))) {
     const [source = '', endpoint = ''] = key.split('\t');
@@ -482,12 +484,15 @@ async function main(): Promise<number> {
   return 0;
 }
 
-main().then(
-  (code) => {
-    process.exitCode = code;
-  },
-  () => {
-    console.error('live:report failed');
-    process.exitCode = 1;
-  },
-);
+// Run only when started as the script, so that a test can import the helpers.
+if (/[\\/]live-report\.ts$/.test(process.argv[1] ?? '')) {
+  main().then(
+    (code) => {
+      process.exitCode = code;
+    },
+    () => {
+      console.error('live:report failed');
+      process.exitCode = 1;
+    },
+  );
+}

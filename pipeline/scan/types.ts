@@ -77,6 +77,11 @@ export interface ScanDependency {
    * the pipeline always sets it.
    */
   readonly hints?: readonly UpstreamHint[];
+  /**
+   * resurrect-upgrade R4.7, R5.1: registry-default upgrade of the Lookup_Target; equal for every
+   * Dependency of it, absent when there is none. Optional so that results built before this spec stay valid.
+   */
+  readonly upgrade?: { readonly version: string; readonly basis: 'registry-default' };
 }
 
 export interface ScanManifestEntry {

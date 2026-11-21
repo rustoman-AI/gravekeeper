@@ -1,5 +1,10 @@
 {
-  "pbtResults": {},
+  "pbtResults": {
+    "5.5 Write the property test for the stored result": {
+      "status": "passed",
+      "lastRunTimestamp": 1795290200505
+    }
+  },
   "executionHistory": {
     "1.1 Implement the strict version validator in Core": [
       {
@@ -217,6 +222,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041610
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288531708
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290094957
       }
     ],
     "5.2 Wire the stage into `run-scan.ts`": [
@@ -224,6 +239,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041655
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290097940
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290161310
       }
     ],
     "5.3 Carry the upgrade into the scan dependencies": [
@@ -231,6 +256,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041707
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288532717
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290095943
       }
     ],
     "5.4 Validate the upgrade in the stored-result validator": [
@@ -238,6 +273,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041747
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290098755
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290161920
       }
     ],
     "5.5 Write the property test for the stored result": [
@@ -245,6 +290,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041790
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290162917
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290242565
       }
     ],
     "5.6 Test the request counts of whole scans": [
@@ -252,6 +307,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041831
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290163629
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290243550
       }
     ],
     "5.7 Split the npm pattern of the request report": [
@@ -259,6 +324,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041873
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288533016
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290096939
       }
     ],
     "6.1 Commit and push the wiring group (orchestrator-only)": [
@@ -539,6 +614,13 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288482186
+      }
+    ],
+    "5. Scan wiring: stage S6, scan result, validator, request report": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290243590
       }
     ]
   }

@@ -116,6 +116,7 @@ function setup(responders: Responders = {}) {
       ctx,
       targets,
       depsdevPackages: depsdevPackages as never,
+      npmLatest: new Map(),
       webHost: WEB_HOST,
     });
   };

@@ -11,6 +11,9 @@ import type { CacheStore, JsonValue } from '../ports/cache';
 import { registryUnitKeys } from './stage-registries';
 import type { LedgerEntry, ScanNote, ScanResult, SourceStatus, TypedCache } from './types';
 
+// Module-local: the constants file defines no other limit for this (resurrect-upgrade 1.2).
+const UPGRADE_VERSION_MAX_LENGTH = 64;
+
 const SOURCE_NAMES: readonly SourceName[] = ['github', 'depsdev', 'osv', 'npm', 'cratesio', 'pypi'];
 
 export type StoreDecision =
@@ -120,6 +123,23 @@ function isHint(v: unknown): boolean {
 /** `hints` is absent (a result stored before the field existed, R4.4) or a short list of hints. */
 function isHintList(v: unknown): boolean {
   return v === undefined || (isArr(v) && v.length <= HINTS_MAX_PER_PACKAGE && v.every(isHint));
+}
+
+/**
+ * resurrect-upgrade R5.2, R5.3: `upgrade` is absent (a result stored before the field existed)
+ * or exactly `{ version, basis }` with a non-empty version of at most 64 code points and the
+ * basis `registry-default`.
+ */
+function isUpgrade(v: unknown): boolean {
+  return (
+    v === undefined ||
+    (isRec(v) &&
+      hasKeys(v, ['version', 'basis']) &&
+      isStr(v.version) &&
+      v.version.length > 0 &&
+      codePointCount(v.version) <= UPGRADE_VERSION_MAX_LENGTH &&
+      v.basis === 'registry-default')
+  );
 }
 
 function isDependency(v: unknown): boolean {
@@ -264,6 +284,7 @@ export function isScanResult(value: unknown): value is ScanResult {
         (d.versionBasis === null || d.versionBasis === 'pinned' || d.versionBasis === 'resolved' || d.versionBasis === 'default') &&
         allOf(d.advisories, isAdvisory) &&
         isHintList(d.hints) &&
+        isUpgrade(d.upgrade) &&
         isRec(d.facts) &&
         hasKeys(d.facts, [
           'daysSinceLastRelease', 'daysSinceLastCommit', 'archived', 'deprecated',

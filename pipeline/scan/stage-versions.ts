@@ -1,13 +1,16 @@
 // Requirement 7.4, 7.5, 7.6, 7.11, 8.7, 8.8, 8.9, 9.1, 9.2, 9.3, 12.5, 12.16, 17.8
+// resurrect-upgrade Requirement 1.1, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10
 import type { Ecosystem } from '@/core';
-import { DEPSDEV_BATCH_SIZE, OSV_BATCH_SIZE } from '../constants';
+import { DEPSDEV_BATCH_SIZE, NPM_VERSION_DOCS_MAX, OSV_BATCH_SIZE } from '../constants';
 import {
   chooseVersion,
   mapDepsDevVersion,
   mapDepsDevVersionBatch,
   mapOsvQueryBatch,
+  needsVersionDocument,
   readDepsDevVersions,
 } from '../mapping';
+import { compareCodePoints } from '../mapping/compare-code-points';
 import type {
   BatchEntry,
   Fetched,
@@ -27,13 +30,15 @@ import type { LookupTarget, ScanDeps, ScanNote } from './types';
 type RunResult = Awaited<ReturnType<UnitRunner['runUnit']>>;
 
 export interface VersionStageInput {
-  readonly sources: Pick<ScanDeps['sources'], 'depsdev' | 'osv' | 'pypi'>;
+  readonly sources: Pick<ScanDeps['sources'], 'depsdev' | 'npm' | 'osv' | 'pypi'>;
   readonly runner: UnitRunner;
   readonly ctx: RequestContext;
   /** The looked-up Lookup_Targets (after the cap). */
   readonly targets: readonly LookupTarget[];
   /** `RegistryStageResult.depsdevPackages`, keyed by `targetKey`. */
   readonly depsdevPackages: ReadonlyMap<string, RunResult>;
+  /** `RegistryStageResult.npmLatest`, keyed by `targetKey` (the `/latest` documents). */
+  readonly npmLatest: ReadonlyMap<string, RunResult>;
   /** Web_Host of the validated configuration (Source_Repo host, R8.7). */
   readonly webHost: string;
 }
@@ -52,6 +57,11 @@ export interface VersionStageResult {
   readonly osv: ReadonlyMap<string, OsvQueryResult | 'unavailable'>;
   /** PyPI per-version document (EF-22) of every `pypi` target with a Selected_Version. */
   readonly pypiProjects: ReadonlyMap<string, Fetched<unknown>>;
+  /**
+   * npm Version_Document per target whose request was sent (at most NPM_VERSION_DOCS_MAX).
+   * `absent` and `unavailable` carry no body.
+   */
+  readonly npmVersions: ReadonlyMap<string, Fetched<unknown>>;
   /** `batch-fallback` (at most one) and `source-repo-unverified` notes. */
   readonly notes: readonly ScanNote[];
 }
@@ -78,6 +88,7 @@ export const versionUnitKeys = {
   osvTarget: (t: Pick<LookupTarget, 'ecosystem' | 'name'>): string =>
     `osv:target:${t.ecosystem}:${t.name}`,
   pypiProject: (name: string, version: string): string => `pypi:${name}:${version}`,
+  npmVersion: (name: string, version: string): string => `npmversion:${name}:${version}`,
 };
 
 function fetchedOf(result: SourceResult | RunResult): Fetched<unknown> {
@@ -116,7 +127,7 @@ interface Selected {
  *   (R17.8). A 404 or a package without a selectable version is not an Applicable_Unit.
  */
 export async function runVersionStage(input: VersionStageInput): Promise<VersionStageResult> {
-  const { sources, runner, ctx, targets, depsdevPackages, webHost } = input;
+  const { sources, runner, ctx, targets, depsdevPackages, npmLatest, webHost } = input;
 
   const selections = new Map<string, VersionSelection>();
   const selected: Selected[] = [];
@@ -145,9 +156,28 @@ export async function runVersionStage(input: VersionStageInput): Promise<Version
     }
   }
 
+  // Version_Documents (resurrect-upgrade R1.1, R1.5): one request per qualifying npm target,
+  // the first NPM_VERSION_DOCS_MAX names in code point order.
+  const npmItems = selected
+    .filter((item) => {
+      if (item.target.ecosystem !== 'npm') return false;
+      const pkg = depsdevPackages.get(item.key);
+      if (pkg === undefined || pkg.kind !== 'ok') return false;
+      const latest = npmLatest.get(item.key);
+      return needsVersionDocument({
+        ecosystem: 'npm',
+        depsdevBody: pkg.body,
+        selected: item.version,
+        latestBody: latest !== undefined && latest.kind === 'ok' ? latest.body : undefined,
+      });
+    })
+    .sort((a, b) => compareCodePoints(a.target.name, b.target.name))
+    .slice(0, NPM_VERSION_DOCS_MAX);
+
   const sourceRepos = new Map<string, Fetched<SourceRepo | null>>();
   const osv = new Map<string, OsvQueryResult | 'unavailable'>();
   const pypiProjects = new Map<string, Fetched<unknown>>();
+  const npmVersions = new Map<string, Fetched<unknown>>();
   const notes: ScanNote[] = [...rangeNotes];
   let fallbackNoted = false;
 
@@ -250,10 +280,18 @@ export async function runVersionStage(input: VersionStageInput): Promise<Version
     pypiProjects.set(item.key, fetchedOf(result));
   };
 
+  const runNpmVersion = async (item: Selected): Promise<void> => {
+    const result = await runner.runUnit('npm', versionUnitKeys.npmVersion(item.target.name, item.version), () =>
+      sources.npm.getVersion(item.target.name, item.version, ctx),
+    );
+    npmVersions.set(item.key, fetchedOf(result));
+  };
+
   await Promise.all([
     ...chunk(selected, DEPSDEV_BATCH_SIZE).map(runVersionBatch),
     ...chunk(selected, OSV_BATCH_SIZE).map(runOsvBatch),
     ...selected.filter((s) => s.target.ecosystem === 'pypi').map(runPypi),
+    ...npmItems.map(runNpmVersion),
   ]);
 
   // R8.14: one note per target whose Source_Repo was derived.
@@ -270,5 +308,5 @@ export async function runVersionStage(input: VersionStageInput): Promise<Version
     }
   }
 
-  return { selections, sourceRepos, osv, pypiProjects, notes };
+  return { selections, sourceRepos, osv, pypiProjects, npmVersions, notes };
 }

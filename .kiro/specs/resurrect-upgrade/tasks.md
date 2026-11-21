@@ -81,28 +81,28 @@ Rules for every task:
     - Stage by name the files of group 3 and commit with the subject `resurrect-upgrade: version-document plan, hint combiner, upgrade chooser (group 3)`. Push. Record the hash.
     - _Requirements: 9.10_
 
-- [ ] 5. Scan wiring: stage S6, scan result, validator, request report
-  - [~] 5.1 Start the capped version-document requests in stage S6
+- [x] 5. Scan wiring: stage S6, scan result, validator, request report
+  - [x] 5.1 Start the capped version-document requests in stage S6
     - In `pipeline/scan/stage-versions.ts` add `'npm'` to the `sources` pick and `npmLatest: ReadonlyMap<string, RunResult>` to `VersionStageInput`, add `versionUnitKeys.npmVersion(name, version)` (`npmversion:<name>:<version>`), build the npm items (selected npm targets with an ok deps.dev result where `needsVersionDocument` is true, sorted by `compareCodePoints` of the name, first `NPM_VERSION_DOCS_MAX`), run them with `runner.runUnit('npm', ...)` inside the existing `Promise.all`, and return `npmVersions: ReadonlyMap<string, Fetched<unknown>>`. One request per target even when several dependencies share it. Cite Requirements 1.1, 1.5 to 1.10.
     - Update the existing stage-versions tests for the new input (find them with `Select-String -Path tests/pipeline -Pattern "runVersionStage" -Recurse`) and create `tests/pipeline/scan/stage-versions-npm.test.ts` with scripted sources: one deprecated differing target gives one `getVersion` call with the selected version; 45 deprecated targets give exactly `NPM_VERSION_DOCS_MAX` calls for the first 40 names in code point order; an absent and a failed answer give no body and the stage still returns; a target with a checked version equal to the latest gives no call.
     - _Requirements: 1.1, 1.5, 1.6, 1.7, 1.9, 1.10_
-  - [~] 5.2 Wire the stage into `run-scan.ts`
+  - [x] 5.2 Wire the stage into `run-scan.ts`
     - In `pipeline/scan/run-scan.ts` pass `sources.npm` and `registries.npmLatest` to `runVersionStage` and set `npmVersion` in `rawOf` from `versions?.npmVersions.get(key)` (through `fetchedOf`, undefined when absent). Cite Requirement 1.5.
     - _Requirements: 1.5_
-  - [~] 5.3 Carry the upgrade into the scan dependencies
+  - [x] 5.3 Carry the upgrade into the scan dependencies
     - In `pipeline/scan/types.ts` add `readonly upgrade?: { readonly version: string; readonly basis: 'registry-default' }` to `ScanDependency` (comment: optional so results built before this spec stay valid). In `pipeline/scan/assemble-result.ts` add `upgrade` to `TargetOutcome` (`assembled.upgrade`; `null` in the all-null and unlooked outcomes) and set the key on each dependency of a target only when it is non-null (spread, so the key is absent otherwise). Update the tests that deep-equal a dependency entry (`tests/pipeline/scan/assemble-result.test.ts` and others found by running them), and add to `tests/pipeline/scan/assemble-result.test.ts` or a new `tests/pipeline/scan/assemble-result-upgrade.test.ts` (new file preferred): two dependencies of one target carry equal upgrades; no key when null.
     - _Requirements: 4.7, 5.1_
-  - [~] 5.4 Validate the upgrade in the stored-result validator
+  - [x] 5.4 Validate the upgrade in the stored-result validator
     - In `pipeline/scan/scan-cache.ts` add `isUpgrade` (exactly the keys `version` and `basis`; `version` a non-empty string of at most 64 code points; `basis` equal to `registry-default`) and extend the dependency check: `upgrade` is `undefined` or valid. Create `tests/pipeline/scan/scan-cache-upgrade.test.ts`: a result without `upgrade` is accepted; a valid one is accepted; a table of malformed values is rejected (array, extra key, missing key, empty version, 65-code-point version, numeric version, `basis: 'latest'`, `null`).
     - _Requirements: 5.2, 5.3_
-  - [~] 5.5 Write the property test for the stored result
+  - [x] 5.5 Write the property test for the stored result
     - `tests/pipeline/scan/scan-cache-upgrade.property.test.ts`: generated `ScanResult` values built from a valid minimal result (as in `scan-cache-hints.property.test.ts`) with `upgrade` absent or present, and mutations that replace one `upgrade` by a malformed value.
     - **Property 7: Scan results with upgrades survive JSON and the validator (RU-P7)**
     - **Validates: Requirements 5.2, 5.3, 5.8**
-  - [~] 5.6 Test the request counts of whole scans
+  - [x] 5.6 Test the request counts of whole scans
     - Create `tests/pipeline/scan/run-scan-version-docs.test.ts` with scripted sources in the style of `run-scan-pyproject.test.ts`, counting `getVersion` calls: no deprecated target gives 0; one deprecated differing version gives 1 and the hint is the version-document text; the same target in two manifests gives 1; a deprecated checked version equal to the latest gives 0 and the `/latest` hint; 45 deprecated targets give `NPM_VERSION_DOCS_MAX`; a failing `getVersion` makes the status of the source `npm` partial and the `/latest` hint remains; the request happens after the deps.dev package answer; the result of a deprecated target carries `upgrade`, the result of a healthy one does not.
     - _Requirements: 1.5, 1.6, 1.7, 1.9, 1.10, 3.4, 4.7_
-  - [~] 5.7 Split the npm pattern of the request report
+  - [x] 5.7 Split the npm pattern of the request report
     - In `scripts/live-report.ts` change the `npm` case of `patternOf` so that a second segment equal to `latest` gives `/{package}/latest` and any other second segment gives `/{package}/{version}`; export `patternOf` (or move it unchanged into an exported helper in the same file) so that it can be tested. Create `tests/scripts/live-report-pattern.test.ts`: `/left-pad/latest`, `/left-pad/1.3.0`, `/@scope%2Fname/latest` (encoded) and `/@scope/name/1.0.0` (unencoded scope) give the expected patterns; the two npm rows are separate in `requestRows` output. The script must still not run `main()` when imported by a test (guard it with the same check that the other scripts use, or move `main()` behind `if (process.argv[1]?.endsWith('live-report.ts'))`).
     - _Requirements: 3.3_
 
