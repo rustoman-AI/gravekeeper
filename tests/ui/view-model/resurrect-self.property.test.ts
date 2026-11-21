@@ -81,6 +81,7 @@ function run(s: Scenario) {
     to: s.tos,
     why: 'The maintainers point to alternatives.',
     source: 'https://example.com/source',
+    evidence: 'https://example.com/evidence',
   };
   const curated: CuratedLookup = (e, n) => (e === s.eco && n === s.name ? entry : null);
   return buildResurrectModel(row, emptyResult, curated);

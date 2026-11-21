@@ -41,7 +41,7 @@ const arbScenario = fc
         : o.curatedKind === 'all-self'
           ? [o.name]
           : INVALID_TO;
-    const entry = { ecosystem: o.ecosystem, from: o.name, to, why: 'why', source: 'https://example.com/source' };
+    const entry = { ecosystem: o.ecosystem, from: o.name, to, why: 'why', source: 'https://example.com/source', evidence: 'https://example.com/evidence' };
     const curated: CuratedLookup = (eco, n) =>
       o.curatedKind !== 'none' && eco === o.ecosystem && n === o.name ? entry : null;
     return { row, curated, curatedKind: o.curatedKind, plotCase: o.plotCase, hintCount: o.hints.length, names: to };
@@ -133,7 +133,7 @@ describe('RS-P11 section order is fixed and the fallback is exclusive', () => {
           }));
           const row = makeRow({ plotCase, hints });
           const to = curatedKind === 'valid' ? VALID_TO : curatedKind === 'all-self' ? ['request'] : INVALID_TO;
-          const entry = { ecosystem: 'npm' as const, from: 'request', to, why: 'w', source: 'https://example.com/s' };
+          const entry = { ecosystem: 'npm' as const, from: 'request', to, why: 'w', source: 'https://example.com/s', evidence: 'https://example.com/evidence' };
           const m = buildResurrectModel(row, emptyResult, () => (curatedKind === 'none' ? null : entry)) as ResurrectModel;
           expect(m.fallback !== null).toBe(n === 0 && curatedKind !== 'valid');
         }

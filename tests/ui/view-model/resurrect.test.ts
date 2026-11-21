@@ -232,6 +232,7 @@ describe('buildResurrectModel on synthetic rows', () => {
       to: ['foo-bar'],
       why: 'Self.',
       source: 'https://example.com/',
+      evidence: 'https://example.com/evidence',
     };
     const row = makeRow({ name: 'foo-bar', ecosystem: 'pypi' });
     const m = buildResurrectModel(row, emptyResult, () => ({ ...entry, to: ['foo_bar', 'Foo.Bar'] }));
@@ -240,7 +241,7 @@ describe('buildResurrectModel on synthetic rows', () => {
   });
 
   it('gives the fallback for an injected entry whose names are all invalid (R7.6, R10.10)', () => {
-    const entry = { ecosystem: 'npm' as const, from: 'request', to: ['', 'a b'], why: 'Bad.', source: 'https://example.com/' };
+    const entry = { ecosystem: 'npm' as const, from: 'request', to: ['', 'a b'], why: 'Bad.', source: 'https://example.com/', evidence: 'https://example.com/evidence' };
     const m = buildResurrectModel(makeRow({ name: 'request', plotCase: 'buried-deprecated' }), emptyResult, () => entry);
     expect(m!.suggestions).toEqual([]);
     expect(m!.fallback).not.toBeNull();

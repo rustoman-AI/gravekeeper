@@ -6,45 +6,51 @@ Source check date: 2026-11-21
 
 Counts per ecosystem: npm 13, pypi 10, cargo 14 (42 candidates before: npm 18, pypi 10, cargo 14). Pages were fetched with the web fetch tool; GitHub READMEs of `har-validator` and `pycrypto` were also read with `gh api`. Where the npm registry document (`registry.npmjs.org/<name>/latest`) was the page that states the deprecation message, it is the source URL.
 
-| Ecosystem | From | To | Source |
-| --- | --- | --- | --- |
-| npm | babel-eslint | @babel/eslint-parser | https://github.com/babel/babel-eslint |
-| npm | coffee-script | coffeescript | https://registry.npmjs.org/coffee-script/latest |
-| npm | gulp-util | fancy-log, plugin-error, vinyl | https://github.com/gulpjs/gulp-util |
-| npm | hoek | @hapi/hoek | https://registry.npmjs.org/hoek/latest |
-| npm | istanbul | nyc | https://registry.npmjs.org/istanbul/latest |
-| npm | jade | pug | https://github.com/pugjs/pug/issues/2184 |
-| npm | karma-phantomjs-launcher | puppeteer | https://registry.npmjs.org/karma-phantomjs-launcher/latest |
-| npm | moment | luxon, dayjs, date-fns | https://momentjscom.readthedocs.io/en/latest/moment/-project-status/01-recommendations/ |
-| npm | node-sass | sass, sass-embedded | https://registry.npmjs.org/node-sass/latest |
-| npm | node-uuid | uuid | https://registry.npmjs.org/node-uuid/latest |
-| npm | request | got, axios, node-fetch | https://github.com/request/request/issues/3143 |
-| npm | tslint | eslint, typescript-eslint | https://github.com/palantir/tslint/issues/4534 |
-| npm | uglify-es | uglify-js | https://registry.npmjs.org/uglify-es/latest |
-| pypi | beautifulsoup | beautifulsoup4 | https://www.crummy.com/software/BeautifulSoup/ |
-| pypi | distribute | setuptools | https://pypi.org/project/distribute/ |
-| pypi | mysql-python | mysqlclient | https://pypi.org/project/mysqlclient/1.3.7/ |
-| pypi | nose | nose2, pytest | https://nose.readthedocs.io/en/latest/ |
-| pypi | oauth2client | google-auth, oauthlib | https://github.com/googleapis/oauth2client |
-| pypi | pep8 | pycodestyle | https://github.com/PyCQA/pycodestyle |
-| pypi | pil | pillow | https://github.com/python-pillow/Pillow |
-| pypi | pycrypto | cryptography, pycryptodome | https://www.pycrypto.org/ |
-| pypi | sklearn | scikit-learn | https://pypi.org/project/sklearn/ |
-| pypi | tensorflow-gpu | tensorflow | https://pypi.org/project/tensorflow-gpu/ |
-| cargo | ansi_term | nu-ansi-term, owo-colors | https://rustsec.org/advisories/RUSTSEC-2021-0139.html |
-| cargo | bincode | wincode, postcard, bitcode, rkyv | https://rustsec.org/advisories/RUSTSEC-2025-0141.html |
-| cargo | dotenv | dotenvy | https://rustsec.org/advisories/RUSTSEC-2021-0141.html |
-| cargo | failure | thiserror, anyhow | https://rustsec.org/advisories/RUSTSEC-2020-0036.html |
-| cargo | fxhash | rustc-hash | https://rustsec.org/advisories/RUSTSEC-2025-0057.html |
-| cargo | instant | web-time | https://rustsec.org/advisories/RUSTSEC-2024-0384.html |
-| cargo | memmap | memmap2 | https://rustsec.org/advisories/RUSTSEC-2020-0077.html |
-| cargo | net2 | socket2 | https://rustsec.org/advisories/RUSTSEC-2020-0016.html |
-| cargo | proc-macro-error | manyhow, proc-macro2-diagnostics | https://rustsec.org/advisories/RUSTSEC-2024-0370.html |
-| cargo | serde_cbor | ciborium, minicbor | https://rustsec.org/advisories/RUSTSEC-2021-0127.html |
-| cargo | structopt | clap | https://github.com/TeXitoi/structopt |
-| cargo | tempdir | tempfile | https://rustsec.org/advisories/RUSTSEC-2018-0017.html |
-| cargo | tui | ratatui | https://rustsec.org/advisories/RUSTSEC-2023-0049.html |
-| cargo | yaml-rust | yaml-rust2 | https://rustsec.org/advisories/RUSTSEC-2024-0320.html |
+| Ecosystem | From | To | Source | Evidence |
+| --- | --- | --- | --- | --- |
+| npm | babel-eslint | @babel/eslint-parser | https://github.com/babel/babel-eslint | https://github.com/babel/babel-eslint |
+| npm | coffee-script | coffeescript | https://www.npmjs.com/package/coffee-script | https://registry.npmjs.org/coffee-script/latest |
+| npm | gulp-util | fancy-log, plugin-error, vinyl | https://github.com/gulpjs/gulp-util | https://github.com/gulpjs/gulp-util |
+| npm | hoek | @hapi/hoek | https://www.npmjs.com/package/hoek | https://registry.npmjs.org/hoek/latest |
+| npm | istanbul | nyc | https://www.npmjs.com/package/istanbul | https://registry.npmjs.org/istanbul/latest |
+| npm | jade | pug | https://github.com/pugjs/pug/issues/2184 | https://github.com/pugjs/pug/issues/2184 |
+| npm | karma-phantomjs-launcher | puppeteer | https://www.npmjs.com/package/karma-phantomjs-launcher | https://registry.npmjs.org/karma-phantomjs-launcher/latest |
+| npm | moment | luxon, dayjs, date-fns | https://momentjscom.readthedocs.io/en/latest/moment/-project-status/01-recommendations/ | https://momentjscom.readthedocs.io/en/latest/moment/-project-status/01-recommendations/ |
+| npm | node-sass | sass, sass-embedded | https://www.npmjs.com/package/node-sass | https://registry.npmjs.org/node-sass/latest |
+| npm | node-uuid | uuid | https://www.npmjs.com/package/node-uuid | https://registry.npmjs.org/node-uuid/latest |
+| npm | request | got, axios, node-fetch | https://github.com/request/request/issues/3143 | https://github.com/request/request/issues/3143 |
+| npm | tslint | eslint, typescript-eslint | https://github.com/palantir/tslint/issues/4534 | https://github.com/palantir/tslint/issues/4534 |
+| npm | uglify-es | uglify-js | https://www.npmjs.com/package/uglify-es | https://registry.npmjs.org/uglify-es/latest |
+| pypi | beautifulsoup | beautifulsoup4 | https://www.crummy.com/software/BeautifulSoup/ | https://www.crummy.com/software/BeautifulSoup/ |
+| pypi | distribute | setuptools | https://pypi.org/project/distribute/ | https://pypi.org/project/distribute/ |
+| pypi | mysql-python | mysqlclient | https://pypi.org/project/mysqlclient/1.3.7/ | https://pypi.org/project/mysqlclient/1.3.7/ |
+| pypi | nose | nose2, pytest | https://nose.readthedocs.io/en/latest/ | https://nose.readthedocs.io/en/latest/ |
+| pypi | oauth2client | google-auth, oauthlib | https://github.com/googleapis/oauth2client | https://github.com/googleapis/oauth2client |
+| pypi | pep8 | pycodestyle | https://github.com/PyCQA/pycodestyle | https://github.com/PyCQA/pycodestyle |
+| pypi | pil | pillow | https://github.com/python-pillow/Pillow | https://github.com/python-pillow/Pillow |
+| pypi | pycrypto | cryptography, pycryptodome | https://www.pycrypto.org/ | https://www.pycrypto.org/ |
+| pypi | sklearn | scikit-learn | https://pypi.org/project/sklearn/ | https://pypi.org/project/sklearn/ |
+| pypi | tensorflow-gpu | tensorflow | https://pypi.org/project/tensorflow-gpu/ | https://pypi.org/project/tensorflow-gpu/ |
+| cargo | ansi_term | nu-ansi-term, owo-colors | https://rustsec.org/advisories/RUSTSEC-2021-0139.html | https://rustsec.org/advisories/RUSTSEC-2021-0139.html |
+| cargo | bincode | wincode, postcard, bitcode, rkyv | https://rustsec.org/advisories/RUSTSEC-2025-0141.html | https://rustsec.org/advisories/RUSTSEC-2025-0141.html |
+| cargo | dotenv | dotenvy | https://rustsec.org/advisories/RUSTSEC-2021-0141.html | https://rustsec.org/advisories/RUSTSEC-2021-0141.html |
+| cargo | failure | thiserror, anyhow | https://rustsec.org/advisories/RUSTSEC-2020-0036.html | https://rustsec.org/advisories/RUSTSEC-2020-0036.html |
+| cargo | fxhash | rustc-hash | https://rustsec.org/advisories/RUSTSEC-2025-0057.html | https://rustsec.org/advisories/RUSTSEC-2025-0057.html |
+| cargo | instant | web-time | https://rustsec.org/advisories/RUSTSEC-2024-0384.html | https://rustsec.org/advisories/RUSTSEC-2024-0384.html |
+| cargo | memmap | memmap2 | https://rustsec.org/advisories/RUSTSEC-2020-0077.html | https://rustsec.org/advisories/RUSTSEC-2020-0077.html |
+| cargo | net2 | socket2 | https://rustsec.org/advisories/RUSTSEC-2020-0016.html | https://rustsec.org/advisories/RUSTSEC-2020-0016.html |
+| cargo | proc-macro-error | manyhow, proc-macro2-diagnostics | https://rustsec.org/advisories/RUSTSEC-2024-0370.html | https://rustsec.org/advisories/RUSTSEC-2024-0370.html |
+| cargo | serde_cbor | ciborium, minicbor | https://rustsec.org/advisories/RUSTSEC-2021-0127.html | https://rustsec.org/advisories/RUSTSEC-2021-0127.html |
+| cargo | structopt | clap | https://github.com/TeXitoi/structopt | https://github.com/TeXitoi/structopt |
+| cargo | tempdir | tempfile | https://rustsec.org/advisories/RUSTSEC-2018-0017.html | https://rustsec.org/advisories/RUSTSEC-2018-0017.html |
+| cargo | tui | ratatui | https://rustsec.org/advisories/RUSTSEC-2023-0049.html | https://rustsec.org/advisories/RUSTSEC-2023-0049.html |
+| cargo | yaml-rust | yaml-rust2 | https://rustsec.org/advisories/RUSTSEC-2024-0320.html | https://rustsec.org/advisories/RUSTSEC-2024-0320.html |
+
+In the table, `source` is the page shown in the slot and `evidence` is the URL that the live contract test fetches.
+
+### Evidence changes (resurrect-upgrade)
+
+No evidence URL needed a change. On 2026-11-21 the live contract test passed all 92 cases (55 targets, 37 evidence URLs).
 
 ### Changed entries
 

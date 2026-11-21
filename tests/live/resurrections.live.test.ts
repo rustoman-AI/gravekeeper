@@ -183,6 +183,103 @@ const CHECKS: Record<Ecosystem, (target: Target) => Promise<void>> = {
   cargo: checkCargo,
 };
 
+// Requirement 8.1, 8.2, 8.3, 8.4, 8.5
+// Evidence check: one case per entry. The evidence URL is read defensively (task 9.2 adds
+// it in parallel); a missing or malformed value fails that case with a clear message.
+
+const MAX_REDIRECTS = 3;
+const MAX_BODY_BYTES = 1024 * 1024;
+
+interface EvidenceEntry {
+  readonly ecosystem: string;
+  readonly from: string;
+  readonly evidence: unknown;
+  readonly to: readonly string[];
+}
+
+function readEvidenceEntries(): EvidenceEntry[] {
+  const raw: unknown = JSON.parse(
+    readFileSync(path.resolve("data", "resurrections.json"), "utf8"),
+  );
+  const entries = isRecord(raw) && Array.isArray(raw.entries) ? raw.entries : [];
+  const out: EvidenceEntry[] = [];
+  for (const entry of entries) {
+    if (!isRecord(entry)) continue;
+    const to = Array.isArray(entry.to)
+      ? entry.to.filter((n): n is string => typeof n === "string")
+      : [];
+    out.push({
+      ecosystem: typeof entry.ecosystem === "string" ? entry.ecosystem : "unknown",
+      from: typeof entry.from === "string" ? entry.from : "unknown",
+      evidence: entry.evidence,
+      to,
+    });
+  }
+  return out;
+}
+
+function evidenceFail(entry: EvidenceEntry, check: string): never {
+  throw new Error(`live contract failure: ${entry.ecosystem} ${entry.from}: evidence ${check}`);
+}
+
+async function readCapped(res: Response): Promise<string> {
+  if (res.body === null) return "";
+  const reader = res.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (total < MAX_BODY_BYTES) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    const take = value.subarray(0, MAX_BODY_BYTES - total);
+    chunks.push(take);
+    total += take.length;
+  }
+  await reader.cancel().catch(() => undefined);
+  return Buffer.concat(chunks).toString("utf8");
+}
+
+async function checkEvidence(entry: EvidenceEntry): Promise<void> {
+  if (typeof entry.evidence !== "string" || entry.evidence === "") {
+    evidenceFail(entry, "field is missing in data/resurrections.json");
+  }
+  let url: string = entry.evidence;
+  let res: Response | null = null;
+  for (let hop = 0; hop <= MAX_REDIRECTS; hop += 1) {
+    res = await fetch(url, {
+      redirect: "manual",
+      headers: { Accept: "text/html,application/json;q=0.9,*/*;q=0.8", "User-Agent": USER_AGENT },
+    });
+    const location = res.headers.get("location");
+    if (res.status >= 300 && res.status < 400 && location !== null) {
+      await res.body?.cancel().catch(() => undefined);
+      if (hop === MAX_REDIRECTS) evidenceFail(entry, `exceeded ${MAX_REDIRECTS} redirects`);
+      try {
+        url = new URL(location, url).toString();
+      } catch {
+        evidenceFail(entry, "redirect target is not a URL");
+      }
+      continue;
+    }
+    break;
+  }
+  if (res === null || res.status !== 200) {
+    await res?.body?.cancel().catch(() => undefined);
+    evidenceFail(entry, `answered HTTP ${res?.status ?? "none"}`);
+  }
+  const text = (await readCapped(res)).toLowerCase();
+  if (!entry.to.some((name) => text.includes(name.toLowerCase()))) {
+    evidenceFail(entry, "does not mention any target name");
+  }
+}
+
+describe("Curated resurrection evidence (live)", () => {
+  for (const entry of readEvidenceEntries()) {
+    liveIt(`${entry.ecosystem} ${entry.from} evidence names a target`, async () => {
+      await checkEvidence(entry);
+    }, TIMEOUT);
+  }
+});
+
 describe("Curated resurrection targets (live)", () => {
   for (const target of readTargets()) {
     liveIt(`${target.ecosystem} ${target.name} is a live, maintained target`, async () => {

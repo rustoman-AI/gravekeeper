@@ -7,6 +7,7 @@ const GOOD = {
   to: ['got'],
   why: 'The maintainers of request deprecated it.',
   source: 'https://github.com/request/request/issues/3142',
+  evidence: 'https://registry.npmjs.org/request/latest',
 };
 const other = { ...GOOD, from: 'tslint', to: ['eslint'] };
 const wrap = (...entries: unknown[]) => ({ entries });
@@ -24,6 +25,17 @@ describe('loadCurated', () => {
     ['non-object entry', 'x'],
     ['extra key', { ...GOOD, extra: 1 }],
     ['missing key', { ecosystem: 'npm', from: 'a', to: ['b'], why: 'A.' }],
+    ['missing evidence', { ecosystem: GOOD.ecosystem, from: GOOD.from, to: GOOD.to, why: GOOD.why, source: GOOD.source }],
+    ['http evidence', { ...GOOD, evidence: 'http://example.com/a' }],
+    ['credentials in evidence', { ...GOOD, evidence: 'https://user:pw@example.com/a' }],
+    ['non-string evidence', { ...GOOD, evidence: 3 }],
+    ['source on registry.npmjs.org', { ...GOOD, source: 'https://registry.npmjs.org/request/latest' }],
+    ['source on api.osv.dev', { ...GOOD, source: 'https://api.osv.dev/v1/vulns/GHSA-x' }],
+    ['source on api.deps.dev', { ...GOOD, source: 'https://api.deps.dev/v3/systems/npm/packages/x' }],
+    ['source on a pypi json endpoint', { ...GOOD, source: 'https://pypi.org/pypi/x/json' }],
+    ['source on a crates.io api endpoint', { ...GOOD, source: 'https://crates.io/api/v1/crates/x' }],
+    ['source on raw.githubusercontent.com', { ...GOOD, source: 'https://raw.githubusercontent.com/a/b/main/README.md' }],
+    ['source on api.github.com', { ...GOOD, source: 'https://api.github.com/repos/a/b' }],
     ['unknown ecosystem', { ...GOOD, ecosystem: 'gem' }],
     ['http source', { ...GOOD, source: 'http://example.com/a' }],
     ['javascript source', { ...GOOD, source: 'javascript:alert(1)' }],

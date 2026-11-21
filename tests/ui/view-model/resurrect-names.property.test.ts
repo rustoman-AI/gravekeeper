@@ -79,6 +79,7 @@ function checkCase({ ecosystem, plotCase, rowName, to, origins, scopes }: CaseIn
     to,
     why: 'The maintainers point to alternatives.',
     source: 'https://example.com/source',
+    evidence: 'https://example.com/evidence',
   };
   const lookup = (e: Ecosystem, n: string): CuratedEntry | null => (e === ecosystem && n === rowName ? entry : null);
   const model = buildResurrectModel(row, EMPTY_RESULT, lookup);

@@ -6,6 +6,21 @@ import { isValidName, normalizeName } from '../../../view-model/resurrect-names'
 import { CURATED_ENTRIES, loadCurated } from '../../../view-model/resurrections';
 
 const ORDER: readonly Ecosystem[] = ['npm', 'pypi', 'cargo'];
+const REGISTRY_PAGE: Record<Ecosystem, (from: string) => string> = {
+  npm: (from) => `https://www.npmjs.com/package/${from}`,
+  pypi: (from) => `https://pypi.org/project/${from}/`,
+  cargo: (from) => `https://crates.io/crates/${from}`,
+};
+
+function isMachineEndpoint(raw: string): boolean {
+  const url = new URL(raw);
+  const host = url.hostname;
+  if (host === 'registry.npmjs.org' || host === 'api.osv.dev' || host === 'api.deps.dev') return true;
+  if (host === 'raw.githubusercontent.com' || host === 'api.github.com') return true;
+  if (host === 'pypi.org') return url.pathname.startsWith('/pypi/') && url.pathname.endsWith('/json');
+  if (host === 'crates.io') return url.pathname.startsWith('/api/');
+  return false;
+}
 const entries = (data as { entries: Array<Record<string, unknown>> }).entries;
 const typed = entries as unknown as ReadonlyArray<{
   ecosystem: Ecosystem;
@@ -13,6 +28,7 @@ const typed = entries as unknown as ReadonlyArray<{
   to: string[];
   why: string;
   source: string;
+  evidence: string;
 }>;
 
 describe('data/resurrections.json', () => {
@@ -20,14 +36,15 @@ describe('data/resurrections.json', () => {
     expect(Object.keys(data)).toEqual(['entries']);
   });
 
-  it('gives every entry exactly the five keys with the right types (7.1)', () => {
+  it('gives every entry exactly the six keys with the right types (7.1)', () => {
     for (const e of entries) {
-      expect(Object.keys(e).sort()).toEqual(['ecosystem', 'from', 'source', 'to', 'why']);
+      expect(Object.keys(e).sort()).toEqual(['ecosystem', 'evidence', 'from', 'source', 'to', 'why']);
       expect(ORDER).toContain(e['ecosystem']);
       expect(typeof e['from']).toBe('string');
       expect(Array.isArray(e['to'])).toBe(true);
       expect(typeof e['why']).toBe('string');
       expect(typeof e['source']).toBe('string');
+      expect(typeof e['evidence']).toBe('string');
     }
   });
 
@@ -51,11 +68,24 @@ describe('data/resurrections.json', () => {
     }
   });
 
-  it('has an https source without credentials', () => {
+  it('has https source and evidence without credentials', () => {
     for (const e of typed) {
-      const url = new URL(e.source);
-      expect(url.protocol).toBe('https:');
-      expect(url.username + url.password).toBe('');
+      for (const raw of [e.source, e.evidence]) {
+        const url = new URL(raw);
+        expect(url.protocol, e.from).toBe('https:');
+        expect(url.username + url.password, e.from).toBe('');
+      }
+    }
+  });
+
+  it('never uses a machine endpoint as source (7.3)', () => {
+    for (const e of typed) expect(isMachineEndpoint(e.source), `${e.from}: ${e.source}`).toBe(false);
+  });
+
+  it('links the registry page when the evidence is a machine endpoint (7.4)', () => {
+    for (const e of typed) {
+      if (!isMachineEndpoint(e.evidence)) continue;
+      expect(e.source, e.from).toBe(REGISTRY_PAGE[e.ecosystem](e.from));
     }
   });
 

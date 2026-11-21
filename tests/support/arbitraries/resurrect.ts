@@ -178,12 +178,18 @@ export function arbCuratedEntry(ecosystem: Ecosystem, from: string): fc.Arbitrar
         minLength: 1,
         maxLength: 4,
       }),
+      evidence: fc.constantFrom(
+        'https://example.com/evidence',
+        'https://example.org/notes/deprecation',
+        'https://github.com/example/project/issues/1',
+      ),
     })
-    .map(({ to }) => ({
+    .map(({ to, evidence }) => ({
       ecosystem,
       from,
       to,
       why: 'The maintainers point to alternatives.',
       source: 'https://example.com/source',
+      evidence,
     }));
 }

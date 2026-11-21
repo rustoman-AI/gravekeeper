@@ -69,6 +69,7 @@ const rawEntry = (ecosystem: Ecosystem, from: string) => ({
   to: ['alt'],
   why: 'It is no longer maintained.',
   source: 'https://example.com/notice',
+  evidence: 'https://example.com/evidence',
 });
 
 const rawList = fc

@@ -129,31 +129,31 @@ Rules for every task:
     - Stage by name `tests/fixtures/request__request` (the directory path), the test files of tasks 7.2 and 7.3, and the regenerated files that the repository tracks, and commit with the subject `resurrect-upgrade: re-record request/request fixture set (group 7)`. Confirm with `git show --stat HEAD` that no other fixture set is in the commit. Push. Record the hash.
     - _Requirements: 9.2_
 
-- [ ] 9. Curated `source` and `evidence`
-  - [~] 9.1 Change the loader and its tests
+- [x] 9. Curated `source` and `evidence`
+  - [x] 9.1 Change the loader and its tests
     - In `view-model/resurrections.ts` add `evidence` to `ENTRY_KEYS` and to `CuratedEntry`, require `isHttpsUrl` (https, no credentials) for `evidence` and `source`, add `isMachineEndpoint(url)` (host `registry.npmjs.org`, `api.osv.dev`, `api.deps.dev`; host `pypi.org` with a path that starts `/pypi/` and ends `/json`; host `crates.io` with a path that starts `/api/`) and drop an entry whose `source` is a Machine_Endpoint. Cite Requirements 7.1 to 7.3, 7.6.
     - Update `tests/ui/view-model/resurrections.test.ts` (entries need `evidence`; add cases: missing `evidence`, `http:` evidence, credentials in either URL, a `source` on `registry.npmjs.org`, `api.osv.dev`, `pypi.org/pypi/x/json` and `crates.io/api/v1/crates/x`, each dropped while valid entries are kept) and `tests/ui/view-model/resurrections.property.test.ts` (RS-P10: its entry generator gains a valid `evidence`; its tag, title and properties stay unchanged).
     - _Requirements: 7.1, 7.2, 7.3, 7.6_
-  - [~] 9.2 Migrate the data file and its data test
+  - [x] 9.2 Migrate the data file and its data test
     - In `data/resurrections.json` add `evidence` to every entry and set `source` by the migration rule of the design: `evidence` is the current `source`; `source` is `https://www.npmjs.com/package/<from>`, `https://pypi.org/project/<from>/` or `https://crates.io/crates/<from>` when the current source is a Machine_Endpoint, and the current source otherwise. Keep the order, the `to` lists and the `why` sentences. Update `tests/ui/view-model/resurrections-data.test.ts`: six keys, both URLs https without credentials, `source` not a Machine_Endpoint, the registry-page rule for entries whose evidence is a Machine_Endpoint, and every entry survives the loader. Keep the other assertions (sorting, names, `why`, minimum 8 entries per ecosystem, no `uuid` as `from`).
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.8, 7.9_
-  - [~] 9.3 Extend the live contract test with the evidence checks
+  - [x] 9.3 Extend the live contract test with the evidence checks
     - In `tests/live/resurrections.live.test.ts` read `evidence` and `to` of each entry and add one case per entry (gated like the others, sequential): GET the evidence with at most 3 redirects and require status 200; read the first 1 MiB of the body as text and require that it contains at least one `to` name of the entry, compared case-insensitively. Send the project User-Agent. A failure message names the ecosystem, the package and the check only. The existing target checks stay unchanged. Update `tests/live/live-gating.test.ts` only if it enumerates cases.
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
-  - [~] 9.4 Run the live contract test and repair the evidence (orchestrator-only)
+  - [x] 9.4 Run the live contract test and repair the evidence (orchestrator-only)
     - Run `$env:GRAVEKEEPER_LIVE_TESTS = '1'; $env:GITHUB_TOKEN = (gh auth token); npx vitest --run tests/live/resurrections.live.test.ts` in one command. For each failing evidence case replace the `evidence` URL in `data/resurrections.json` by a working machine-checkable URL that names a `to` package (for PyPI entries `https://pypi.org/pypi/<name>/json` of the package whose page states the relationship, the raw README, or the registry document), or drop the entry (keeping at least 8 entries per ecosystem); keep `source` a Human_Page. A failure caused by rate limiting or the network is waited out and repeated. Rerun until the test passes and run the data and loader tests. Write the changes (entry, old evidence, new evidence or drop, reason) into a list for task 9.5.
     - _Requirements: 8.6_
-  - [~] 9.5 Update the curated tables of `docs/resurrect-report.md`
+  - [x] 9.5 Update the curated tables of `docs/resurrect-report.md`
     - In `docs/resurrect-report.md` change the curated table of kept entries to the columns ecosystem, from, to, source, evidence (from `data/resurrections.json`, same row order), add the section `### Evidence changes (resurrect-upgrade)` with the list of task 9.4 (or the sentence "No evidence URL needed a change"), and add one sentence that `source` is the page shown in the slot and `evidence` is the URL that the live contract test fetches. Change no other text of the file. This task is the only task that edits this file.
     - _Requirements: 7.10_
-  - [~] 9.6 Write the property test for the curated loader
+  - [x] 9.6 Write the property test for the curated loader
     - `tests/ui/view-model/resurrections-evidence.property.test.ts`: generated raw entry lists (valid entries and entries with a missing or extra key, non-string, non-https, credential-bearing `source` or `evidence`, and Machine_Endpoint `source` values), and generated valid lists run through `buildResurrectModel` with hostile rows from `tests/support/arbitraries/resurrect.ts`.
     - **Property 8: The curated loader enforces the six-key schema and links only the human page (RU-P8)**
     - **Validates: Requirements 7.1, 7.2, 7.3, 7.6, 7.7**
 
-- [ ] 10. Checkpoint - Curated data
+- [x] 10. Checkpoint - Curated data
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 10.1 Commit and push the curated group (orchestrator-only)
+  - [x] 10.1 Commit and push the curated group (orchestrator-only)
     - Stage by name the files of group 9 and commit with the subject `resurrect-upgrade: curated source and evidence (group 9)`. Push. Record the hash.
     - _Requirements: 9.10_
 
