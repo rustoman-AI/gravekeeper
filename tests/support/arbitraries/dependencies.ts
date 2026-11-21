@@ -10,6 +10,7 @@ import { arbRespelling } from './requirements';
 export const ECOSYSTEM_OF_FORMAT: Readonly<Record<ManifestFormat, Ecosystem>> = {
   'package.json': 'npm',
   'requirements.txt': 'pypi',
+  'pyproject.toml': 'pypi',
   'Cargo.toml': 'cargo',
 };
 

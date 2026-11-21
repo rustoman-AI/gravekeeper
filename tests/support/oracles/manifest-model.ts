@@ -16,12 +16,14 @@ const SCOPE_RANK: Readonly<Record<Scope, number>> = { runtime: 0, dev: 1, build:
 const ECOSYSTEM_OF: Readonly<Record<ManifestFormat, Ecosystem>> = {
   'package.json': 'npm',
   'requirements.txt': 'pypi',
+  'pyproject.toml': 'pypi',
   'Cargo.toml': 'cargo',
 };
 
 const SCOPES_OF: Readonly<Record<ManifestFormat, readonly Scope[]>> = {
   'package.json': ['runtime', 'dev', 'optional', 'peer'],
   'requirements.txt': ['runtime'],
+  'pyproject.toml': ['runtime', 'dev', 'optional'],
   'Cargo.toml': ['runtime', 'dev', 'build'],
 };
 

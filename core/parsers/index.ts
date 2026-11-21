@@ -6,12 +6,14 @@ import { parseCargoToml } from './cargo-toml';
 import { finish } from './finish';
 import type { RawParse } from './finish';
 import { parsePackageJson } from './package-json';
+import { parsePyprojectToml } from './pyproject-toml';
 import { parseRequirementsTxt } from './requirements-txt';
 
 /** Format parsers by Manifest_Format. Formats without an entry are reported as unsupported. */
 const PARSERS: Readonly<Partial<Record<ManifestFormat, (text: string) => RawParse>>> = {
   'package.json': parsePackageJson,
   'requirements.txt': parseRequirementsTxt,
+  'pyproject.toml': parsePyprojectToml,
   'Cargo.toml': parseCargoToml,
 };
 

@@ -47,8 +47,10 @@ function checkNoMutation<I, R>(input: I, call: (i: I) => R): void {
   expect(second).toEqual(plain);
 }
 
-const FORMATS: readonly ManifestFormat[] = ['package.json', 'requirements.txt', 'Cargo.toml'];
-const TEXT_ARB: Readonly<Record<ManifestFormat, fc.Arbitrary<string>>> = {
+// pyproject.toml has no writer and its parser is covered by the pyproject spec; the three original formats keep their coverage here.
+type CoreFormat = Exclude<ManifestFormat, 'pyproject.toml'>;
+const FORMATS: readonly CoreFormat[] = ['package.json', 'requirements.txt', 'Cargo.toml'];
+const TEXT_ARB: Readonly<Record<CoreFormat, fc.Arbitrary<string>>> = {
   'package.json': arbAnyPackageJsonText,
   'requirements.txt': arbAnyRequirementsText,
   'Cargo.toml': arbAnyCargoText,

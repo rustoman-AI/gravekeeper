@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { parseManifest, serializeManifest } from '../../../core';
 import type { Ecosystem, ManifestFormat, Scope, SerializableDependency, SourceKind } from '../../../core';
 
-const ECO: Record<ManifestFormat, Ecosystem> = { 'package.json': 'npm', 'requirements.txt': 'pypi', 'Cargo.toml': 'cargo' };
+const ECO: Record<ManifestFormat, Ecosystem> = { 'package.json': 'npm', 'requirements.txt': 'pypi', 'pyproject.toml': 'pypi', 'Cargo.toml': 'cargo' };
 
 function dep(
   format: ManifestFormat,

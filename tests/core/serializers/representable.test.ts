@@ -5,7 +5,7 @@ import { sourceKindOfNpmSpec } from '../../../core/formats/npm-source-kind';
 import { isRepresentable } from '../../../core/serializers/representable';
 import { oracleNpmSourceKind } from '../../support/oracles/manifest-model';
 
-const ECO: Record<ManifestFormat, Ecosystem> = { 'package.json': 'npm', 'requirements.txt': 'pypi', 'Cargo.toml': 'cargo' };
+const ECO: Record<ManifestFormat, Ecosystem> = { 'package.json': 'npm', 'requirements.txt': 'pypi', 'pyproject.toml': 'pypi', 'Cargo.toml': 'cargo' };
 
 function dep(
   format: ManifestFormat,

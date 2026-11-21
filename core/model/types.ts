@@ -1,7 +1,7 @@
 // Model types for the dependency-graveyard-core spec (design: Data Models).
 // Types only. Constants live in constants.ts.
 
-export type ManifestFormat = 'package.json' | 'requirements.txt' | 'Cargo.toml';
+export type ManifestFormat = 'package.json' | 'requirements.txt' | 'pyproject.toml' | 'Cargo.toml';
 export type Ecosystem = 'npm' | 'pypi' | 'cargo';
 /** Source_Kind */
 export type SourceKind = 'registry' | 'git' | 'path';

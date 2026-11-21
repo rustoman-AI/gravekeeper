@@ -27,9 +27,18 @@ export const CARGO_TOKENS: readonly string[] = [
   'a = "unterminated', // unterminated string
 ];
 
+export const PYPROJECT_TOKENS: readonly string[] = [
+  '[project]', '[project.optional-dependencies]', '[dependency-groups]', '[build-system]', '[tool.poetry.dependencies]',
+  '[tool.poetry.group.dev.dependencies]', 'dependencies = [', ']', '[', '{', '}', '=', '"""', "'''", 'python = "^3.9"',
+  'requires = [', 'name = "x"', '{ include-group = "dev" }', '"requests>=2.0"', '"Django[argon2]>=4 ; python_version<\"3.12\""',
+  '"pkg @ git+https://h/r"', '"a==1.*"', '"a~=1.4.2"', '"a===1.0"', '"__proto__"', 'a = { git = "https://h/r" }', 'a = { path = "../a" }',
+  '1979-05-27T07:32:00Z', 'inf', 'nan', '\\u0000', 'x = "unterminated',
+];
+
 export const TOKENS_BY_FORMAT: Readonly<Record<ManifestFormat, readonly string[]>> = {
   'package.json': PACKAGE_JSON_TOKENS,
   'requirements.txt': REQUIREMENTS_TOKENS,
+  'pyproject.toml': PYPROJECT_TOKENS,
   'Cargo.toml': CARGO_TOKENS,
 };
 

@@ -11,20 +11,23 @@ import { MIXED_CASE_NAMES, arbAnyRequirementsText } from '../../support/arbitrar
 import { cfg } from '../../support/fc-config';
 import { dependencySet, oracleNormalize, project, projectionKey, restrict } from '../../support/oracles/manifest-model';
 
-const FORMATS: readonly ManifestFormat[] = ['package.json', 'requirements.txt', 'Cargo.toml'];
+/** pyproject.toml has no writer, so it stays out of the round-trip properties. */
+type WritableFormat = Exclude<ManifestFormat, 'pyproject.toml'>;
 
-const FIXTURE_FILES: Readonly<Record<ManifestFormat, string>> = {
+const FORMATS: readonly WritableFormat[] = ['package.json', 'requirements.txt', 'Cargo.toml'];
+
+const FIXTURE_FILES: Readonly<Record<WritableFormat, string>> = {
   'package.json': 'sample-package.json',
   'requirements.txt': 'sample-requirements.txt',
   'Cargo.toml': 'sample-Cargo.toml',
 };
 
-function fixtureText(format: ManifestFormat): string {
+function fixtureText(format: WritableFormat): string {
   return readFileSync(fileURLToPath(new URL(`../../fixtures/${FIXTURE_FILES[format]}`, import.meta.url)), 'utf8');
 }
 
 /** The fixture as a serializer input list (parsed by the production parser, rawName kept). */
-function fixtureList(format: ManifestFormat): SerializableDependency[] {
+function fixtureList(format: WritableFormat): SerializableDependency[] {
   return [...parseManifest(fixtureText(format), format).dependencies];
 }
 
@@ -110,7 +113,7 @@ const arbBackslashRequirements: fc.Arbitrary<string> = fc
   )
   .map((items) => items.map(([n, s]) => `${n}${s}`).join('\n'));
 
-const arbInputText: Readonly<Record<ManifestFormat, fc.Arbitrary<string>>> = {
+const arbInputText: Readonly<Record<WritableFormat, fc.Arbitrary<string>>> = {
   'package.json': arbAnyPackageJsonText,
   'requirements.txt': fc.oneof({ weight: 4, arbitrary: arbAnyRequirementsText }, { weight: 1, arbitrary: arbBackslashRequirements }),
   'Cargo.toml': arbAnyCargoText,
