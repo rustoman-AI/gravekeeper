@@ -106,9 +106,9 @@ Rules for every task:
     - In `scripts/live-report.ts` change the `npm` case of `patternOf` so that a second segment equal to `latest` gives `/{package}/latest` and any other second segment gives `/{package}/{version}`; export `patternOf` (or move it unchanged into an exported helper in the same file) so that it can be tested. Create `tests/scripts/live-report-pattern.test.ts`: `/left-pad/latest`, `/left-pad/1.3.0`, `/@scope%2Fname/latest` (encoded) and `/@scope/name/1.0.0` (unencoded scope) give the expected patterns; the two npm rows are separate in `requestRows` output. The script must still not run `main()` when imported by a test (guard it with the same check that the other scripts use, or move `main()` behind `if (process.argv[1]?.endsWith('live-report.ts'))`).
     - _Requirements: 3.3_
 
-- [ ] 6. Checkpoint - Scan wiring
+- [x] 6. Checkpoint - Scan wiring
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. The `request/request` fixture tests are expected to fail with "replay missed a request" until group 7; list them in the report and do not change them here. Ask the user if questions arise.
-  - [~] 6.1 Commit and push the wiring group (orchestrator-only)
+  - [x] 6.1 Commit and push the wiring group (orchestrator-only)
     - Stage by name the files of group 5 and commit with the subject `resurrect-upgrade: stage S6 version documents, upgrade in the scan result (group 5)`. Push. Record the hash.
     - _Requirements: 9.10_
 
@@ -123,9 +123,9 @@ Rules for every task:
     - Run `npm run e2e:fixtures` and check that `tests/e2e/.generated/scan-request.json` holds the `uuid` hint and `upgrade` and the `rimraf` hint and `upgrade`, and that the other generated files are unchanged. Update `tests/ui/export-scan-fixtures.test.ts` and `tests/ui/view-model/fixtures-replay.test.ts` only where they deep-equal exported values or the old behavior of `uuid`. Edit `scripts/export-scan-fixtures.ts` only if the synthetic bodies need an `upgrade` (they do not; leave it unchanged otherwise).
     - _Requirements: 9.3, 9.10_
 
-- [ ] 8. Checkpoint - Fixtures
+- [x] 8. Checkpoint - Fixtures
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 8.1 Commit and push the fixtures group (orchestrator-only)
+  - [x] 8.1 Commit and push the fixtures group (orchestrator-only)
     - Stage by name `tests/fixtures/request__request` (the directory path), the test files of tasks 7.2 and 7.3, and the regenerated files that the repository tracks, and commit with the subject `resurrect-upgrade: re-record request/request fixture set (group 7)`. Confirm with `git show --stat HEAD` that no other fixture set is in the commit. Push. Record the hash.
     - _Requirements: 9.2_
 
@@ -202,7 +202,7 @@ Rules for every task:
     - _Requirements: 9.10_
 
 - [ ] 15. End-to-end, report spec and traceability
-  - [~] 15.1 Update the end-to-end spec
+  - [-] 15.1 Update the end-to-end spec
     - In `tests/e2e/resurrect.spec.ts` change the `uuid` case (restless: the urgent sentence first, then the Upgrade_Section with the label "From the registry" and the title "Upgrade to <version>", then the hint from the version document; no fallback paragraph) and add `rimraf` (hint, Upgrade_Section, npm command) and keep `har-validator` (hint, no Upgrade_Section, no fallback conflict); copy test for the upgrade command with `context.grantPermissions(['clipboard-read', 'clipboard-write'])` on the desktop project (clipboard text equals the displayed lines, Copy_Status text appears); axe on each opened panel with `AXE_TAGS`. Read expected versions from the loaded scan body in the test, never hard-code them.
     - _Requirements: 6.14, 9.5_
   - [~] 15.2 Update the report spec

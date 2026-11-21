@@ -102,21 +102,27 @@ test.describe("resurrect slot (request fixture)", () => {
     await expectNoA11yViolations(page, "resurrect-aws-sign2", test.info().project.name);
   });
 
-  test("uuid: restless shows the urgent sentence first, then the buried paragraph", async ({ page }) => {
+  // resurrect-upgrade R2.1: the checked version's notice replaces the fallback
+  test("uuid: restless shows the urgent sentence first, then the checked version's deprecation notice", async ({ page }) => {
     const dialog = await openPackage(page, "uuid");
     const slot = slotOf(dialog);
     await expect(slot).toBeVisible();
     const urgent = slot.locator(".gk-resurrect-urgent");
     await expect(urgent).toHaveText(/^This package (has \d+ open vulnerabilit(y|ies)|is haunted by open vulnerabilities), so moving off it is urgent\.$/);
-    expect(hintsOf("request", "uuid")).toHaveLength(0);
+    const hints = hintsOf("request", "uuid");
+    expect(hints).toHaveLength(1);
     expect(curatedFor("npm", "uuid")).toBeUndefined();
-    const fallback = slot.locator(".gk-resurrect-fallback");
-    await expect(fallback).toContainText("No notice text and no recommended replacement is on record.");
+    const label = slot.getByText("From the package's deprecation notice", { exact: true });
+    await expect(label).toBeVisible();
+    const text = slot.locator(".gk-resurrect-text").first();
+    await expect(text).toHaveText(hints[0]!.text);
+    await expect(text.locator("a")).toHaveCount(0);
+    await expect(slot.locator(".gk-resurrect-fallback")).toHaveCount(0);
     const u = await urgent.boundingBox();
-    const f = await fallback.boundingBox();
+    const l = await label.boundingBox();
     expect(u).not.toBeNull();
-    expect(f).not.toBeNull();
-    expect(u!.y).toBeLessThan(f!.y);
+    expect(l).not.toBeNull();
+    expect(u!.y).toBeLessThan(l!.y);
     await expect(slot.locator("pre")).toHaveCount(0);
     await expectNoA11yViolations(page, "resurrect-uuid", test.info().project.name);
   });

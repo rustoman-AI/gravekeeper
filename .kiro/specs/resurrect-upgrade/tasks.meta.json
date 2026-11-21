@@ -341,6 +341,11 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041916
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290968270
       }
     ],
     "7.1 Re-record `request/request` (orchestrator-only)": [
@@ -399,6 +404,11 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288042102
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290968641
       }
     ],
     "9.1 Change the loader and its tests": [
@@ -532,6 +542,11 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288042885
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290898206
       }
     ],
     "15.2 Update the report spec": [
@@ -658,6 +673,20 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795290436281
+      }
+    ],
+    "6. Checkpoint - Scan wiring": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290968322
+      }
+    ],
+    "8. Checkpoint - Fixtures": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795290968686
       }
     ]
   }
