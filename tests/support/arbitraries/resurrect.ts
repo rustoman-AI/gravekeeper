@@ -146,6 +146,7 @@ export function makeRow(opts: RowOptions = {}): PackageRow {
     versionBasis: null,
     advisories: [],
     hints: opts.hints ?? [],
+    upgrade: null,
     manifestOrigins: origins,
     accessibleLabel: name,
   } as PackageRow;

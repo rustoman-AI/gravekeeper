@@ -64,7 +64,8 @@ export function ResurrectSlot({ model }: ResurrectSlotProps) {
     }, COPY_STATUS_RESET_MS);
   };
 
-  const copy = (block: ResurrectBlock, to: string) => {
+  // resurrect-upgrade R6.14: the status names block.copyName.
+  const copy = (block: ResurrectBlock) => {
     let pending: Promise<void>;
     try {
       pending = navigator.clipboard.writeText(block.copyText);
@@ -73,10 +74,33 @@ export function ResurrectSlot({ model }: ResurrectSlotProps) {
       return;
     }
     pending.then(
-      () => report(`Copied the commands for ${to}`),
+      () => report(`Copied the commands for ${block.copyName}`),
       () => report(COPY_FAILED),
     );
   };
+
+  const blockView = (b: ResurrectBlock, bi: number) => (
+    <div key={bi} className="gk-resurrect-block">
+      {b.heading === null ? null : (
+        <p className="gk-resurrect-block-heading">{b.heading}</p>
+      )}
+      {b.lead === null ? null : <Lead segments={b.lead} />}
+      <pre className="gk-resurrect-commands">
+        <code>{b.lines.join("\n")}</code>
+      </pre>
+      {b.note === null ? null : <p className="gk-resurrect-note">{b.note}</p>}
+      <button
+        type="button"
+        className="gk-resurrect-copy"
+        aria-label={b.copyLabel}
+        onClick={() => {
+          copy(b);
+        }}
+      >
+        Copy
+      </button>
+    </div>
+  );
 
   return (
     <section
@@ -88,6 +112,16 @@ export function ResurrectSlot({ model }: ResurrectSlotProps) {
 
       {model.urgent === null ? null : (
         <p className="gk-resurrect-urgent">{model.urgent}</p>
+      )}
+
+      {/* resurrect-upgrade R6.1, R6.2: between the urgent sentence and the hints. */}
+      {model.upgrade === null ? null : (
+        <div className="gk-resurrect-upgrade">
+          <p className="gk-resurrect-label">{model.upgrade.label}</p>
+          <p className="gk-resurrect-name">{model.upgrade.title}</p>
+          <p className="gk-resurrect-text">{model.upgrade.sentence}</p>
+          {model.upgrade.blocks.map(blockView)}
+        </div>
       )}
 
       {model.hints.map((h, i) => (
@@ -108,30 +142,7 @@ export function ResurrectSlot({ model }: ResurrectSlotProps) {
               <p className="gk-resurrect-name">
                 <code>{a.name}</code>
               </p>
-              {a.blocks.map((b, bi) => (
-                <div key={bi} className="gk-resurrect-block">
-                  {b.heading === null ? null : (
-                    <p className="gk-resurrect-block-heading">{b.heading}</p>
-                  )}
-                  {b.lead === null ? null : <Lead segments={b.lead} />}
-                  <pre className="gk-resurrect-commands">
-                    <code>{b.lines.join("\n")}</code>
-                  </pre>
-                  {b.note === null ? null : (
-                    <p className="gk-resurrect-note">{b.note}</p>
-                  )}
-                  <button
-                    type="button"
-                    className="gk-resurrect-copy"
-                    aria-label={b.copyLabel}
-                    onClick={() => {
-                      copy(b, a.name);
-                    }}
-                  >
-                    Copy
-                  </button>
-                </div>
-              ))}
+              {a.blocks.map(blockView)}
             </div>
           ))}
         </div>

@@ -22,6 +22,7 @@ function block(to: string, lines: string[]): ResurrectBlock {
     note: null,
     copyLabel: `Copy commands for ${to}`,
     copyText: lines.join("\n"),
+    copyName: to,
   };
 }
 
@@ -29,6 +30,7 @@ function modelOf(over: Partial<ResurrectModel> = {}): ResurrectModel {
   return {
     heading: "Resurrect",
     urgent: null,
+    upgrade: null,
     hints: [],
     suggestions: [
       {
@@ -231,5 +233,59 @@ describe("Copy (Requirements 11.1 to 11.6, 11.8)", () => {
     });
     unmount();
     expect(vi.getTimerCount()).toBe(0);
+  });
+});
+
+describe("Upgrade_Section (resurrect-upgrade Requirements 6.1, 6.2, 6.14, 6.16)", () => {
+  const upgrade = (blocks: ResurrectBlock[]): ResurrectModel["upgrade"] => ({
+    label: "From the registry",
+    title: "Upgrade to 11.1.0",
+    sentence: "The registry lists 11.1.0 as the default version.",
+    version: "11.1.0",
+    blocks,
+  });
+  const upgradeBlock = (): ResurrectBlock => ({
+    ...block("uuid", ["npm install uuid@11.1.0"]),
+    copyLabel: "Copy commands to upgrade uuid",
+  });
+
+  it("shows label, title, sentence and command between urgent and hints", () => {
+    render(
+      <ResurrectSlot
+        model={modelOf({
+          urgent: "Move off it now.",
+          suggestions: [],
+          hints: [{ label: "Upstream says", text: "HINTTEXT", link: null }],
+          upgrade: upgrade([upgradeBlock()]),
+        })}
+      />,
+    );
+    const section = slot().querySelector(".gk-resurrect-upgrade") as HTMLElement;
+    expect(section.textContent).toContain("From the registry");
+    expect(section.textContent).toContain("Upgrade to 11.1.0");
+    expect(section.textContent).toContain("The registry lists 11.1.0 as the default version.");
+    expect(section.querySelector("pre > code")?.textContent).toBe("npm install uuid@11.1.0");
+    const text = slot().textContent ?? "";
+    expect(text.indexOf("Move off it now.")).toBeLessThan(text.indexOf("From the registry"));
+    expect(text.indexOf("From the registry")).toBeLessThan(text.indexOf("HINTTEXT"));
+  });
+
+  it("copies the upgrade lines, names the package in the status, and sends no request", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("navigator", { clipboard: { writeText } });
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    render(<ResurrectSlot model={modelOf({ suggestions: [], upgrade: upgrade([upgradeBlock()]) })} />);
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "Copy commands to upgrade uuid" }));
+    });
+    expect(writeText).toHaveBeenCalledWith("npm install uuid@11.1.0");
+    expect(screen.getByRole("status").textContent).toBe("Copied the commands for uuid");
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("shows no Copy button for a section without blocks", () => {
+    render(<ResurrectSlot model={modelOf({ suggestions: [], upgrade: upgrade([]) })} />);
+    expect(screen.getByText("Upgrade to 11.1.0")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /copy/i })).toBeNull();
   });
 });

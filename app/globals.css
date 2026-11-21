@@ -743,6 +743,7 @@ main[tabindex="-1"]:focus-visible {
   color: var(--color-bone);
 }
 .gk-resurrect-urgent,
+.gk-resurrect-upgrade,
 .gk-resurrect-hint,
 .gk-resurrect-suggestion,
 .gk-resurrect-fallback,

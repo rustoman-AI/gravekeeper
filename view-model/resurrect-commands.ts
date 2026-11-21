@@ -1,3 +1,4 @@
+import { isStrictVersion } from '../core';
 import type { Ecosystem, ManifestFormat, Scope } from '../core';
 import { isCommandSafe } from './resurrect-names';
 import type { ManifestOrigin, ResurrectBlock, ResurrectSegment } from './types';
@@ -64,15 +65,17 @@ function replaceLead(
   from: string,
   path: string,
   to: string,
+  upgrade = false,
 ): readonly ResurrectSegment[] {
-  const first = what === 'line' ? 'Replace the line for ' : 'Replace the entry for ';
+  const verb = upgrade ? 'Change' : 'Replace';
+  const first = what === 'line' ? `${verb} the line for ` : `${verb} the entry for `;
   const middle = what === 'line' ? ' in ' : ' in the dependencies of ';
   return [
     { kind: 'text', text: first },
     { kind: 'code', text: from },
     { kind: 'text', text: middle },
     { kind: 'code', text: path },
-    { kind: 'text', text: ' with ' },
+    { kind: 'text', text: upgrade ? ' to ' : ' with ' },
     { kind: 'code', text: to },
     { kind: 'text', text: ', then run:' },
   ];
@@ -114,14 +117,22 @@ function bodyOf(draft: Draft, from: string, to: string): Body {
 function leadKey(lead: readonly ResurrectSegment[] | null): string {
   return lead === null ? '' : lead.map((s) => `${s.kind}:${s.text}`).join('\u0000');
 }
-/** Builds the command blocks for one Alternative. Returns [] when a name is not command-safe. */
-export function buildCommandBlocks(input: CommandInput): readonly ResurrectBlock[] {
-  const { origins, from, to } = input;
-  const scopes: readonly Scope[] = input.scopes.length === 0 ? ['runtime'] : input.scopes;
+interface BlockSpec {
+  readonly bodyOf: (draft: Draft) => Body;
+  readonly copyName: string;
+  readonly copyLabel: string;
+}
+// resurrect-upgrade R6.9, R6.7: shared grouping, de-duplication and headings.
+function assembleBlocks(
+  origins: readonly ManifestOrigin[],
+  scopesIn: readonly Scope[],
+  safe: (eco: Ecosystem) => boolean,
+  spec: BlockSpec,
+): readonly ResurrectBlock[] {
+  const scopes: readonly Scope[] = scopesIn.length === 0 ? ['runtime'] : scopesIn;
   const drafts: Draft[] = [];
   for (const origin of origins) {
-    const eco = ecosystemOf(origin.format);
-    if (!isCommandSafe(eco, from) || !isCommandSafe(eco, to)) continue;
+    if (!safe(ecosystemOf(origin.format))) continue;
     for (const { variant, toolHeading } of variantsOf(origin)) {
       for (const scope of scopes) drafts.push({ variant, toolHeading, path: origin.path, scope });
     }
@@ -131,7 +142,7 @@ export function buildCommandBlocks(input: CommandInput): readonly ResurrectBlock
   const seen = new Set<string>();
   const unique: Array<{ draft: Draft; body: Body }> = [];
   for (const draft of drafts) {
-    const body = bodyOf(draft, from, to);
+    const body = spec.bodyOf(draft);
     const key = [draft.toolHeading ?? '', draft.path, leadKey(body.lead), body.lines.join('\n')].join(
       '\u0001',
     );
@@ -152,8 +163,73 @@ export function buildCommandBlocks(input: CommandInput): readonly ResurrectBlock
       lead: body.lead,
       lines: body.lines,
       note: body.note,
-      copyLabel: `Copy commands for ${to}`,
+      copyLabel: spec.copyLabel,
       copyText: body.lines.join('\n'),
+      copyName: spec.copyName,
     };
   });
+}
+/** Builds the command blocks for one Alternative. Returns [] when a name is not command-safe. */
+export function buildCommandBlocks(input: CommandInput): readonly ResurrectBlock[] {
+  const { origins, from, to } = input;
+  return assembleBlocks(
+    origins,
+    input.scopes,
+    (eco) => isCommandSafe(eco, from) && isCommandSafe(eco, to),
+    { bodyOf: (draft) => bodyOf(draft, from, to), copyName: to, copyLabel: `Copy commands for ${to}` },
+  );
+}
+export interface UpgradeCommandInput {
+  readonly origins: readonly ManifestOrigin[];
+  readonly scopes: readonly Scope[];
+  /** The package name (kept, not replaced). */
+  readonly name: string;
+  /** A Strict_Version. */
+  readonly version: string;
+}
+// resurrect-upgrade R6.3 to R6.8: the upgrade templates. Fixed text: `@`, `==`, `>=` and the
+// double quotes of the pip lines (D13); names and versions are validated per origin ecosystem.
+function upgradeBodyOf(draft: Draft, name: string, version: string): Body {
+  switch (draft.variant) {
+    case 'npm':
+      return {
+        lead: null,
+        lines: [withFlag('npm install', NPM_FLAGS[draft.scope], `${name}@${version}`)],
+        note: null,
+      };
+    case 'pip':
+      return {
+        lead: replaceLead('line', name, draft.path, `${name}==${version}`, true),
+        lines: [`pip install "${name}==${version}"`],
+        note: null,
+      };
+    case 'poetry':
+      return { lead: null, lines: [`poetry add ${name}@${version}`], note: POETRY_NOTE };
+    case 'pep621':
+      return {
+        lead: replaceLead('entry', name, draft.path, `${name}>=${version}`, true),
+        lines: [`pip install "${name}>=${version}"`],
+        note: null,
+      };
+    case 'cargo':
+      return {
+        lead: null,
+        lines: [withFlag('cargo add', CARGO_FLAGS[draft.scope], `${name}@${version}`)],
+        note: null,
+      };
+  }
+}
+/** Builds the upgrade command blocks. Returns [] for an origin whose name or version is unsafe. */
+export function buildUpgradeBlocks(input: UpgradeCommandInput): readonly ResurrectBlock[] {
+  const { origins, name, version } = input;
+  return assembleBlocks(
+    origins,
+    input.scopes,
+    (eco) => isCommandSafe(eco, name) && isStrictVersion(eco, version),
+    {
+      bodyOf: (draft) => upgradeBodyOf(draft, name, version),
+      copyName: name,
+      copyLabel: `Copy commands to upgrade ${name}`,
+    },
+  );
 }

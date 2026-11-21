@@ -68,11 +68,18 @@ export interface ParsedHint {
   readonly sourceUrl: string | null;
   readonly link: { readonly href: string; readonly label: string } | null;
 }
+/** resurrect-upgrade R5.6: an upgrade after narrowing (strict version, differs from lookupVersion). */
+export interface ParsedUpgrade {
+  readonly version: string;
+  readonly basis: 'registry-default';
+}
 export type ParsedDependency = Omit<
   ScanResult['dependencies'][number],
-  'facts' | 'versionBasis' | 'advisories' | 'hints'
+  'facts' | 'versionBasis' | 'advisories' | 'hints' | 'upgrade'
 > & {
   readonly hints: readonly ParsedHint[];
+  /** resurrect-upgrade R5.6: null when absent or invalid. */
+  readonly upgrade: ParsedUpgrade | null;
   readonly facts: NarrowedFacts;
   readonly versionBasis: VersionBasis;
   readonly advisories: readonly ParsedAdvisory[];
@@ -144,6 +151,8 @@ export interface PackageRow {
   readonly versionBasis: VersionBasis;
   readonly advisories: readonly ParsedAdvisory[];
   readonly hints: readonly ParsedHint[];
+  /** resurrect-upgrade R6.1: first non-null upgrade of the row's entries in manifest order. */
+  readonly upgrade: ParsedUpgrade | null;
   /** One per distinct manifest path of the row, in the order of manifestPaths. */
   readonly manifestOrigins: readonly ManifestOrigin[];
   /** `<name>, <ecosystem>, <status word>, <short reason or cause>` (Requirement 7.6). */
@@ -361,6 +370,17 @@ export interface ResurrectBlock {
   readonly copyLabel: string;
   /** lines.join('\n'). */
   readonly copyText: string;
+  /** resurrect-upgrade R6.14: name for the Copy_Status text (the `to` name, or the package for an upgrade). */
+  readonly copyName: string;
+}
+/** resurrect-upgrade R6.1: the Upgrade_Section. */
+export interface ResurrectUpgrade {
+  readonly label: 'From the registry';
+  /** `Upgrade to <version>`. */
+  readonly title: string;
+  readonly sentence: string;
+  readonly version: string;
+  readonly blocks: readonly ResurrectBlock[];
 }
 export interface ResurrectHint {
   readonly label: string;
@@ -386,6 +406,8 @@ export interface ResurrectFallback {
 export interface ResurrectModel {
   readonly heading: 'Resurrect';
   readonly urgent: string | null;
+  /** resurrect-upgrade R6.1, R6.2: between the urgent sentence and the hints. */
+  readonly upgrade: ResurrectUpgrade | null;
   readonly hints: readonly ResurrectHint[];
   readonly suggestions: readonly ResurrectSuggestion[];
   readonly fallback: ResurrectFallback | null;

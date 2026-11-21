@@ -3,6 +3,10 @@
     "5.5 Write the property test for the stored result": {
       "status": "passed",
       "lastRunTimestamp": 1795290200505
+    },
+    "11.8 Write the property test for the section order": {
+      "status": "passed",
+      "lastRunTimestamp": 1795292038335
     }
   },
   "executionHistory": {
@@ -530,6 +534,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288042431
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795291634666
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795291676873
       }
     ],
     "11.2 Narrow the upgrade at the response boundary": [
@@ -537,6 +551,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288042470
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795291678375
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795291895851
       }
     ],
     "11.3 Write the property test for the narrowing": [
@@ -544,6 +568,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288042512
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795291903663
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292001254
       }
     ],
     "11.4 Add the upgrade to the package rows": [
@@ -551,6 +585,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288042552
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795291679366
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795291897348
       }
     ],
     "11.5 Implement the upgrade command builder": [
@@ -558,6 +602,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288042598
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795291680104
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795291897961
       }
     ],
     "11.6 Write the property test for the commands": [
@@ -565,6 +619,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288042643
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795291904667
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292000258
       }
     ],
     "11.7 Build the Upgrade_Section in the model": [
@@ -572,6 +636,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288042685
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795291905282
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795291998750
       }
     ],
     "11.8 Write the property test for the section order": [
@@ -579,6 +653,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288042724
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292002246
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292093701
       }
     ],
     "12. Checkpoint - View-model": [
@@ -586,6 +670,11 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288042762
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292094682
       }
     ],
     "13.1 Render the Upgrade_Section": [
@@ -593,6 +682,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288042804
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292002934
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292096181
       }
     ],
     "14.1 Commit and push the view-model and component groups (orchestrator-only)": [
@@ -766,6 +865,20 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795291580644
+      }
+    ],
+    "11. View-model: types, narrowing, rows, commands, model": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292093757
+      }
+    ],
+    "13. Component": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292096226
       }
     ]
   }

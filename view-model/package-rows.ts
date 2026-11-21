@@ -84,6 +84,8 @@ export function buildPackageRows(result: ParsedScanResult): readonly PackageRow[
     const advisories = first?.advisories ?? [];
     // Resurrect R5.7: the first entry in manifest order that carries hints; older results have none.
     const hints = entries.find((e) => (e.hints?.length ?? 0) > 0)?.hints ?? NO_HINTS;
+    // resurrect-upgrade R5.6: the first entry in manifest order with a non-null upgrade; absent reads as null.
+    const upgrade = entries.find((e) => (e.upgrade ?? null) !== null)?.upgrade ?? null;
     const manifestPaths = distinct(entries.map((e) => e.manifestPath)).sort(compareCodePoints);
     const manifestOrigins = manifestPaths.flatMap((path) => {
       const origin = manifestByPath.get(path);
@@ -140,6 +142,7 @@ export function buildPackageRows(result: ParsedScanResult): readonly PackageRow[
       versionBasis: first?.versionBasis ?? null,
       advisories,
       hints,
+      upgrade,
       manifestOrigins,
       accessibleLabel: `${displayName}, ${g.ecosystem}, ${statusWord}, ${epitaphShort}`,
     };

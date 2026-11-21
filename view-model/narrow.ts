@@ -1,11 +1,12 @@
 // Requirement 14.5, 6.6: total narrowing of untrusted values. Nothing here throws.
-import type { Severity } from '../core';
+import { isStrictVersion, type Severity } from '../core';
 import { HINT_TEXT_MAX_LENGTH, HINTS_MAX_PER_PACKAGE } from '../pipeline/constants';
 import type {
   AdvisoryExclusion,
   NarrowedFacts,
   ParsedAdvisory,
   ParsedHint,
+  ParsedUpgrade,
   VersionBasis,
 } from './types';
 import { advisoryLink } from './urls';
@@ -171,4 +172,24 @@ export function narrowHints(value: unknown): readonly ParsedHint[] {
     });
   }
   return kept;
+}
+
+/**
+ * resurrect-upgrade R5.6, R5.7: total and idempotent narrowing of the registry-default upgrade.
+ * Null unless the value is a record with exactly the keys ersion and asis, asis is
+ * egistry-default, the version is a Strict_Version for the ecosystem and differs from lookupVersion.
+ */
+export function narrowUpgrade(value: unknown, ecosystem: unknown, lookupVersion: unknown): ParsedUpgrade | null {
+  try {
+    if (!isRecord(value)) return null;
+    const keys = Object.keys(value);
+    if (keys.length !== 2 || !keys.includes('version') || !keys.includes('basis')) return null;
+    const { version, basis } = value;
+    if (basis !== 'registry-default') return null;
+    if (typeof version !== 'string' || !isStrictVersion(ecosystem, version)) return null;
+    if (version === lookupVersion) return null;
+    return { version, basis: 'registry-default' };
+  } catch {
+    return null;
+  }
 }

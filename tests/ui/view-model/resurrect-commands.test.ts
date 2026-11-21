@@ -28,6 +28,7 @@ describe('resurrect Command_Builder (Requirements 10.2 to 10.10)', () => {
       note: null,
       copyLabel: 'Copy commands for got',
       copyText: 'npm uninstall request\nnpm install got',
+      copyName: 'got',
     });
   });
 

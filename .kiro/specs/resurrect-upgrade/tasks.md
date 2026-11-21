@@ -157,41 +157,41 @@ Rules for every task:
     - Stage by name the files of group 9 and commit with the subject `resurrect-upgrade: curated source and evidence (group 9)`. Push. Record the hash.
     - _Requirements: 9.10_
 
-- [ ] 11. View-model: types, narrowing, rows, commands, model
-  - [~] 11.1 Add the view-model types
+- [x] 11. View-model: types, narrowing, rows, commands, model
+  - [x] 11.1 Add the view-model types
     - In `view-model/types.ts` add `ParsedUpgrade` (`version`, `basis: 'registry-default'`), `upgrade: ParsedUpgrade | null` on `ParsedDependency` (and in the `Omit` of the scan dependency type, as `hints` is) and on `PackageRow`, `ResurrectUpgrade` (`label: 'From the registry'`, `title`, `sentence`, `version`, `blocks`), `upgrade: ResurrectUpgrade | null` on `ResurrectModel`, and `copyName: string` on `ResurrectBlock`. Types only. Typecheck errors in the files of the next tasks are expected until they are done.
     - _Requirements: 6.1, 6.14_
-  - [~] 11.2 Narrow the upgrade at the response boundary
+  - [x] 11.2 Narrow the upgrade at the response boundary
     - In `view-model/narrow.ts` add `narrowUpgrade(value, ecosystem, lookupVersion): ParsedUpgrade | null` by the design (exact keys, `basis` `registry-default`, `isStrictVersion` from Core for the ecosystem, version different from `lookupVersion`; total; idempotent). In `view-model/parse-response.ts` set `upgrade` on each dependency and do not require the field. Create `tests/ui/view-model/narrow-upgrade.test.ts`: absent field gives null; a valid upgrade; version with `;`, a space, `$(x)`, 65 code points; an unknown `basis`; an extra key; a version equal to the `lookupVersion`; a pypi `1.0.post1` accepted and an npm `1.0` rejected; and a parse-response case with no `upgrade` anywhere (results recorded before this spec still parse). Cite Requirements 5.6 and 5.7.
     - _Requirements: 5.6, 5.7_
-  - [~] 11.3 Write the property test for the narrowing
+  - [x] 11.3 Write the property test for the narrowing
     - `tests/ui/view-model/narrow-upgrade.property.test.ts`: `fc.anything()` values, generated upgrade-like records (valid and invalid fields, metacharacters, long versions), the three ecosystems, a generated `lookupVersion`, and outputs fed back in.
     - **Property 5: Client narrowing of the upgrade is total, valid and idempotent (RU-P5)**
     - **Validates: Requirements 5.6, 5.7**
-  - [~] 11.4 Add the upgrade to the package rows
+  - [x] 11.4 Add the upgrade to the package rows
     - In `view-model/package-rows.ts` fill `PackageRow.upgrade` from the first dependency entry of the row (manifest order) that has a non-null upgrade, null otherwise. Update the existing row tests that deep-equal a whole row (`upgrade: null`), keeping tags and titles, and the helpers in `tests/support/ui/scan-result-builder.ts` and `tests/support/arbitraries/resurrect.ts` only as far as they must produce `upgrade: null`.
     - _Requirements: 5.6_
-  - [~] 11.5 Implement the upgrade command builder
+  - [x] 11.5 Implement the upgrade command builder
     - In `view-model/resurrect-commands.ts` add `buildUpgradeBlocks({origins, scopes, name, version})` with the templates of the design (npm, pip, poetry, pep621, cargo; scope flags; mixed gives the two blocks with tool headings; heading by path when several blocks exist; `copyLabel` `Copy commands to upgrade <name>`; `copyText` lines joined by `\n`; a block only when `isCommandSafe` and `isStrictVersion` hold for the origin's ecosystem; the double quotes are template text) and add `copyName` to the blocks of the existing `buildCommandBlocks` (the `to` name). Share the grouping code through local helpers; do not change any existing output. Cite Requirements 6.3 to 6.11.
     - Create `tests/ui/view-model/resurrect-upgrade-commands.test.ts`: every template and every scope flag, requirements.txt and pep621 sentences with the exact text of Requirements 6.4 and 6.6, mixed gives both blocks, two manifests give two blocks with path headings, an unsafe name and a non-strict version give no block. The existing `resurrect-commands` tests stay unchanged except for `copyName`.
     - _Requirements: 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.10, 6.11_
-  - [~] 11.6 Write the property test for the commands
+  - [x] 11.6 Write the property test for the commands
     - `tests/ui/view-model/resurrect-upgrade-commands.property.test.ts`: all origin formats and Pyproject_Tool values, scopes, names and versions including hostile ones (spaces, quotes, `;`, `$`, backticks, `!`, `+`, newlines, Unicode), and arbitrary strings for `isStrictVersion`. One describe with two tests: the alphabet of accepted versions, and the token grammar with `copyText`.
     - **Property 4: Strict versions are shell-safe and upgrade commands follow the fixed grammar (RU-P4)**
     - **Validates: Requirements 5.5, 6.3, 6.4, 6.5, 6.6, 6.8, 6.10, 6.11, 6.15**
-  - [~] 11.7 Build the Upgrade_Section in the model
+  - [x] 11.7 Build the Upgrade_Section in the model
     - In `view-model/resurrect.ts` add `upgrade` to `buildResurrectModel`: non-null when `row.upgrade !== null` and `isStrictVersion(row.ecosystem, version)`; title `Upgrade to <version>`, label `From the registry`, the sentence of Requirement 6.1, blocks from `buildUpgradeBlocks` with the row's origins, scopes and name; the fallback only when hints, suggestions and upgrade are all empty. Keep `suggestionOf` and the RS-P5 filter unchanged. Cite Requirements 6.1, 6.2, 6.12, 6.13. Create `tests/ui/view-model/resurrect-upgrade.test.ts`: uuid-like row (hint, upgrade, no fallback), restless row (urgent first, then upgrade), upgrade with a curated entry (both shown, upgrade first), upgrade with a non-command-safe name (title and sentence, no blocks), upgrade with a non-strict version (no section, fallback shown), `har-validator`-like row (no upgrade, hint, no fallback). Update `tests/ui/view-model/resurrect*.test.ts` that deep-equal a model (`upgrade: null`), keeping tags and titles.
     - _Requirements: 6.1, 6.2, 6.11, 6.12, 6.13_
-  - [~] 11.8 Write the property test for the section order
+  - [x] 11.8 Write the property test for the section order
     - `tests/ui/view-model/resurrect-upgrade-order.property.test.ts`: slot rows of every plot case, combinations of upgrade (strict, non-strict, absent), zero to three hints and zero or one curated entry, built with the existing arbitraries.
     - **Property 6: Section order is fixed and an upgrade suppresses the fallback (RU-P6)**
     - **Validates: Requirements 6.2, 6.11, 6.12**
 
-- [~] 12. Checkpoint - View-model
+- [x] 12. Checkpoint - View-model
   - Run `npx vitest --run tests/ui/view-model tests/core` and ensure all pass. The full `npm run typecheck` is expected to pass only after task 13.1 (the component still reads the old model shape). Ask the user if questions arise.
 
-- [ ] 13. Component
-  - [~] 13.1 Render the Upgrade_Section
+- [x] 13. Component
+  - [x] 13.1 Render the Upgrade_Section
     - In `components/resurrect-slot.tsx` render `model.upgrade` between the urgent sentence and the hints: a `div.gk-resurrect-upgrade` with the label paragraph (`gk-resurrect-label`), the title paragraph, the sentence (`gk-resurrect-text`), and for each block the same markup as an Alternative block (heading, lead, `pre`, note, Copy_Button). Change the copy handler to use `block.copyName` for the Copy_Status text ("Copied the commands for <copyName>"). No new request, no animation, no new color. Update `tests/ui/components/resurrect-slot.test.tsx` and `tests/ui/components/detail-panel.test.tsx` only where they build a `ResurrectModel` or `ResurrectBlock` (`upgrade: null`, `copyName`), and add cases to the slot test: the Upgrade_Section shows the label, the title, the sentence and the command; the Copy_Button has the accessible name "Copy commands to upgrade <name>"; copying writes the lines and sets the status "Copied the commands for <name>"; an Upgrade_Section without blocks shows no Copy_Button; no `fetch` call happens.
     - _Requirements: 6.1, 6.2, 6.14, 6.16_
 

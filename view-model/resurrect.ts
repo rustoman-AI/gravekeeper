@@ -1,5 +1,6 @@
+import { isStrictVersion } from '../core';
 import type { Ecosystem } from '../core';
-import { buildCommandBlocks } from './resurrect-commands';
+import { buildCommandBlocks, buildUpgradeBlocks } from './resurrect-commands';
 import { isValidName, normalizeName } from './resurrect-names';
 import { lookupCurated, type CuratedEntry } from './resurrections';
 import type {
@@ -11,6 +12,7 @@ import type {
   ResurrectLink,
   ResurrectModel,
   ResurrectSuggestion,
+  ResurrectUpgrade,
 } from './types';
 import { advisoryLink, registryLink, sourceRepoLink } from './urls';
 
@@ -25,6 +27,9 @@ const SUGGESTION_LABEL = "From the caretaker's list";
 const SOURCE_LINK_LABEL = 'Source for this suggestion';
 const REPO_LINK_LABEL = 'Source repository (listed by the package, not verified)';
 const ISSUES_LINK_LABEL = 'Issues (listed by the package, not verified)';
+const UPGRADE_LABEL = 'From the registry';
+const UPGRADE_SENTENCE =
+  'The registry lists this newer version as its default and does not mark it deprecated.';
 const GENERIC_URGENT = 'This package is haunted by open vulnerabilities, so moving off it is urgent.';
 const FORGOTTEN_PARAGRAPH =
   'No notice and no recommended replacement is on record for this package. ' +
@@ -79,6 +84,26 @@ function suggestionOf(row: PackageRow, entry: CuratedEntry): ResurrectSuggestion
         to: name,
       }),
     })),
+  };
+}
+
+// resurrect-upgrade R6.1, R6.11: no section for a version that is not a Strict_Version; for an unsafe
+// name the section stays and its blocks are empty.
+function upgradeOf(row: PackageRow): ResurrectUpgrade | null {
+  if (row.upgrade === null) return null;
+  const version = row.upgrade.version;
+  if (!isStrictVersion(row.ecosystem, version)) return null;
+  return {
+    label: UPGRADE_LABEL,
+    title: `Upgrade to ${version}`,
+    sentence: UPGRADE_SENTENCE,
+    version,
+    blocks: buildUpgradeBlocks({
+      origins: row.manifestOrigins,
+      scopes: row.scopes,
+      name: row.name,
+      version,
+    }),
   };
 }
 
@@ -139,11 +164,15 @@ export function buildResurrectModel(
   const suggestion = entry === null ? null : suggestionOf(row, entry);
   const suggestions = suggestion === null ? [] : [suggestion];
 
+  const upgrade = upgradeOf(row);
+
   return {
     heading: 'Resurrect',
     urgent: restless ? urgentSentence(row) : null,
+    upgrade,
     hints,
     suggestions,
-    fallback: hints.length === 0 && suggestions.length === 0 ? fallbackOf(row, result) : null,
+    fallback:
+      hints.length === 0 && suggestions.length === 0 && upgrade === null ? fallbackOf(row, result) : null,
   };
 }
