@@ -69,18 +69,18 @@ Rules for every task:
     - Stage by name the files of group 3 and commit with the subject `art-polish: graves stand in the landscape, ground and grass (group 3)`. Push. Record the hash.
     - _Requirements: 10.6_
 
-- [ ] 5. Fog without hard edges
-  - [-] 5.1 Feather the fog (Visual)
+- [x] 5. Fog without hard edges
+  - [x] 5.1 Feather the fog (Visual)
     - In `app/globals.css` replace the `.gk-fog` background by the design's two radial-gradient bands (`ellipse 28% 14% at 40% 34%` and `at 60% 84%`, colour stops `var(--color-mist) 0%`, a `color-mix` 45 % stop at 55 %, `transparent 100%`), `background-size: 100% calc(var(--cell-h, 156px) * 2)`, `background-repeat: repeat-y`, `background-position: 0 16px`; make `.gk-fog-high` and `.gk-fog-b` use the swapped centres (60 % and 40 %) and `ellipse 24% 14%`, and remove their old `background-position` and `background-size`. Keep opacity 0.25 and 0.35, `top/right/bottom/left`, `animation` (transform only), the simplified-mode and the reduced-motion rules. Constants must equal those of `view-model/fog.ts`. No `mask`, no `filter`, no `url()`. The Hero uses the same classes.
     - Visual: take preview screenshots of the results scene at 1440x760 and of the landing at 1440x760 (reduced motion, so the fog is static), open the images and report: whether any fog band shows a hard edge on any side, whether rows 1 and 2 show bands at different horizontal positions, whether any stripe or tile seam is visible, whether labels under fog are still readable. Tune only the colour stop positions inside the constraints; a change of the numbers in `view-model/fog.ts` is allowed only together with the CSS in this task and with the constants test updated (report it).
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8_
-  - [~] 5.2 Add the fog CSS test
+  - [x] 5.2 Add the fog CSS test
     - In `tests/ui/art-css.test.ts` add the fog test of the design ("Fog CSS test (R4.10)"): for every rule whose selector contains `.gk-fog` and that has `background-image`, split on top-level commas, require only `radial-gradient(` parts, no `url(`, each ending in `transparent 100%`; parse `ellipse A% B% at C% D%`, check the band is inside the layer horizontally and strictly inside one half of the tile vertically (at least 2 points from each border); require `background-repeat: repeat-y`, `background-size` starting with `100%` and containing `calc(var(--cell-h, 156px) * 2)`; per layer, two bands whose `C` differ by at least 15 and whose `D` lie in different halves; compare with the constants of `@/view-model`. Keep the existing fog opacity, keyframe and reduced-motion tests green. Add a negative self-check: a helper applied to a hard-edged sample string (an `url()` image, a gradient ending in a colour, a band touching the tile border) reports a failure for each.
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.10, 9.5, 9.7_
 
-- [ ] 6. Checkpoint - Fog
+- [x] 6. Checkpoint - Fog
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 6.1 Commit and push the fog group (orchestrator-only)
+  - [x] 6.1 Commit and push the fog group (orchestrator-only)
     - Stage by name the files of group 5 and commit with the subject `art-polish: feathered fog with alternating row offsets (group 5)`. Push. Record the hash.
     - _Requirements: 10.6_
 

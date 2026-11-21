@@ -2,6 +2,14 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { FOG_OPACITY_HIGH, FOG_OPACITY_LOW } from "@/view-model/constants";
+import {
+  FOG_BAND_CENTER_X_PCT,
+  FOG_BAND_CENTER_Y_PCT,
+  FOG_BAND_RX_PCT,
+  FOG_BAND_RY_PCT,
+  FOG_HIGH_RX_PCT,
+  fogRowOffsetPct,
+} from "@/view-model/fog";
 
 /**
  * Art style test (graveyard-art task 18.1; R1.4, R2.2, R2.3, R5.1, R12.1, R12.4, R12.5, R13.7).
@@ -196,6 +204,160 @@ describe("app/globals.css art style", () => {
     for (const name of names) {
       expect([...keyframeProps(name)], `${name} animates`).toEqual(["transform"]);
     }
+  });
+
+  // art-polish task 5.2 (R4.1 to R4.4, R4.10, R9.5, R9.7)
+  /** Splits on commas outside parentheses. */
+  const splitTopLevel = (value: string): string[] => {
+    const parts: string[] = [];
+    let depth = 0;
+    let start = 0;
+    for (let i = 0; i < value.length; i++) {
+      if (value[i] === "(") depth++;
+      else if (value[i] === ")") depth--;
+      else if (value[i] === "," && depth === 0) {
+        parts.push(value.slice(start, i));
+        start = i + 1;
+      }
+    }
+    parts.push(value.slice(start));
+    return parts.map(norm).filter((p) => p.length > 0);
+  };
+
+  interface Band {
+    rx: number;
+    ry: number;
+    cx: number;
+    cy: number;
+  }
+
+  /** Returns the failures of one fog `background-image` value, and the parsed bands. */
+  function checkFogImage(value: string): { failures: string[]; bands: Band[] } {
+    const failures: string[] = [];
+    const bands: Band[] = [];
+    for (const part of splitTopLevel(value)) {
+      if (/url\(/i.test(part)) failures.push(`url(): ${part}`);
+      if (!/^radial-gradient\(/i.test(part)) {
+        failures.push(`not a radial-gradient: ${part}`);
+        continue;
+      }
+      const inner = part.slice(part.indexOf("(") + 1, part.lastIndexOf(")"));
+      const args = splitTopLevel(inner);
+      if (args[args.length - 1] !== "transparent 100%") {
+        failures.push(`does not end in transparent 100%: ${part}`);
+      }
+      const m = /^ellipse ([\d.]+)% ([\d.]+)% at ([\d.]+)% ([\d.]+)%$/.exec(args[0] ?? "");
+      if (!m) {
+        failures.push(`unparsable ellipse: ${args[0]}`);
+        continue;
+      }
+      const [rx, ry, cx, cy] = m.slice(1).map(Number);
+      bands.push({ rx, ry, cx, cy });
+      // Strictly inside one half of the tile, at least 2 points from each border (R4.3).
+      const inHalf = (lo: number, hi: number) => cy - ry >= lo + 2 && cy + ry <= hi - 2;
+      if (!inHalf(0, 50) && !inHalf(50, 100)) failures.push(`band touches a tile border: ${part}`);
+    }
+    return { failures, bands };
+  }
+
+  const fogRules = rules.filter(
+    (r) => r.selectors.some((s) => /\.gk-fog\b/.test(s)) && r.decls.has("background-image"),
+  );
+  const DRIFT_PCT = 8; // keyframes gk-fog-drift: translate3d(-8%..8%)
+
+  it("the fog layer spans the box exactly: left 0 and right 0 (art-polish R4.5)", () => {
+    const { decls } = merged(".gk-fog");
+    expect(decls.get("left")).toBe("0");
+    expect(decls.get("right")).toBe("0");
+  });
+
+  it("every fog background-image is feathered radial gradients only (art-polish R4.1, R4.2, R4.10)", () => {
+    expect(fogRules.length).toBeGreaterThan(0);
+    const layers = new Set<string>();
+    for (const r of fogRules) {
+      const { failures, bands } = checkFogImage(r.decls.get("background-image")!);
+      expect(failures, r.selectors.join(", ")).toEqual([]);
+      expect(bands).toHaveLength(2);
+      for (const s of r.selectors) layers.add(s);
+    }
+    expect(layers.has(".gk-fog")).toBe(true);
+    expect(layers.has(".gk-fog-high")).toBe(true);
+    expect(layers.has(".gk-fog-b")).toBe(true);
+  });
+
+  it("the fog tile repeats on the Y axis over two rows (art-polish R4.2, R4.3)", () => {
+    const { decls } = merged(".gk-fog");
+    expect(decls.get("background-repeat")).toBe("repeat-y");
+    const size = norm(decls.get("background-size") ?? "");
+    expect(size.startsWith("100% ")).toBe(true);
+    expect(size).toContain("calc(var(--cell-h, 156px) * 2)");
+  });
+
+  it("fog band centres match view-model/fog.ts and rows differ by at least 15 points (art-polish R4.3, R4.4)", () => {
+    const low = checkFogImage(rulesWith(".gk-fog")[0].decls.get("background-image")!).bands;
+    expect(low.map((b) => b.cx)).toEqual([...FOG_BAND_CENTER_X_PCT]);
+    expect(low.map((b) => b.cy)).toEqual([...FOG_BAND_CENTER_Y_PCT]);
+    for (const b of low) {
+      expect(b.rx).toBe(FOG_BAND_RX_PCT);
+      expect(b.ry).toBe(FOG_BAND_RY_PCT);
+    }
+    expect(fogRowOffsetPct(0)).toBe(low[0].cx);
+    expect(fogRowOffsetPct(1)).toBe(low[1].cx);
+    expect(Math.abs(low[0].cx - low[1].cx)).toBeGreaterThanOrEqual(15);
+
+    const highRule = rulesWith(".gk-fog-high").find((r) => r.decls.has("background-image"))!;
+    const high = checkFogImage(highRule.decls.get("background-image")!).bands;
+    for (const b of high) expect(b.rx).toBe(FOG_HIGH_RX_PCT);
+    expect(high.map((b) => b.cx)).toEqual([...FOG_BAND_CENTER_X_PCT].reverse());
+    expect(Math.abs(high[0].cx - high[1].cx)).toBeGreaterThanOrEqual(15);
+    // Each layer has one band in each half of the tile, and the layers never line up.
+    for (const bands of [low, high]) {
+      expect(bands[0].cy).toBeLessThan(50);
+      expect(bands[1].cy).toBeGreaterThan(50);
+    }
+    for (let i = 0; i < 2; i++) expect(Math.abs(low[i].cx - high[i].cx)).toBeGreaterThanOrEqual(15);
+  });
+
+  it("each fog band plus the maximum drift stays inside 0 to 100 % horizontally (art-polish R4.5)", () => {
+    for (const r of fogRules) {
+      for (const b of checkFogImage(r.decls.get("background-image")!).bands) {
+        expect(b.cx - b.rx - DRIFT_PCT, r.selectors.join(", ")).toBeGreaterThanOrEqual(0);
+        expect(b.cx + b.rx + DRIFT_PCT, r.selectors.join(", ")).toBeLessThanOrEqual(100);
+      }
+    }
+    const kf = keyframes.find((b) => norm(b.prelude) === "@keyframes gk-fog-drift")!;
+    expect(kf.body).toMatch(/translate3d\(\s*-8%/);
+    expect(kf.body).toMatch(/translate3d\(\s*8%/);
+  });
+
+  it("fog rules declare no mask or filter (art-polish R4.6, R9.5)", () => {
+    for (const r of rules) {
+      if (!r.selectors.some((s) => /\.gk-fog\b/.test(s))) continue;
+      for (const [name, value] of r.decls) {
+        if (/^(-webkit-)?(backdrop-filter|filter|mask(-[\w-]+)?)$/.test(name)) {
+          expect(value, `${r.selectors.join(", ")} { ${name} }`).toBe("none");
+        }
+      }
+    }
+  });
+
+  it("the fog check reports hard-edged samples (negative self-check)", () => {
+    const url = checkFogImage("url(fog.png)");
+    expect(url.failures.length).toBeGreaterThan(0);
+    const linear = checkFogImage("linear-gradient(red, transparent 100%)");
+    expect(linear.failures.some((f) => f.startsWith("not a radial-gradient"))).toBe(true);
+    const solid = checkFogImage(
+      "radial-gradient(ellipse 28% 14% at 40% 34%, var(--color-mist) 0%, var(--color-mist) 100%)",
+    );
+    expect(solid.failures.some((f) => f.includes("transparent 100%"))).toBe(true);
+    const border = checkFogImage(
+      "radial-gradient(ellipse 28% 14% at 40% 10%, var(--color-mist) 0%, transparent 100%)",
+    );
+    expect(border.failures.some((f) => f.includes("tile border"))).toBe(true);
+    const good = checkFogImage(
+      "radial-gradient(ellipse 28% 14% at 40% 34%, var(--color-mist) 0%, color-mix(in srgb, var(--color-mist) 45%, transparent) 55%, transparent 100%)",
+    );
+    expect(good.failures).toEqual([]);
   });
 
   it("gk-lantern-flicker declares only opacity (R12.4)", () => {

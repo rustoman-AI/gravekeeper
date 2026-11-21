@@ -180,21 +180,36 @@ main[tabindex="-1"]:focus-visible {
 .gk-fog {
   position: absolute;
   top: 0;
-  right: -50%;
+  right: 0;
   bottom: 0;
-  left: -50%;
+  left: 0;
   z-index: 1;
   pointer-events: none;
-  /* One mist puff per row cell, hugging the ground at the bottom of the cell (under the labels). */
+  /*
+   * Art-polish R4.1 to R4.5: two feathered bands per two-row tile (even row, odd row). Each
+   * radial-gradient fades to transparent at its ellipse edge, which lies inside the tile on
+   * all four sides, so the layer has no hard edge. The tile repeats on the Y axis only, so
+   * there is no horizontal seam. Numbers equal view-model/fog.ts (centres 40/60 % and 34/84 %,
+   * rx 28 %, ry 14 %); tests/ui/art-css.test.ts ties them.
+   * The layer spans exactly the Scene (or Hero) box, which clips it: the widest band plus the +-8 %
+   * drift stays inside 0 to 100 %, so no band reaches a clipped side.
+   */
   background-image:
     radial-gradient(
-      ellipse 60% 24% at 50% 68%,
+      ellipse 28% 14% at 40% 34%,
       var(--color-mist) 0%,
-      color-mix(in srgb, var(--color-mist) 45%, transparent) 60%,
+      color-mix(in srgb, var(--color-mist) 45%, transparent) 55%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 28% 14% at 60% 84%,
+      var(--color-mist) 0%,
+      color-mix(in srgb, var(--color-mist) 45%, transparent) 55%,
       transparent 100%
     );
-  background-size: 18% var(--cell-h, 156px);
-  background-repeat: repeat;
+  background-size: 100% calc(var(--cell-h, 156px) * 2);
+  background-repeat: repeat-y;
+  background-position: 0 16px;
   animation: gk-fog-drift 70s linear infinite alternate;
   will-change: transform;
 }
@@ -206,8 +221,20 @@ main[tabindex="-1"]:focus-visible {
 .gk-fog-high,
 .gk-fog-b {
   opacity: 0.35;
-  background-position: 9% 0;
-  background-size: 26% var(--cell-h, 156px);
+  /* R4.4: centres swapped (60 %, 40 %) and rx 24 %, so the two layers never line up. */
+  background-image:
+    radial-gradient(
+      ellipse 24% 14% at 60% 34%,
+      var(--color-mist) 0%,
+      color-mix(in srgb, var(--color-mist) 45%, transparent) 55%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 24% 14% at 40% 84%,
+      var(--color-mist) 0%,
+      color-mix(in srgb, var(--color-mist) 45%, transparent) 55%,
+      transparent 100%
+    );
   animation-duration: 110s;
   animation-direction: alternate-reverse;
 }
