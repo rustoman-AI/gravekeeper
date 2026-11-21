@@ -87,6 +87,27 @@ export { headlineText, buildHeaderModel, formatAge } from './header';
 export { plural } from './plural';
 export { columnsFor, hashKey, sceneHeight, buildSceneModel } from './scene';
 export { nextFocus } from './scene-nav';
+export {
+  FOG_BAND_CENTER_X_PCT,
+  FOG_BAND_CENTER_Y_PCT,
+  FOG_BAND_RX_PCT,
+  FOG_BAND_RY_PCT,
+  FOG_HIGH_RX_PCT,
+  fogRowOffsetPct,
+} from './fog';
+export {
+  RESTLESS_STONE_SCALE,
+  RESTLESS_STONE_FOOT,
+  GHOST_BASE_BOX,
+  RESTLESS_GHOST_SCALE,
+  RESTLESS_GHOST_TOP,
+  RESTLESS_MAX_OVERFLOW_PX,
+  RESTLESS_MAX_OVERLAP,
+  STONE_TOPS,
+  restlessStoneTransform,
+  restlessGhostTransform,
+  restlessGeometry,
+} from './restless-art';
 export { buildTableModel } from './table';
 export { stageAt, stageStates } from './stages';
 export { FACT_FIELDS, formatFact } from './format-fact';

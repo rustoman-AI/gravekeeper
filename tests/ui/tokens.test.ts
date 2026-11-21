@@ -114,3 +114,36 @@ describe("graveyard-art landscape tokens (R13)", () => {
     expect(contrast(tokenHex("bone"), fog)).toBeGreaterThanOrEqual(TEXT_CONTRAST_MIN);
   });
 });
+
+// art-polish R3.1, R3.2, R3.3, R3.5: ground tokens that labels sit on.
+const GROUND_TOKENS = ["ground-moss", "grass"];
+const GROUND_STOPS = ["ground", "ground-moss", "grass", "night"];
+const LABEL_TOKENS = ["bone", "bone-muted"];
+
+describe("art-polish ground tokens (R3)", () => {
+  for (const name of GROUND_TOKENS) {
+    it(`${name} exists with a 6-digit hex value and is not decorative only`, () => {
+      expect(tokenHex(name)).toMatch(/^#[0-9a-fA-F]{6}$/);
+      expect(tokenLine(name)).not.toMatch(/DECORATIVE ONLY/);
+    });
+  }
+  for (const bg of GROUND_STOPS) {
+    for (const fg of LABEL_TOKENS) {
+      it(`${fg} on ${bg} is at least ${TEXT_CONTRAST_MIN}`, () => {
+        expect(contrast(tokenHex(fg), tokenHex(bg))).toBeGreaterThanOrEqual(TEXT_CONTRAST_MIN);
+      });
+    }
+  }
+  const byLuminance = [...GROUND_STOPS].sort((a, b) => luminance(tokenHex(a)) - luminance(tokenHex(b)));
+  for (const [label, bg] of [
+    ["darkest", byLuminance[0]],
+    ["lightest", byLuminance[byLuminance.length - 1]],
+  ] as const) {
+    for (const fg of LABEL_TOKENS) {
+      it(`${fg} on mist at FOG_OPACITY_HIGH over the ${label} ground stop (${bg}) is at least 4.5`, () => {
+        const fog = composite(tokenHex("mist"), tokenHex(bg), FOG_OPACITY_HIGH);
+        expect(contrast(tokenHex(fg), fog)).toBeGreaterThanOrEqual(TEXT_CONTRAST_MIN);
+      });
+    }
+  }
+});

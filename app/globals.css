@@ -5,7 +5,8 @@
  * This is the only place that holds literal colours.
  * Contrast on --color-night (WCAG 2.2): bone 15.22, bone-muted 9.55, amber 10.14,
  * spectral 12.57, stone 7.20, moss 7.64, focus 13.13.
- * graveyard-art tokens (sky-low, ground, plaque): text tokens must reach 4.5 and focus 3
+ * graveyard-art tokens (sky-low, ground, plaque) and art-polish ground tokens
+ * (ground-moss, grass): text tokens must reach 4.5 and focus 3
  * on each of them, and bone must reach 4.5 on mist at FOG_OPACITY_HIGH over night
  * (all checked in tests/ui/tokens.test.ts, R13.1 to R13.4).
  */
@@ -27,6 +28,8 @@
   --color-iron: #2a3350; /* DECORATIVE ONLY: tree and fence silhouettes, epitaph border */
   --color-mist: #9aa6c0; /* DECORATIVE ONLY: fog tint, bone is tested over its highest composite */
   --color-plaque: #252c40; /* plaque, epitaph block, headstone cards (text sits on it) */
+  --color-ground-moss: #0d1713; /* ground below the fence (label text sits on it) */
+  --color-grass: #0f1a15; /* grass strips at the row base (label text sits on it) */
 }
 
 /* Font variables are set by next/font in app/layout.tsx (IM Fell English SC, Atkinson Hyperlegible). */

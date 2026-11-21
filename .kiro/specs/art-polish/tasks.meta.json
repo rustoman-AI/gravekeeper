@@ -1,0 +1,356 @@
+{
+  "pbtResults": {
+    "1.2 Write the property test for fog row offsets": {
+      "status": "passed",
+      "lastRunTimestamp": 1795303944378
+    },
+    "1.4 Write the property test for ground contrast": {
+      "status": "passed",
+      "lastRunTimestamp": 1795303964574
+    }
+  },
+  "executionHistory": {
+    "1.1 Create the fog and restless-art modules": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303737703
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303747708
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303909990
+      }
+    ],
+    "1.2 Write the property test for fog row offsets": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303737752
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303912344
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303974536
+      }
+    ],
+    "1.3 Add the ground tokens": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303737781
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303747897
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303910345
+      }
+    ],
+    "1.4 Write the property test for ground contrast": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303737810
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303912971
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303975533
+      }
+    ],
+    "1.5 Create the polish report spec": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303737838
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303748302
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303911346
+      }
+    ],
+    "2.1 Commit and push the foundations group (orchestrator-only)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303737864
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303977034
+      }
+    ],
+    "3.1 Remove the empty band and draw the ground (Visual)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303737908
+      }
+    ],
+    "3.2 Update the art style test for the stage and the ground": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303737946
+      }
+    ],
+    "3.3 Assert the overlap in the art end-to-end spec": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303737973
+      }
+    ],
+    "3.4 Update the above-the-fold spec to the new viewports": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738005
+      }
+    ],
+    "4.1 Commit and push the stage group (orchestrator-only)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738034
+      }
+    ],
+    "5.1 Feather the fog (Visual)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738064
+      }
+    ],
+    "5.2 Add the fog CSS test": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738092
+      }
+    ],
+    "6.1 Commit and push the fog group (orchestrator-only)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738121
+      }
+    ],
+    "7.1 Set the headline clamp at 1280 px and wider": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738148
+      }
+    ],
+    "7.2 Test the headline clamps": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738177
+      }
+    ],
+    "7.3 Add the headline line-count end-to-end spec": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738204
+      }
+    ],
+    "7.4 Measure the targets and compact the header only if needed (Visual)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738231
+      }
+    ],
+    "8.1 Commit and push the headline group (orchestrator-only)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738260
+      }
+    ],
+    "9.1 Redraw the slab as a ledger stone (Visual)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738291
+      }
+    ],
+    "9.2 Rearrange the restless plot (Visual)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738317
+      }
+    ],
+    "9.3 Write the property test for the variant set": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738347
+      }
+    ],
+    "9.4 Write the property test for the restless geometry": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738379
+      }
+    ],
+    "9.5 Write the greyscale distinctness test": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738405
+      }
+    ],
+    "10.1 Commit and push the sprites group (orchestrator-only)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738436
+      }
+    ],
+    "11.1 Add the hero silhouettes and the path (Visual)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738465
+      }
+    ],
+    "11.2 Test the hero landscape": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738494
+      }
+    ],
+    "12.1 Commit and push the hero group (orchestrator-only)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738524
+      }
+    ],
+    "13.1 Add the AP traceability test": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738553
+      }
+    ],
+    "13.2 Update the property traceability document": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738581
+      }
+    ],
+    "14.1 Commit and push the traceability group (orchestrator-only)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738618
+      }
+    ],
+    "15.1 Regenerate the committed screenshots (Visual)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738648
+      }
+    ],
+    "15.2 Take the report screenshots (Visual)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738678
+      }
+    ],
+    "15.3 Measure the render and the bundle budgets": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738711
+      }
+    ],
+    "15.4 Commit and push the screenshots (orchestrator-only)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738736
+      }
+    ],
+    "15.5 Verify the deploy (orchestrator-only)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738772
+      }
+    ],
+    "15.6 Write the report (orchestrator-only)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738806
+      }
+    ],
+    "15.7 Commit the report and append the commits with CI status (orchestrator-only)": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738839
+      }
+    ],
+    "16. STOP": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303738871
+      }
+    ],
+    "1. Foundations: constants, tokens, contrast helper, report spec": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303975563
+      }
+    ],
+    "2. Checkpoint - Foundations": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795303977063
+      }
+    ]
+  }
+}
