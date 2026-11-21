@@ -123,7 +123,14 @@ export function ResultsPage({ result, cache, nowMs, view, onViewChange, onScanMa
   }, [result, ready]);
   return (
     <div className="flex w-full flex-col">
-      <div className={`${column} pt-8 pb-6`}>
+      <div
+        className={
+          // Scene view: tight spacing so the first graves show above the fold (graveyard-art R5.10, R5.11).
+          showScene
+            ? 'mx-auto flex w-full max-w-6xl flex-col gap-2 px-4 pt-4 pb-1'
+            : `${column} pt-8 pb-6`
+        }
+      >
         {ready ? <ResultsHeader header={header} cache={cache} nowMs={nowMs} /> : null}
         {ready && notes.capBanner !== null ? <CapBanner banner={notes.capBanner} /> : null}
         {!ready ? null : notes.empty === null ? (

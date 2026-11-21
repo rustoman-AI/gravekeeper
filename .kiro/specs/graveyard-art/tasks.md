@@ -356,11 +356,11 @@ Implementation language: TypeScript (strict), the project root is the `gravekeep
     - Regenerate only the images named in task 22.1 under `docs/screenshots/` (desktop and mobile), with the documented command of the spec, and update `docs/screenshots/README.md` only if it lists them. Do not touch `docs/screenshots/m1/` or `m2/`. Look at each new image and report any with clipped text or overlapping labels.
     - Files: `docs/screenshots/*.png` (only those named in task 22.1), `docs/screenshots/README.md`
     - _Requirements: 14.9_
-  - [~] 22.3 Compact results header layout
+  - [x] 22.3 Compact results header layout
     - In `app/globals.css`, make `.gk-results-header` a CSS grid from 1024 px (headline and plaque in one row, explanation, chips and meta as a compact block under it), and under 640 px lower the headline clamp bound to 26 px and shrink the plaque. In `components/results-header.tsx` add wrapper class names only; make no text change, no order change, no heading-level change and no accessible-name change. Keep the desktop clamp bounds (32 and 56 px), the display font and the Token colours; add no Token, no filter and no animation. Keep the existing header unit tests and `tests/ui/art-css.test.ts` passing.
     - Files: `app/globals.css`, `components/results-header.tsx`
     - _Requirements: 5.1, 5.10, 5.11, 5.12, 5.13, 5.14_
-  - [~] 22.4 Above-the-fold test
+  - [x] 22.4 Above-the-fold test
     - Create `tests/e2e/above-fold.spec.ts` with the request fixture and a mocked `/api/scan`: at 1440x900 and 1280x800 (desktop) and at 390x844 (mobile), the top of the art box of the first `.gk-plot` is smaller than the viewport height. Run the existing header unit tests (`tests/ui/components/results-header.test.tsx`) and `tests/ui/art-css.test.ts`. Edit `tests/ui/art-css.test.ts` only to add the mobile clamp lower bound (26 px under 640 px); keep the 32 and 56 px desktop check unchanged.
     - Files: `tests/e2e/above-fold.spec.ts`, `tests/ui/art-css.test.ts` (only if a mobile clamp bound is added)
     - _Requirements: 5.10, 5.11, 5.12, 5.14_

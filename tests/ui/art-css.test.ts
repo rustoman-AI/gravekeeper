@@ -168,6 +168,19 @@ describe("app/globals.css art style", () => {
     expect(px(m![2])).toBe(56);
   });
 
+  it("the headline clamp lower bound is 26px under 640px (R5.12)", () => {
+    const media = topLevel.filter((b) => /^@media \(max-width: 639(\.98)?px\)$/i.test(norm(b.prelude)));
+    const small = media
+      .flatMap((m) => collectRules(parseBlocks(m.body), false))
+      .filter((r) => r.selectors.includes(".gk-headline"));
+    expect(small).toHaveLength(1);
+    const value = small[0].decls.get("font-size") ?? "";
+    const m = /^clamp\(\s*([\d.]+)rem\s*,[^,]+,\s*([\d.]+)rem\s*\)$/.exec(value);
+    expect(m, `font-size was "${value}"`).not.toBeNull();
+    expect(px(m![1])).toBe(26);
+    expect(px(m![2])).toBe(56);
+  });
+
   it("declares no filter, backdrop-filter or mask (R12.5)", () => {
     // `filter: none` only switches a filter off (simplified mode), so it is not a filter effect.
     const offenders: string[] = [];

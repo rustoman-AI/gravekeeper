@@ -37,14 +37,14 @@ export function ResultsHeader({ header, cache, nowMs }: ResultsHeaderProps) {
     );
   }
   return (
-    <section aria-label="Scan summary" className="flex flex-col gap-4">
+    <section aria-label="Scan summary" className="gk-results-header">
       <h1 id="results-heading" tabIndex={-1} className="font-display text-2xl text-bone">
         {header.repoName}
       </h1>
       <p className="gk-headline">{header.headline !== null ? header.headline.text : null}</p>
-      <div className="flex flex-wrap items-start gap-x-8 gap-y-4">
+      <div className="gk-results-header-detail">
         <GradePlaque grade={grade} />
-        <ul aria-label="Status counts" className="flex flex-wrap items-center gap-2">
+        <ul aria-label="Status counts" className="gk-results-header-chips">
           {header.chips.map((chip) => (
             <StatusChip key={chip.status} chip={chip} />
           ))}

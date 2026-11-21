@@ -1543,6 +1543,26 @@
         "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795220174700
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795220180540
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795220748988
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795220867680
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795221079825
       }
     ],
     "22.4 Above-the-fold test": [
@@ -1550,6 +1570,16 @@
         "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795220174810
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795220752012
+      },
+      {
+        "executionId": "728a2da2-9b62-49af-82e2-49da4826ba8e",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795221080283
       }
     ],
     "22.5 Regenerate the screenshots again after the compact header": [
