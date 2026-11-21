@@ -1,0 +1,369 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Register the format in the Core tables": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208127
+      }
+    ],
+    "1.2 Update the Core tests that list the formats": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208172
+      }
+    ],
+    "1.3 Implement the PEP 508 entry reader": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208221
+      }
+    ],
+    "1.4 Write unit tests for the PEP 508 reader": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208264
+      }
+    ],
+    "1.5 Implement the Poetry constraint translator": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208304
+      }
+    ],
+    "1.6 Write the Poetry reference oracle and its generators": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208351
+      }
+    ],
+    "1.7 Write unit tests for the translator": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208403
+      }
+    ],
+    "1.8 Write the property test for the Poetry translation": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208443
+      }
+    ],
+    "2.1 Implement the PEP 621 and PEP 735 collectors": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208486
+      }
+    ],
+    "2.2 Implement the Poetry collector": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208533
+      }
+    ],
+    "2.3 Implement the parser entry and register it": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208581
+      }
+    ],
+    "2.4 Write the pyproject writer and generators": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208626
+      }
+    ],
+    "2.5 Write unit tests for the parser": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208679
+      }
+    ],
+    "2.6 Write the property test for totality": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208730
+      }
+    ],
+    "2.7 Write the property test for the round trip": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208779
+      }
+    ],
+    "2.8 Write the property test for determinism and order": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208827
+      }
+    ],
+    "2.9 Write the property test for names": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208876
+      }
+    ],
+    "2.10 Write the property test for scope mapping": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208920
+      }
+    ],
+    "2.11 Write the property test for include-group": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230208966
+      }
+    ],
+    "2.12 Write the property test for PEP 508 agreement": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209014
+      }
+    ],
+    "3.1 Commit and push the core group (orchestrator-only)": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209059
+      }
+    ],
+    "4.1 Change the pipeline constants": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209103
+      }
+    ],
+    "4.2 Update the constants tests": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209145
+      }
+    ],
+    "4.3 Change the `no-manifests` message and the spec table that holds it": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209193
+      }
+    ],
+    "4.4 Accept the format in the stored-result validator and update the key tests": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209238
+      }
+    ],
+    "4.5 Treat `*` as no constraint for pypi in `chooseVersion`": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209282
+      }
+    ],
+    "4.6 Update the discovery and selection tests and generators": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209328
+      }
+    ],
+    "4.7 Write the property test for discovery and root selection": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209394
+      }
+    ],
+    "4.8 Write the property test for translated ranges and the resolver": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209518
+      }
+    ],
+    "4.9 Update the manifest stage test": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209631
+      }
+    ],
+    "4.10 Write the scripted scan test": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209680
+      }
+    ],
+    "5.1 Update the user-visible lists of formats": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209729
+      }
+    ],
+    "6.1 Commit and push the pipeline group (orchestrator-only)": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209775
+      }
+    ],
+    "7.1 Extend the live report script": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209822
+      }
+    ],
+    "7.2 Extend the recorder for one repository and the flag": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209867
+      }
+    ],
+    "7.3 Run the Probe (orchestrator-only)": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209915
+      }
+    ],
+    "7.4 Record the fixture set (orchestrator-only)": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230209967
+      }
+    ],
+    "7.5 Update the fixture tests, the export and the samples": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210013
+      }
+    ],
+    "7.6 Write the end-to-end test": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210060
+      }
+    ],
+    "7.7 Add the repository to the live smoke list": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210105
+      }
+    ],
+    "8.1 Commit and push the fixture group (orchestrator-only)": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210148
+      }
+    ],
+    "9.1 Compare and decide": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210195
+      }
+    ],
+    "9.2 Replace the featured entry (only when 9.1 says Convincing_Graveyard)": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210246
+      }
+    ],
+    "10.1 Write the traceability test": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210290
+      }
+    ],
+    "10.2 Update the traceability document": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210342
+      }
+    ],
+    "11.1 Run the end-to-end suite": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210385
+      }
+    ],
+    "11.2 Commit and push the traceability group (orchestrator-only)": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210431
+      }
+    ],
+    "12.1 Run the live scan and write the report (orchestrator-only)": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210479
+      }
+    ],
+    "12.2 Run the deep property tests and append them (orchestrator-only)": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210529
+      }
+    ],
+    "12.3 Remove the probe file, commit and push the report (orchestrator-only)": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210598
+      }
+    ],
+    "12.4 Append the commits with their CI status (orchestrator-only)": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210646
+      }
+    ],
+    "13. STOP": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795230210705
+      }
+    ]
+  }
+}
