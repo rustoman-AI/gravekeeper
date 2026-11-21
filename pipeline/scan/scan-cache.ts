@@ -238,7 +238,16 @@ export function isScanResult(value: unknown): value is ScanResult {
   if (
     !allOf(
       value.manifests,
-      (m) => isRec(m) && isStr(m.path) && isFormat(m.format) && isStrArr(m.warnings),
+      // resurrect R5.5, R5.6: pyprojectTool is absent or one of the three values.
+      (m) =>
+        isRec(m) &&
+        isStr(m.path) &&
+        isFormat(m.format) &&
+        isStrArr(m.warnings) &&
+        (m.pyprojectTool === undefined ||
+          m.pyprojectTool === 'poetry' ||
+          m.pyprojectTool === 'pep621' ||
+          m.pyprojectTool === 'mixed'),
     )
   ) {
     return false;

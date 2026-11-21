@@ -1,4 +1,4 @@
-// Requirements 5.1, 5.2, 5.4, 5.5, 5.8, 5.9, 5.10, 5.11, 5.12
+﻿// Requirements 5.1, 5.2, 5.4, 5.5, 5.8, 5.9, 5.10, 5.11, 5.12
 import { describe, expect, it, vi } from 'vitest';
 import { CONSTANTS, parseManifest } from '../../../core';
 import { discoverManifests } from '../../../pipeline/mapping';
@@ -391,6 +391,7 @@ describe('runManifestStage', () => {
         format: 'pyproject.toml',
         warnings: expected.warnings,
         dependencies: expected.dependencies,
+        pyprojectTool: 'pep621',
       },
     ]);
     expect(result.value.manifests[0]?.dependencies[0]?.ecosystem).toBe('pypi');

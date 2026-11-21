@@ -66,21 +66,21 @@ Rules for every task:
     - P71 in `tests/adapters/l2-entries.property.test.ts` must pass unchanged, also with `npm run test:deep -- tests/adapters/l2-entries.property.test.ts`. This task owns only the first two files named above.
     - _Requirements: 3.8_
 
-- [ ] 2. Checkpoint - Pipeline hints
+- [x] 2. Checkpoint - Pipeline hints
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [-] 2.1 Commit and push the pipeline group (orchestrator-only)
+  - [x] 2.1 Commit and push the pipeline group (orchestrator-only)
     - After the checkpoint is green, stage by name the files of group 1 and commit with the subject `resurrect: upstream hints, cache key 4 (group 1)`. Push. Record the hash for the report (task 14.4).
     - _Requirements: 16.6_
 
-- [ ] 3. Pyproject tool detection
-  - [~] 3.1 Implement the detector in Core
+- [x] 3. Pyproject tool detection
+  - [x] 3.1 Implement the detector in Core
     - Create `core/parsers/pyproject-tool.ts` with `detectPyprojectTool(text: string): 'poetry' | 'pep621' | 'mixed' | null` by the design: parse with the TOML reader of `core/parsers/toml-tree.ts`; a Poetry table counts when `tool.poetry.dependencies`, `tool.poetry.group.<g>.dependencies` or `tool.poetry.dev-dependencies` exists as an own object with at least one entry (the `python` key alone does not count); a PEP table counts when `project.dependencies` is a non-empty array, `project.optional-dependencies` or `dependency-groups` is a non-empty object; own-property reads only (`Object.hasOwn`); null for invalid TOML, for text longer than `MAX_MANIFEST_LENGTH`, and for no table. Export it from `core/index.ts`. Update `tests/core/public-api.test.ts` if it lists the exports. Run `npm run check:core`.
     - Create `tests/core/parsers/pyproject-tool.test.ts`: `tests/fixtures/sample-pyproject.toml` (`psf/requests` layout) gives `pep621`, `tests/fixtures/sample-poetry-pyproject.toml` gives `poetry`, a file with both table kinds gives `mixed`, `[tool.ruff]` only and an empty string give null, a Poetry file whose `[project]` has only `name` gives `poetry`, invalid TOML and a 1 MB string give null without throwing, `__proto__` and `constructor` keys do not count as tables.
     - _Requirements: 5.1, 5.2, 5.3_
-  - [~] 3.2 Carry the tool into the manifest entries and the validator
+  - [x] 3.2 Carry the tool into the manifest entries and the validator
     - In `pipeline/scan/types.ts` add `readonly pyprojectTool?: 'poetry' | 'pep621' | 'mixed'` to `ScanManifestEntry`. In `pipeline/scan/stage-manifests.ts` (near line 194, where `parseManifest` is called) call `detectPyprojectTool(fetched.body)` when the format is `pyproject.toml` and keep a non-null result on the assembly manifest; in `pipeline/scan/assemble-result.ts` copy it into the manifest entry (line 249) with the key omitted when absent, so that every other manifest entry stays unchanged. In `pipeline/scan/scan-cache.ts` accept `pyprojectTool` that is `undefined` or one of the three values and reject any other value. Create `tests/pipeline/scan/pyproject-tool-plumbing.test.ts`: a scripted scan with a Poetry `pyproject.toml`, a PEP 621 one, a `requirements.txt` and a `package.json` gives `pyprojectTool` on the first two entries only; the validator accepts a result without the field and rejects `pyprojectTool: 'uv'` (Requirements 5.5, 5.6). Update the manifest-stage tests that deep-equal a manifest entry for a `pyproject.toml`.
     - _Requirements: 5.4, 5.5, 5.6_
-  - [~] 3.3 Write the property test for the stored result
+  - [x] 3.3 Write the property test for the stored result
     - `tests/pipeline/scan/scan-cache-hints.property.test.ts`: generated `ScanResult` values (small generated dependency lists with generated hints, `hints` absent or present, manifests with and without `pyprojectTool`), built from a valid minimal result by a generator in the test file, and mutations that replace one hint or one tool by a malformed value.
     - **Property 12: Scan results with hints survive JSON and the validator (RS-P12)**
     - **Validates: Requirements 4.5, 4.6, 5.5**
@@ -91,27 +91,27 @@ Rules for every task:
     - Stage by name the files of group 3 and commit with the subject `resurrect: pyproject tool detection, stored-result round trip (group 3)`. Push. Record the hash.
     - _Requirements: 16.6_
 
-- [ ] 5. Curated data, names, loader and live contract test
-  - [~] 5.1 Add the view-model constants and the name rules
+- [x] 5. Curated data, names, loader and live contract test
+  - [x] 5.1 Add the view-model constants and the name rules
     - In `view-model/constants.ts` add `COPY_STATUS_RESET_MS` (3000), `CURATED_MAX_ALTERNATIVES` (4) and `CURATED_WHY_MAX_LENGTH` (200). Create `view-model/resurrect-names.ts` with `isValidName`, `isCommandSafe` and `normalizeName` exactly as the design table states (npm, pypi and cargo patterns; linear, no nested quantifiers; total for non-strings). Create `tests/ui/view-model/resurrect-names.test.ts`: tables of accepted and rejected names for each function and ecosystem (`@scope/pkg`, `~tilde`, `-rf`, `a b`, `a;b`, `$(x)`, an empty string, a 215-character npm name, `Requests` and `requests_toolkit` for pypi, `serde_json` and `1abc` for cargo), and `normalizeName` examples (`Foo__Bar.baz` gives `foo-bar-baz` for pypi; `Serde_JSON` gives `serde-json` for cargo; npm unchanged).
     - _Requirements: 7.2, 10.10_
-  - [~] 5.2 Write the candidate curated file
+  - [x] 5.2 Write the candidate curated file
     - Create `data/resurrections.json` (the folder `data/` does not exist yet) with the shape `{"entries": [...]}` and the 44 candidates of the design table "Curated candidates", sorted by ecosystem (`npm`, `pypi`, `cargo`) then `from` in code point order, each with `to`, a one-sentence `why` of at most 200 characters ending with a period that states only what the expected source says (for example "The maintainers of request deprecated it and list alternatives."), and the expected source URL as an https URL. Use the exact registry names of the design (PyPI names in normalized form, for example `beautifulsoup`, `pil`, `mysql-python`). The file is a candidate list; task 6.1 removes the entries that fail. Write no entry for `uuid`.
     - _Requirements: 6.1, 6.5, 6.6, 6.7, 6.8, 6.9_
-  - [~] 5.3 Implement the loader and the data test
+  - [x] 5.3 Implement the loader and the data test
     - Create `view-model/resurrections.ts` with `loadCurated(raw: unknown)` (validates schema, `why` rules, https and no credentials, 1 to `CURATED_MAX_ALTERNATIVES` distinct `to` names that pass `isValidName`, `from` that passes `isValidName`, drops failures, drops later duplicates of a normalized `from`; total) and `lookupCurated(ecosystem, name)` over the module-level list built from `data/resurrections.json`, with the normalized-key `Map` of the design. Cite Requirements 7.4, 7.6.
     - Create `tests/ui/view-model/resurrections.test.ts` (loader behavior with hostile raw values: non-object, entries not an array, entry with extra key, `http:` source, `javascript:` source, URL with credentials, `to` of five names, `to` with a duplicate, invalid names, `why` with a URL; each dropped, the valid entries kept, never throws) and `tests/ui/view-model/resurrections-data.test.ts` over the real file: schema of every entry (Requirement 7.1), no `to` that is a `from` of the same ecosystem, no `to` equal to its own `from` after normalization, every `source` an `https` URL, every name valid, sorted order, no duplicate normalized `from`, `why` one sentence of at most 200 characters, at least 8 entries per ecosystem, no entry with `from` `uuid`, and the loaded list has the same length as the file (nothing dropped silently).
     - _Requirements: 6.2, 6.5, 6.6, 6.7, 6.8, 6.9, 7.1, 7.3, 7.4, 7.6_
-  - [~] 5.4 Write the property test for the lookup
+  - [x] 5.4 Write the property test for the lookup
     - `tests/ui/view-model/resurrections.property.test.ts`: generated curated lists (valid entries) and generated spelling variants of each `from` (PyPI: case changes and runs of `-`, `_`, `.`; crates: case changes and `-` versus `_`; npm: exact), plus generated names that are not a `from`.
     - **Property 10: Curated lookup is invariant under equivalent spellings (RS-P10)**
     - **Validates: Requirements 7.4, 7.5**
-  - [~] 5.5 Write the live contract test
+  - [x] 5.5 Write the live contract test
     - Create `tests/live/resurrections.live.test.ts` in the style of the other `tests/live/*.live.test.ts` files and `tests/live/live-support.ts` (gating by `GRAVEKEEPER_LIVE_TESTS`, one skipped case without it, no request without it): for each `to` name of the real `data/resurrections.json`, the checks of Requirements 8.2 to 8.4 (npm: 200, `dist-tags.latest`, latest version document without `deprecated`, GitHub repository not archived when the `repository` field is a GitHub URL; PyPI: 200, `info.yanked` false, no `Development Status :: 7 - Inactive`, Simple JSON `project-status.status` `active` when present; crates.io: 200, newest non-yanked version, no non-withdrawn OSV `unmaintained` advisory, GitHub repository not archived when known; send a User-Agent that names the project to crates.io). The GitHub archived check uses `process.env.GITHUB_TOKEN` when set and is skipped with a note when it is not. Concurrency of at most 4 requests; each failure message names the registry, the package and the failed check, never a header. Update `tests/live/live-gating.test.ts` only if it enumerates the live files.
     - _Requirements: 8.2, 8.3, 8.4, 8.5, 8.6_
 
 - [ ] 6. Source check and live verification of the curated list
-  - [~] 6.1 Check every source URL (orchestrator-only)
+  - [-] 6.1 Check every source URL (orchestrator-only)
     - For each entry of `data/resurrections.json` fetch the `source` URL with the fetch tool (`web_fetch`; a GitHub URL may use `gh` instead). Keep an entry only when the page text names every `to` package it lists, or states the deprecation or unmaintained status and names the successor; remove a `to` name that the page does not name and keep the entry when at least one `to` name remains that the page states. When a better page is found for a good candidate, replace the source URL with it and say so. Drop an entry when the page is unreachable, states nothing about the replacement, or contradicts the entry. Keep at least 8 entries per ecosystem after dropping (add well-known entries with a verified source if needed, sorted in place). Create `docs/resurrect-report.md` with the heading `# Resurrect report`, one line of the check date and the section `## Curated list` with a table of kept entries (ecosystem, from, to, source), a table `### Dropped candidates` (ecosystem, from, reason, URL tried) and a line that says `har-validator` was kept or dropped and why. Rewrite `why` sentences only to match what the page says. Edit no file other than `data/resurrections.json` and `docs/resurrect-report.md`. Run `npx vitest --run tests/ui/view-model/resurrections-data.test.ts` afterwards.
     - _Requirements: 6.2, 6.3, 6.4, 8.1_
   - [~] 6.2 Run the live contract test and drop failing targets (orchestrator-only)

@@ -191,6 +191,11 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282679683
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282938239
       }
     ],
     "3.1 Implement the detector in Core": [
@@ -198,6 +203,16 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282203414
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282945158
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283074404
       }
     ],
     "3.2 Carry the tool into the manifest entries and the validator": [
@@ -205,6 +220,16 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282203446
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283080669
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283215714
       }
     ],
     "3.3 Write the property test for the stored result": [
@@ -212,6 +237,16 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282203474
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283220587
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283304589
       }
     ],
     "4.1 Commit and push the detection group (orchestrator-only)": [
@@ -226,6 +261,16 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282203536
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282945599
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283075892
       }
     ],
     "5.2 Write the candidate curated file": [
@@ -233,6 +278,16 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282203567
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282946300
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283076060
       }
     ],
     "5.3 Implement the loader and the data test": [
@@ -240,6 +295,16 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282203595
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283082178
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283215937
       }
     ],
     "5.4 Write the property test for the lookup": [
@@ -247,6 +312,16 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282203625
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283221588
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283305252
       }
     ],
     "5.5 Write the live contract test": [
@@ -254,6 +329,16 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282203655
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283082332
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283214227
       }
     ],
     "6.1 Check every source URL (orchestrator-only)": [
@@ -261,6 +346,11 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282203682
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283222295
       }
     ],
     "6.2 Run the live contract test and drop failing targets (orchestrator-only)": [
@@ -518,6 +608,27 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282914841
+      }
+    ],
+    "2. Checkpoint - Pipeline hints": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282938278
+      }
+    ],
+    "3. Pyproject tool detection": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283304641
+      }
+    ],
+    "5. Curated data, names, loader and live contract test": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283305291
       }
     ]
   }

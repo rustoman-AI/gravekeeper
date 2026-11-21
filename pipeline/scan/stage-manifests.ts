@@ -1,6 +1,6 @@
 // Requirement 4.6, 4.8, 5.1, 5.2, 5.3, 5.4, 5.5, 5.7, 5.8, 5.9, 5.10, 5.11, 5.12
 // S2 selection and S3 manifest fetch and parse. Relative `core` import: Vitest has no `@/` alias at runtime.
-import { CONSTANTS, parseManifest } from '../../core';
+import { CONSTANTS, detectPyprojectTool, parseManifest } from '../../core';
 import { err, ok } from '../internal/result';
 import type { Result } from '../internal/result';
 import { compareCodePoints } from '../mapping/compare-code-points';
@@ -192,11 +192,14 @@ export async function runManifestStage(
     }
     try {
       const parsed = parseManifest(fetched.body, format as AssemblyManifest['format']);
+      // resurrect R5.4: detect the tool of a pyproject.toml; keep a non-null result only.
+      const tool = format === 'pyproject.toml' ? detectPyprojectTool(fetched.body) : null;
       manifests.push({
         path,
         format: format as AssemblyManifest['format'],
         warnings: parsed.warnings,
         dependencies: parsed.dependencies,
+        ...(tool !== null ? { pyprojectTool: tool } : {}),
       });
     } catch {
       notes.push(manifestFetchFailedNote(path));

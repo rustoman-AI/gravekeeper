@@ -7,5 +7,6 @@ export {
   compareClassifications,
 } from './summarizer';
 export { parseManifest } from './parsers';
+export { detectPyprojectTool } from './parsers/pyproject-tool';
 export { serializeManifest } from './serializers';
 export type { Result, SerializeError } from './internal/result';

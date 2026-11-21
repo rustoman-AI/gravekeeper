@@ -56,6 +56,7 @@ const EXPECTED_RUNTIME_EXPORTS: string[] = [
   'WORST_LIST_SIZE',
   'classify',
   'compareClassifications',
+  'detectPyprojectTool',
   'mergeClassifications',
   'parseManifest',
   'serializeManifest',

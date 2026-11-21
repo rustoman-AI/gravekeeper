@@ -46,6 +46,8 @@ export interface AssemblyManifest {
   readonly format: ManifestFormat;
   readonly warnings: readonly string[];
   readonly dependencies: readonly Dependency[];
+  /** resurrect R5.4: set only for a pyproject.toml whose tool was detected. */
+  readonly pyprojectTool?: 'poetry' | 'pep621' | 'mixed';
 }
 
 /**
@@ -252,7 +254,13 @@ export function assembleResult(input: AssembleInput): ScanResult {
     asOf,
     repo,
     discovery: input.discovery,
-    manifests: manifests.map((m) => ({ path: m.path, format: m.format, warnings: m.warnings })),
+    // resurrect R5.4: the key is omitted when absent so other entries stay unchanged.
+    manifests: manifests.map((m) => ({
+      path: m.path,
+      format: m.format,
+      warnings: m.warnings,
+      ...(m.pyprojectTool !== undefined ? { pyprojectTool: m.pyprojectTool } : {}),
+    })),
     dependencies,
     assessed,
     summary: summarize(assessed),

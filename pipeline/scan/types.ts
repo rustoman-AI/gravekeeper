@@ -83,6 +83,8 @@ export interface ScanManifestEntry {
   readonly path: string;
   readonly format: ManifestFormat;
   readonly warnings: readonly string[];
+  /** resurrect R5.4: Poetry or PEP 621 layout of a pyproject.toml; absent for other manifests. */
+  readonly pyprojectTool?: 'poetry' | 'pep621' | 'mixed';
 }
 
 export interface ScanRepo {
