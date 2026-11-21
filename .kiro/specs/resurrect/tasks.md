@@ -85,9 +85,9 @@ Rules for every task:
     - **Property 12: Scan results with hints survive JSON and the validator (RS-P12)**
     - **Validates: Requirements 4.5, 4.6, 5.5**
 
-- [ ] 4. Checkpoint - Pyproject tool detection
+- [x] 4. Checkpoint - Pyproject tool detection
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 4.1 Commit and push the detection group (orchestrator-only)
+  - [x] 4.1 Commit and push the detection group (orchestrator-only)
     - Stage by name the files of group 3 and commit with the subject `resurrect: pyproject tool detection, stored-result round trip (group 3)`. Push. Record the hash.
     - _Requirements: 16.6_
 
@@ -110,11 +110,11 @@ Rules for every task:
     - Create `tests/live/resurrections.live.test.ts` in the style of the other `tests/live/*.live.test.ts` files and `tests/live/live-support.ts` (gating by `GRAVEKEEPER_LIVE_TESTS`, one skipped case without it, no request without it): for each `to` name of the real `data/resurrections.json`, the checks of Requirements 8.2 to 8.4 (npm: 200, `dist-tags.latest`, latest version document without `deprecated`, GitHub repository not archived when the `repository` field is a GitHub URL; PyPI: 200, `info.yanked` false, no `Development Status :: 7 - Inactive`, Simple JSON `project-status.status` `active` when present; crates.io: 200, newest non-yanked version, no non-withdrawn OSV `unmaintained` advisory, GitHub repository not archived when known; send a User-Agent that names the project to crates.io). The GitHub archived check uses `process.env.GITHUB_TOKEN` when set and is skipped with a note when it is not. Concurrency of at most 4 requests; each failure message names the registry, the package and the failed check, never a header. Update `tests/live/live-gating.test.ts` only if it enumerates the live files.
     - _Requirements: 8.2, 8.3, 8.4, 8.5, 8.6_
 
-- [ ] 6. Source check and live verification of the curated list
-  - [-] 6.1 Check every source URL (orchestrator-only)
+- [x] 6. Source check and live verification of the curated list
+  - [x] 6.1 Check every source URL (orchestrator-only)
     - For each entry of `data/resurrections.json` fetch the `source` URL with the fetch tool (`web_fetch`; a GitHub URL may use `gh` instead). Keep an entry only when the page text names every `to` package it lists, or states the deprecation or unmaintained status and names the successor; remove a `to` name that the page does not name and keep the entry when at least one `to` name remains that the page states. When a better page is found for a good candidate, replace the source URL with it and say so. Drop an entry when the page is unreachable, states nothing about the replacement, or contradicts the entry. Keep at least 8 entries per ecosystem after dropping (add well-known entries with a verified source if needed, sorted in place). Create `docs/resurrect-report.md` with the heading `# Resurrect report`, one line of the check date and the section `## Curated list` with a table of kept entries (ecosystem, from, to, source), a table `### Dropped candidates` (ecosystem, from, reason, URL tried) and a line that says `har-validator` was kept or dropped and why. Rewrite `why` sentences only to match what the page says. Edit no file other than `data/resurrections.json` and `docs/resurrect-report.md`. Run `npx vitest --run tests/ui/view-model/resurrections-data.test.ts` afterwards.
     - _Requirements: 6.2, 6.3, 6.4, 8.1_
-  - [~] 6.2 Run the live contract test and drop failing targets (orchestrator-only)
+  - [x] 6.2 Run the live contract test and drop failing targets (orchestrator-only)
     - Run `$env:GRAVEKEEPER_LIVE_TESTS = '1'; $env:GITHUB_TOKEN = (gh auth token); npx vitest --run tests/live/resurrections.live.test.ts` in one command (the token is never printed). For each failing `to` name remove it from its entry in `data/resurrections.json` (remove the entry when none remains) and rerun until the test passes; a failure caused by rate limiting or network is waited out and repeated, not treated as a failed target. Append to the `## Curated list` section of `docs/resurrect-report.md` a table `### Removed by the live contract test` (ecosystem, from, to name, failed check) or the sentence "No target failed the contract test". Run the data test of task 5.3 and the loader tests afterwards.
     - _Requirements: 8.2, 8.3, 8.4, 8.7_
 

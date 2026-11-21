@@ -254,6 +254,11 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282203506
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283367457
       }
     ],
     "5.1 Add the view-model constants and the name rules": [
@@ -351,6 +356,11 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795283222295
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283641608
       }
     ],
     "6.2 Run the live contract test and drop failing targets (orchestrator-only)": [
@@ -358,6 +368,16 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282203713
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283641822
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283685584
       }
     ],
     "7.1 Commit and push the curated-data group (orchestrator-only)": [
@@ -629,6 +649,20 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795283305291
+      }
+    ],
+    "4. Checkpoint - Pyproject tool detection": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283367500
+      }
+    ],
+    "6. Source check and live verification of the curated list": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795283685640
       }
     ]
   }

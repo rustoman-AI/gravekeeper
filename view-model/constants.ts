@@ -117,3 +117,9 @@ export const DAYS_PER_YEAR_TEXT = 365;
 export const SCAN_STONE_COUNT = 4;
 // graveyard-art Requirement 10.1: x position of each stone in the scanning scene viewBox.
 export const SCAN_STONE_X = [50, 150, 250, 350] as const;
+// resurrect Requirement 10.10: milliseconds until the Copy_Status text returns to empty.
+export const COPY_STATUS_RESET_MS = 3000;
+// resurrect Requirement 7.2: most Alternatives a Curated_Entry may list.
+export const CURATED_MAX_ALTERNATIVES = 4;
+// resurrect Requirement 7.2: longest allowed `why` sentence of a Curated_Entry, in characters.
+export const CURATED_WHY_MAX_LENGTH = 200;
