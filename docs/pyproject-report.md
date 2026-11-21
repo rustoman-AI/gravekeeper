@@ -178,3 +178,18 @@ Files with several tests (P1 has 3, P2 has 2, P4 has 5, P5 has 2, P6 has 3, P7 h
 - **PY-P10** found a second zero-padding defect, in the `~=` path: `~=2.0.0.0` vs `["2.0"]`, seed 1855169442, path `263:6:9`. `resolveRange` returned `unresolved` where the Poetry_Reference expects `2.0`. It was fixed in task 4.12 (criterion 10.10) in a separate commit, b7ebbaf: `pepSatisfies` now zero-pads the candidate for every PEP 440 clause.
 - **PY-P2** first failed on the empty list (`[[]]`, seed -792885459) because the test was too strict. The parser correctly warns when there are no tables. The test was corrected.
 - **PY-P8** filters out blank and comment-only lines, which the requirements.txt grammar ignores.
+
+## Commits and CI
+
+The post-Milestone 3 fixes commit 3bd0e3d preceded this spec, and its CI passed.
+
+| hash | subject | CI |
+| --- | --- | --- |
+| 6da90db | spec: pyproject (requirements, design, tasks) | success |
+| 61981af | pyproject: core parser, Poetry translator and properties (groups 1-2) | no own run (pushed with 7115d2f, which passed) |
+| 7115d2f | pyproject: discovery, cache key 3, pypi * rule, PEP 440 prefix padding, scan test (groups 4-5, 7.1-7.2, 10.1) | success |
+| 7b1f424 | pyproject: psf/requests fixture set, export, e2e test, traceability doc; canopy stays featured (groups 7, 9, 10.2) | success |
+| 7def432 | pyproject: final checkpoint green (task 11) | success |
+| b7ebbaf | fix(pep440): zero-pad candidates for every clause (PY-P10 counterexample ~=2.0.0.0 vs 2.0; task 4.12, R10.10) | success |
+| 61e5310 | pyproject: live report | success |
+| (this commit) | pyproject: report commits and CI status | pending |
