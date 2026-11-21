@@ -195,29 +195,29 @@ Rules for every task:
     - In `components/resurrect-slot.tsx` render `model.upgrade` between the urgent sentence and the hints: a `div.gk-resurrect-upgrade` with the label paragraph (`gk-resurrect-label`), the title paragraph, the sentence (`gk-resurrect-text`), and for each block the same markup as an Alternative block (heading, lead, `pre`, note, Copy_Button). Change the copy handler to use `block.copyName` for the Copy_Status text ("Copied the commands for <copyName>"). No new request, no animation, no new color. Update `tests/ui/components/resurrect-slot.test.tsx` and `tests/ui/components/detail-panel.test.tsx` only where they build a `ResurrectModel` or `ResurrectBlock` (`upgrade: null`, `copyName`), and add cases to the slot test: the Upgrade_Section shows the label, the title, the sentence and the command; the Copy_Button has the accessible name "Copy commands to upgrade <name>"; copying writes the lines and sets the status "Copied the commands for <name>"; an Upgrade_Section without blocks shows no Copy_Button; no `fetch` call happens.
     - _Requirements: 6.1, 6.2, 6.14, 6.16_
 
-- [ ] 14. Checkpoint - Component
+- [x] 14. Checkpoint - Component
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 14.1 Commit and push the view-model and component groups (orchestrator-only)
+  - [x] 14.1 Commit and push the view-model and component groups (orchestrator-only)
     - Stage by name the files of groups 11 and 13 and commit with the subject `resurrect-upgrade: upgrade section, commands, narrowing (groups 11, 13)`. Push. Record the hash.
     - _Requirements: 9.10_
 
-- [ ] 15. End-to-end, report spec and traceability
-  - [-] 15.1 Update the end-to-end spec
+- [x] 15. End-to-end, report spec and traceability
+  - [x] 15.1 Update the end-to-end spec
     - In `tests/e2e/resurrect.spec.ts` change the `uuid` case (restless: the urgent sentence first, then the Upgrade_Section with the label "From the registry" and the title "Upgrade to <version>", then the hint from the version document; no fallback paragraph) and add `rimraf` (hint, Upgrade_Section, npm command) and keep `har-validator` (hint, no Upgrade_Section, no fallback conflict); copy test for the upgrade command with `context.grantPermissions(['clipboard-read', 'clipboard-write'])` on the desktop project (clipboard text equals the displayed lines, Copy_Status text appears); axe on each opened panel with `AXE_TAGS`. Read expected versions from the loaded scan body in the test, never hard-code them.
     - _Requirements: 6.14, 9.5_
-  - [~] 15.2 Update the report spec
+  - [x] 15.2 Update the report spec
     - In `tests/e2e/resurrect-report.spec.ts` add `rimraf` to the packages whose slot text is written to `test-results/resurrect-slot-text.json`, keep the three screenshots (same file names, same packages, 1440x900) so that the `uuid` screenshot shows the Upgrade_Section in the frame, update the note of the synthetic `request` row, and write the Upgrade_Section text (title and command) per package into the output. Keep the `RS_REPORT=1` and `desktop` gating.
     - _Requirements: 9.6, 9.7_
-  - [~] 15.3 Write the traceability test
+  - [x] 15.3 Write the traceability test
     - Create `tests/ui/ru-traceability.test.ts` in the pattern of `tests/ui/rs-traceability.test.ts` (tag regex `Feature:\s*resurrect-upgrade,\s*Property\s+RU-P(\d+)`, property count 8, three tests titled `RU-trace ...`): each number 1 to 8 appears in exactly one tag, every tagged file has a `// Validates:` line, every test title of a tagged file starts with its `RU-P` number.
     - _Requirements: 9.4_
-  - [~] 15.4 Update the traceability document
+  - [x] 15.4 Update the traceability document
     - In `docs/property-traceability.md` add a section `## resurrect-upgrade (RU-P1 to RU-P8)` with one row per property (requirements, test file, test titles, status from a full `npx vitest --run`), update the header sentence (spec list and the test and file counts) and add `### resurrect-upgrade (0 of 8)` to "Properties without a test" with the sentence that all eight properties have a passing test (or list those without one). Add a note that RU-P1 to RU-P6 and RU-P8 run on pure values without a DOM.
     - _Requirements: 9.4_
 
 - [ ] 16. Final checkpoint - All checks and end-to-end
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 16.1 Run the end-to-end suite and the bundle check
+  - [x] 16.1 Run the end-to-end suite and the bundle check
     - Run `npm run test:e2e` after the full vitest run is green, and `npm run build` followed by `npm run check:bundle` (the budget script reads the build output; if it needs no build in this repository, run it alone). Fix only failures caused by this spec without any change of art, palette or header layout, and without lowering an assertion or a budget. Record the client JavaScript numbers (bytes against budget) for the report.
     - _Requirements: 6.16, 9.5, 9.9_
   - [~] 16.2 Commit and push the end-to-end group (orchestrator-only)

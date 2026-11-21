@@ -1,6 +1,6 @@
 # Property traceability
 
-Maps every design property of the `scan-pipeline`, `dependency-graveyard-core`, `scan-accuracy`, `graveyard-ui`, `graveyard-art`, `pyproject` and `resurrect` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 3807 passed and 82 skipped, 332 test files passed and 7 skipped (339 files, 3889 tests), with no failure. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
+Maps every design property of the `scan-pipeline`, `dependency-graveyard-core`, `scan-accuracy`, `graveyard-ui`, `graveyard-art`, `pyproject`, `resurrect` and `resurrect-upgrade` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 3977 passed and 119 skipped, 356 test files passed and 7 skipped (363 files, 4096 tests), with no failure. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
 
 ## scan-pipeline
 
@@ -253,6 +253,22 @@ RS-P4 and RS-P7 run on view-model values without a DOM.
 
 RS-P3 found a defect during development: curated names injected into the model were not re-validated in `suggestionOf`. Counterexamples: `to: [""]` (seed -726162033) and `to: ["a b"]` (seed -1346668248). The fix is in `view-model/resurrect.ts`.
 
+## resurrect-upgrade (RU-P1 to RU-P8)
+
+Tags read `// Feature: resurrect-upgrade, Property RU-P<n>`. Test titles start with `RU-P<n>`. Status is from the full `npx vitest --run` above; every file listed passed.
+
+| Property | Requirement(s) | Test file | Test title | Status |
+| --- | --- | --- | --- | --- |
+| RU-P1 | 1.1, 1.2, 1.3, 1.4 | `tests/pipeline/mapping/version-doc-plan.property.test.ts` | RU-P1: needsVersionDocument equals the oracle, never throws, and ignores the order of versions[]<br>RU-P1: the hand-written strict npm oracle agrees with isStrictVersion | passing |
+| RU-P2 | 2.1, 2.2, 2.4, 2.5 | `tests/pipeline/mapping/hints-combine.property.test.ts` | RU-P2 never throws and returns at most one deprecation-notice with no source URL<br>RU-P2 returns the version body notice when its normalized text is non-null<br>RU-P2 otherwise returns exactly what npmDeprecationHint gives for the /latest body | passing |
+| RU-P3 | 4.1, 4.2, 4.3, 4.4, 4.6 | `tests/pipeline/mapping/upgrade.property.test.ts` | RU-P3: offered iff deprecated checked version, listed healthy default, strictly higher, npm /latest not deprecating it | passing |
+| RU-P4 | 5.5, 6.3, 6.4, 6.5, 6.6, 6.8, 6.10, 6.11, 6.15 | `tests/ui/view-model/resurrect-upgrade-commands.property.test.ts` | RU-P4: isStrictVersion accepts only letters, digits, dot and hyphen<br>RU-P4: every line follows the fixed token grammar, copyText equals the lines, unsafe input gives no block | passing |
+| RU-P5 | 5.6, 5.7 | `tests/ui/view-model/narrow-upgrade.property.test.ts` | RU-P5 never throws, keeps only exact valid records different from the lookupVersion, and is idempotent<br>RU-P5 never throws on arbitrary ecosystem and lookupVersion values<br>RU-P5 accepts a well-formed upgrade whose version is strict and differs from the lookupVersion | passing |
+| RU-P6 | 6.2, 6.11, 6.12 | `tests/ui/view-model/resurrect-upgrade-order.property.test.ts` | RU-P6 sections are a subsequence of urgent, upgrade, hints, suggestions, fallback, urgent only for restless rows<br>RU-P6 the upgrade is present iff the row carries an upgrade with a strict version<br>RU-P6 the fallback is present iff there is no upgrade, no hint and no suggestion | passing |
+| RU-P7 | 5.2, 5.3, 5.8 | `tests/pipeline/scan/scan-cache-upgrade.property.test.ts` | RU-P7 accepts a generated result, before and after a JSON round trip<br>RU-P7 rejects a result with one upgrade replaced by a malformed value | passing |
+| RU-P8 | 7.1, 7.2, 7.3, 7.6, 7.7 | `tests/ui/view-model/resurrections-evidence.property.test.ts` | RU-P8 keeps exactly the valid six-key entries, and the model links only the source, never a different evidence | passing |
+
+RU-P1 to RU-P6 and RU-P8 run on pure values without a DOM.
 ## Properties without a test
 
 ### scan-pipeline (0 of 76)
@@ -278,6 +294,10 @@ None. All 10 properties (PY-P1 to PY-P10) have at least one passing test.
 ### resurrect (0 of 12)
 
 None. All 12 properties (RS-P1 to RS-P12) have at least one passing test.
+
+### resurrect-upgrade (0 of 8)
+
+None. All 8 properties (RU-P1 to RU-P8) have at least one passing test.
 
 ## Tag and number mismatches
 

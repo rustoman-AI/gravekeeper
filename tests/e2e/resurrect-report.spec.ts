@@ -33,6 +33,8 @@ type SlotEntry = {
   source: "request fixture" | "synthetic body";
   synthetic: boolean;
   innerText: string;
+  /** Title and command lines of the Upgrade_Section; null when the slot has none. */
+  upgrade: { title: string; commands: string } | null;
   screenshot: string | null;
   axe: Axe;
 };
@@ -159,19 +161,35 @@ test("Resurrect report screenshots, slot text and axe counts", async ({ page }) 
       const slot = await openPanel(page, pkg);
       const geometry = await scrollSlotIntoView(slot);
       expect(geometry.scrolled, `${pkg}: a scroll container exists`).toBe(true);
-      expect(geometry.fits, `${pkg}: slot fully visible ${JSON.stringify(geometry)}`).toBe(true);
+      if (geometry.slotBottom - geometry.slotTop <= geometry.boxBottom - geometry.boxTop) {
+        expect(geometry.fits, `${pkg}: slot fully visible ${JSON.stringify(geometry)}`).toBe(true);
+      } else {
+        // Taller than the viewport: the slot's top (heading and Upgrade_Section) must be in the frame.
+        expect(geometry.slotTop >= geometry.boxTop - 0.5, `${pkg}: slot top visible ${JSON.stringify(geometry)}`).toBe(true);
+        expect(geometry.slotTop < geometry.boxBottom, `${pkg}: slot top inside frame ${JSON.stringify(geometry)}`).toBe(true);
+        console.log(`${pkg}: slot is taller than the viewport; scrolled to its top ${JSON.stringify(geometry)}`);
+      }
       await page.evaluate(() => document.fonts.ready.then(() => undefined));
       if (file !== null) {
         await page.mouse.move(0, 0);
         await page.screenshot({ path: path.join(SHOT_DIR, file), animations: "disabled", caret: "hide" });
       }
       const innerText = await slot.innerText();
+      const section = slot.locator(".gk-resurrect-upgrade");
+      const upgrade =
+        (await section.count()) === 0
+          ? null
+          : {
+              title: (await section.locator(".gk-resurrect-name").first().innerText()).trim(),
+              commands: (await section.locator("pre").allInnerTexts()).join("\n"),
+            };
       const axe = await measure(page);
       entries.push({
         package: pkg,
         source,
         synthetic: source === "synthetic body",
         innerText,
+        upgrade,
         screenshot: file === null ? null : `docs/screenshots/resurrect/${file}`,
         axe,
       });
@@ -184,6 +202,7 @@ test("Resurrect report screenshots, slot text and axe counts", async ({ page }) 
     await visit(loadScan("request"), "request fixture", [
       ...shots,
       ["phantomjs-prebuilt", null],
+      ["rimraf", null],
     ]);
     await visit(syntheticBody(), "synthetic body", [["request", null]]);
   } finally {
@@ -192,7 +211,7 @@ test("Resurrect report screenshots, slot text and axe counts", async ({ page }) 
       OUTPUT,
       `${JSON.stringify(
         {
-          note: "The entry with synthetic=true comes from a synthetic body (a buried 'request' npm row added to the request fixture, mocked); the row is synthetic, but its hint text is the real npm deprecation notice of request@2.88.2, fetched from https://registry.npmjs.org/request/latest on 2026-11-21.",
+          note: "The entry with synthetic=true comes from a synthetic body (a buried 'request' npm row added to the request fixture, mocked); the row is synthetic and carries no upgrade (so no Upgrade_Section), but its hint text is the real npm deprecation notice of request@2.88.2, fetched from https://registry.npmjs.org/request/latest on 2026-11-21. Every other entry comes from the recorded request fixture, including its upgrade facts.",
           slots: entries,
           axeViolationTotal: entries.reduce((n, e) => n + e.axe.violationCount, 0),
         },

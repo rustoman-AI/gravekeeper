@@ -38,6 +38,21 @@ function hintsOf(fixture: FixtureName, name: string): FixtureHint[] {
   return dep.hints ?? [];
 }
 
+type UpgradeFact = { version: string; lines: string[] };
+
+/** The upgrade version comes from the loaded scan body; the npm command follows the scope flag grammar. */
+function upgradeOf(name: string): UpgradeFact {
+  const body = loadScan("request");
+  const deps = body["dependencies"] as Array<{
+    dependency: { name: string; scope: string };
+    upgrade?: { version: string };
+  }>;
+  const dep = deps.find((d) => d.dependency.name === name);
+  if (dep?.upgrade === undefined) throw new Error(`${name} has no upgrade in the request fixture`);
+  const flags: Record<string, string> = { dev: " --save-dev", optional: " --save-optional", peer: " --save-peer" };
+  const flag = flags[dep.dependency.scope] ?? "";
+  return { version: dep.upgrade.version, lines: [`npm install${flag} ${name}@${dep.upgrade.version}`] };
+}
 async function openScan(page: Page, fixture: FixtureName, repo: string): Promise<void> {
   await mockScan(page, respondWithFixture(fixture));
   await page.goto("/");
@@ -72,7 +87,8 @@ test.describe("resurrect slot (request fixture)", () => {
     expect(hints).toHaveLength(1);
     expect(hints[0]!.text).toContain("this library is no longer supported");
     await expect(slot.getByText("From the package's deprecation notice", { exact: true })).toBeVisible();
-    await expect(slot.locator(".gk-resurrect-text").first()).toHaveText(hints[0]!.text);
+    await expect(slot.locator(".gk-resurrect-hint .gk-resurrect-text")).toHaveText(hints[0]!.text);
+    await expect(slot.locator(".gk-resurrect-upgrade")).toHaveCount(0);
     // The slot has a hint, so no fallback paragraph shows.
     await expect(slot.locator(".gk-resurrect-fallback")).toHaveCount(0);
     const entry = curatedFor("npm", "har-validator");
@@ -102,8 +118,8 @@ test.describe("resurrect slot (request fixture)", () => {
     await expectNoA11yViolations(page, "resurrect-aws-sign2", test.info().project.name);
   });
 
-  // resurrect-upgrade R2.1: the checked version's notice replaces the fallback
-  test("uuid: restless shows the urgent sentence first, then the checked version's deprecation notice", async ({ page }) => {
+  // resurrect-upgrade R6.1, R6.14: urgent sentence, then the Upgrade_Section, then the hint; no fallback
+  test("uuid: restless shows the urgent sentence, the Upgrade_Section, then the version's deprecation notice", async ({ page }) => {
     const dialog = await openPackage(page, "uuid");
     const slot = slotOf(dialog);
     await expect(slot).toBeVisible();
@@ -112,22 +128,64 @@ test.describe("resurrect slot (request fixture)", () => {
     const hints = hintsOf("request", "uuid");
     expect(hints).toHaveLength(1);
     expect(curatedFor("npm", "uuid")).toBeUndefined();
+    const { version, lines } = upgradeOf("uuid");
+    const section = slot.locator(".gk-resurrect-upgrade");
+    await expect(section).toHaveCount(1);
+    await expect(section.getByText("From the registry", { exact: true })).toBeVisible();
+    await expect(section.locator(".gk-resurrect-name")).toHaveText(`Upgrade to ${version}`);
+    await expect(section.locator("pre")).toHaveText(lines.join("\n"));
     const label = slot.getByText("From the package's deprecation notice", { exact: true });
     await expect(label).toBeVisible();
-    const text = slot.locator(".gk-resurrect-text").first();
+    const text = slot.locator(".gk-resurrect-hint .gk-resurrect-text");
     await expect(text).toHaveText(hints[0]!.text);
     await expect(text.locator("a")).toHaveCount(0);
     await expect(slot.locator(".gk-resurrect-fallback")).toHaveCount(0);
     const u = await urgent.boundingBox();
+    const g = await section.boundingBox();
     const l = await label.boundingBox();
     expect(u).not.toBeNull();
+    expect(g).not.toBeNull();
     expect(l).not.toBeNull();
-    expect(u!.y).toBeLessThan(l!.y);
-    await expect(slot.locator("pre")).toHaveCount(0);
+    expect(u!.y).toBeLessThan(g!.y);
+    expect(g!.y).toBeLessThan(l!.y);
     await expectNoA11yViolations(page, "resurrect-uuid", test.info().project.name);
   });
-});
 
+  test("rimraf: hint, Upgrade_Section and the npm command", async ({ page }) => {
+    const dialog = await openPackage(page, "rimraf");
+    const slot = slotOf(dialog);
+    await expect(slot).toBeVisible();
+    const hints = hintsOf("request", "rimraf");
+    expect(hints).toHaveLength(1);
+    const { version, lines } = upgradeOf("rimraf");
+    const section = slot.locator(".gk-resurrect-upgrade");
+    await expect(section).toHaveCount(1);
+    await expect(section.getByText("From the registry", { exact: true })).toBeVisible();
+    await expect(section.locator(".gk-resurrect-name")).toHaveText(`Upgrade to ${version}`);
+    await expect(section.locator("pre")).toHaveText(lines.join("\n"));
+    expect(lines[0]).toMatch(/^npm install /);
+    await expect(slot.getByRole("button", { name: "Copy commands to upgrade rimraf" })).toBeVisible();
+    await expect(slot.getByText("From the package's deprecation notice", { exact: true })).toBeVisible();
+    await expect(slot.locator(".gk-resurrect-hint .gk-resurrect-text")).toHaveText(hints[0]!.text);
+    await expect(slot.locator(".gk-resurrect-fallback")).toHaveCount(0);
+    await expectNoA11yViolations(page, "resurrect-rimraf", test.info().project.name);
+  });
+
+  test("upgrade copy: the clipboard text equals the displayed lines", async ({ page, context }, info) => {
+    test.skip(info.project.name !== "desktop", "clipboard permissions: desktop project only");
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    const dialog = await openPackage(page, "uuid");
+    const slot = slotOf(dialog);
+    const { lines } = upgradeOf("uuid");
+    await slot.getByRole("button", { name: "Copy commands to upgrade uuid" }).click();
+    await expect(slot.getByRole("status")).toHaveText("Copied the commands for uuid");
+    const shown = (await slot.locator(".gk-resurrect-upgrade pre").textContent()) ?? "";
+    expect(shown.split("\n")).toEqual(lines);
+    // The Windows clipboard returns CRLF line breaks; compare the lines.
+    const clip = await page.evaluate(() => navigator.clipboard.readText());
+    expect(clip.split(/\r?\n/)).toEqual(lines);
+  });
+});
 test.describe("resurrect slot (zoxide fixture)", () => {
   test.beforeEach(async ({ page }) => {
     await openScan(page, "zoxide", "ajeetdsouza/zoxide");
