@@ -710,6 +710,11 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795232178485
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232265613
       }
     ],
     "9.1 Compare and decide": [
@@ -785,6 +790,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230210385
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232269404
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232447518
       }
     ],
     "11.2 Commit and push the traceability group (orchestrator-only)": [
@@ -792,6 +807,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230210431
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232451038
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232455800
       }
     ],
     "12.1 Run the live scan and write the report (orchestrator-only)": [
@@ -907,6 +932,20 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795232177679
+      }
+    ],
+    "8. Checkpoint - Fixture": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232265660
+      }
+    ],
+    "11. Final checkpoint - All checks and end-to-end": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232455842
       }
     ]
   }

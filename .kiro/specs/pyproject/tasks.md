@@ -170,9 +170,9 @@ Rules for every task:
     - In `tests/live/smoke-scan.live.test.ts` add the chosen repository to `REPOS`. The test stays skipped without `GRAVEKEEPER_LIVE_TESTS=1` (`tests/live/live-gating.test.ts` still passes).
     - _Requirements: 12.9_
 
-- [ ] 8. Checkpoint - Fixture
+- [x] 8. Checkpoint - Fixture
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [-] 8.1 Commit and push the fixture group (orchestrator-only)
+  - [x] 8.1 Commit and push the fixture group (orchestrator-only)
     - Stage by name the files of groups 7 and 9 and commit with the subject `pyproject: fixture set, export, e2e test, featured decision (groups 7, 9)`. Push. Record the hash for the report.
     - _Requirements: 15.6_
 
@@ -192,12 +192,12 @@ Rules for every task:
     - In `docs/property-traceability.md` add a section `## pyproject (PY-P1 to PY-P10)` with one row per property (requirements, test file, test title, status from a full `npx vitest --run`), update the header sentence (spec list and the counts of tests and files) and add `### pyproject (0 of 10)` to "Properties without a test", with the sentence that all ten properties have a passing test (or list those without one). Add a line under "Notes" that PY-P8 compares with the requirements.txt parser and that the Pyproject_Writer is test-only.
     - _Requirements: 15.2_
 
-- [ ] 11. Final checkpoint - All checks and end-to-end
+- [x] 11. Final checkpoint - All checks and end-to-end
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Then run `npm run test:e2e` (it exports the fixtures and runs Playwright) and ensure it passes. Ask the user if questions arise.
-  - [~] 11.1 Run the end-to-end suite
+  - [x] 11.1 Run the end-to-end suite
     - Run `npm run test:e2e` after the full vitest run is green. Fix only failures caused by this spec (a changed message, a changed featured list, the new fixture), without any change of art, palette or header layout.
     - _Requirements: 15.3, 15.4, 15.5, 15.6_
-  - [~] 11.2 Commit and push the traceability group (orchestrator-only)
+  - [x] 11.2 Commit and push the traceability group (orchestrator-only)
     - Stage by name the files of group 10 and any fix of task 11.1 and commit with the subject `pyproject: traceability test and document (group 10)`. Push. Record the hash for the report.
     - _Requirements: 15.6_
 
