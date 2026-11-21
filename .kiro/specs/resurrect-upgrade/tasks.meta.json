@@ -1,0 +1,434 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Implement the strict version validator in Core": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288040968
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288051935
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288152212
+      }
+    ],
+    "1.2 Change the pipeline constants and the constants test": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041012
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288052050
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288151808
+      }
+    ],
+    "1.3 Add `getVersion` to the npm port and adapter, and to every stub": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041053
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288052304
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288150308
+      }
+    ],
+    "2.1 Commit and push the foundations group (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041096
+      }
+    ],
+    "3.1 Add the mapping types": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041140
+      }
+    ],
+    "3.2 Implement the version-document plan": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041184
+      }
+    ],
+    "3.3 Write the property test for the plan": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041224
+      }
+    ],
+    "3.4 Implement the hint combiner": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041266
+      }
+    ],
+    "3.5 Write the property test for the combiner": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041321
+      }
+    ],
+    "3.6 Implement the upgrade chooser": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041363
+      }
+    ],
+    "3.7 Write the property test for the chooser": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041413
+      }
+    ],
+    "3.8 Wire hints and upgrade into `assembleFacts`": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041465
+      }
+    ],
+    "4.1 Commit and push the mapping group (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041568
+      }
+    ],
+    "5.1 Start the capped version-document requests in stage S6": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041610
+      }
+    ],
+    "5.2 Wire the stage into `run-scan.ts`": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041655
+      }
+    ],
+    "5.3 Carry the upgrade into the scan dependencies": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041707
+      }
+    ],
+    "5.4 Validate the upgrade in the stored-result validator": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041747
+      }
+    ],
+    "5.5 Write the property test for the stored result": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041790
+      }
+    ],
+    "5.6 Test the request counts of whole scans": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041831
+      }
+    ],
+    "5.7 Split the npm pattern of the request report": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041873
+      }
+    ],
+    "6.1 Commit and push the wiring group (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041916
+      }
+    ],
+    "7.1 Re-record `request/request` (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288041975
+      }
+    ],
+    "7.2 Update and extend the replay tests of the `request/request` set": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042019
+      }
+    ],
+    "7.3 Re-export the e2e fixtures": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042063
+      }
+    ],
+    "8.1 Commit and push the fixtures group (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042102
+      }
+    ],
+    "9.1 Change the loader and its tests": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042144
+      }
+    ],
+    "9.2 Migrate the data file and its data test": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042186
+      }
+    ],
+    "9.3 Extend the live contract test with the evidence checks": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042226
+      }
+    ],
+    "9.4 Run the live contract test and repair the evidence (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042268
+      }
+    ],
+    "9.5 Update the curated tables of `docs/resurrect-report.md`": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042309
+      }
+    ],
+    "9.6 Write the property test for the curated loader": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042347
+      }
+    ],
+    "10.1 Commit and push the curated group (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042390
+      }
+    ],
+    "11.1 Add the view-model types": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042431
+      }
+    ],
+    "11.2 Narrow the upgrade at the response boundary": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042470
+      }
+    ],
+    "11.3 Write the property test for the narrowing": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042512
+      }
+    ],
+    "11.4 Add the upgrade to the package rows": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042552
+      }
+    ],
+    "11.5 Implement the upgrade command builder": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042598
+      }
+    ],
+    "11.6 Write the property test for the commands": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042643
+      }
+    ],
+    "11.7 Build the Upgrade_Section in the model": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042685
+      }
+    ],
+    "11.8 Write the property test for the section order": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042724
+      }
+    ],
+    "12. Checkpoint - View-model": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042762
+      }
+    ],
+    "13.1 Render the Upgrade_Section": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042804
+      }
+    ],
+    "14.1 Commit and push the view-model and component groups (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042844
+      }
+    ],
+    "15.1 Update the end-to-end spec": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042885
+      }
+    ],
+    "15.2 Update the report spec": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042925
+      }
+    ],
+    "15.3 Write the traceability test": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288042970
+      }
+    ],
+    "15.4 Update the traceability document": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288043030
+      }
+    ],
+    "16.1 Run the end-to-end suite and the bundle check": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288043074
+      }
+    ],
+    "16.2 Commit and push the end-to-end group (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288043120
+      }
+    ],
+    "17.1 Run the deep property tests (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288043160
+      }
+    ],
+    "17.2 Regenerate the three screenshots (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288043202
+      }
+    ],
+    "17.3 Count the cold-scan requests (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288043241
+      }
+    ],
+    "17.4 Deploy and run the live smoke (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288043285
+      }
+    ],
+    "17.5 Write the report (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288043326
+      }
+    ],
+    "17.6 Commit the report and append the commits with CI status (orchestrator-only)": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288043365
+      }
+    ],
+    "18. STOP": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288043405
+      }
+    ],
+    "1. Foundations: strict version, constants, npm port and adapter": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288152257
+      }
+    ]
+  }
+}

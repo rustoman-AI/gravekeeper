@@ -53,6 +53,8 @@ describe('port types', () => {
 
   it('the six source interfaces take a RequestContext', () => {
     expectTypeOf<NpmSource['getLatest']>().parameter(1).toEqualTypeOf<RequestContext>();
+    expectTypeOf<NpmSource['getVersion']>().parameters.toEqualTypeOf<[string, string, RequestContext]>();
+    expectTypeOf<NpmSource['getVersion']>().returns.toEqualTypeOf<Promise<SourceResult>>();
     expectTypeOf<OsvSource['queryBatch']>().returns.toEqualTypeOf<Promise<SourceResult>>();
     expectTypeOf<GithubSource['hasToken']>().returns.toEqualTypeOf<boolean>();
     expectTypeOf<DepsDevSource>().toBeObject();

@@ -57,6 +57,7 @@ const EXPECTED_RUNTIME_EXPORTS: string[] = [
   'classify',
   'compareClassifications',
   'detectPyprojectTool',
+  'isStrictVersion',
   'mergeClassifications',
   'parseManifest',
   'serializeManifest',

@@ -139,6 +139,7 @@ function buildWorld(options: WorldOptions) {
     npm:
       options.npm ??
       ({
+        getVersion: () => Promise.resolve(absent),
         getLatest: () => Promise.resolve(ok({ maintainers: [{ name: 'a' }, { name: 'b' }] })),
       } as ScanDeps['sources']['npm']),
     cratesio: {

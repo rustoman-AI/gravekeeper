@@ -8,5 +8,6 @@ export {
 } from './summarizer';
 export { parseManifest } from './parsers';
 export { detectPyprojectTool } from './parsers/pyproject-tool';
+export { isStrictVersion } from './versions/strict-version';
 export { serializeManifest } from './serializers';
 export type { Result, SerializeError } from './internal/result';

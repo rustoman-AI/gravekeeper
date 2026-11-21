@@ -5,4 +5,6 @@ import type { SourceResult } from './github-source';
 export interface NpmSource {
   /** EF-20. GET https://registry.npmjs.org/{name}/latest. 404 is absent. */
   getLatest(name: string, ctx: RequestContext): Promise<SourceResult>;
+  /** EF-20 variant. GET https://registry.npmjs.org/{name}/{version}. 404 is absent. */
+  getVersion(name: string, version: string, ctx: RequestContext): Promise<SourceResult>;
 }

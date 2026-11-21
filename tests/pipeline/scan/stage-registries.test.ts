@@ -50,6 +50,7 @@ function setup(
       },
     },
     npm: {
+      getVersion: () => Promise.resolve(absent),
       getLatest: (name: string) => {
         calls.npm.push(name);
         return (responses.npm ?? (() => Promise.resolve(ok({}))))(name);

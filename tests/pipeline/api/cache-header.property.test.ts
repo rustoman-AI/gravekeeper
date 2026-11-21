@@ -75,7 +75,7 @@ function buildSources(upstream: Upstream): ScanDeps['sources'] {
       queryBatch: (queries: unknown[]) => Promise.resolve(ok({ results: queries.map(() => ({})) })),
       getVulnerability: () => Promise.resolve(absent),
     },
-    npm: { getLatest: () => Promise.resolve(ok({ maintainers: [{ name: 'a' }, { name: 'b' }] })) },
+    npm: { getVersion: () => Promise.resolve(absent), getLatest: () => Promise.resolve(ok({ maintainers: [{ name: 'a' }, { name: 'b' }] })) },
     cratesio: { getOwners: () => Promise.resolve(absent) },
     pypi: { getProject: () => Promise.resolve(absent) },
   } as unknown as ScanDeps['sources'];

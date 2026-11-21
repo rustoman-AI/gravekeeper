@@ -152,6 +152,7 @@ describe('createProductionDeps token handling (20.1)', () => {
     await deps.sources.github.getManifestText(ref, sha, 'package.json', null, ctx(), gate);
     await deps.sources.github.queryRepositories('query { viewer { login } }', {}, ctx(), gate);
     await deps.sources.npm.getLatest('left-pad', ctx());
+    await deps.sources.npm.getVersion('left-pad', '1.3.0', ctx());
 
     expect(calls.length).toBeGreaterThanOrEqual(6);
     const authorized = calls.filter((c) =>

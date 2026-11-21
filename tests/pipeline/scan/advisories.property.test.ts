@@ -218,7 +218,7 @@ function makeSources(scenario: Scenario): ScanDeps['sources'] {
         );
       },
     },
-    npm: { getLatest: () => Promise.resolve(okResult({ maintainers: [{ name: 'a' }, { name: 'b' }] })) },
+    npm: { getVersion: () => Promise.resolve(absentResult), getLatest: () => Promise.resolve(okResult({ maintainers: [{ name: 'a' }, { name: 'b' }] })) },
     cratesio: { getOwners: () => Promise.resolve(absentResult) },
     pypi: { getProject: () => Promise.resolve(absentResult) },
   };

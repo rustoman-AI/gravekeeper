@@ -55,7 +55,7 @@ function buildSources(upstream: Upstream): ScanDeps['sources'] {
       queryBatch: () => Promise.resolve(ok({ results: [{}] })),
       getVulnerability: () => Promise.resolve(absent),
     },
-    npm: { getLatest: () => Promise.resolve(absent) },
+    npm: { getVersion: () => Promise.resolve(absent), getLatest: () => Promise.resolve(absent) },
     cratesio: { getOwners: () => Promise.resolve(absent) },
     pypi: { getProject: () => Promise.resolve(absent) },
   } as unknown as ScanDeps['sources'];

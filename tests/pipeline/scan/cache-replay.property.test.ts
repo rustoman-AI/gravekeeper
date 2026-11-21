@@ -138,6 +138,7 @@ function createWorld(options: WorldOptions): World {
       },
     },
     npm: {
+      getVersion: () => Promise.resolve(absentResult),
       getLatest: () => {
         track('getLatest');
         return Promise.resolve(okResult({ maintainers: [{ name: 'a' }, { name: 'b' }] }));

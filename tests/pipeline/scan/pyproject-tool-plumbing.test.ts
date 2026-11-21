@@ -1,4 +1,4 @@
-﻿// resurrect spec task 3.2: pyprojectTool on manifest entries and in the validator (Requirements 5.4, 5.5, 5.6).
+// resurrect spec task 3.2: pyprojectTool on manifest entries and in the validator (Requirements 5.4, 5.5, 5.6).
 import { describe, expect, it } from 'vitest';
 import type { IsoInstant } from '../../../pipeline/mapping';
 import type { SourceResult } from '../../../pipeline/ports';
@@ -72,6 +72,7 @@ function buildSources(): ScanDeps['sources'] {
       getVulnerability: () => Promise.resolve(absent),
     },
     npm: {
+      getVersion: () => Promise.resolve(absent),
       getLatest: () =>
         Promise.resolve(absent),
     } as ScanDeps['sources']['npm'],

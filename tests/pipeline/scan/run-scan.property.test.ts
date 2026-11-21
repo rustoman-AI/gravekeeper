@@ -326,6 +326,7 @@ function makeSources(world: World, faults: Faults, discovery?: Discovery): ScanD
         ),
     },
     npm: {
+      getVersion: () => Promise.resolve(absent()),
       getLatest: (name) =>
         failing('npm', () => {
           const p = find('npm', name);

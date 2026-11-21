@@ -188,7 +188,7 @@ async function runCase(crates: readonly CrateCase[]) {
       queryBatch: (queries) => Promise.resolve(ok({ results: queries.map(() => ({})) })),
       getVulnerability: () => Promise.resolve(absent),
     },
-    npm: { getLatest: () => Promise.resolve(absent) },
+    npm: { getVersion: () => Promise.resolve(absent), getLatest: () => Promise.resolve(absent) },
     cratesio: cratesOf(scanStore),
     pypi: { getProject: () => Promise.resolve(absent) },
   };

@@ -156,6 +156,7 @@ function createWorld(options: WorldOptions): World {
     getVulnerability: () => Promise.resolve(absentResult),
   };
   const npm: NpmSource = {
+    getVersion: () => Promise.resolve(absentResult),
     getLatest: () => Promise.resolve(okResult({ maintainers: [{ name: 'a' }, { name: 'b' }] })),
   };
   const cratesio: CratesIoSource = { getOwners: () => Promise.resolve(absentResult) };

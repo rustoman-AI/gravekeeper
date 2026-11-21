@@ -84,6 +84,7 @@ const TABLE_NAMES: readonly string[] = [
   'CACHE_KEY_VERSION',
   'HINT_TEXT_MAX_LENGTH',
   'HINTS_MAX_PER_PACKAGE',
+  'NPM_VERSION_DOCS_MAX',
   'REDIRECT_MAX_HOPS',
   'RESPONSE_HEADER_ALLOWLIST',
   'ROUTE_MAX_DURATION_SECONDS',
@@ -212,8 +213,12 @@ describe('constant consistency rules', () => {
     ]);
   });
 
-  it('CACHE_KEY_VERSION equals 4', () => {
-    expect(num('CACHE_KEY_VERSION')).toBe(4);
+  it('CACHE_KEY_VERSION equals 5', () => {
+    expect(num('CACHE_KEY_VERSION')).toBe(5);
+  });
+
+  it('NPM_VERSION_DOCS_MAX equals 40', () => {
+    expect(num('NPM_VERSION_DOCS_MAX')).toBe(40);
   });
 
   it('HINT_TEXT_MAX_LENGTH equals 600', () => {
@@ -263,6 +268,7 @@ describe('constant consistency rules', () => {
       'CACHE_KEY_VERSION',
       'HINT_TEXT_MAX_LENGTH',
       'HINTS_MAX_PER_PACKAGE',
+      'NPM_VERSION_DOCS_MAX',
       'FIXTURE_SET_MAX_BYTES',
     ];
     for (const name of ruleNames) {

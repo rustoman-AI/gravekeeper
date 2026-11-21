@@ -88,6 +88,7 @@ function buildSources(): ScanDeps['sources'] {
       getVulnerability: () => Promise.resolve(absent),
     },
     npm: {
+      getVersion: () => Promise.resolve(absent),
       getLatest: (name) =>
         Promise.resolve(name === 'oldpkg' ? ok({ deprecated: NOTICE, maintainers: [] }) : absent),
     } as ScanDeps['sources']['npm'],

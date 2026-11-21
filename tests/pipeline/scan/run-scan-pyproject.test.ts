@@ -123,7 +123,7 @@ function buildSources(): ScanDeps['sources'] {
       queryBatch: (queries) => Promise.resolve(ok({ results: queries.map(() => ({})) })),
       getVulnerability: () => Promise.resolve(absent),
     },
-    npm: { getLatest: () => Promise.resolve(absent) } as ScanDeps['sources']['npm'],
+    npm: { getVersion: () => Promise.resolve(absent), getLatest: () => Promise.resolve(absent) } as ScanDeps['sources']['npm'],
     cratesio: { getOwners: () => Promise.resolve(absent) } as ScanDeps['sources']['cratesio'],
     pypi: { getProject: () => Promise.resolve(absent) },
   };

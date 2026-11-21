@@ -81,8 +81,11 @@ export const PARTIAL_SCAN_TTL_SECONDS = 600;
 export const L2_OPERATION_TIMEOUT_MS = 300;
 export const L2_MAX_SCAN_BYTES = 1000000;
 export const L2_MAX_BODY_BYTES = 262144;
-// resurrect spec R4.1: bumped to 4 so scans cached before hints are not reused.
-export const CACHE_KEY_VERSION = 4;
+// resurrect-upgrade R3.1: bumped to 5 so scans cached before version notices and upgrades are not reused
+export const CACHE_KEY_VERSION = 5;
+
+// Maximum number of npm version documents requested per scan.
+export const NPM_VERSION_DOCS_MAX = 40;
 
 // Maximum code points of one normalized hint text.
 export const HINT_TEXT_MAX_LENGTH = 600;
