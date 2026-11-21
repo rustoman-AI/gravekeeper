@@ -81,7 +81,6 @@ async function replay(name: string, owner: string, repo: string): Promise<Parsed
   return parsed.result;
 }
 
-const FALLBACK_WORDS = /archived|deprecated|forgotten|finished/;
 
 describe('buildResurrectModel on the recorded request/request set', () => {
   let result: ParsedScanResult;
@@ -144,9 +143,10 @@ describe('buildResurrectModel on the recorded request/request set', () => {
     const { row, model: m } = model('uuid');
     expect(row.kind).toBe('restless');
     expect(m!.urgent).toMatch(/^This (package has \d+ open vulnerabilit(y|ies)|package is haunted by open vulnerabilities), so moving off it is urgent\.$/);
-    expect(m!.fallback!.kind).toBe('buried');
-    expect(m!.fallback!.paragraph).toMatch(FALLBACK_WORDS);
-    expect(m!.fallback!.paragraph).not.toContain('uuid');
+    // resurrect-upgrade: the re-recorded uuid@3.4.0 version document carries its own deprecation notice, so the hint replaces the fallback.
+    expect(m!.hints).toHaveLength(1);
+    expect(m!.hints[0]!.label).toBe("From the package's deprecation notice");
+    expect(m!.fallback).toBeNull();
     expect(m!.urgent).not.toContain('uuid');
   });
 });

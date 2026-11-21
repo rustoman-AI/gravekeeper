@@ -112,14 +112,14 @@ Rules for every task:
     - Stage by name the files of group 5 and commit with the subject `resurrect-upgrade: stage S6 version documents, upgrade in the scan result (group 5)`. Push. Record the hash.
     - _Requirements: 9.10_
 
-- [ ] 7. Fixture re-recording and replay
-  - [~] 7.1 Re-record `request/request` (orchestrator-only)
+- [x] 7. Fixture re-recording and replay
+  - [x] 7.1 Re-record `request/request` (orchestrator-only)
     - Run in one command: `$env:GRAVEKEEPER_LIVE_TESTS = '1'; $env:GITHUB_TOKEN = (gh auth token); npm run fixtures:record -- --only request/request` (the token is never printed). Then run `git status --short tests/fixtures` and `git diff --stat tests/fixtures`: only paths under `tests/fixtures/request__request/` may change; revert anything else with `git checkout -- <path>`. Check that `tests/fixtures/request__request/index.json` now lists `https://registry.npmjs.org/uuid/<version>` and `https://registry.npmjs.org/rimraf/<version>` (not `latest`) and note the two checked versions for the report. If the recorder fails or the two documents are missing, stop and report; do not edit recorded files by hand.
     - _Requirements: 9.1, 9.2_
-  - [~] 7.2 Update and extend the replay tests of the `request/request` set
+  - [x] 7.2 Update and extend the replay tests of the `request/request` set
     - Create `tests/pipeline/resurrect-upgrade-fixtures.test.ts` in the style of `tests/pipeline/resurrect-fixtures.test.ts`: in `request__request`, `uuid` carries one `deprecation-notice` hint (the recorded text of its checked version) and an `upgrade` whose version is the deps.dev default and is higher than its `lookupVersion`; `rimraf` the same; `har-validator` carries its `/latest` hint and no `upgrade`; two replays are equal; no hint text or version contains `ghp_`, `gho_` or `github_pat_`; the number of recorded npm version documents equals the number of replayed `getVersion` calls. Update `tests/pipeline/fixtures-scan.test.ts` and `tests/pipeline/resurrect-fixtures.test.ts` only where they mention recorded facts of this set or the hints of `uuid` and `rimraf` (as-of date, ages, advisory counts, the old assertion that `uuid` and `rimraf` carry no hint), and write each changed assertion and its reason into a list for the report. Run the other three sets' replay tests and confirm they pass unchanged.
     - _Requirements: 9.3, 9.10_
-  - [~] 7.3 Re-export the e2e fixtures
+  - [x] 7.3 Re-export the e2e fixtures
     - Run `npm run e2e:fixtures` and check that `tests/e2e/.generated/scan-request.json` holds the `uuid` hint and `upgrade` and the `rimraf` hint and `upgrade`, and that the other generated files are unchanged. Update `tests/ui/export-scan-fixtures.test.ts` and `tests/ui/view-model/fixtures-replay.test.ts` only where they deep-equal exported values or the old behavior of `uuid`. Edit `scripts/export-scan-fixtures.ts` only if the synthetic bodies need an `upgrade` (they do not; leave it unchanged otherwise).
     - _Requirements: 9.3, 9.10_
 

@@ -105,6 +105,18 @@ function recordedDeprecation(name: string, pkg: string): string | null {
   throw new Error(`no recorded npm response for ${pkg}`);
 }
 
+/** The recorded `deprecated` text of one npm version document. */
+function recordedVersionDeprecation(name: string, pkg: string, version: string | null): string | null {
+  const set = loadFixtureSet(join(FIXTURES, name));
+  const url = `https://registry.npmjs.org/${pkg}/${version}`;
+  for (const entry of set.entries.values()) {
+    if (entry.source !== 'npm' || entry.url !== url) continue;
+    const body = JSON.parse(set.read(entry).response.bodyText) as { deprecated?: unknown };
+    return normalizeHintText(body.deprecated);
+  }
+  throw new Error(`no recorded npm version document for ${pkg}@${version}`);
+}
+
 function rowsOf(result: ScanResult, pkg: string): ScanResult['dependencies'] {
   const rows = result.dependencies.filter((d) => d.dependency.name === pkg);
   expect(rows.length).toBeGreaterThan(0);
@@ -142,11 +154,15 @@ describe('resurrect hints over the recorded sets', () => {
     }
   });
 
+  // resurrect-upgrade R9.3: the /latest document of uuid and rimraf carries no notice, but the
+  // re-recorded version document of the checked version does; the hint is that recorded text.
   for (const pkg of ['uuid', 'rimraf']) {
-    it(`request__request: ${pkg} carries no hint`, async () => {
+    it(`request__request: ${pkg} carries the recorded notice of its checked version`, async () => {
       expect(recordedDeprecation('request__request', pkg)).toBeNull();
       for (const row of rowsOf(await resultOf('request__request'), pkg)) {
-        expect(row.hints).toEqual([]);
+        const text = recordedVersionDeprecation('request__request', pkg, row.lookupVersion);
+        expect(text).not.toBeNull();
+        expect(row.hints).toEqual([{ kind: 'deprecation-notice', text, sourceUrl: null }]);
       }
     });
   }
