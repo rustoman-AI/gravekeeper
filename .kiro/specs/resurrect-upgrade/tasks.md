@@ -215,32 +215,32 @@ Rules for every task:
     - In `docs/property-traceability.md` add a section `## resurrect-upgrade (RU-P1 to RU-P8)` with one row per property (requirements, test file, test titles, status from a full `npx vitest --run`), update the header sentence (spec list and the test and file counts) and add `### resurrect-upgrade (0 of 8)` to "Properties without a test" with the sentence that all eight properties have a passing test (or list those without one). Add a note that RU-P1 to RU-P6 and RU-P8 run on pure values without a DOM.
     - _Requirements: 9.4_
 
-- [ ] 16. Final checkpoint - All checks and end-to-end
+- [x] 16. Final checkpoint - All checks and end-to-end
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
   - [x] 16.1 Run the end-to-end suite and the bundle check
     - Run `npm run test:e2e` after the full vitest run is green, and `npm run build` followed by `npm run check:bundle` (the budget script reads the build output; if it needs no build in this repository, run it alone). Fix only failures caused by this spec without any change of art, palette or header layout, and without lowering an assertion or a budget. Record the client JavaScript numbers (bytes against budget) for the report.
     - _Requirements: 6.16, 9.5, 9.9_
-  - [~] 16.2 Commit and push the end-to-end group (orchestrator-only)
+  - [x] 16.2 Commit and push the end-to-end group (orchestrator-only)
     - Stage by name the files of group 15 and any fix of task 16.1 and commit with the subject `resurrect-upgrade: end-to-end, report spec, traceability (group 15)`. Push. Record the hash.
     - _Requirements: 9.10_
 
 - [ ] 17. Deep runs, screenshots, deploy, live smoke and report
-  - [~] 17.1 Run the deep property tests (orchestrator-only)
+  - [x] 17.1 Run the deep property tests (orchestrator-only)
     - Run `npm run test:deep -- <file>` for each of the eight property files (`tests/pipeline/mapping/version-doc-plan.property.test.ts`, `hints-combine.property.test.ts`, `upgrade.property.test.ts`, `tests/pipeline/scan/scan-cache-upgrade.property.test.ts`, `tests/ui/view-model/narrow-upgrade.property.test.ts`, `resurrect-upgrade-commands.property.test.ts`, `resurrect-upgrade-order.property.test.ts`, `resurrections-evidence.property.test.ts`). Never set `FC_NUM_RUNS` in the shell. Keep for the report, per property: number, title, file, result and, for a failure, the shrunk counterexample, seed and path (or "no counterexample found"). A failing property is reported, not hidden; fix the cause in a separate commit if it is a code defect and rerun.
     - _Requirements: 9.6_
-  - [~] 17.2 Regenerate the three screenshots (orchestrator-only)
+  - [x] 17.2 Regenerate the three screenshots (orchestrator-only)
     - Run `npm run e2e:fixtures`, then `$env:RS_REPORT = '1'; npx playwright test tests/e2e/resurrect-report.spec.ts --project=desktop`. Check that `docs/screenshots/resurrect/resurrect-buried-har-validator.png`, `resurrect-forgotten-aws-sign2.png` and `resurrect-restless-uuid.png` are rewritten at 1440x900 and show the slot (open the images), and keep `test-results/resurrect-slot-text.json` for task 17.5.
     - _Requirements: 9.7_
-  - [~] 17.3 Count the cold-scan requests (orchestrator-only)
+  - [x] 17.3 Count the cold-scan requests (orchestrator-only)
     - Run `$env:GRAVEKEEPER_LIVE_TESTS = '1'; $env:GITHUB_TOKEN = (gh auth token); npm run live:report -- --out test-results/resurrect-upgrade-live-report.md request/request` in one command (the token is never printed; the output file is not committed). Take the `npm` rows (`/{package}/latest` and `/{package}/{version}`) and the cold total for `request/request`. Take the "before" numbers from `docs/scan-accuracy-live-report.md` (the `request/request` column, with its date) and note that the "before" report predates this spec.
     - _Requirements: 3.5_
-  - [~] 17.4 Deploy and run the live smoke (orchestrator-only)
+  - [x] 17.4 Deploy and run the live smoke (orchestrator-only)
     - Check that the commits of groups 1 to 15 are pushed to `main`, run `npm run verify:deploy` until it passes (Vercel deploys on push), then run one scan against production without any token header: `Invoke-RestMethod -Method Post -Uri https://gravekeeper-chi.vercel.app/api/scan -ContentType 'application/json' -Body '{"repoUrl":"https://github.com/request/request"}' -TimeoutSec 90`. For the dependencies `uuid` and `rimraf` print `lookupVersion`, `versionBasis`, `hints` and `upgrade` (names and fields only). Repeat once if the first answer is a timeout or a partial source status. Keep the output for task 17.5. If production still answers with the old shape (no `upgrade` anywhere, `hints` of the latest document), wait for the deployment and retry; if it persists, report it.
     - _Requirements: 9.8_
-  - [~] 17.5 Write the report (orchestrator-only)
+  - [x] 17.5 Write the report (orchestrator-only)
     - Create `docs/resurrect-upgrade-report.md` with the sections `# Resurrect upgrade report`, `## What the slot shows` (for `uuid`, `rimraf`, `har-validator` and a synthetic `request` row, labelled synthetic with its reason, the text from `test-results/resurrect-slot-text.json`: sections, hint text and label, the Upgrade_Section title and command), `## Screenshots` (the three PNGs embedded), `## Properties` (task 17.1), `## Requests` (task 17.3: before and after, the added `{package}/{version}` row), `## Fixture` (the two recorded version documents of task 7.1, the exact repository, the statement that no other set changed, and the list of changed assertions of task 7.2), `## Live smoke` (task 17.4: hints and upgrade of `uuid` and `rimraf` on production), `## Findings` (client JavaScript numbers of task 16.1, which ecosystems showed an upgrade in the data, anything surprising, any limit of the evidence check) and `## Commits and CI` (task 17.6). The report holds no token; grep it for `ghp_`, `gho_` and `github_pat_`.
     - _Requirements: 9.6, 9.7, 9.8_
-  - [~] 17.6 Commit the report and append the commits with CI status (orchestrator-only)
+  - [-] 17.6 Commit the report and append the commits with CI status (orchestrator-only)
     - Stage `docs/resurrect-upgrade-report.md`, `docs/screenshots/resurrect/*.png` and `docs/property-traceability.md` (if the counts changed) by name and commit with the subject `resurrect-upgrade: report and screenshots`. Push. Collect the commits of this spec (the hashes recorded in tasks 2.1, 4.1, 6.1, 8.1, 10.1, 14.1, 16.2 and this one, plus any fix commit) with `git log --oneline`, and the CI status of each with `gh run list --limit 30` (workflow `ci.yml`: status and conclusion per commit, `pending` for an unfinished run). Append the table (hash, subject, CI status) to the section `## Commits and CI` of the report, commit it with the subject `resurrect-upgrade: report commits and CI status` and push; the CI status of this last commit is `pending`.
     - _Requirements: 9.6_
 

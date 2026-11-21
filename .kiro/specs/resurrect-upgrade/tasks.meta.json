@@ -796,6 +796,11 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288043120
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292562797
       }
     ],
     "17.1 Run the deep property tests (orchestrator-only)": [
@@ -803,6 +808,11 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288043160
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292581470
       }
     ],
     "17.2 Regenerate the three screenshots (orchestrator-only)": [
@@ -810,6 +820,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288043202
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292582463
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292614066
       }
     ],
     "17.3 Count the cold-scan requests (orchestrator-only)": [
@@ -817,6 +837,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288043241
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292615378
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292630992
       }
     ],
     "17.4 Deploy and run the live smoke (orchestrator-only)": [
@@ -824,6 +854,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288043285
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292632483
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795293010900
       }
     ],
     "17.5 Write the report (orchestrator-only)": [
@@ -831,6 +871,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288043326
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795293011064
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795293063260
       }
     ],
     "17.6 Commit the report and append the commits with CI status (orchestrator-only)": [
@@ -838,6 +888,11 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288043365
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795293064257
       }
     ],
     "18. STOP": [
@@ -943,6 +998,13 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795292390666
+      }
+    ],
+    "16. Final checkpoint - All checks and end-to-end": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795292562848
       }
     ]
   }
