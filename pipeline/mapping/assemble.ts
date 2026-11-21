@@ -5,7 +5,8 @@ import { mapCratesOwners, mapNpmLatest, mapPypiOwnership } from './maintainers';
 import { aggregateAdvisories, mapOsvAdvisory } from './osv-advisory';
 import { mapDepsDevAdvisory } from './severity';
 import { buildAdvisoryEntries } from './advisories';
-import { advisoryNoticeHints, npmDeprecationHint } from './hints';
+import { advisoryNoticeHints, combineNpmHints } from './hints';
+import { chooseUpgrade } from './upgrade';
 import type {
   AdvisoryEntry,
   AdvisoryRecord,
@@ -13,6 +14,7 @@ import type {
   Fetched,
   RawTargetInputs,
   TargetNote,
+  UpgradeSuggestion,
   UpstreamHint,
   VersionSelection,
 } from './types';
@@ -50,6 +52,7 @@ export function assembleFacts(raw: RawTargetInputs, asOf: string): AssembledFact
   let selection: VersionSelection = NO_SELECTION;
   let advisories: readonly AdvisoryEntry[] = [];
   let hints: readonly UpstreamHint[] = [];
+  let upgrade: UpgradeSuggestion | null = null;
 
   const packageFound = raw.depsdevPackage.state === 'ok';
 
@@ -71,6 +74,14 @@ export function assembleFacts(raw: RawTargetInputs, asOf: string): AssembledFact
       }
     }
 
+    // Resurrect-upgrade R4.1, R4.2: upgrade suggestion after the selection.
+    upgrade = chooseUpgrade({
+      ecosystem,
+      depsdevBody: body,
+      selected: selection.selected,
+      latestBody: bodyOf(raw.npmLatest),
+    });
+
     const mapped = mapDepsDevPackage(body, selection.selected, asOf);
     daysSinceLastRelease = mapped.daysSinceLastRelease;
     deprecated = mapped.deprecated;
@@ -82,10 +93,13 @@ export function assembleFacts(raw: RawTargetInputs, asOf: string): AssembledFact
     }
   }
 
-  // Resurrect R2.1, R2.6: npm hint from the latest document only (R2.4).
+  // Resurrect R2.6, resurrect-upgrade R2.1, R2.2: npm hint from the version document, else `/latest`.
   if (ecosystem === 'npm') {
     const latestBody = bodyOf(raw.npmLatest);
-    if (latestBody !== undefined) hints = npmDeprecationHint(latestBody);
+    const versionBody = raw.npmVersion === undefined ? undefined : bodyOf(raw.npmVersion);
+    if (latestBody !== undefined || versionBody !== undefined) {
+      hints = combineNpmHints(versionBody, latestBody);
+    }
   }
 
   // R12: maintainerCount comes only from the ecosystem's maintainer mapper.
@@ -169,5 +183,5 @@ export function assembleFacts(raw: RawTargetInputs, asOf: string): AssembledFact
     maxSeverity,
     maintainerCount,
   };
-  return { facts, advisories, hints, selection, notes };
+  return { facts, advisories, hints, upgrade, selection, notes };
 }

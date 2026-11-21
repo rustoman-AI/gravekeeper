@@ -212,6 +212,7 @@ const isAssembledFacts = shape({
   facts: isHealthFacts,
   advisories: arrayOf(isAdvisoryEntry),
   hints: arrayOf(isUpstreamHint),
+  upgrade: nullOr(shape({ version: isString, basis: literal('registry-default') })),
   selection: isVersionSelection,
   notes: arrayOf(isTargetNote),
 });
@@ -372,6 +373,25 @@ export const MAPPER_REGISTRY: readonly RegistryEntry[] = [
     })),
     validate: nullOr(isString),
   },
+  mapper('combineNpmHints', (json) => mapping.combineNpmHints(json, json), arrayOf(isUpstreamHint)),
+  {
+    kind: 'mapper',
+    name: 'chooseUpgrade',
+    variants: (['npm', 'pypi', 'cargo'] as const).map((ecosystem) => ({
+      label: ecosystem,
+      call: (json: unknown) =>
+        mapping.chooseUpgrade({
+          ecosystem,
+          depsdevBody: json,
+          selected: mapping.readDepsDevVersions(json).versions[0] ?? null,
+          latestBody: json,
+        }),
+    })),
+    validate: nullOr(shape({ version: isString, basis: literal('registry-default') })),
+  },
+  helper('versionDeprecated', 'Reads one version flag from a deps.dev body and a version string (resurrect-upgrade).'),
+  helper('latestVersionOf', 'Picks between an npm latest body and a default version string (resurrect-upgrade).'),
+  helper('needsVersionDocument', 'Decision over a typed input record, not a single body (resurrect-upgrade).'),
   helper('advisoryUrl', 'Builds a URL from an advisory id string; not a body mapper (scan-accuracy Property 10).'),
   helper(
     'buildAdvisoryEntries',

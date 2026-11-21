@@ -37,47 +37,47 @@ Rules for every task:
     - Add `getVersion: () => Promise.resolve(absent)` (or the local equivalent) to every stub `NpmSource` in the tests, found with `Select-String -Path tests -Pattern "getLatest" -Recurse` (at least `tests/pipeline/api/cache-header.property.test.ts`, `handle-scan-request.test.ts`, `handle-scan-request.property.test.ts`, `tests/pipeline/scan/advisories.property.test.ts`), add a `getVersion` call to `tests/adapters/composition.test.ts` and its type check to `tests/pipeline/ports.test.ts`. This task owns these test files.
     - _Requirements: 1.8, 1.11, 3.2_
 
-- [ ] 2. Checkpoint - Foundations
+- [x] 2. Checkpoint - Foundations
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 2.1 Commit and push the foundations group (orchestrator-only)
+  - [x] 2.1 Commit and push the foundations group (orchestrator-only)
     - Stage by name the files of group 1 and commit with the subject `resurrect-upgrade: strict version, cache key 5, npm getVersion (group 1)`. Push. Record the hash for the report (task 17.5).
     - _Requirements: 9.10_
 
-- [ ] 3. Pipeline mapping: plan, combiner, chooser, assembly
-  - [~] 3.1 Add the mapping types
+- [x] 3. Pipeline mapping: plan, combiner, chooser, assembly
+  - [x] 3.1 Add the mapping types
     - In `pipeline/mapping/types.ts` add `UpgradeSuggestion` (`version: string`, `basis: 'registry-default'`), the optional `npmVersion?: Fetched<unknown>` on `RawTargetInputs` (comment: optional so existing literals stay valid) and `upgrade: UpgradeSuggestion | null` on `AssembledFacts`. This task is the only owner of `pipeline/mapping/index.ts`: it exports `UpgradeSuggestion`, and also the functions that tasks 3.2, 3.4 and 3.6 create (`needsVersionDocument`, `latestVersionOf` and `versionDeprecated` from `./version-doc-plan`, `combineNpmHints` from `./hints`, `chooseUpgrade` from `./upgrade`). Typecheck errors for these exports are expected until wave 3 is done. Types and exports only.
     - _Requirements: 4.7, 5.1_
-  - [~] 3.2 Implement the version-document plan
+  - [x] 3.2 Implement the version-document plan
     - Create `pipeline/mapping/version-doc-plan.ts` with `versionDeprecated`, `latestVersionOf` and `needsVersionDocument` as in the design (reads with `readOwn`, try/catch everywhere, uses `readDepsDevVersions` for the default version, `isStrictVersion('npm', ...)` from Core). Cite Requirements 1.1 to 1.4 and 1.11 in comments.
     - Create `tests/pipeline/mapping/version-doc-plan.test.ts`: a `uuid`-like body (3.4.0 deprecated, default 11.x not deprecated) gives true; checked equal to the latest gives false; not deprecated gives false; `isDeprecated: "true"` (string) gives false; unknown latest gives true; pypi and cargo give false; a selected version with a space or `;` gives false; a body whose `versions` getter throws gives false.
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.11_
-  - [~] 3.3 Write the property test for the plan
+  - [x] 3.3 Write the property test for the plan
     - `tests/pipeline/mapping/version-doc-plan.property.test.ts`: generated deps.dev bodies (versions with random `isDeprecated` of any type, `isDefault`, shuffled order, hostile getters), generated selected versions (valid, null, with metacharacters, over 64 code points), generated latest bodies (absent, with and without `version`).
     - **Property 1: A version document is requested exactly for a deprecated, differing, strict npm version (RU-P1)**
     - **Validates: Requirements 1.1, 1.2, 1.3, 1.4**
-  - [~] 3.4 Implement the hint combiner
+  - [x] 3.4 Implement the hint combiner
     - In `pipeline/mapping/hints.ts` add `combineNpmHints(versionBody: unknown, latestBody: unknown): UpstreamHint[]` by the design (version hint first, else the `/latest` hint, never more than one; accept `undefined` for an absent body). Cite Requirements 2.1, 2.2, 2.4, 2.5.
     - Create `tests/pipeline/mapping/hints-combine.test.ts`: the `uuid@3.4.0` text wins over a different `/latest` text; an empty `deprecated` in the version body falls back to the `/latest` hint; both absent gives `[]`; the version hint has `sourceUrl` null.
     - _Requirements: 2.1, 2.2, 2.4, 2.5_
-  - [~] 3.5 Write the property test for the combiner
+  - [x] 3.5 Write the property test for the combiner
     - `tests/pipeline/mapping/hints-combine.property.test.ts`: generated version and `/latest` bodies (objects with `deprecated` of every type, arrays, primitives, undefined, throwing getters).
     - **Property 2: Hint combination prefers the version notice and stays bounded (RU-P2)**
     - **Validates: Requirements 2.1, 2.2, 2.4, 2.5**
-  - [~] 3.6 Implement the upgrade chooser
+  - [x] 3.6 Implement the upgrade chooser
     - Create `pipeline/mapping/upgrade.ts` with `chooseUpgrade` by the six steps of the design, using `versionDeprecated`, `readDepsDevVersions`, `semverVersion`/`semverCompare` for npm and cargo and `pepVersion`/`pepCompare` for PyPI, `readOwn` and `normalizeHintText` for the npm `/latest` check. Add the source comment of Requirement 4.8 (what `isDeprecated` is, and that only this flag decides). Total.
     - Create `tests/pipeline/mapping/upgrade.test.ts`: uuid-like npm gives the default; `rimraf`-like gives the default; a deprecated default gives null; a default lower than or equal to the checked version gives null; npm `/latest` with a `deprecated` string for the same version gives null; a checked version that is not deprecated but has advisories (HAUNTED case) gives null (Requirement 4.5); PyPI and cargo examples with their comparators (`1.0.0` < `1.0.1`, `1.9` < `1.10` for PyPI); unparsable versions give null.
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.8_
-  - [~] 3.7 Write the property test for the chooser
+  - [x] 3.7 Write the property test for the chooser
     - `tests/pipeline/mapping/upgrade.property.test.ts`: generated version lists per ecosystem (semver and PEP 440 generators and unparsable strings), one default, random `isDeprecated`, a checked version from the list or not, `/latest` bodies with and without `deprecated`; an independent oracle in the test; shuffled order of `versions[]`.
     - **Property 3: An upgrade is offered only to an existing, healthy, higher default version of a deprecated checked version (RU-P3)**
     - **Validates: Requirements 4.1, 4.2, 4.3, 4.4, 4.6**
-  - [~] 3.8 Wire hints and upgrade into `assembleFacts`
+  - [x] 3.8 Wire hints and upgrade into `assembleFacts`
     - In `pipeline/mapping/assemble.ts` replace the `npmDeprecationHint` call by `combineNpmHints(raw.npmVersion === undefined ? undefined : bodyOf(raw.npmVersion), bodyOf(raw.npmLatest))` (only when one body exists), compute `upgrade = chooseUpgrade({...})` after the selection when the deps.dev body is ok, and return `upgrade` in the result (null otherwise). Cite Requirements 2.1, 2.2, 4.1, 4.2. Create `tests/pipeline/mapping/assemble-upgrade.test.ts`: a deprecated checked version with a version document gives the version hint and the upgrade; the same without the version document gives the `/latest` hint and the upgrade; a checked version equal to the latest gives the `/latest` hint and no upgrade; pypi and cargo give an upgrade without any hint. Update the existing `assembleFacts` tests that deep-equal the whole result (`upgrade: null`), keeping their tags and titles.
     - _Requirements: 2.1, 2.2, 2.3, 4.1, 4.2, 4.5_
 
-- [ ] 4. Checkpoint - Pipeline mapping
+- [x] 4. Checkpoint - Pipeline mapping
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 4.1 Commit and push the mapping group (orchestrator-only)
+  - [x] 4.1 Commit and push the mapping group (orchestrator-only)
     - Stage by name the files of group 3 and commit with the subject `resurrect-upgrade: version-document plan, hint combiner, upgrade chooser (group 3)`. Push. Record the hash.
     - _Requirements: 9.10_
 

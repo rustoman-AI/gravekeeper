@@ -40,6 +40,7 @@ export type {
   SelectionResult,
   SourceRepo,
   TargetNote,
+  UpgradeSuggestion,
   VersionBasis,
   VersionSelection,
   VulnerabilityFacts,
@@ -48,3 +49,6 @@ export { exactPin, readDepsDevVersions, selectVersion } from './version-select';
 export { chooseVersion } from './version-choose';
 export { resolveRange } from './range-resolve';
 export { cargoToSemverRange } from './range-cargo';
+export { needsVersionDocument, latestVersionOf, versionDeprecated } from './version-doc-plan';
+export { combineNpmHints } from './hints';
+export { chooseUpgrade } from './upgrade';

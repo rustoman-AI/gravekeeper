@@ -57,6 +57,11 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041096
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288203461
       }
     ],
     "3.1 Add the mapping types": [
@@ -64,6 +69,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041140
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288203667
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288246922
       }
     ],
     "3.2 Implement the version-document plan": [
@@ -71,6 +86,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041184
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288204569
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288327574
       }
     ],
     "3.3 Write the property test for the plan": [
@@ -78,6 +103,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041224
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288334243
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288470226
       }
     ],
     "3.4 Implement the hint combiner": [
@@ -85,6 +120,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041266
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288205580
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288328531
       }
     ],
     "3.5 Write the property test for the combiner": [
@@ -92,6 +137,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041321
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288335251
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288471200
       }
     ],
     "3.6 Implement the upgrade chooser": [
@@ -99,6 +154,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041363
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288206318
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288329168
       }
     ],
     "3.7 Write the property test for the chooser": [
@@ -106,6 +171,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041413
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288336254
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288472200
       }
     ],
     "3.8 Wire hints and upgrade into `assembleFacts`": [
@@ -113,6 +188,16 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041465
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288336936
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288472724
       }
     ],
     "4.1 Commit and push the mapping group (orchestrator-only)": [
@@ -120,6 +205,11 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288041568
+      },
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288482147
       }
     ],
     "5.1 Start the capped version-document requests in stage S6": [
@@ -428,6 +518,27 @@
         "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795288152257
+      }
+    ],
+    "2. Checkpoint - Foundations": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288203520
+      }
+    ],
+    "3. Pipeline mapping: plan, combiner, chooser, assembly": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288472763
+      }
+    ],
+    "4. Checkpoint - Pipeline mapping": [
+      {
+        "executionId": "92f44c0a-d0a5-4a2c-ab3a-ceefb24add5d",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795288482186
       }
     ]
   }

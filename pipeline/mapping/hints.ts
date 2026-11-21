@@ -65,3 +65,18 @@ export function advisoryNoticeHints(records: readonly AdvisoryRecord[]): Upstrea
     return [];
   }
 }
+
+/**
+ * Requirement 2.1, 2.2, 2.4, 2.5: the deprecation notice of the Checked_Version
+ * document wins; when it gives no hint, the `/latest` notice is the fallback.
+ * Either body may be absent. At most one hint, no source URL. Total: never throws.
+ */
+export function combineNpmHints(versionBody: unknown, latestBody: unknown): UpstreamHint[] {
+  try {
+    const fromVersion = npmDeprecationHint(versionBody);
+    if (fromVersion.length > 0) return fromVersion;
+    return npmDeprecationHint(latestBody);
+  } catch {
+    return [];
+  }
+}

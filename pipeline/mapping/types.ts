@@ -69,6 +69,12 @@ export interface UpstreamHint {
   readonly sourceUrl: string | null;
 }
 
+/** A newer registry-default version offered for a deprecated checked version (resurrect-upgrade R4.7, R5.1). */
+export interface UpgradeSuggestion {
+  readonly version: string;
+  readonly basis: 'registry-default';
+}
+
 export interface VulnerabilityFacts {
   /** Alias_Groups of Counted_Advisories plus unfetched ids. */
   readonly openVulnerabilityCount: number;
@@ -108,6 +114,8 @@ export interface RawTargetInputs {
   readonly depsdevPackage: Fetched<unknown>;
   /** EF-20 (npm only; unavailable otherwise) */
   readonly npmLatest: Fetched<unknown>;
+  /** EF-20 variant: npm version document (optional so existing literals stay valid). */
+  readonly npmVersion?: Fetched<unknown>;
   /** EF-20, EF-21 or EF-22 body by ecosystem */
   readonly maintainers: Fetched<unknown>;
   readonly osv: {
@@ -161,6 +169,8 @@ export interface AssembledFacts {
   readonly notes: readonly TargetNote[];
   /** Upstream hints for the target (resurrect R3.2). */
   readonly hints: readonly UpstreamHint[];
+  /** Upgrade suggestion for the target, or null (resurrect-upgrade R4.7, R5.1). */
+  readonly upgrade: UpgradeSuggestion | null;
 }
 
 export interface ManifestCandidate {
