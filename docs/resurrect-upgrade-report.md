@@ -185,4 +185,18 @@ Production `https://gravekeeper-chi.vercel.app`, scan of `request/request` witho
 
 ## Commits and CI
 
-Filled in by task 17.6.
+Two runs failed on test assertions that this spec changed, and the next commit fixed each one. 2e850ed: the re-recorded uuid now has a hint, so the old e2e expectation of no hint failed; fixed in 4e6e94e. a61603b: the upgrade section became the first text block in the slot, so the e2e test read the wrong element; fixed in 891ed4a.
+
+| hash | subject | CI |
+| --- | --- | --- |
+| 8b80843 | spec: resurrect-upgrade (requirements, design, tasks) | success |
+| db4fd27 | resurrect-upgrade: strict version, cache key 5, npm getVersion (group 1) | success |
+| c033595 | resurrect-upgrade: version-document plan, hint combiner, upgrade chooser (group 3) | success |
+| 62446e8 | resurrect-upgrade: stage S6 version documents, upgrade in the scan result (group 5) | no own run (pushed with the next commit) |
+| 2e850ed | resurrect-upgrade: re-record request/request fixture set (group 7) | failure |
+| 4e6e94e | test(e2e): uuid slot shows its checked version's notice (resurrect-upgrade R2.1) | success |
+| 3ea7ceb | resurrect-upgrade: curated source and evidence (group 9) | success |
+| a61603b | resurrect-upgrade: upgrade section, commands, narrowing (groups 11, 13) | failure |
+| 891ed4a | resurrect-upgrade: end-to-end, report spec, traceability (group 15) | success |
+| c4eb43b | resurrect-upgrade: report and screenshots | success |
+| (this commit) | resurrect-upgrade: report commits and CI status | pending |
