@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "sample-service"
+version = "0.1.0"
+description = "A hand-written Poetry manifest for parser tests"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.110.0"
+httpx = "~0.27.0"
+pydantic = "*"
+uvicorn = { version = "^0.29", optional = true }
+mylib = { git = "https://github.com/example/mylib.git", branch = "main" }
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0"
+black = "~24.2"

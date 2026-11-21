@@ -37,6 +37,7 @@ const CASES = [
   { name: 'request__request', owner: 'request', repo: 'request', rows: 40 },
   { name: 'revmic__canopy', owner: 'revmic', repo: 'canopy', rows: 6 },
   { name: 'ajeetdsouza__zoxide', owner: 'ajeetdsouza', repo: 'zoxide', rows: 20 },
+  { name: 'psf__requests', owner: 'psf', repo: 'requests', rows: 17 },
 ] as const;
 
 async function replayToParsed(name: string, owner: string, repo: string) {

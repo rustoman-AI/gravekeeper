@@ -1,6 +1,6 @@
-﻿# Property traceability
+# Property traceability
 
-Maps every design property of the `scan-pipeline`, `dependency-graveyard-core`, `scan-accuracy` and `graveyard-ui` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 3164 passed and 26 skipped (the live tests, skipped without `GRAVEKEEPER_LIVE_TESTS`), 251 test files passed and 6 skipped. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
+Maps every design property of the `scan-pipeline`, `dependency-graveyard-core`, `scan-accuracy`, `graveyard-ui`, `graveyard-art` and `pyproject` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 3551 passed, 1 failed and 26 skipped (the live tests, skipped without `GRAVEKEEPER_LIVE_TESTS`), 302 test files passed, 1 failed and 6 skipped (309 files, 3578 tests). The one failure is `tests/pipeline/fixtures-scan.test.ts` for the new, untracked `tests/fixtures/psf__requests` set that task 7.4 is still writing (it expects an archived or deprecated dependency and finds none). It is not a pyproject property test. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
 
 ## scan-pipeline
 
@@ -214,6 +214,22 @@ Tags read `// Feature: graveyard-art, Property GA-P<n>`. Test titles start with 
 | GA-P13 | 11.6, 11.8 | `tests/ui/view-model/notes-once.property.test.ts` | The empty-graveyard message appears once | passing |
 | GA-P14 | 8.1, 8.6, 8.8 | `tests/ui/view-model/detail-reasons.property.test.ts` | Reasons keep the core message and rule id verbatim | passing |
 
+## pyproject (PY-P1 to PY-P10)
+
+Tags read `// Feature: pyproject, Property PY-P<n>`. Test titles start with `PY-P<n>`. Status is from the full `npx vitest --run` above; every file listed passed.
+
+| Property | Requirement(s) | Test file | Test title | Status |
+| --- | --- | --- | --- | --- |
+| PY-P1 | 2.1, 2.2, 2.4, 2.6, 2.7 | `tests/core/parsers/pyproject-never-throws.property.test.ts` | PY-P1: arbitrary strings with full unicode never throw and give a well formed result<br>PY-P1: hostile TOML-shaped texts never throw and give a well formed result<br>PY-P1: single table fragments, fixed and generated, never throw and give a well formed result | passing |
+| PY-P2 | 8.9, 5.5, 5.7, 3.1, 3.2, 4.1 | `tests/core/parsers/pyproject-roundtrip.property.test.ts` | PY-P2 PEP 621 style: write then parse returns the sorted input with no warnings<br>PY-P2 Poetry style: write then parse returns the sorted input with no warnings | passing |
+| PY-P3 | 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.10 | `tests/core/formats/poetry-constraint.property.test.ts` | PY-P3 the translated PEP 440 text accepts exactly what the Poetry reference accepts | passing |
+| PY-P4 | 8.2, 8.3, 8.5, 8.6, 8.7 | `tests/core/parsers/pyproject-determinism.property.test.ts` | PY-P4: hostile and TOML-shaped text parses to equal results twice, sorted, without repeated keys<br>PY-P4: written dependency lists (both styles) parse deterministically, sorted, without repeated keys, no warnings<br>PY-P4: permuting the entries of a written list gives the same dependency list and warnings<br>PY-P4: scope models of every table kind are sorted and unique, and entry and table order do not change the result<br>PY-P4: the same package in a PEP 621 and a Poetry table keeps the PEP 621 entry whatever the text order, with one warning | passing |
+| PY-P5 | 7.1, 7.2, 7.3, 7.4 | `tests/core/parsers/pyproject-names.property.test.ts` | PY-P5: the oracle collapses separator runs and lowercases (self check)<br>PY-P5: in every table kind, name is the PEP 503 form, rawName is as written, and it matches requirements.txt | passing |
+| PY-P6 | 8.1, 8.8, 3.1, 3.2, 4.1, 5.1, 5.2, 5.3 | `tests/core/parsers/pyproject-scopes.property.test.ts` | PY-P6: the local scope table agrees with expectedScope for every kind and optional flag<br>PY-P6: every dependency of every table kind has exactly its table scope, within supportedScopes<br>PY-P6: Poetry entries map by table and optional flag, within supportedScopes | passing |
+| PY-P7 | 4.2, 4.4, 4.5 | `tests/core/parsers/pyproject-include-group.property.test.ts` | PY-P7: dependencies equal those of the input without Include_Entries<br>PY-P7: exactly one Requirement 4.2 warning is added per Include_Entry, with the verbatim text<br>PY-P7: no dependency has an included group as its only source<br>PY-P7: self cycles and missing targets neither throw nor produce an error warning | passing |
+| PY-P8 | 3.4, 3.5, 3.9 | `tests/core/parsers/pep508.property.test.ts` | PY-P8: a PEP 621 entry and a requirements.txt line give the same name, rawName, versionSpec and sourceKind, or both are skipped<br>PY-P8: generated valid lines are read, not vacuously skipped by both | passing |
+| PY-P9 | 9.1, 9.2, 9.3, 9.8 | `tests/pipeline/mapping/pyproject-discovery.property.test.ts` | PY-P9 discovery lists exactly the manifest-named blobs outside skip dirs within the depth limit, format equals file name<br>PY-P9 default selection is exactly the root manifests in ascending code point order, pyproject.toml and requirements.txt together | passing |
+| PY-P10 | 6.11, 10.4 | `tests/pipeline/mapping/poetry-resolve.property.test.ts` | PY-P10 resolveRange on the translation equals the Poetry_Reference highest stable version<br>PY-P10 every non-* translation is accepted by pepRange | passing |
 ## Properties without a test
 
 ### scan-pipeline (0 of 76)
@@ -232,6 +248,10 @@ None. All 12 properties (P1 to P12) have at least one passing test.
 
 None. All 34 properties (P1 to P34) have at least one passing test.
 
+### pyproject (0 of 10)
+
+None. All 10 properties (PY-P1 to PY-P10) have at least one passing test.
+
 ## Tag and number mismatches
 
 - No test is tagged with a property number that is missing from the matching design.md.
@@ -249,4 +269,5 @@ None. All 34 properties (P1 to P34) have at least one passing test.
 - `dependency-graveyard-core/design.md` has 47 properties, not 39. The table has one row per property.
 - P16 and P17 are registry-driven: one test per mapper or per removed field in `mappers.property.test.ts`, so the title cell gives a count.
 - scan-accuracy P3, P4 and P11 are now tagged with `// Feature: scan-accuracy` and `// Validates:` lines.
-
+- pyproject PY-P8 compares the PEP 621 entry parser with the requirements.txt parser. The Pyproject_Writer used by PY-P2 and PY-P4 is test-only and not part of the product code.
+- pyproject PY-P10 found a PEP 440 zero-padding defect in prefix matches (counterexample `1.0.*` against `["1"]`, seed -444692813). The fix is in task 4.11 and criterion 10.9.

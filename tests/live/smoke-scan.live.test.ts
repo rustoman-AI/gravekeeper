@@ -11,7 +11,7 @@ import { liveIt } from './live-support';
 // Skipped unless GRAVEKEEPER_LIVE_TESTS=1. The token is only read by the production
 // adapters (GITHUB_TOKEN) and is never printed.
 
-const REPOS = ['request/request', 'revmic/canopy', 'ajeetdsouza/zoxide'] as const;
+const REPOS = ['request/request', 'revmic/canopy', 'ajeetdsouza/zoxide', 'psf/requests'] as const;
 const TIMEOUT = 90_000;
 const L1_KEYS = [
   Symbol.for('gravekeeper.l1.upstream-cache'),

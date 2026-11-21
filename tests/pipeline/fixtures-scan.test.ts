@@ -36,6 +36,7 @@ interface RepoFixture {
   readonly owner: string;
   readonly repo: string;
   readonly asOf: string;
+  readonly requiresFlaggedDependency: boolean;
 }
 
 function repositorySets(): RepoFixture[] {
@@ -48,10 +49,13 @@ function repositorySets(): RepoFixture[] {
       kind: string;
       canonicalRepoUrl: string | null;
       asOf: string;
+      requiresFlaggedDependency?: boolean;
     };
     if (meta.kind !== 'npm' && meta.kind !== 'python' && meta.kind !== 'rust') continue;
     const [owner, repo] = new URL(meta.canonicalRepoUrl ?? '').pathname.split('/').filter(Boolean);
-    sets.push({ name: entry.name, dir, owner: owner as string, repo: repo as string, asOf: meta.asOf });
+    sets.push({ name: entry.name, dir, owner: owner as string, repo: repo as string, asOf: meta.asOf,
+      requiresFlaggedDependency: meta.requiresFlaggedDependency !== false,
+    });
   }
   return sets;
 }
@@ -114,16 +118,23 @@ describe('fixture scan replay', () => {
   });
 
   for (const set of sets) {
-    it(`${set.name}: two replays are equal, ok, with an archived or deprecated dependency`, async () => {
+    const title = set.requiresFlaggedDependency
+      ? 'with an archived or deprecated dependency'
+      : 'with a dependency from a pyproject.toml';
+    it(`${set.name}: two replays are equal, ok, ${title}`, async () => {
       const first = await replay(set);
       const second = await replay(set);
       expect(first.ok).toBe(true);
       expect(second).toEqual(first);
       if (!first.ok) return;
-      const flagged = first.value.result.dependencies.filter(
-        (d) => d.facts.archived === true || d.facts.deprecated === true,
-      );
-      expect(flagged.length).toBeGreaterThan(0);
+      const dependencies = first.value.result.dependencies;
+      if (set.requiresFlaggedDependency) {
+        const flagged = dependencies.filter((d) => d.facts.archived === true || d.facts.deprecated === true);
+        expect(flagged.length).toBeGreaterThan(0);
+      } else {
+        expect(dependencies.length).toBeGreaterThan(0);
+        expect(dependencies.some((d) => d.manifestPath.endsWith('pyproject.toml'))).toBe(true);
+      }
     });
     it(`${set.name}: versionBasis and advisories are consistent`, async () => {
       const outcome = await replay(set);

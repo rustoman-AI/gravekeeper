@@ -40,6 +40,7 @@ const RECORDED: ReadonlyArray<{ readonly dir: string; readonly file: string }> =
   { dir: 'request__request', file: 'scan-request.json' },
   { dir: 'revmic__canopy', file: 'scan-canopy.json' },
   { dir: 'ajeetdsouza__zoxide', file: 'scan-zoxide.json' },
+  { dir: 'psf__requests', file: 'scan-psf-requests.json' },
 ];
 
 async function replay(fixtureName: string): Promise<ScanResult> {

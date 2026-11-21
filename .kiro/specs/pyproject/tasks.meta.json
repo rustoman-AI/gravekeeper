@@ -370,6 +370,11 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795231688385
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231844932
       }
     ],
     "4.1 Change the pipeline constants": [
@@ -564,6 +569,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209775
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231846233
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231851322
       }
     ],
     "7.1 Extend the live report script": [
@@ -605,6 +620,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209915
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231846829
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231893800
       }
     ],
     "7.4 Record the fixture set (orchestrator-only)": [
@@ -612,6 +637,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230209967
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231894108
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231984144
       }
     ],
     "7.5 Update the fixture tests, the export and the samples": [
@@ -619,6 +654,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230210013
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231988624
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232106491
       }
     ],
     "7.6 Write the end-to-end test": [
@@ -626,6 +671,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230210060
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232111391
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232177631
       }
     ],
     "7.7 Add the repository to the live smoke list": [
@@ -633,6 +688,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230210105
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231989619
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232106875
       }
     ],
     "8.1 Commit and push the fixture group (orchestrator-only)": [
@@ -640,6 +705,11 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230210148
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232178485
       }
     ],
     "9.1 Compare and decide": [
@@ -647,6 +717,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230210195
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231990321
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232107339
       }
     ],
     "9.2 Replace the featured entry (only when 9.1 says Convincing_Graveyard)": [
@@ -654,6 +734,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230210246
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232112054
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232118688
       }
     ],
     "10.1 Write the traceability test": [
@@ -678,6 +768,16 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795230210342
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231897990
+      },
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231984359
       }
     ],
     "11.1 Run the end-to-end suite": [
@@ -772,6 +872,41 @@
         "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795231678338
+      }
+    ],
+    "3. Checkpoint - Core": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231844994
+      }
+    ],
+    "6. Checkpoint - Pipeline and copy": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231851371
+      }
+    ],
+    "10. Traceability": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795231984551
+      }
+    ],
+    "9. Featured graveyards": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232118733
+      }
+    ],
+    "7. Probe, fixture and end-to-end test": [
+      {
+        "executionId": "447cf936-23ee-4ee0-ad53-5f675089f827",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795232177679
       }
     ]
   }

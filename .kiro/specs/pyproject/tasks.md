@@ -92,9 +92,9 @@ Rules for every task:
     - **Property 8: PEP 508 entries agree with the requirements.txt grammar (PY-P8)**
     - **Validates: Requirements 3.4, 3.5, 3.9**
 
-- [ ] 3. Checkpoint - Core
+- [x] 3. Checkpoint - Core
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [-] 3.1 Commit and push the core group (orchestrator-only)
+  - [x] 3.1 Commit and push the core group (orchestrator-only)
     - After the checkpoint is green, stage by name the files of groups 1 and 2 and commit with the subject `pyproject: core parser, Poetry translator and properties (groups 1-2)`. Push. Record the hash for the report (task 12.4).
     - _Requirements: 15.6_
 
@@ -141,54 +141,54 @@ Rules for every task:
     - Edit `.kiro/steering/product.md` (line "The app reads dependency manifests") to list `package.json, requirements.txt, pyproject.toml, Cargo.toml`. In `tests/e2e/support/bodies.ts` and `tests/e2e/notes.spec.ts` change the repeated `no-manifests` text to the new message. Run `Select-String -Path app,components,view-model,README.md -Pattern "requirements\.txt|Cargo\.toml" -Recurse` and record that the landing copy, legend and how-it-decides copy list no formats; if a list is found, add `pyproject.toml` to it and update its test, without any change of art, palette or layout.
     - _Requirements: 9.5, 9.6_
 
-- [ ] 6. Checkpoint - Pipeline and copy
+- [x] 6. Checkpoint - Pipeline and copy
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 6.1 Commit and push the pipeline group (orchestrator-only)
+  - [x] 6.1 Commit and push the pipeline group (orchestrator-only)
     - Stage by name the files of groups 4 and 5 and commit with the subject `pyproject: discovery, cache key 3, pypi * rule, scan test (groups 4-5)`. Push. Record the hash for the report.
     - _Requirements: 15.6_
 
-- [ ] 7. Probe, fixture and end-to-end test
+- [x] 7. Probe, fixture and end-to-end test
   - [x] 7.1 Extend the live report script
     - In `scripts/live-report.ts` add the arguments `--title "<text>"` (default `Scan accuracy live report`, used for the `#` heading) and `--per-package <owner/repo>` (default `request/request`, replaces the constant `PER_PACKAGE_REPO`), and a section `### Manifests read` per repository (path, format, dependency count from `result.manifests` and `result.dependencies`). Keep all existing output, the token guard and the `GRAVEKEEPER_LIVE_TESTS=1` gate. Update `tests/scripts` only if a test covers the script (none did when this plan was written).
     - _Requirements: 14.1, 14.2, 14.5_
   - [x] 7.2 Extend the recorder for one repository and the flag
     - In `scripts/fixtures/fixture-set.ts` add the optional boolean `requiresFlaggedDependency` to `FixtureMetadata`. In `scripts/record-fixtures.ts` add the argument `--only <owner/repo>` (records that repository only, no supplementary set, other sets untouched), the optional `requiresFlagged` of `RepoSpec`, writing `requiresFlaggedDependency: false` into the metadata when it is false, and a `replayCheck` that requires only `ok` and at least one dependency in that case (otherwise unchanged). Update or add the unit tests of the recorder helpers (find them with `Select-String -Path tests -Pattern "fixture-set|record-fixtures" -Recurse`).
     - _Requirements: 12.3, 12.4_
-  - [~] 7.3 Run the Probe (orchestrator-only)
+  - [x] 7.3 Run the Probe (orchestrator-only)
     - With `GRAVEKEEPER_LIVE_TESTS=1` and `GITHUB_TOKEN` in the process environment, run `npm run live:report -- psf/requests revmic/canopy --out docs/pyproject-probe.md --title "pyproject probe" --per-package psf/requests`. Verify in the output that `pyproject.toml` is listed under "Manifests read" for `psf/requests` with at least one dependency and that the scan is not an error. If not, run the same command for `pallets/flask`, then `encode/httpx`, then `tiangolo/fastapi` and take the first that meets this check (Requirement 12.2). Note from the per-package table whether any dependency of the chosen repository is archived or deprecated (the recorder replay check is the final authority). Never print the token. If the probe fails because of rate limits, wait and repeat; do not weaken any check.
     - _Requirements: 12.1, 12.2_
-  - [~] 7.4 Record the fixture set (orchestrator-only)
+  - [x] 7.4 Record the fixture set (orchestrator-only)
     - Set `requiresFlagged: false` in the new `REPOS` entry of `scripts/record-fixtures.ts` only when the probe showed no archived or deprecated dependency; add the entry with `kind: 'python'`. Run `GRAVEKEEPER_LIVE_TESTS=1 npm run fixtures:record -- --only <owner>/<repo>` with the token in the environment. Check that the set `tests/fixtures/<owner>__<repo>/` exists (lower case), is at most `FIXTURE_SET_MAX_BYTES`, has `manifestPaths` `["pyproject.toml"]`, and that `git status` shows no change in the three existing sets. If the recorder refuses (size or replay), report the exact message and stop this task. Never write the token to a file.
     - _Requirements: 12.3, 12.4_
-  - [~] 7.5 Update the fixture tests, the export and the samples
+  - [x] 7.5 Update the fixture tests, the export and the samples
     - Update `tests/pipeline/fixtures-scan.test.ts` (honor `requiresFlaggedDependency`; for the new set require two equal replays, `ok`, at least one dependency, and a dependency whose manifest path ends in `pyproject.toml`), `tests/pipeline/fixtures-coverage.test.ts` and `tests/fixtures/fixtures-hygiene.test.ts` / `fixtures-size.test.ts` if they enumerate sets, `tests/ui/view-model/fixtures-replay.test.ts` (add the set with its row count), `scripts/export-scan-fixtures.ts` (add `{ dir, file: 'scan-<name>.json' }`) and `tests/ui/export-scan-fixtures.test.ts` (expected row count), and `tests/e2e/support/fixtures.ts` (the fixture name). Copy the recorded `pyproject.toml` text out of the set into `tests/fixtures/sample-pyproject.toml`, add a Poetry-style `tests/fixtures/sample-poetry-pyproject.toml` (a hand-written file with caret, tilde, wildcard, group, `optional` and git entries), and create `tests/core/parsers/pyproject-sample.test.ts` that parses both and compares the exact dependency list and warnings.
     - _Requirements: 12.3, 12.5, 12.6, 12.8_
-  - [~] 7.6 Write the end-to-end test
+  - [x] 7.6 Write the end-to-end test
     - Create `tests/e2e/pyproject.spec.ts` in the style of `tests/e2e/results.spec.ts` (mocked `POST /api/scan` with the exported body of the new set through `tests/e2e/support/mock-scan.ts`): the results page shows the dependency rows, opening a dependency shows `pyproject.toml` among its manifest paths, and when the body has manifest warnings the "Manifest warnings" section shows them. Add an axe check as the other results specs do. Do not change art or layout.
     - _Requirements: 12.7_
-  - [~] 7.7 Add the repository to the live smoke list
+  - [x] 7.7 Add the repository to the live smoke list
     - In `tests/live/smoke-scan.live.test.ts` add the chosen repository to `REPOS`. The test stays skipped without `GRAVEKEEPER_LIVE_TESTS=1` (`tests/live/live-gating.test.ts` still passes).
     - _Requirements: 12.9_
 
 - [ ] 8. Checkpoint - Fixture
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 8.1 Commit and push the fixture group (orchestrator-only)
+  - [-] 8.1 Commit and push the fixture group (orchestrator-only)
     - Stage by name the files of groups 7 and 9 and commit with the subject `pyproject: fixture set, export, e2e test, featured decision (groups 7, 9)`. Push. Record the hash for the report.
     - _Requirements: 15.6_
 
-- [ ] 9. Featured graveyards
-  - [~] 9.1 Compare and decide
+- [x] 9. Featured graveyards
+  - [x] 9.1 Compare and decide
     - Read `docs/pyproject-probe.md`. Append a section `## Featured decision` to that file with a table of the chosen repository and `revmic/canopy`: ALIVE, HAUNTED, DEAD, unassessed, DEAD plus HAUNTED, grade. Apply Requirement 13.1: the chosen repository is a Convincing_Graveyard when its DEAD plus HAUNTED is strictly larger, or equal and its grade is worse (order A, B, C, D, F). Write one sentence that states which repository stays featured and why, naming the numbers. This task edits only `docs/pyproject-probe.md`.
     - _Requirements: 13.1, 13.3, 13.4_
-  - [~] 9.2 Replace the featured entry (only when 9.1 says Convincing_Graveyard)
+  - [x] 9.2 Replace the featured entry (only when 9.1 says Convincing_Graveyard)
     - Skip this task, and say so in the task note, when 9.1 keeps `revmic/canopy`. Otherwise replace `https://github.com/revmic/canopy` by the chosen repository URL at the same position in `FEATURED_GRAVEYARDS` of `view-model/constants.ts` and in `ECOSYSTEM_BY_URL` of `components/featured-graveyards.tsx` (`pypi`), and update `tests/ui/view-model/constants.test.ts`, `tests/ui/components/landing-page.test.tsx`, `tests/ui/components/graveyard-app.test.tsx` if it names the list, `tests/e2e/landing.spec.ts` and `tests/e2e/live-scan.spec.ts`. Keep three entries, keep `revmic/canopy` as a fixture set and in its other tests, and change no art, palette or layout.
     - _Requirements: 13.2, 13.5, 13.6_
 
-- [ ] 10. Traceability
+- [x] 10. Traceability
   - [x] 10.1 Write the traceability test
     - Create `tests/ui/py-traceability.test.ts` in the pattern of `tests/ui/art-traceability.test.ts` (tag regex `Feature:\s*pyproject,\s*Property\s+PY-P(\d+)`, property count 10, three tests titled `PY-trace ...`): each number 1 to 10 appears in exactly one tag, every tagged file has a `// Validates:` line, every test title of a tagged file starts with its `PY-P` number.
     - _Requirements: 15.1_
-  - [~] 10.2 Update the traceability document
+  - [x] 10.2 Update the traceability document
     - In `docs/property-traceability.md` add a section `## pyproject (PY-P1 to PY-P10)` with one row per property (requirements, test file, test title, status from a full `npx vitest --run`), update the header sentence (spec list and the counts of tests and files) and add `### pyproject (0 of 10)` to "Properties without a test", with the sentence that all ten properties have a passing test (or list those without one). Add a line under "Notes" that PY-P8 compares with the requirements.txt parser and that the Pyproject_Writer is test-only.
     - _Requirements: 15.2_
 

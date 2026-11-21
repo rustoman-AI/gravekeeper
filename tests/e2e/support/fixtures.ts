@@ -5,6 +5,7 @@ export const FIXTURE_NAMES = [
   "request",
   "canopy",
   "zoxide",
+  "psf-requests",
   "synthetic-restless",
   "synthetic-300",
   "synthetic-301",

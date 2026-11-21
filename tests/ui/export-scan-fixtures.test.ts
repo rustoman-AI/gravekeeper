@@ -15,6 +15,7 @@ const EXPECTED: Readonly<Record<string, number>> = {
   'scan-request.json': 40,
   'scan-canopy.json': 6,
   'scan-zoxide.json': 20,
+  'scan-psf-requests.json': 17,
   'scan-synthetic-restless.json': 6,
   'scan-synthetic-300.json': 300,
   'scan-synthetic-301.json': 301,
@@ -41,7 +42,7 @@ afterAll(async () => {
 });
 
 describe('exportScanFixtures', () => {
-  it('writes exactly the six expected files', () => {
+  it('writes exactly the seven expected files', () => {
     expect(paths.map((p) => basename(p)).sort()).toEqual(Object.keys(EXPECTED).sort());
   });
 

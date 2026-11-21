@@ -43,6 +43,7 @@ const REPOS: readonly RepoSpec[] = [
   { kind: 'npm', owner: 'request', repo: 'request' },
   { kind: 'python', owner: 'revmic', repo: 'canopy' },
   { kind: 'rust', owner: 'ajeetdsouza', repo: 'zoxide' },
+  { kind: 'python', owner: 'psf', repo: 'requests', requiresFlagged: false },
 ];
 
 function stagingPath(label: string): string {
