@@ -41,9 +41,15 @@ export function mapOsvAdvisory(body: unknown, advisoryScore: number | null): Adv
       }
     }
 
+    // Requirement 3.2: raw own string fields, normalized later by the extractor.
+    const details = readOwn(body, 'details');
+    const summary = readOwn(body, 'summary');
+
     return {
       id,
       aliases,
+      details: typeof details === 'string' ? details : null,
+      summary: typeof summary === 'string' ? summary : null,
       withdrawn: typeof withdrawn === 'string' && withdrawn.length > 0,
       informational,
       unmaintained,

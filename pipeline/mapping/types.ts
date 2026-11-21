@@ -56,6 +56,17 @@ export interface AdvisoryRecord {
   readonly unmaintained: boolean;
   /** `severityOf(advisoryScore, body)`. */
   readonly severity: Severity | null;
+  /** Own string `details` of the body, unnormalized; null when absent or not a string (resurrect R3.2). */
+  readonly details: string | null;
+  /** Own string `summary` of the body, unnormalized; null when absent or not a string (resurrect R3.2). */
+  readonly summary: string | null;
+}
+
+/** An upstream notice about a package (resurrect spec). */
+export interface UpstreamHint {
+  readonly kind: 'deprecation-notice' | 'advisory-notice';
+  readonly text: string;
+  readonly sourceUrl: string | null;
 }
 
 export interface VulnerabilityFacts {
@@ -148,6 +159,8 @@ export interface AssembledFacts {
   readonly advisories: readonly AdvisoryEntry[];
   readonly selection: VersionSelection;
   readonly notes: readonly TargetNote[];
+  /** Upstream hints for the target (resurrect R3.2). */
+  readonly hints: readonly UpstreamHint[];
 }
 
 export interface ManifestCandidate {

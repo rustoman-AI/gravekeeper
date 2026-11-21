@@ -27,6 +27,8 @@ const recordFor = (id: string): fc.Arbitrary<AdvisoryRecord> =>
     informational: fc.boolean(),
     unmaintained: fc.boolean(),
     severity: fc.constantFrom(...SEVERITIES),
+    details: fc.constant(null),
+    summary: fc.constant(null),
   });
 
 const scenario = fc

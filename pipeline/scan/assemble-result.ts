@@ -9,6 +9,7 @@ import type { Result } from '../internal/result';
 import { assembleFacts } from '../mapping/assemble';
 import { compareCodePoints } from '../mapping/compare-code-points';
 import type { AssembledFacts, DiscoveryResult, RawTargetInputs, TargetNote } from '../mapping';
+import type { UpstreamHint } from '../mapping/types';
 import { renderErrorMessage } from './messages';
 import {
   conflictingPinsNote,
@@ -141,6 +142,8 @@ interface TargetOutcome {
   readonly advisories: AssembledFacts['advisories'];
   readonly selection: AssembledFacts['selection'];
   readonly notes: readonly ScanNote[];
+  /** Resurrect R4.2, R4.3. */
+  readonly hints: readonly UpstreamHint[];
 }
 
 /** R13.14, R17.7: a throwing assembly turns the facts of that target all-null; the scan goes on. */
@@ -153,9 +156,10 @@ function assembleTarget(raw: RawTargetInputs, asOf: string): TargetOutcome {
         advisories: assembled.advisories,
         selection: assembled.selection,
         notes: assembled.notes.map(toScanNote),
+        hints: assembled.hints,
       };
     },
-    (): TargetOutcome => ({ facts: NULL_FACTS(), advisories: [], selection: NO_SELECTION, notes: [] }),
+    (): TargetOutcome => ({ facts: NULL_FACTS(), advisories: [], selection: NO_SELECTION, notes: [], hints: [] }),
   );
 }
 
@@ -211,6 +215,7 @@ export function assembleResult(input: AssembleInput): ScanResult {
           versionBasis: null,
           facts: NULL_FACTS(),
           advisories: [],
+          hints: [],
         });
         assessed.push({ dependency, classification: null });
         continue;
@@ -224,6 +229,7 @@ export function assembleResult(input: AssembleInput): ScanResult {
         versionBasis: both ? basis : null,
         facts: outcome.facts,
         advisories: outcome.advisories,
+        hints: outcome.hints,
       });
       assessed.push({ dependency, classification: classified.get(key) ?? null });
     }

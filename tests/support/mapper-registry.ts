@@ -128,6 +128,8 @@ const isAdvisoryRecord = shape({
   informational: isBoolean,
   unmaintained: isBoolean,
   severity: nullOr(isSeverity),
+  details: nullOr(isString),
+  summary: nullOr(isString),
 });
 const isGraphqlRepoResult = oneOf(
   shape({
@@ -201,9 +203,15 @@ const isAdvisoryEntry = shape({
   url: isString,
   excluded: nullOr(literal('withdrawn', 'informational')),
 });
+const isUpstreamHint = shape({
+  kind: literal('deprecation-notice', 'advisory-notice'),
+  text: isString,
+  sourceUrl: nullOr(isString),
+});
 const isAssembledFacts = shape({
   facts: isHealthFacts,
   advisories: arrayOf(isAdvisoryEntry),
+  hints: arrayOf(isUpstreamHint),
   selection: isVersionSelection,
   notes: arrayOf(isTargetNote),
 });

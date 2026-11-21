@@ -82,6 +82,8 @@ const TABLE_NAMES: readonly string[] = [
   'L2_MAX_SCAN_BYTES',
   'L2_MAX_BODY_BYTES',
   'CACHE_KEY_VERSION',
+  'HINT_TEXT_MAX_LENGTH',
+  'HINTS_MAX_PER_PACKAGE',
   'REDIRECT_MAX_HOPS',
   'RESPONSE_HEADER_ALLOWLIST',
   'ROUTE_MAX_DURATION_SECONDS',
@@ -210,8 +212,16 @@ describe('constant consistency rules', () => {
     ]);
   });
 
-  it('CACHE_KEY_VERSION equals 3', () => {
-    expect(num('CACHE_KEY_VERSION')).toBe(3);
+  it('CACHE_KEY_VERSION equals 4', () => {
+    expect(num('CACHE_KEY_VERSION')).toBe(4);
+  });
+
+  it('HINT_TEXT_MAX_LENGTH equals 600', () => {
+    expect(num('HINT_TEXT_MAX_LENGTH')).toBe(600);
+  });
+
+  it('HINTS_MAX_PER_PACKAGE equals 3', () => {
+    expect(num('HINTS_MAX_PER_PACKAGE')).toBe(3);
   });
 
   it('RANGE_MAX_LENGTH is a positive integer', () => {
@@ -251,6 +261,8 @@ describe('constant consistency rules', () => {
       'UPSTREAM_CACHE_TTL_SECONDS',
       'DISCOVERY_MANIFEST_NAMES',
       'CACHE_KEY_VERSION',
+      'HINT_TEXT_MAX_LENGTH',
+      'HINTS_MAX_PER_PACKAGE',
       'FIXTURE_SET_MAX_BYTES',
     ];
     for (const name of ruleNames) {

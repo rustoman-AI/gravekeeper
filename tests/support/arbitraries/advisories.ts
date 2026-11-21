@@ -84,6 +84,8 @@ export const arbAdvisoryRecord: fc.Arbitrary<AdvisoryRecord> = fc.record({
   informational: fc.boolean(),
   unmaintained: fc.boolean(),
   severity: fc.constantFrom<Severity | null>(null, 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'),
+  details: fc.constant(null),
+  summary: fc.constant(null),
 });
 
 /** Records from advisory bodies (EF-6) mapped through `mapOsvAdvisory`. */
@@ -125,6 +127,8 @@ export const arbDisjointCounted: fc.Arbitrary<{ records: AdvisoryRecord[]; i: nu
         informational: false,
         unmaintained: k % 2 === 0,
         severity: sevs[k],
+        details: null,
+        summary: null,
       });
     }
     return fc

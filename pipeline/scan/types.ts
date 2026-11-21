@@ -8,6 +8,7 @@ import type {
   RepoSummary,
 } from '@/core';
 import type { AdvisoryEntry, DiscoveryResult, IsoInstant } from '../mapping';
+import type { UpstreamHint } from '../mapping/types';
 import type {
   Clock,
   GithubConfig,
@@ -70,6 +71,12 @@ export interface ScanDependency {
   readonly facts: RawHealthFacts;
   /** Open advisories of the Lookup_Target; equal for every Dependency of it, `[]` when not looked up. */
   readonly advisories: readonly AdvisoryEntry[];
+  /**
+   * Upstream hints of the Lookup_Target (resurrect spec R4.2, R4.3); equal for every Dependency of it,
+   * `[]` when not looked up. Optional so that results and fixtures built before this spec stay valid;
+   * the pipeline always sets it.
+   */
+  readonly hints?: readonly UpstreamHint[];
 }
 
 export interface ScanManifestEntry {

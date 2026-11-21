@@ -115,6 +115,7 @@ The decisions of this document are final (user brief of the session that created
 5. IF an advisory has neither `details` nor `summary` text after normalization, THEN THE Hint_Extractor SHALL return no hint for that advisory.
 6. WHERE the ecosystem is `npm` or `pypi`, THE Hint_Extractor SHALL return no `advisory-notice`, so that a non-cargo `unmaintained` marker is never reported as a hint.
 7. IF an advisory body is not an object, or reading a field throws, THEN THE Hint_Extractor SHALL skip that advisory and SHALL NOT throw [PBT].
+8. THE compact L2 cache entry of an OSV advisory SHALL keep its own string fields `summary` and `details`, so that the mapper output is equal on compact and full text (scan-pipeline Requirement 19.31).
 
 ### Requirement 4: Hints in the Scan_Result, validator, client boundary and cache version
 

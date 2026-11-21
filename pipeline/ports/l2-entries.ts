@@ -42,6 +42,12 @@ export function compactOsvAdvisory(bodyText: string): string {
 
   const out: Record<string, unknown> = { id };
 
+  // Requirement 3.8: the advisory hint reads `summary` and `details`, so the compact entry keeps them when they are strings.
+  const summary = own(body, "summary");
+  if (typeof summary === "string") out.summary = summary;
+  const details = own(body, "details");
+  if (typeof details === "string") out.details = details;
+
   const rawAliases = own(body, "aliases");
   if (Array.isArray(rawAliases)) {
     const aliases: string[] = [];

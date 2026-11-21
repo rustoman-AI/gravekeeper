@@ -137,6 +137,8 @@ flowchart LR
 
 `mapOsvAdvisory` adds `details` and `summary` to `AdvisoryRecord`: the own string value of the body field, or null. The raw strings are not normalized here; the normalizer runs once, in `hints.ts`. Existing property tests of `mapOsvAdvisory` compare chosen fields; the two new fields are additive.
 
+Finding from checkpoint 2 (compact L2 entry): scan-pipeline Property 71 (`tests/adapters/l2-entries.property.test.ts`, "OSV advisory: Mapper output is equal on compact and full text", scan-pipeline R19.31) failed with the counterexample `{"summary":"","id":"a"}` (seed 433693239). Cause: `mapOsvAdvisory` now reads `details` and `summary`, but `compactOsvAdvisory` in `pipeline/ports/l2-entries.ts` keeps only the fields that the mapper read before, so a compact L2 cache entry loses both and a cached cargo scan would lose the RustSec advisory hint (Requirement 3.8). Fix: `compactOsvAdvisory` keeps the own string fields `summary` and `details` (any other type is dropped, as for the other kept fields), and the compact shape test is updated. Property 71 stays unchanged and must pass, also under `npm run test:deep`. Task 1.11 does this.
+
 ### `pipeline/scan/*`
 
 - `ScanDependency.hints?: readonly UpstreamHint[]`. `assemble-result.ts` sets `hints: outcome.hints` (and `[]` for the all-null and unlooked paths).

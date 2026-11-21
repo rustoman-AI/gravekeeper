@@ -1,5 +1,11 @@
 // Scan_Cache store rule and typed cache (R19.5, R19.6, R19.7, R19.22, R19.28, R19.30).
-import { L2_MAX_SCAN_BYTES, PARTIAL_SCAN_TTL_SECONDS, SCAN_CACHE_TTL_SECONDS } from '../constants';
+import {
+  HINT_TEXT_MAX_LENGTH,
+  HINTS_MAX_PER_PACKAGE,
+  L2_MAX_SCAN_BYTES,
+  PARTIAL_SCAN_TTL_SECONDS,
+  SCAN_CACHE_TTL_SECONDS,
+} from '../constants';
 import type { SourceName } from '../ports';
 import type { CacheStore, JsonValue } from '../ports/cache';
 import { registryUnitKeys } from './stage-registries';
@@ -93,6 +99,27 @@ function isAdvisory(v: unknown): boolean {
       v.severity === 'CRITICAL') &&
     isStr(v.url)
   );
+}
+
+/** Code points of a string, not UTF-16 units. */
+function codePointCount(text: string): number {
+  return Array.from(text).length;
+}
+
+function isHint(v: unknown): boolean {
+  return (
+    isRec(v) &&
+    hasKeys(v, ['kind', 'text', 'sourceUrl']) &&
+    (v.kind === 'deprecation-notice' || v.kind === 'advisory-notice') &&
+    isStr(v.text) &&
+    codePointCount(v.text) <= HINT_TEXT_MAX_LENGTH &&
+    (v.sourceUrl === null || isStr(v.sourceUrl))
+  );
+}
+
+/** `hints` is absent (a result stored before the field existed, R4.4) or a short list of hints. */
+function isHintList(v: unknown): boolean {
+  return v === undefined || (isArr(v) && v.length <= HINTS_MAX_PER_PACKAGE && v.every(isHint));
 }
 
 function isDependency(v: unknown): boolean {
@@ -227,6 +254,7 @@ export function isScanResult(value: unknown): value is ScanResult {
         (d.lookupVersion === null || isStr(d.lookupVersion)) &&
         (d.versionBasis === null || d.versionBasis === 'pinned' || d.versionBasis === 'resolved' || d.versionBasis === 'default') &&
         allOf(d.advisories, isAdvisory) &&
+        isHintList(d.hints) &&
         isRec(d.facts) &&
         hasKeys(d.facts, [
           'daysSinceLastRelease', 'daysSinceLastCommit', 'archived', 'deprecated',

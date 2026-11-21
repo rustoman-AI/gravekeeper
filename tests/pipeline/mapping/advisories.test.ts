@@ -12,6 +12,8 @@ function record(id: string, extra: Partial<AdvisoryRecord> = {}): AdvisoryRecord
     informational: false,
     unmaintained: false,
     severity: null,
+    details: null,
+    summary: null,
     ...extra,
   };
 }

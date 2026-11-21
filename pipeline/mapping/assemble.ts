@@ -5,6 +5,7 @@ import { mapCratesOwners, mapNpmLatest, mapPypiOwnership } from './maintainers';
 import { aggregateAdvisories, mapOsvAdvisory } from './osv-advisory';
 import { mapDepsDevAdvisory } from './severity';
 import { buildAdvisoryEntries } from './advisories';
+import { advisoryNoticeHints, npmDeprecationHint } from './hints';
 import type {
   AdvisoryEntry,
   AdvisoryRecord,
@@ -12,6 +13,7 @@ import type {
   Fetched,
   RawTargetInputs,
   TargetNote,
+  UpstreamHint,
   VersionSelection,
 } from './types';
 import { chooseVersion } from './version-choose';
@@ -47,6 +49,7 @@ export function assembleFacts(raw: RawTargetInputs, asOf: string): AssembledFact
   let maintainerCount: number | null = null;
   let selection: VersionSelection = NO_SELECTION;
   let advisories: readonly AdvisoryEntry[] = [];
+  let hints: readonly UpstreamHint[] = [];
 
   const packageFound = raw.depsdevPackage.state === 'ok';
 
@@ -77,6 +80,12 @@ export function assembleFacts(raw: RawTargetInputs, asOf: string): AssembledFact
       const latest = bodyOf(raw.npmLatest);
       deprecated = latest === undefined ? null : mapNpmLatest(latest).deprecated;
     }
+  }
+
+  // Resurrect R2.1, R2.6: npm hint from the latest document only (R2.4).
+  if (ecosystem === 'npm') {
+    const latestBody = bodyOf(raw.npmLatest);
+    if (latestBody !== undefined) hints = npmDeprecationHint(latestBody);
   }
 
   // R12: maintainerCount comes only from the ecosystem's maintainer mapper.
@@ -118,6 +127,8 @@ export function assembleFacts(raw: RawTargetInputs, asOf: string): AssembledFact
     if (selection.selected !== null) advisories = buildAdvisoryEntries([...wanted], recordsById);
     const unfetchedIds = sorted(unfetched);
     const vulnerability = aggregateAdvisories(records, unfetchedIds);
+    // Resurrect R3.1, R3.6: only crates get advisory-notice hints.
+    if (ecosystem === 'cargo') hints = advisoryNoticeHints(records);
     openVulnerabilityCount = vulnerability.openVulnerabilityCount;
     maxSeverity = vulnerability.maxSeverity;
 
@@ -158,5 +169,5 @@ export function assembleFacts(raw: RawTargetInputs, asOf: string): AssembledFact
     maxSeverity,
     maintainerCount,
   };
-  return { facts, advisories, selection, notes };
+  return { facts, advisories, hints, selection, notes };
 }

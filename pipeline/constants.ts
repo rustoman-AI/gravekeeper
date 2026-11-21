@@ -81,9 +81,13 @@ export const PARTIAL_SCAN_TTL_SECONDS = 600;
 export const L2_OPERATION_TIMEOUT_MS = 300;
 export const L2_MAX_SCAN_BYTES = 1000000;
 export const L2_MAX_BODY_BYTES = 262144;
-// pyproject spec R10.1: bumped to 3 so scans cached before pyproject.toml
-// support are not reused.
-export const CACHE_KEY_VERSION = 3;
+// resurrect spec R4.1: bumped to 4 so scans cached before hints are not reused.
+export const CACHE_KEY_VERSION = 4;
+
+// Maximum code points of one normalized hint text.
+export const HINT_TEXT_MAX_LENGTH = 600;
+// Maximum number of hints kept per package.
+export const HINTS_MAX_PER_PACKAGE = 3;
 
 export const REDIRECT_MAX_HOPS = 3;
 

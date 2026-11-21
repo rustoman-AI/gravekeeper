@@ -137,6 +137,8 @@ describe('mapOsvAdvisory', () => {
       informational: true,
       unmaintained: true,
       severity: null,
+      details: null,
+      summary: null,
     });
   });
   it('maps other informational values without unmaintained', () => {
@@ -171,6 +173,8 @@ describe('aggregateAdvisories', () => {
     informational: false,
     unmaintained: false,
     severity: null,
+    details: null,
+    summary: null,
     ...o,
   });
   it('returns zero facts for no input', () => {

@@ -1,0 +1,524 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Change the pipeline constants and the constants test": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282202310
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282210847
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282313864
+      }
+    ],
+    "1.2 Implement the hint normalizer": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282202908
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282211567
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282314864
+      }
+    ],
+    "1.3 Write the property test for the normalizer": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282202961
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282319221
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282379748
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282483534
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282590336
+      }
+    ],
+    "1.4 Add the hint type and the advisory text fields": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203024
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282211987
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282315204
+      }
+    ],
+    "1.5 Implement the hint extractors": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203069
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282319600
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282380099
+      }
+    ],
+    "1.6 Write the property test for the extractors": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203159
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282384632
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282482543
+      }
+    ],
+    "1.7 Wire the hints into `assembleFacts`": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203225
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282385039
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282482359
+      }
+    ],
+    "1.8 Carry the hints into the scan dependencies": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203263
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282483995
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282591339
+      }
+    ],
+    "1.9 Check hints in the stored-result validator": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203301
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282592324
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282669868
+      }
+    ],
+    "1.10 Check the fixtures through the changed pipeline": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203348
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282592954
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282671367
+      }
+    ],
+    "2.1 Commit and push the pipeline group (orchestrator-only)": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203381
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282679683
+      }
+    ],
+    "3.1 Implement the detector in Core": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203414
+      }
+    ],
+    "3.2 Carry the tool into the manifest entries and the validator": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203446
+      }
+    ],
+    "3.3 Write the property test for the stored result": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203474
+      }
+    ],
+    "4.1 Commit and push the detection group (orchestrator-only)": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203506
+      }
+    ],
+    "5.1 Add the view-model constants and the name rules": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203536
+      }
+    ],
+    "5.2 Write the candidate curated file": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203567
+      }
+    ],
+    "5.3 Implement the loader and the data test": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203595
+      }
+    ],
+    "5.4 Write the property test for the lookup": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203625
+      }
+    ],
+    "5.5 Write the live contract test": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203655
+      }
+    ],
+    "6.1 Check every source URL (orchestrator-only)": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203682
+      }
+    ],
+    "6.2 Run the live contract test and drop failing targets (orchestrator-only)": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203713
+      }
+    ],
+    "7.1 Commit and push the curated-data group (orchestrator-only)": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203743
+      }
+    ],
+    "8.1 Add the view-model types": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203770
+      }
+    ],
+    "8.2 Narrow hints at the response boundary": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203801
+      }
+    ],
+    "8.3 Write the property test for the narrowing": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203830
+      }
+    ],
+    "8.4 Add hints and manifest origins to the package rows": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203861
+      }
+    ],
+    "8.5 Implement the Command_Builder": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203892
+      }
+    ],
+    "8.6 Write the property test for the commands": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203922
+      }
+    ],
+    "8.7 Implement the Resurrect_Model builder and the generators": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203949
+      }
+    ],
+    "8.8 Write the property test for determinism": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282203981
+      }
+    ],
+    "8.9 Write the property test for slot visibility": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204013
+      }
+    ],
+    "8.10 Write the property test for validated names": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204045
+      }
+    ],
+    "8.11 Write the property test for the self-replacement rule": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204109
+      }
+    ],
+    "8.12 Write the property test for links": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204139
+      }
+    ],
+    "8.13 Write the property test for order and fallback": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204171
+      }
+    ],
+    "8.14 Wire the model into the detail model": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204201
+      }
+    ],
+    "9.1 Rewrite the slot component": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204232
+      }
+    ],
+    "9.2 Render the slot from the detail panel": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204264
+      }
+    ],
+    "9.3 Add the slot style block": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204297
+      }
+    ],
+    "9.4 Verify the client budgets": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204331
+      }
+    ],
+    "10.1 Commit and push the slot group (orchestrator-only)": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204365
+      }
+    ],
+    "11.1 Re-export the e2e fixtures": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204405
+      }
+    ],
+    "11.2 Write the end-to-end test": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204438
+      }
+    ],
+    "11.3 Write the report spec": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204466
+      }
+    ],
+    "12.1 Run the end-to-end suite": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204498
+      }
+    ],
+    "12.2 Commit and push the end-to-end group (orchestrator-only)": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204533
+      }
+    ],
+    "13.1 Write the traceability test": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204570
+      }
+    ],
+    "13.2 Update the traceability document": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204602
+      }
+    ],
+    "13.3 Commit and push the traceability group (orchestrator-only)": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204636
+      }
+    ],
+    "14.1 Run the deep property tests (orchestrator-only)": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204669
+      }
+    ],
+    "14.2 Take the screenshots and write the slot sections of the report (orchestrator-only)": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204703
+      }
+    ],
+    "14.3 Commit and push the report (orchestrator-only)": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204753
+      }
+    ],
+    "14.4 Append the commits with their CI status (orchestrator-only)": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204788
+      }
+    ],
+    "15. STOP": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282204821
+      }
+    ],
+    "1. Pipeline: hint constants, normalizer, extractors, wiring, validator": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282671407
+      }
+    ],
+    "1.11 Keep summary and details in the compact OSV entry": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282823501
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795282914841
+      }
+    ]
+  }
+}

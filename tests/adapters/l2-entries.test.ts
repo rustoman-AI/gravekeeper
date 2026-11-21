@@ -41,6 +41,8 @@ describe('compactOsvAdvisory', () => {
     const compact = compactOsvAdvisory(json(full));
     expect(JSON.parse(compact)).toEqual({
       id: 'GHSA-xxxx',
+      summary: 'x'.repeat(500),
+      details: 'y'.repeat(2000),
       aliases: ['CVE-2024-1'],
       withdrawn: '2024-02-02T00:00:00Z',
       database_specific: { severity: 'HIGH' },
@@ -51,6 +53,15 @@ describe('compactOsvAdvisory', () => {
       severity: [{ type: 'CVSS_V3', score: CVSS }],
     });
     expect(compact.length).toBeLessThan(json(full).length);
+  });
+
+  // Requirement 3.8
+  it('keeps summary and details when strings, including empty, and drops them when absent or not strings', () => {
+    expect(JSON.parse(compactOsvAdvisory(json({ id: 'a', summary: '' })))).toEqual({ id: 'a', summary: '' });
+    expect(JSON.parse(compactOsvAdvisory(json({ id: 'a', details: 'd' })))).toEqual({ id: 'a', details: 'd' });
+    expect(JSON.parse(compactOsvAdvisory(json({ id: 'a' })))).toEqual({ id: 'a' });
+    expect(JSON.parse(compactOsvAdvisory(json({ id: 'a', summary: 1, details: ['x'] })))).toEqual({ id: 'a' });
+    expect(JSON.parse(compactOsvAdvisory(json({ id: 'a', summary: null, details: {} })))).toEqual({ id: 'a' });
   });
 
   it('is smaller than a realistic EF-6 body and no larger for a minimal one', () => {
