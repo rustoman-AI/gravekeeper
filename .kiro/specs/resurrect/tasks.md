@@ -230,7 +230,7 @@ Rules for every task:
     - Stage by name the files of group 13 and commit with the subject `resurrect: traceability test and document (group 13)`. Push. Record the hash.
     - _Requirements: 16.6_
 
-- [ ] 14. Deep runs and report
+- [x] 14. Deep runs and report
   - [x] 14.1 Run the deep property tests (orchestrator-only)
     - Run `npm run test:deep -- <file>` for each of the twelve property files (`tests/pipeline/mapping/hint-text.property.test.ts`, `tests/pipeline/mapping/hints.property.test.ts`, `tests/pipeline/scan/scan-cache-hints.property.test.ts`, `tests/ui/view-model/narrow-hints.property.test.ts`, `resurrections.property.test.ts`, `resurrect-commands.property.test.ts`, `resurrect-determinism.property.test.ts`, `resurrect-visibility.property.test.ts`, `resurrect-names.property.test.ts`, `resurrect-self.property.test.ts`, `resurrect-links.property.test.ts`, `resurrect-order.property.test.ts`). Never set `FC_NUM_RUNS` in the shell. Append to `docs/resurrect-report.md` the section `## Properties` with one row per property: number, title, test file, result and, for a failure, the shrunk counterexample, seed and path from the output (or the text "no counterexample found"). A failing property is reported, not hidden; fix the cause in a separate commit if it is a code defect and rerun.
     - _Requirements: 16.4_
@@ -240,11 +240,11 @@ Rules for every task:
   - [x] 14.3 Commit and push the report (orchestrator-only)
     - Stage `docs/resurrect-report.md` and `docs/screenshots/resurrect/*.png` by name, commit with the subject `resurrect: report and screenshots`, push, and record the hash.
     - _Requirements: 16.5, 16.6_
-  - [-] 14.4 Append the commits with their CI status (orchestrator-only)
+  - [x] 14.4 Append the commits with their CI status (orchestrator-only)
     - Collect the commits of this spec (the hashes recorded in tasks 2.1, 4.1, 7.1, 10.1, 12.2, 13.3 and 14.3, plus any fix commit) with `git log --oneline`, and their CI run status with `gh run list --limit 20` (workflow `ci.yml`, status and conclusion per commit; `pending` for a run that has not finished). Append the section `## Commits and CI` to `docs/resurrect-report.md` as a table (hash, subject, CI status), commit it with the subject `resurrect: report commits and CI status` and push. The CI status of this last commit is written as `pending`.
     - _Requirements: 16.6_
 
-- [~] 15. STOP
+- [x] 15. STOP
   - Stop here. Report to the user: the five slots of `request`, `har-validator`, `phantomjs-prebuilt`, `aws-sign2` and `uuid` in short form, the number of kept and dropped curated entries and what the live contract test removed, the properties with any counterexample, the client budget numbers, the commits with CI status, and the path of `docs/resurrect-report.md`. Do not start any other work, spec or refactor.
 
 ## Notes
