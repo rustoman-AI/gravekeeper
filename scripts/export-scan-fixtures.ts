@@ -17,6 +17,7 @@ import {
   SCAN_MAX_MANIFESTS,
 } from '../pipeline/constants';
 import { readGithubConfig } from '../pipeline/config/github-config';
+import type { UpstreamHint } from '../pipeline/mapping/types';
 import { createScanCache } from '../pipeline/scan/scan-cache';
 import { runScan } from '../pipeline/scan/run-scan';
 import type { ScanDeps, ScanResult } from '../pipeline/scan/types';
@@ -94,7 +95,24 @@ async function replay(fixtureName: string): Promise<ScanResult> {
   return { ...outcome.value.result, ok: true };
 }
 
+// Requirement 4.2: one deprecation notice on `buried-one` so that the synthetic body exercises the slot.
+const BURIED_HINT: UpstreamHint = {
+  kind: 'deprecation-notice',
+  text: 'This package is no longer maintained. Use the successor package instead.',
+  sourceUrl: null,
+};
+
 function syntheticRestless(): ScanResult {
+  const base = syntheticRestlessRows();
+  return {
+    ...base,
+    dependencies: base.dependencies.map((d) =>
+      d.dependency.name === 'buried-one' ? { ...d, hints: [BURIED_HINT] } : d,
+    ),
+  };
+}
+
+function syntheticRestlessRows(): ScanResult {
   return buildScanResult([
     { name: 'restless-one', kind: 'restless-both' },
     { name: 'ghost-one', kind: 'ghost', advisories: advisoriesOfEveryExclusion() },

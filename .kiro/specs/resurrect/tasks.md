@@ -193,26 +193,26 @@ Rules for every task:
     - Run `npm run build` and `npm run check:bundle`, and `npx playwright test tests/e2e/js-budget.spec.ts --project=desktop` if the budget spec runs against the build. Record the numbers (initial client JS before and after, from the output) in the final message of the task; do not write them to a file. If a budget is exceeded, find the cause (for example the JSON imported into an eager chunk) and fix it in the files of tasks 8.14 or 9.2 only after reporting; do not raise a budget.
     - _Requirements: 13.6_
 
-- [ ] 10. Checkpoint - Slot
+- [x] 10. Checkpoint - Slot
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 10.1 Commit and push the slot group (orchestrator-only)
+  - [x] 10.1 Commit and push the slot group (orchestrator-only)
     - Stage by name the files of groups 8 and 9 and commit with the subject `resurrect: slot model, commands, component, style (groups 8-9)`. Push. Record the hash.
     - _Requirements: 16.6_
 
-- [ ] 11. Fixtures, end-to-end and report specs
-  - [~] 11.1 Re-export the e2e fixtures
+- [x] 11. Fixtures, end-to-end and report specs
+  - [x] 11.1 Re-export the e2e fixtures
     - Run `npm run e2e:fixtures` and check that `tests/e2e/.generated/scan-request.json` now holds `hints` for `har-validator`, `phantomjs-prebuilt` and `karma-phantomjs-launcher`, `scan-zoxide.json` holds the `advisory-notice` of `bincode`, and the manifests of the pyproject set hold `pyprojectTool`. In `scripts/export-scan-fixtures.ts` add one `deprecation-notice` hint (a short plain text) to the synthetic restless scan for the dependency `buried-one` so that the synthetic body exercises the slot, and keep every other synthetic value unchanged. Update `tests/ui/export-scan-fixtures.test.ts` (the export has the hints; a scan of every exported file contains none of the prefixes `ghp_`, `gho_`, `github_pat_`) and `tests/ui/view-model/fixtures-replay.test.ts` only where they deep-equal exported values. Re-record no fixture.
     - _Requirements: 4.2, 12.6_
-  - [~] 11.2 Write the end-to-end test
+  - [x] 11.2 Write the end-to-end test
     - Create `tests/e2e/resurrect.spec.ts` in the style of `tests/e2e/detail.spec.ts` and `tests/e2e/results.spec.ts` (mock `/api/scan` through `tests/e2e/support/mock-scan.ts` with the exported fixture, helpers of `tests/e2e/support/*`, axe through `AXE_TAGS`): open `har-validator` (buried: the deprecation text "this library is no longer supported", its label, and a curated block only if the data file has an entry for it), `aws-sign2` (forgotten: the forgotten paragraph, no `pre`, no Copy_Button), `uuid` of `request/request` (restless: the urgent sentence first, then the buried paragraph) and `bincode` of the zoxide fixture (advisory text shown as text, no `a` element inside the text element, the cargo commands for the curated entry when the data file has one); an ALIVE package and a non-restless ghost show no slot (Requirement 15.8); for each opened panel axe reports no violation; a keyboard check (Tab reaches the Copy_Button, Enter copies); copy with `context.grantPermissions(['clipboard-read', 'clipboard-write'])` on the desktop project: the clipboard text equals the displayed lines and the Copy_Status text appears. Make assertions about curated content depend on the real `data/resurrections.json` by reading the file in the test (for example the entry for the package, when present), never on a hard-coded list.
     - _Requirements: 13.1, 13.7, 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7, 15.8_
-  - [~] 11.3 Write the report spec
+  - [x] 11.3 Write the report spec
     - Create `tests/e2e/resurrect-report.spec.ts` in the pattern of `tests/e2e/m3-report.spec.ts`, running only when `RS_REPORT=1` is set and only in the `desktop` project (viewport 1440x900, reduced motion): for `har-validator` (buried), `aws-sign2` (forgotten) and `uuid` (restless) of the `request/request` fixture, open the Detail_Panel, scroll the slot into view, and save `docs/screenshots/resurrect/resurrect-buried-har-validator.png`, `resurrect-forgotten-aws-sign2.png` and `resurrect-restless-uuid.png` with the slot visible in the frame; write the inner text of the slot for `har-validator`, `phantomjs-prebuilt`, `aws-sign2`, `uuid` and (from the synthetic body, labelled synthetic) a `request` row into `test-results/resurrect-slot-text.json`; run axe on each opened panel and write the violation counts into the same file. `/api/scan` is always mocked. No token is read or written.
     - _Requirements: 16.1, 16.2, 16.5_
 
 - [ ] 12. Final checkpoint - All checks and end-to-end
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Then run `npm run test:e2e` and ensure it passes. Ask the user if questions arise.
-  - [~] 12.1 Run the end-to-end suite
+  - [-] 12.1 Run the end-to-end suite
     - Run `npm run test:e2e` after the full vitest run is green. Fix only failures caused by this spec (the slot, the hints, the changed cache key) without any change of art, palette or header layout, and without lowering an assertion or a budget.
     - _Requirements: 13.5, 13.6, 14.5, 15.1, 15.6_
   - [~] 12.2 Commit and push the end-to-end group (orchestrator-only)

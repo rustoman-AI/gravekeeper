@@ -67,6 +67,40 @@ describe('exportScanFixtures', () => {
     expect(kinds).toEqual([...all].sort());
   });
 
+  // Requirements 4.2, 12.6
+  it('exports hints for the deprecated npm packages, bincode and the synthetic buried package', () => {
+    const hinted = (file: string): Map<string, string[]> => {
+      const out = new Map<string, string[]>();
+      for (const d of rawByFile.get(file)!.dependencies as unknown as {
+        dependency: { name: string };
+        hints?: { kind: string }[];
+      }[]) {
+        if (d.hints !== undefined && d.hints.length > 0) out.set(d.dependency.name, d.hints.map((h) => h.kind));
+      }
+      return out;
+    };
+    const request = hinted('scan-request.json');
+    for (const name of ['har-validator', 'phantomjs-prebuilt', 'karma-phantomjs-launcher']) {
+      expect(request.get(name), name).toEqual(['deprecation-notice']);
+    }
+    expect(hinted('scan-zoxide.json').get('bincode')).toEqual(['advisory-notice']);
+    expect([...hinted('scan-synthetic-restless.json').keys()]).toEqual(['buried-one']);
+  });
+
+  it('exports pyprojectTool on the pyproject manifest', () => {
+    const manifests = (rawByFile.get('scan-psf-requests.json') as unknown as {
+      manifests: { path: string; pyprojectTool?: string }[];
+    }).manifests;
+    expect(manifests.find((m) => m.path === 'pyproject.toml')?.pyprojectTool).toBe('pep621');
+  });
+
+  it('no exported file contains a token prefix', async () => {
+    for (const p of paths) {
+      const text = await readFile(p, 'utf8');
+      for (const prefix of ['ghp_', 'gho_', 'github_pat_']) expect(text.includes(prefix), `${basename(p)} ${prefix}`).toBe(false);
+    }
+  });
+
   it('synthetic restless file has advisories excluded as withdrawn, informational and null', () => {
     const excluded = new Set(
       rawByFile.get('scan-synthetic-restless.json')!.dependencies.flatMap((d) => d.advisories.map((a) => a.excluded)),

@@ -736,6 +736,11 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282204365
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795284725008
       }
     ],
     "11.1 Re-export the e2e fixtures": [
@@ -743,6 +748,16 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282204405
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795284734180
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795284812283
       }
     ],
     "11.2 Write the end-to-end test": [
@@ -750,6 +765,16 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282204438
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795284813269
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795284955031
       }
     ],
     "11.3 Write the report spec": [
@@ -757,6 +782,16 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282204466
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795284813709
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795285125619
       }
     ],
     "12.1 Run the end-to-end suite": [
@@ -764,6 +799,11 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795282204498
+      },
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795285126079
       }
     ],
     "12.2 Commit and push the end-to-end group (orchestrator-only)": [
@@ -902,6 +942,20 @@
         "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795284671886
+      }
+    ],
+    "10. Checkpoint - Slot": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795284725045
+      }
+    ],
+    "11. Fixtures, end-to-end and report specs": [
+      {
+        "executionId": "216098e6-6013-43f4-8717-d84c3c50183f",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795285125665
       }
     ]
   }
