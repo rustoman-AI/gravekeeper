@@ -85,3 +85,105 @@ Other checks: the RustSec URLs ending in `.html` all resolve. The Medium post fo
 ### Removed by the live contract test
 
 No target failed the contract test. On 2026-11-21 all 55 distinct replacement targets passed: each exists in its registry, is not deprecated or yanked, has no unmaintained advisory (crates.io), and its GitHub repository, when listed, is not archived (checked with a GitHub token).
+
+
+## Properties
+
+Each property ran 1000 times with `npm run test:deep` (`FC_NUM_RUNS` not set in the shell).
+
+| Property | Title | Test file | Runs | Result |
+| --- | --- | --- | --- | --- |
+| RS-P1 | The Resurrect_Model is deterministic | `tests/ui/view-model/resurrect-determinism.property.test.ts` (4 tests) | 1000 | pass, no counterexample found |
+| RS-P2 | The slot exists exactly for DEAD packages and restless ghosts | `tests/ui/view-model/resurrect-visibility.property.test.ts` (3 tests) | 1000 | pass, no counterexample found |
+| RS-P3 | Every suggested name is validated | `tests/ui/view-model/resurrect-names.property.test.ts` (1 test) | 1000 | pass, no counterexample found |
+| RS-P4 | Commands contain only Fixed_Words and Validated_Names, and the copy text equals the lines | `tests/ui/view-model/resurrect-commands.property.test.ts` (2 tests) | 1000 | pass, no counterexample found |
+| RS-P5 | A package is never suggested as its own replacement | `tests/ui/view-model/resurrect-self.property.test.ts` (3 tests) | 1000 | pass, no counterexample found |
+| RS-P6 | Hint text is bounded, plain and stable | `tests/pipeline/mapping/hint-text.property.test.ts` (6 tests) | 1000 | pass, no counterexample found |
+| RS-P7 | Links come only from validated builders, never from hint text | `tests/ui/view-model/resurrect-links.property.test.ts` (2 tests) | 1000 | pass, no counterexample found |
+| RS-P8 | Hint extraction is total and well-shaped | `tests/pipeline/mapping/hints.property.test.ts` (6 tests) | 1000 | pass, no counterexample found |
+| RS-P9 | Client narrowing of hints is total, valid and idempotent | `tests/ui/view-model/narrow-hints.property.test.ts` (3 tests) | 1000 | pass, no counterexample found |
+| RS-P10 | Curated lookup is invariant under equivalent spellings | `tests/ui/view-model/resurrections.property.test.ts` (5 tests) | 1000 | pass, no counterexample found |
+| RS-P11 | Section order is fixed and the fallback is exclusive | `tests/ui/view-model/resurrect-order.property.test.ts` (5 tests) | 1000 | pass, no counterexample found |
+| RS-P12 | Scan results with hints survive JSON and the validator | `tests/pipeline/scan/scan-cache-hints.property.test.ts` (3 tests) | 1000 | pass, no counterexample found |
+
+### Counterexamples found during development
+
+- **RS-P3 found a real defect.** Names from an injected curated list were not re-validated in `suggestionOf` (`view-model/resurrect.ts`). Counterexamples: an npm buried row `request` with `to: [""]` (seed -726162033), the same with `to: ["a b"]` (deep seed -1346668248), and a cargo row with `to: ["@scope/pkg","got"]`. Fixed in commit d18b79f. A later RS-P3 counterexample (pypi `requirements.txt` path used as a code segment, seed -1445781093) was a test bug: the manifest path is a legitimate code segment, so the test was narrowed to exempt exact origin paths.
+- **Scan-pipeline Property 71** (compact L2 OSV entry equals full text) caught that the compact cache entry dropped `summary` and `details` after this spec started reading them. Counterexample `{"summary":"","id":"a"}`, seed 433693239. Fixed in commit 87dd26b (task 1.11, criterion 3.8).
+- **RS-P6 test bug:** a U+FEFF trim check failed (seed -1597909426). The code was right and the test was corrected.
+
+## What the slot shows
+
+Text is taken verbatim from `test-results/resurrect-slot-text.json`. Sections are separated by blank lines. All five slots come from the `request/request` fixture except the first, which is synthetic.
+
+### request (synthetic row)
+
+`request` is not a dependency of `request/request`. The row is **synthetic**: a buried `request` npm row was added to the request fixture through a mocked body. Its hint text is the real npm deprecation notice of `request@2.88.2`, fetched from `https://registry.npmjs.org/request/latest` on 2026-11-21. The curated list supplies got, axios and node-fetch, each with commands.
+
+- From the package's deprecation notice: "request has been deprecated, see https://github.com/request/request/issues/3142"
+- Link: Read it on the registry page (www.npmjs.com)
+- From the caretaker's list: "The request maintainers collected alternative libraries after deprecating request, and the list names node-fetch, got and axios."
+- Link: Source for this suggestion (github.com)
+- got: `npm uninstall request`, `npm install got`, Copy
+- axios: `npm uninstall request`, `npm install axios`, Copy
+- node-fetch: `npm uninstall request`, `npm install node-fetch`, Copy
+
+### har-validator
+
+- From the package's deprecation notice: "this library is no longer supported"
+- Link: Read it on the registry page (www.npmjs.com)
+
+There is no curated suggestion: its registry page names no successor (see Curated list).
+
+### phantomjs-prebuilt
+
+- From the package's deprecation notice: "this package is now deprecated"
+- Link: Read it on the registry page (www.npmjs.com)
+
+There is no curated suggestion: its registry page names no successor (see Curated list).
+
+### aws-sign2
+
+No hint and no curated entry, so the fallback shows:
+
+- "No notice and no recommended replacement is on record for this package. It may be finished and need no change. Check its repository for recent activity and open issues. Pinning the version or vendoring the code is an option."
+- Links: Read it on the registry page (www.npmjs.com); Source repository (listed by the package, not verified) (github.com); Issues (listed by the package, not verified) (github.com)
+
+### uuid
+
+- Urgent line: "This package has 1 open vulnerability, so moving off it is urgent."
+- Buried paragraph: "This package is marked deprecated. No notice text and no recommended replacement is on record. Read the package page and the repository, and look for a maintained alternative."
+- Links: Read it on the registry page (www.npmjs.com); Source repository (listed by the package, not verified) (github.com); Issues (listed by the package, not verified) (github.com)
+
+The deprecation notice of `uuid@3.4.0` is on its own version document, which the scan does not fetch (Decision D3). The slot therefore shows the urgent line and the buried paragraph, not the notice text.
+
+## Screenshots
+
+1440x900, desktop project, detail panel scrolled to the slot.
+
+![har-validator, buried](screenshots/resurrect/resurrect-buried-har-validator.png)
+
+![aws-sign2, forgotten](screenshots/resurrect/resurrect-forgotten-aws-sign2.png)
+
+![uuid, restless](screenshots/resurrect/resurrect-restless-uuid.png)
+
+Axe violations per panel (from `test-results/resurrect-slot-text.json`):
+
+| Panel | Violations |
+| --- | --- |
+| har-validator | 0 |
+| aws-sign2 | 0 |
+| uuid | 0 |
+| phantomjs-prebuilt | 0 |
+| request (synthetic) | 0 |
+
+Total: 0.
+
+## Findings
+
+- Client JS is 173,948 B gzip of the 256,000 B budget. It was 168,829 B before this spec (+5,119 B). The curated JSON sits in the lazy detail-panel chunk.
+- Scene render medians: 31.6 ms (300 plots) and 17.0 ms (request).
+- Curated list: 37 entries kept (npm 13, pypi 10, cargo 14) of 42 candidates, 5 dropped. The live contract test removed 0 (55 targets checked).
+- Hints present per fixture: request/request has them for har-validator, phantomjs-prebuilt, karma-phantomjs-launcher and codecov; zoxide has the bincode advisory; psf/requests and canopy have none.
+- Several npm sources are raw registry JSON (`registry.npmjs.org/<name>/latest`). They state the notice but are not friendly pages.
+- The 600-code-point cap cuts nothing for bincode (425 characters).

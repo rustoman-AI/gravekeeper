@@ -219,22 +219,22 @@ Rules for every task:
     - Stage by name the files of group 11 and any fix of task 12.1 and commit with the subject `resurrect: fixtures re-export, end-to-end and report specs (group 11)`. Push. Record the hash.
     - _Requirements: 16.6_
 
-- [ ] 13. Traceability
+- [x] 13. Traceability
   - [x] 13.1 Write the traceability test
     - Create `tests/ui/rs-traceability.test.ts` in the pattern of `tests/ui/py-traceability.test.ts` (tag regex `Feature:\s*resurrect,\s*Property\s+RS-P(\d+)`, property count 12, three tests titled `RS-trace ...`): each number 1 to 12 appears in exactly one tag, every tagged file has a `// Validates:` line, every test title of a tagged file starts with its `RS-P` number.
     - _Requirements: 14.1, 14.2_
   - [x] 13.2 Update the traceability document
     - In `docs/property-traceability.md` add a section `## resurrect (RS-P1 to RS-P12)` with one row per property (requirements, test file, test title, status from a full `npx vitest --run`), update the header sentence (spec list and the counts of tests and files) and add `### resurrect (0 of 12)` to "Properties without a test" with the sentence that all twelve properties have a passing test (or list those without one). Add a note that RS-P4 and RS-P7 run on view-model values without a DOM.
     - _Requirements: 14.3_
-  - [~] 13.3 Commit and push the traceability group (orchestrator-only)
+  - [x] 13.3 Commit and push the traceability group (orchestrator-only)
     - Stage by name the files of group 13 and commit with the subject `resurrect: traceability test and document (group 13)`. Push. Record the hash.
     - _Requirements: 16.6_
 
 - [ ] 14. Deep runs and report
-  - [~] 14.1 Run the deep property tests (orchestrator-only)
+  - [x] 14.1 Run the deep property tests (orchestrator-only)
     - Run `npm run test:deep -- <file>` for each of the twelve property files (`tests/pipeline/mapping/hint-text.property.test.ts`, `tests/pipeline/mapping/hints.property.test.ts`, `tests/pipeline/scan/scan-cache-hints.property.test.ts`, `tests/ui/view-model/narrow-hints.property.test.ts`, `resurrections.property.test.ts`, `resurrect-commands.property.test.ts`, `resurrect-determinism.property.test.ts`, `resurrect-visibility.property.test.ts`, `resurrect-names.property.test.ts`, `resurrect-self.property.test.ts`, `resurrect-links.property.test.ts`, `resurrect-order.property.test.ts`). Never set `FC_NUM_RUNS` in the shell. Append to `docs/resurrect-report.md` the section `## Properties` with one row per property: number, title, test file, result and, for a failure, the shrunk counterexample, seed and path from the output (or the text "no counterexample found"). A failing property is reported, not hidden; fix the cause in a separate commit if it is a code defect and rerun.
     - _Requirements: 16.4_
-  - [~] 14.2 Take the screenshots and write the slot sections of the report (orchestrator-only)
+  - [-] 14.2 Take the screenshots and write the slot sections of the report (orchestrator-only)
     - Run `$env:RS_REPORT = '1'; npx playwright test tests/e2e/resurrect-report.spec.ts --project=desktop` (after `npm run e2e:fixtures`). Check that the three 1440x900 PNGs exist under `docs/screenshots/resurrect/` and that each shows the slot (open the images). Append to `docs/resurrect-report.md` the section `## What the slot shows` with one subsection each for `request` (stating that it is not a dependency of `request/request` and showing the synthetic row, labelled synthetic), `har-validator`, `phantomjs-prebuilt`, `aws-sign2` and `uuid`, taking the text from `test-results/resurrect-slot-text.json` (sections, hint text and label, curated suggestions, commands; the uuid subsection says that the notice of `uuid@3.4.0` is on its own version document and therefore not shown, Decision D3), the section `## Screenshots` that embeds the three PNGs, the axe counts, and the section `## Findings` (client budget numbers from task 9.4, the number of kept and dropped curated entries, hints present in each fixture, anything surprising). The report holds no token; grep it for `ghp_`, `gho_` and `github_pat_`.
     - _Requirements: 16.1, 16.2, 16.3, 16.5, 16.7_
   - [~] 14.3 Commit and push the report (orchestrator-only)
