@@ -1,6 +1,6 @@
 # Property traceability
 
-Maps every design property of the `scan-pipeline`, `dependency-graveyard-core`, `scan-accuracy`, `graveyard-ui`, `graveyard-art` and `pyproject` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 3551 passed, 1 failed and 26 skipped (the live tests, skipped without `GRAVEKEEPER_LIVE_TESTS`), 302 test files passed, 1 failed and 6 skipped (309 files, 3578 tests). The one failure is `tests/pipeline/fixtures-scan.test.ts` for the new, untracked `tests/fixtures/psf__requests` set that task 7.4 is still writing (it expects an archived or deprecated dependency and finds none). It is not a pyproject property test. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
+Maps every design property of the `scan-pipeline`, `dependency-graveyard-core`, `scan-accuracy`, `graveyard-ui`, `graveyard-art`, `pyproject` and `resurrect` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 3807 passed and 82 skipped, 332 test files passed and 7 skipped (339 files, 3889 tests), with no failure. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
 
 ## scan-pipeline
 
@@ -230,6 +230,29 @@ Tags read `// Feature: pyproject, Property PY-P<n>`. Test titles start with `PY-
 | PY-P8 | 3.4, 3.5, 3.9 | `tests/core/parsers/pep508.property.test.ts` | PY-P8: a PEP 621 entry and a requirements.txt line give the same name, rawName, versionSpec and sourceKind, or both are skipped<br>PY-P8: generated valid lines are read, not vacuously skipped by both | passing |
 | PY-P9 | 9.1, 9.2, 9.3, 9.8 | `tests/pipeline/mapping/pyproject-discovery.property.test.ts` | PY-P9 discovery lists exactly the manifest-named blobs outside skip dirs within the depth limit, format equals file name<br>PY-P9 default selection is exactly the root manifests in ascending code point order, pyproject.toml and requirements.txt together | passing |
 | PY-P10 | 6.11, 10.4 | `tests/pipeline/mapping/poetry-resolve.property.test.ts` | PY-P10 resolveRange on the translation equals the Poetry_Reference highest stable version<br>PY-P10 every non-* translation is accepted by pepRange | passing |
+## resurrect (RS-P1 to RS-P12)
+
+Tags read `// Feature: resurrect, Property RS-P<n>`. Test titles start with `RS-P<n>`. Status is from the full `npx vitest --run` above; every file listed passed.
+
+| Property | Requirement(s) | Test file | Test title | Status |
+| --- | --- | --- | --- | --- |
+| RS-P1 | 10.11 | `tests/ui/view-model/resurrect-determinism.property.test.ts` | RS-P1 building the model twice gives deeply equal values<br>RS-P1 the model does not depend on object identity or key order of the inputs<br>RS-P1 permuting the notes of the scan does not change the model of a row<br>RS-P1 the model survives a JSON round trip unchanged | passing |
+| RS-P2 | 9.1, 9.2 | `tests/ui/view-model/resurrect-visibility.property.test.ts` | RS-P2: for every plot case the model is non-null iff status is DEAD or kind is restless<br>RS-P2: the rule holds for every combination of classification and plot kind<br>RS-P2: every plot case and plot kind is exercised, with and without a slot | passing |
+| RS-P3 | 7.2, 7.6, 10.1, 10.10 | `tests/ui/view-model/resurrect-names.property.test.ts` | RS-P3: every alternative and code name is valid; names that fail never appear | passing |
+| RS-P4 | 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.9, 10.10, 11.7 | `tests/ui/view-model/resurrect-commands.property.test.ts` | RS-P4: every token is a Fixed_Word or a validated name, copyText equals the lines, hostile names give no block<br>RS-P4: a name that is not command-safe for any origin ecosystem yields no block | passing |
+| RS-P5 | 7.7 | `tests/ui/view-model/resurrect-self.property.test.ts` | RS-P5 no alternative normalises to the name of the row<br>RS-P5 when every alternative is a self-reference the suggestion is absent and the fallback shows<br>RS-P5 an alternative that is not a self-reference is kept | passing |
+| RS-P6 | 1.1, 1.2, 1.3, 1.4, 1.5, 1.6 | `tests/pipeline/mapping/hint-text.property.test.ts` | RS-P6 constant matches the bound used by the oracle<br>RS-P6 non-string values give null<br>RS-P6 strings match the independent oracle<br>RS-P6 result is trimmed, bounded, plain and single-spaced<br>RS-P6 normalizing twice equals normalizing once<br>RS-P6 Markdown, HTML and URL characters stay literal | passing |
+| RS-P7 | 12.2, 4.9, 4.10 | `tests/ui/view-model/resurrect-links.property.test.ts` | RS-P7: every href comes from a validated builder or a validated curated source, is https, and is not taken from hint text<br>RS-P7: a URL present only in hint text never appears as an href | passing |
+| RS-P8 | 2.1, 2.2, 2.3, 3.1, 3.2, 3.3, 3.4, 3.5, 3.7 | `tests/pipeline/mapping/hints.property.test.ts` | RS-P8 npm extractor never throws and yields at most one well-shaped hint<br>RS-P8 npm extractor returns one hint exactly when deprecated is a string non-empty after normalization<br>RS-P8 advisory extractor never throws and keeps kind, source URL and the cap<br>RS-P8 advisory extractor matches the independent selection oracle, ids ascending and unique<br>RS-P8 withdrawn or not-unmaintained records never produce a hint<br>RS-P8 advisory extractor is total for a hostile list | passing |
+| RS-P9 | 4.7, 4.8 | `tests/ui/view-model/narrow-hints.property.test.ts` | RS-P9 is total and gives [] for any non-array<br>RS-P9 returns only valid hints, at most the cap, in the order of the valid inputs<br>RS-P9 is idempotent on its own output | passing |
+| RS-P10 | 7.4, 7.5 | `tests/ui/view-model/resurrections.property.test.ts` | RS-P10 loaded lists hold one entry per normalized from, and every equivalent spelling resolves to it<br>RS-P10 a name whose normalized form is not a from gives null in a loaded list<br>RS-P10 lookupCurated returns the same entry for every equivalent spelling of a shipped from<br>RS-P10 lookupCurated agrees with the oracle on arbitrary names, null when the normalized form is not a from<br>RS-P10 an npm name is looked up exactly, so a different case is not an equivalent spelling | passing |
+| RS-P11 | 9.3, 9.4, 9.6, 9.7, 9.11 | `tests/ui/view-model/resurrect-order.property.test.ts` | RS-P11 urgent exists iff the row is restless, and sections follow urgent, hints, suggestions, fallback<br>RS-P11 the fallback is present iff there are no hints and no suggestions<br>RS-P11 the fallback is forgotten-type for forgotten rows and buried-type otherwise<br>RS-P11 the fallback names no package: no code segments, no alternatives, no curated name<br>RS-P11 every combination of hint count and curated kind occurs for each slot case | passing |
+| RS-P12 | 4.5, 4.6, 5.5 | `tests/pipeline/scan/scan-cache-hints.property.test.ts` | RS-P12 accepts a generated result, before and after a JSON round trip<br>RS-P12 rejects a result with one hint replaced by a malformed one<br>RS-P12 rejects a result with one pyprojectTool replaced by an unknown value | passing |
+
+RS-P4 and RS-P7 run on view-model values without a DOM.
+
+RS-P3 found a defect during development: curated names injected into the model were not re-validated in `suggestionOf`. Counterexamples: `to: [""]` (seed -726162033) and `to: ["a b"]` (seed -1346668248). The fix is in `view-model/resurrect.ts`.
+
 ## Properties without a test
 
 ### scan-pipeline (0 of 76)
@@ -251,6 +274,10 @@ None. All 34 properties (P1 to P34) have at least one passing test.
 ### pyproject (0 of 10)
 
 None. All 10 properties (PY-P1 to PY-P10) have at least one passing test.
+
+### resurrect (0 of 12)
+
+None. All 12 properties (RS-P1 to RS-P12) have at least one passing test.
 
 ## Tag and number mismatches
 

@@ -210,20 +210,20 @@ Rules for every task:
     - Create `tests/e2e/resurrect-report.spec.ts` in the pattern of `tests/e2e/m3-report.spec.ts`, running only when `RS_REPORT=1` is set and only in the `desktop` project (viewport 1440x900, reduced motion): for `har-validator` (buried), `aws-sign2` (forgotten) and `uuid` (restless) of the `request/request` fixture, open the Detail_Panel, scroll the slot into view, and save `docs/screenshots/resurrect/resurrect-buried-har-validator.png`, `resurrect-forgotten-aws-sign2.png` and `resurrect-restless-uuid.png` with the slot visible in the frame; write the inner text of the slot for `har-validator`, `phantomjs-prebuilt`, `aws-sign2`, `uuid` and (from the synthetic body, labelled synthetic) a `request` row into `test-results/resurrect-slot-text.json`; run axe on each opened panel and write the violation counts into the same file. `/api/scan` is always mocked. No token is read or written.
     - _Requirements: 16.1, 16.2, 16.5_
 
-- [ ] 12. Final checkpoint - All checks and end-to-end
+- [x] 12. Final checkpoint - All checks and end-to-end
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Then run `npm run test:e2e` and ensure it passes. Ask the user if questions arise.
-  - [-] 12.1 Run the end-to-end suite
+  - [x] 12.1 Run the end-to-end suite
     - Run `npm run test:e2e` after the full vitest run is green. Fix only failures caused by this spec (the slot, the hints, the changed cache key) without any change of art, palette or header layout, and without lowering an assertion or a budget.
     - _Requirements: 13.5, 13.6, 14.5, 15.1, 15.6_
-  - [~] 12.2 Commit and push the end-to-end group (orchestrator-only)
+  - [x] 12.2 Commit and push the end-to-end group (orchestrator-only)
     - Stage by name the files of group 11 and any fix of task 12.1 and commit with the subject `resurrect: fixtures re-export, end-to-end and report specs (group 11)`. Push. Record the hash.
     - _Requirements: 16.6_
 
 - [ ] 13. Traceability
-  - [~] 13.1 Write the traceability test
+  - [x] 13.1 Write the traceability test
     - Create `tests/ui/rs-traceability.test.ts` in the pattern of `tests/ui/py-traceability.test.ts` (tag regex `Feature:\s*resurrect,\s*Property\s+RS-P(\d+)`, property count 12, three tests titled `RS-trace ...`): each number 1 to 12 appears in exactly one tag, every tagged file has a `// Validates:` line, every test title of a tagged file starts with its `RS-P` number.
     - _Requirements: 14.1, 14.2_
-  - [~] 13.2 Update the traceability document
+  - [x] 13.2 Update the traceability document
     - In `docs/property-traceability.md` add a section `## resurrect (RS-P1 to RS-P12)` with one row per property (requirements, test file, test title, status from a full `npx vitest --run`), update the header sentence (spec list and the counts of tests and files) and add `### resurrect (0 of 12)` to "Properties without a test" with the sentence that all twelve properties have a passing test (or list those without one). Add a note that RS-P4 and RS-P7 run on view-model values without a DOM.
     - _Requirements: 14.3_
   - [~] 13.3 Commit and push the traceability group (orchestrator-only)
