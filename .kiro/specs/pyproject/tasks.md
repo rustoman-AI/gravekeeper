@@ -206,7 +206,7 @@ Rules for every task:
     - Stage by name the files of group 10 and any fix of task 11.1 and commit with the subject `pyproject: traceability test and document (group 10)`. Push. Record the hash for the report.
     - _Requirements: 15.6_
 
-- [ ] 12. Report
+- [x] 12. Report
   - [x] 12.1 Run the live scan and write the report (orchestrator-only)
     - With `GRAVEKEEPER_LIVE_TESTS=1` and `GITHUB_TOKEN` in the environment, run `npm run live:report -- <owner>/<repo> --out docs/pyproject-report.md --title "pyproject live report" --per-package <owner>/<repo>` for the chosen repository. Check that the file states the grade and counts, the manifests read, the HAUNTED packages with advisory ids, the `versionBasis` counts, the notes by code, the duration and the cache header values, and that it holds no token. Append the section `## Featured comparison` copied from `docs/pyproject-probe.md` (Requirement 13.1 table and decision sentence) and a short `## Findings` list of what the scan showed about the feature (for example a `range-unresolved` note count, warnings of the parser, unassessed git entries).
     - _Requirements: 14.1, 14.2, 14.5, 13.1, 13.4_
@@ -216,11 +216,11 @@ Rules for every task:
   - [x] 12.3 Remove the probe file, commit and push the report (orchestrator-only)
     - Delete `docs/pyproject-probe.md` (only that file), stage `docs/pyproject-report.md` and the deletion, commit with the subject `pyproject: live report`, push, and record the hash.
     - _Requirements: 14.6, 14.5_
-  - [-] 12.4 Append the commits with their CI status (orchestrator-only)
+  - [x] 12.4 Append the commits with their CI status (orchestrator-only)
     - Collect the commits of this spec (the hashes recorded in tasks 3.1, 6.1, 8.1, 11.2 and 12.3, plus any fix commit) with `git log --oneline`, and their CI run status with `gh run list --limit 20` (workflow `ci.yml`, status and conclusion per commit; `pending` for a run that has not finished). Append the section `## Commits and CI` to `docs/pyproject-report.md` as a table (hash, subject, CI status), commit it with the subject `pyproject: report commits and CI status` and push. The CI status of this last commit is written as `pending`.
     - _Requirements: 14.4, 14.5_
 
-- [~] 13. STOP
+- [x] 13. STOP
   - Stop here. Report to the user: the grade and counts of the chosen repository, the HAUNTED packages with advisory ids, the `versionBasis` counts, the notes and duration, the properties with any counterexample, the commits with CI status, and which repository stays featured. Do not start any other work, spec or refactor.
 
 ## Notes
