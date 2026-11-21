@@ -1,11 +1,14 @@
 // Requirement 14.5, 6.6: total narrowing of untrusted values. Nothing here throws.
 import type { Severity } from '../core';
+import { HINT_TEXT_MAX_LENGTH, HINTS_MAX_PER_PACKAGE } from '../pipeline/constants';
 import type {
   AdvisoryExclusion,
   NarrowedFacts,
   ParsedAdvisory,
+  ParsedHint,
   VersionBasis,
 } from './types';
+import { advisoryLink } from './urls';
 
 const SEVERITIES: readonly string[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
 
@@ -118,4 +121,54 @@ export function narrowAdvisories(advisories: unknown): readonly ParsedAdvisory[]
 
 export function narrowVersionBasis(value: unknown): VersionBasis {
   return value === 'pinned' || value === 'resolved' || value === 'default' ? value : null;
+}
+
+/** Characters that normalizeHintText replaces by a space (Requirement 4.7); a text holding one is not trusted. */
+function isRemovedChar(cp: number): boolean {
+  return (
+    cp <= 0x1f ||
+    (cp >= 0x7f && cp <= 0x9f) ||
+    cp === 0x2028 ||
+    cp === 0x2029 ||
+    (cp >= 0x202a && cp <= 0x202e) ||
+    (cp >= 0x2066 && cp <= 0x2069) ||
+    cp === 0x200e ||
+    cp === 0x200f ||
+    (cp >= 0xd800 && cp <= 0xdfff)
+  );
+}
+
+function isValidHintText(value: unknown): value is string {
+  if (typeof value !== 'string' || value === '') return false;
+  let count = 0;
+  for (const ch of value) {
+    count += 1;
+    if (count > HINT_TEXT_MAX_LENGTH) return false;
+    if (isRemovedChar(ch.codePointAt(0) ?? 0)) return false;
+  }
+  return true;
+}
+
+/**
+ * Resurrect R4.7, 4.9, 4.10: total, order-keeping and idempotent narrowing of upstream hints.
+ * A missing or non-array value gives []. The link is computed here, never taken from the input.
+ */
+export function narrowHints(value: unknown): readonly ParsedHint[] {
+  if (!Array.isArray(value)) return [];
+  const kept: ParsedHint[] = [];
+  for (const entry of value as readonly unknown[]) {
+    if (kept.length >= HINTS_MAX_PER_PACKAGE) break;
+    if (!isRecord(entry)) continue;
+    const { kind, text, sourceUrl } = entry;
+    if (kind !== 'deprecation-notice' && kind !== 'advisory-notice') continue;
+    if (!isValidHintText(text)) continue;
+    const safeUrl = advisoryLink(sourceUrl);
+    kept.push({
+      kind,
+      text,
+      sourceUrl: safeUrl,
+      link: kind === 'advisory-notice' && safeUrl !== null ? { href: safeUrl, label: 'Read the advisory' } : null,
+    });
+  }
+  return kept;
 }

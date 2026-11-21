@@ -1,7 +1,7 @@
 // Requirement 14.1 to 14.6, 14.9: the response boundary. Total, never throws.
 import { CACHE_STATUS_HEADER } from '../pipeline/constants';
 import type { ScanErrorBody } from '../pipeline';
-import { isValidRepo, narrowAdvisories, narrowFacts, narrowVersionBasis } from './narrow';
+import { isValidRepo, narrowAdvisories, narrowFacts, narrowHints, narrowVersionBasis } from './narrow';
 import type {
   CacheStatus,
   HeaderReader,
@@ -79,10 +79,11 @@ function parseResult(body: Record<string, unknown>): ParsedScanResult | null {
   for (const entry of dependencies as readonly unknown[]) {
     if (!isRecord(entry) || !isRecord(entry['dependency']) || !Array.isArray(entry['advisories'])) return null;
     parsed.push({
-      ...(entry as unknown as Omit<ParsedDependency, 'facts' | 'versionBasis' | 'advisories'>),
+      ...(entry as unknown as Omit<ParsedDependency, 'facts' | 'versionBasis' | 'advisories' | 'hints'>),
       facts: narrowFacts(entry['facts']),
       versionBasis: narrowVersionBasis(entry['versionBasis']),
       advisories: narrowAdvisories(entry['advisories']),
+      hints: narrowHints(entry['hints']),
     });
   }
   const { ok: _ok, ...rest } = body;

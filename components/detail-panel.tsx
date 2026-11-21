@@ -181,9 +181,9 @@ export function DetailPanel({
           </section>
         )}
 
-        {/* Requirement 10.13, 12.1: the placeholder slot for every DEAD package. */}
-        {model.resurrect ? (
-          <ResurrectSlot packageKey={model.key} displayName={model.title} />
+        {/* Requirements 9.1, 9.2: the Resurrect_Slot for DEAD packages and restless ghosts only. */}
+        {model.resurrect !== null ? (
+          <ResurrectSlot model={model.resurrect} />
         ) : null}
       </div>
     </div>,

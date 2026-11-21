@@ -60,10 +60,19 @@ export interface NarrowedFacts {
   readonly maxSeverity: Severity | null;
   readonly maintainerCount: number | null;
 }
+/** Resurrect R4: an upstream hint after narrowing; link is computed by the narrower. */
+export interface ParsedHint {
+  readonly kind: 'deprecation-notice' | 'advisory-notice';
+  readonly text: string;
+  /** Kept as received only when it passes the link validator, otherwise null. */
+  readonly sourceUrl: string | null;
+  readonly link: { readonly href: string; readonly label: string } | null;
+}
 export type ParsedDependency = Omit<
   ScanResult['dependencies'][number],
-  'facts' | 'versionBasis' | 'advisories'
+  'facts' | 'versionBasis' | 'advisories' | 'hints'
 > & {
+  readonly hints: readonly ParsedHint[];
   readonly facts: NarrowedFacts;
   readonly versionBasis: VersionBasis;
   readonly advisories: readonly ParsedAdvisory[];
@@ -97,6 +106,12 @@ export interface ScanRequestBody {
   readonly manifests?: readonly string[];
 }
 
+/** One manifest that declares a package (Resurrect R5.7, R10.8). */
+export interface ManifestOrigin {
+  readonly path: string;
+  readonly format: ScanResult['manifests'][number]['format'];
+  readonly pyprojectTool: 'poetry' | 'pep621' | 'mixed' | null;
+}
 // ---- package rows (Requirement 7) --------------------------------------------------------------
 export interface PackageRow {
   readonly key: PackageKeyString;
@@ -128,6 +143,9 @@ export interface PackageRow {
   readonly lookupVersion: string | null;
   readonly versionBasis: VersionBasis;
   readonly advisories: readonly ParsedAdvisory[];
+  readonly hints: readonly ParsedHint[];
+  /** One per distinct manifest path of the row, in the order of manifestPaths. */
+  readonly manifestOrigins: readonly ManifestOrigin[];
   /** `<name>, <ecosystem>, <status word>, <short reason or cause>` (Requirement 7.6). */
   readonly accessibleLabel: string;
 }
@@ -321,10 +339,57 @@ export interface DetailModel {
     readonly registry: string | null;
     readonly sourceRepo: string | null;
   };
-  /** Merged status DEAD (Requirement 10.13). */
-  readonly resurrect: boolean;
+  /** Resurrect R9.1, R9.2: non-null for DEAD packages and restless ghosts. */
+  readonly resurrect: ResurrectModel | null;
 }
 
+// ---- resurrect (Resurrect spec R9 to R11) ------------------------------------------------------
+/** A piece of a lead sentence: plain text or a name shown in a code element. */
+export type ResurrectSegment =
+  | { readonly kind: 'text'; readonly text: string }
+  | { readonly kind: 'code'; readonly text: string };
+export interface ResurrectLink {
+  readonly href: string;
+  readonly label: string;
+}
+export interface ResurrectBlock {
+  readonly heading: string | null;
+  readonly lead: readonly ResurrectSegment[] | null;
+  readonly lines: readonly string[];
+  readonly note: string | null;
+  /** Copy commands for <to>. */
+  readonly copyLabel: string;
+  /** lines.join('\n'). */
+  readonly copyText: string;
+}
+export interface ResurrectHint {
+  readonly label: string;
+  readonly text: string;
+  readonly link: ResurrectLink | null;
+}
+export interface ResurrectAlternative {
+  readonly name: string;
+  readonly blocks: readonly ResurrectBlock[];
+}
+export interface ResurrectSuggestion {
+  /** From the caretaker's list. */
+  readonly label: string;
+  readonly why: string;
+  readonly source: ResurrectLink;
+  readonly alternatives: readonly ResurrectAlternative[];
+}
+export interface ResurrectFallback {
+  readonly kind: 'buried' | 'forgotten';
+  readonly paragraph: string;
+  readonly links: readonly ResurrectLink[];
+}
+export interface ResurrectModel {
+  readonly heading: 'Resurrect';
+  readonly urgent: string | null;
+  readonly hints: readonly ResurrectHint[];
+  readonly suggestions: readonly ResurrectSuggestion[];
+  readonly fallback: ResurrectFallback | null;
+}
 // ---- notes (Requirement 11) --------------------------------------------------------------------
 export interface NotesModel {
   readonly sources: readonly {

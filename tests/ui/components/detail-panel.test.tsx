@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+﻿// @vitest-environment jsdom
 import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
@@ -261,33 +261,29 @@ describe("DetailPanel content", () => {
     expect(within(second.dialog).queryByRole("link")).toBeNull();
   });
 
-  it("shows the Resurrect_Slot only for buried and forgotten packages (R10.13, R12.1)", () => {
+  it("shows the Resurrect_Slot only for buried, forgotten and restless packages (R9.1, R9.2)", () => {
     const specs: RowSpec[] = [
       { name: "dead-one", kind: "buried" },
       { name: "forgotten-one", kind: "forgotten" },
-      { name: "haunted-one", kind: "haunted" },
       { name: "restless-one", kind: "restless-both" },
+      { name: "ghost-one", kind: "ghost" },
+      { name: "haunted-one", kind: "haunted" },
       { name: "alive-one", kind: "alive" },
       { name: "mystery-one", kind: "unknown-facts" },
     ];
-    const shown = new Set(["dead-one", "forgotten-one"]);
+    const shown = new Set(["dead-one", "forgotten-one", "restless-one"]);
     for (const s of specs) {
       const { dialog } = renderPanel(modelOf(specs, s.name));
       const slot = dialog.querySelector('[data-slot="resurrect"]');
       if (shown.has(s.name)) {
         expect(slot).not.toBeNull();
-        expect(slot?.getAttribute("data-placeholder")).toBe("true");
         expect(within(dialog).getByRole("heading", { level: 3, name: "Resurrect" })).toBeTruthy();
-        expect(within(dialog).getByText("Coming soon: suggest a maintained alternative and a manifest patch")).toBeTruthy();
-        const button = within(dialog).getByRole("button", { name: "Resurrect" });
-        expect(button.hasAttribute("disabled")).toBe(true);
-        expect(button.getAttribute("aria-disabled")).toBe("true");
-        const descId = button.getAttribute("aria-describedby") ?? "";
-        expect(document.getElementById(descId)?.textContent?.trim()).toBe("Not available yet");
       } else {
         expect(slot).toBeNull();
-        expect(within(dialog).queryByText(/resurrect/i)).toBeNull();
+        expect(within(dialog).queryByRole("heading", { name: "Resurrect" })).toBeNull();
       }
+      expect(within(dialog).queryByRole("button", { name: "Resurrect" })).toBeNull();
+      expect(within(dialog).queryByText(/coming soon/i)).toBeNull();
       cleanup();
     }
   });

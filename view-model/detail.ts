@@ -5,6 +5,8 @@ import { FACT_FIELDS, formatFact } from './format-fact';
 import { NOTE_SECTIONS, OTHER_NOTES_TITLE } from './notes';
 import { unassessedLabelOf } from './package-rows';
 import { plainReasonLine } from './plain-reasons';
+import { buildResurrectModel } from './resurrect';
+import { lookupCurated } from './resurrections';
 import type { DetailModel, PackageKeyString, PackageRow, ParsedScanResult } from './types';
 import { registryLink, sourceRepoLink } from './urls';
 
@@ -134,6 +136,6 @@ export function buildDetailModel(
       registry: registryLink(row.ecosystem, row.name),
       sourceRepo: sourceRepoNote === undefined ? null : sourceRepoLink(sourceRepoNote.details?.sourceRepo),
     },
-    resurrect: classification !== null && classification.status === 'DEAD',
+    resurrect: buildResurrectModel(row, result, lookupCurated),
   };
 }

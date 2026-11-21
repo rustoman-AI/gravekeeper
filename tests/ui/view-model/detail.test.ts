@@ -103,19 +103,31 @@ describe('maxSeverity text (R10.5)', () => {
 
 describe('Resurrect_Slot (R10.13)', () => {
   it.each(['restless-archived', 'restless-deprecated', 'restless-both'] as const)(
-    'is off for the restless ghost %s',
+    'gives a model for the restless ghost %s',
     (kind) => {
-      expect(one({ name: 'a', kind }).resurrect).toBe(false);
+      expect(one({ name: 'a', kind }).resurrect).not.toBeNull();
     },
   );
 
-  it.each(['buried', 'forgotten', 'buried-deprecated'] as const)('is on for the DEAD package %s', (kind) => {
-    expect(one({ name: 'a', kind }).resurrect).toBe(true);
+  it.each(['buried', 'forgotten', 'buried-deprecated'] as const)(
+    'gives a model for the DEAD package %s',
+    (kind) => {
+      expect(one({ name: 'a', kind }).resurrect?.heading).toBe('Resurrect');
+    },
+  );
+
+  it('gives the fallback kind that matches a buried and a forgotten row', () => {
+    expect(one({ name: 'a', kind: 'buried' }).resurrect?.fallback?.kind).toBe('buried');
+    expect(one({ name: 'a', kind: 'forgotten' }).resurrect?.fallback?.kind).toBe('forgotten');
   });
 
-  it('is off for an alive package and an unmarked grave', () => {
-    expect(one({ name: 'a', kind: 'alive' }).resurrect).toBe(false);
-    expect(one({ name: 'a', kind: 'unassessed-git' }).resurrect).toBe(false);
+  it('gives null for an alive package and an unassessed package', () => {
+    expect(one({ name: 'a', kind: 'alive' }).resurrect).toBeNull();
+    expect(one({ name: 'a', kind: 'unassessed-git' }).resurrect).toBeNull();
+  });
+
+  it('gives null for a ghost that is not restless', () => {
+    expect(one({ name: 'a', kind: 'ghost' as never }).resurrect).toBeNull();
   });
 });
 

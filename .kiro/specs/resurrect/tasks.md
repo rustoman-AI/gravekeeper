@@ -118,78 +118,78 @@ Rules for every task:
     - Run `$env:GRAVEKEEPER_LIVE_TESTS = '1'; $env:GITHUB_TOKEN = (gh auth token); npx vitest --run tests/live/resurrections.live.test.ts` in one command (the token is never printed). For each failing `to` name remove it from its entry in `data/resurrections.json` (remove the entry when none remains) and rerun until the test passes; a failure caused by rate limiting or network is waited out and repeated, not treated as a failed target. Append to the `## Curated list` section of `docs/resurrect-report.md` a table `### Removed by the live contract test` (ecosystem, from, to name, failed check) or the sentence "No target failed the contract test". Run the data test of task 5.3 and the loader tests afterwards.
     - _Requirements: 8.2, 8.3, 8.4, 8.7_
 
-- [ ] 7. Checkpoint - Curated data
+- [x] 7. Checkpoint - Curated data
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 7.1 Commit and push the curated-data group (orchestrator-only)
+  - [x] 7.1 Commit and push the curated-data group (orchestrator-only)
     - Stage by name the files of groups 5 and 6 and commit with the subject `resurrect: curated replacements, names, loader, live contract test (groups 5-6)`. Push. Record the hash.
     - _Requirements: 16.6_
 
-- [ ] 8. View-model: boundary, rows, commands, model
-  - [~] 8.1 Add the view-model types
+- [x] 8. View-model: boundary, rows, commands, model
+  - [x] 8.1 Add the view-model types
     - In `view-model/types.ts` add `ParsedHint` (`kind`, `text`, `sourceUrl: string | null`, and `link: {href: string, label: string} | null` computed by the narrower), `ManifestOrigin` (`path`, `format`, `pyprojectTool: 'poetry' | 'pep621' | 'mixed' | null`), `hints: readonly ParsedHint[]` on `ParsedDependency` (and omit `hints` from the `Omit` of the scan dependency type, as `advisories` is), `hints` and `manifestOrigins` on `PackageRow`, the `ResurrectModel` family of the design ("ResurrectModel" table: `heading`, `urgent`, `hints`, `suggestions`, `fallback`, and the block record with `heading`, `lead` segments, `lines`, `note`, `copyLabel`, `copyText`), and change `DetailModel.resurrect` from `boolean` to `ResurrectModel | null`. Types only.
     - _Requirements: 9.1, 10.1, 11.1_
-  - [~] 8.2 Narrow hints at the response boundary
+  - [x] 8.2 Narrow hints at the response boundary
     - In `view-model/narrow.ts` add `narrowHints(value: unknown): readonly ParsedHint[]` by the design (non-array gives `[]`; each entry a record with a known `kind`, a non-empty `text` of at most `HINT_TEXT_MAX_LENGTH` code points with none of the characters that `normalizeHintText` removes, at most `HINTS_MAX_PER_PACKAGE` entries kept, link from `advisoryLink` labelled "Read the advisory" for `advisory-notice` and null for `deprecation-notice`, `sourceUrl` kept as received only when it passes the link validator, otherwise null; total, order kept, idempotent). In `view-model/parse-response.ts` set `hints: narrowHints(entry['hints'])` on each dependency and do not require the field. Create `tests/ui/view-model/narrow-hints.test.ts`: absent field, valid hints, a hint with a `javascript:` `sourceUrl` (kept, link null), a deprecation hint with a non-null `sourceUrl` (link null), unknown kind, empty text, 601-code-point text, a `\n` in the text, a fifth entry; and a parse-response case where the body has no `hints` anywhere (results recorded before this spec still parse). Cite Requirements 4.7, 4.9, 4.10.
     - _Requirements: 4.7, 4.9, 4.10_
-  - [~] 8.3 Write the property test for the narrowing
+  - [x] 8.3 Write the property test for the narrowing
     - `tests/ui/view-model/narrow-hints.property.test.ts`: `fc.anything()` values, arrays of generated hint-like records (valid and invalid fields), and outputs fed back in.
     - **Property 9: Client narrowing of hints is total, valid and idempotent (RS-P9)**
     - **Validates: Requirements 4.7, 4.8**
-  - [~] 8.4 Add hints and manifest origins to the package rows
+  - [x] 8.4 Add hints and manifest origins to the package rows
     - In `view-model/package-rows.ts` fill `PackageRow.hints` (from the first dependency entry of the row in manifest order that has hints) and `PackageRow.manifestOrigins` (one `ManifestOrigin` per distinct manifest path of the row, in the order of `manifestPaths`, with `format` and `pyprojectTool` read from `result.manifests`; `pyprojectTool` null when the entry has none). Update the existing row tests that deep-equal a whole row (find them by running `tests/ui/view-model`), keeping tags and titles, and create `tests/ui/view-model/package-rows-origins.test.ts`: a package declared in `package.json` and `Cargo.toml`-free results; a pypi package declared in `requirements.txt` and a Poetry `pyproject.toml` has two origins in path order with the tool on the second only; a result without `pyprojectTool` gives null.
     - _Requirements: 5.7, 10.8_
-  - [~] 8.5 Implement the Command_Builder
+  - [x] 8.5 Implement the Command_Builder
     - Create `view-model/resurrect-commands.ts` with the templates of the design table (the only place that holds Fixed_Words): `buildCommandBlocks(input)` for an origin (`package.json`, `requirements.txt`, `pyproject.toml` with tool `poetry`, `pep621`, `mixed` or null, `Cargo.toml`), the scopes of the row, the `from` name, the `to` name and the manifest path. It returns blocks (`heading`, `lead` as segments of text and code names, `lines`, `note`, `copyLabel` "Copy commands for <to>", `copyText` = lines joined by `\n`); `pyproject.toml` with `mixed` or null gives the Poetry block headed "If this project uses Poetry" and the PEP 621 block headed "If this project uses another tool (PEP 621)"; one block per distinct (origin, scope) with the manifest path as heading when more than one block exists; flags by scope as in Requirements 10.2 and 10.7 (npm `--save-dev`, `--save-optional`, `--save-peer`; cargo `--dev`, `--build`, `--optional`; none for pip and poetry); returns no block when `from` or `to` fails `isCommandSafe`; never builds a line from any other string. Cite Requirements 10.2 to 10.7, 10.9, 10.10.
     - Create `tests/ui/view-model/resurrect-commands.test.ts`: every template with exact lines (`npm uninstall request` / `npm install got`; the dev, optional and peer flags; `pip install got`-style lead sentences with the path; `poetry remove` / `poetry add` plus the `--group` note; PEP 621 lead and `pip install`; `cargo remove` / `cargo add --dev`), `mixed` and null show two blocks, two scopes give two blocks, hostile names (`-rf`, `a;b`, `~x`, `$(x)`) give no block.
     - _Requirements: 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 10.10_
-  - [~] 8.6 Write the property test for the commands
+  - [x] 8.6 Write the property test for the commands
     - `tests/ui/view-model/resurrect-commands.property.test.ts`: generated origins (every format, every tool value and null), scope lists, `from` and `to` names (valid names plus hostile strings with spaces, quotes, `;`, `$`, backticks, `~`, leading `-`, unicode) and paths.
     - **Property 4: Commands contain only Fixed_Words and Validated_Names, and the copy text equals the lines (RS-P4)**
     - **Validates: Requirements 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.9, 10.10, 11.7**
-  - [~] 8.7 Implement the Resurrect_Model builder and the generators
+  - [x] 8.7 Implement the Resurrect_Model builder and the generators
     - Create `view-model/resurrect.ts` with `buildResurrectModel(row, result, curated)` where `curated` is the lookup function (default `lookupCurated`, injectable for tests) exactly as the design lists its six steps: null unless DEAD or `row.kind === 'restless'`; the urgent sentence (count from `facts.openVulnerabilityCount` when a finite integer of at least 1, singular for 1, otherwise the generic sentence); hints with labels "From the package's deprecation notice" and "From an advisory that marks this crate unmaintained" and links (advisory link "Read the advisory", registry link "Read it on the registry page"); curated suggestions under "From the caretaker's list" with the self-replacement filter by `normalizeName`, the source link labelled "Source for this suggestion", and command blocks from task 8.5 per distinct origin and scope; the fallback only when there are no hints and no suggestions, with the fixed texts of Requirements 9.6 and 9.7 (reason words "archived", "deprecated", "archived and deprecated" from the reasons 8.1 and 8.2), the registry link, and the repository and issues links labelled "Source repository (listed by the package, not verified)" and "Issues (listed by the package, not verified)" built from the `source-repo-unverified` note through `sourceRepoLink` (omitted when null); every href from `registryLink`, `advisoryLink`, `sourceRepoLink` or the curated `source`. Pure, no clock, no random. Cite Requirements 9.1 to 9.11, 10.1, 12.4, 12.5.
     - Create `tests/support/arbitraries/resurrect.ts` (generators of package rows of every plot kind and classification, hints with hostile texts and `sourceUrl` values, manifest origins and scopes, curated lists with valid and self-referencing entries) and `tests/ui/view-model/resurrect.test.ts`: unit cases for the `request/request` rows from `tests/e2e/.generated/scan-request.json` (the file is generated by task 11.1; until then build the rows from `tests/fixtures` replay or from synthetic rows): `har-validator` shows the hint and no fallback; `aws-sign2` shows the forgotten paragraph and the unverified repository links; `uuid` shows the urgent sentence and the buried paragraph and names no package; `bincode` shows the advisory hint and the cargo commands for `wincode`; a synthetic `request` row shows the curated entry and `npm uninstall request` / `npm install got`; a ghost, an ALIVE package and an unassessed package give null.
     - _Requirements: 9.1, 9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9, 9.10, 9.11, 10.1, 12.4, 12.5_
-  - [~] 8.8 Write the property test for determinism
+  - [x] 8.8 Write the property test for determinism
     - `tests/ui/view-model/resurrect-determinism.property.test.ts`, with the generators of `tests/support/arbitraries/resurrect.ts`.
     - **Property 1: The Resurrect_Model is deterministic (RS-P1)**
     - **Validates: Requirements 10.11**
-  - [~] 8.9 Write the property test for slot visibility
+  - [x] 8.9 Write the property test for slot visibility
     - `tests/ui/view-model/resurrect-visibility.property.test.ts`.
     - **Property 2: The slot exists exactly for DEAD packages and restless ghosts (RS-P2)**
     - **Validates: Requirements 9.1, 9.2**
-  - [~] 8.10 Write the property test for validated names
+  - [x] 8.10 Write the property test for validated names
     - `tests/ui/view-model/resurrect-names.property.test.ts`, with curated lists that are injected after loading and hold hostile names.
     - **Property 3: Every suggested name is validated (RS-P3)**
     - **Validates: Requirements 7.2, 7.6, 10.1, 10.10**
-  - [~] 8.11 Write the property test for the self-replacement rule
+  - [x] 8.11 Write the property test for the self-replacement rule
     - `tests/ui/view-model/resurrect-self.property.test.ts`, with entries whose `to` holds the `from` name, differently spelled forms of it and the name of the row.
     - **Property 5: A package is never suggested as its own replacement (RS-P5)**
     - **Validates: Requirements 7.7**
-  - [~] 8.12 Write the property test for links
+  - [x] 8.12 Write the property test for links
     - `tests/ui/view-model/resurrect-links.property.test.ts`, with hint texts that hold URLs, Markdown links, HTML and `javascript:` strings and `sourceUrl` values of every kind.
     - **Property 7: Links come only from validated builders, never from hint text (RS-P7)**
     - **Validates: Requirements 12.2, 4.9, 4.10**
-  - [~] 8.13 Write the property test for order and fallback
+  - [x] 8.13 Write the property test for order and fallback
     - `tests/ui/view-model/resurrect-order.property.test.ts`, with every combination of hints and curated entries over rows with a slot.
     - **Property 11: Section order is fixed and the fallback is exclusive (RS-P11)**
     - **Validates: Requirements 9.3, 9.4, 9.6, 9.7, 9.11**
-  - [~] 8.14 Wire the model into the detail model
+  - [x] 8.14 Wire the model into the detail model
     - In `view-model/detail.ts` replace `resurrect: classification !== null && classification.status === 'DEAD'` by `resurrect: buildResurrectModel(row, result, lookupCurated)`; export the new types and functions from `view-model/index.ts` where the other detail items are exported. Update `tests/ui/view-model/detail.test.ts` lines 104 to 118 ("Resurrect_Slot (R10.13)"): a buried and a forgotten row give a model, a restless row gives a model, ghost, ALIVE and unassessed rows give null.
     - _Requirements: 9.1, 9.2_
 
-- [ ] 9. Component and style
-  - [~] 9.1 Rewrite the slot component
+- [x] 9. Component and style
+  - [x] 9.1 Rewrite the slot component
     - Rewrite `components/resurrect-slot.tsx` with props `{ model: ResurrectModel }` (the old `packageKey` and `displayName` props are replaced; the section keeps `data-slot="resurrect"` and an `aria-labelledby` heading `Resurrect` of level 3, and drops `data-placeholder`, the disabled button, "Coming soon" and "Not available yet"). Render in the order of the design layout: urgent paragraph, hint blocks (label paragraph, text paragraph with the hint text as one text node, link through `ExternalLink`), the "From the caretaker's list" blocks (why, source link, per Alternative the name in a `code` element, the lead sentence with names in `code`, the lines in `pre > code`, the note, the Copy_Button with `aria-label` from `copyLabel`), the fallback paragraph with its links, and one `p role="status"` Copy_Status that is always present. Copy: `navigator.clipboard.writeText(copyText)` in the click handler; success sets "Copied the commands for <to>", absence or rejection sets "Copying failed. Select the commands and copy them by hand."; the status clears after `COPY_STATUS_RESET_MS` through a `setTimeout` cleared on unmount and on the next copy; focus stays on the button. No request, no `fetch`, no animation. Read `components/external-link.tsx` and reuse it for every link. Cite Requirements 9.12, 10.12, 11.1 to 11.6, 11.8, 12.1, 12.3.
     - Rewrite `tests/ui/components/resurrect-slot.test.tsx` (the placeholder tests are replaced): heading and attributes (9.12), no disabled button and no "Coming soon", hint text rendered as one text node and no `a` element inside it for the `bincode` text and for `<a href="https://evil.example">x</a>` and `javascript:alert(1)` texts, names in `code`, links rendered through `ExternalLink` (`rel` and `target` as the existing component sets them), Copy_Status present before any copy with `role="status"`, copy success with a mocked clipboard (text equals the lines joined by `\n`, status text, focus stays), copy failure for a rejecting clipboard and for no clipboard, reset after 3000 ms with fake timers, no `fetch` call (spy), no command block for an Alternative whose names failed validation.
     - _Requirements: 9.12, 10.12, 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.8, 12.1, 12.3_
-  - [~] 9.2 Render the slot from the detail panel
+  - [x] 9.2 Render the slot from the detail panel
     - In `components/detail-panel.tsx` (near line 185) render `<ResurrectSlot model={model.resurrect} />` when `model.resurrect !== null` and nothing otherwise; update the comment to cite Requirements 9.1 and 9.2. Update `tests/ui/components/detail-panel.test.tsx` lines 264 to 289 ("shows the Resurrect_Slot only for buried and forgotten packages"): buried, forgotten and restless show the slot, ghost, lantern and unmarked do not, there is no "Resurrect" button, and `queryByText(/coming soon/i)` is null. Update `tests/ui/components/graveyard-app.test.tsx` and `tests/ui/components/lazy-detail-panel.test.tsx` only if they reference the placeholder (find them with `Select-String -Path tests -Pattern "resurrect|Coming soon" -Recurse`).
     - _Requirements: 9.1, 9.2_
-  - [~] 9.3 Add the slot style block
+  - [x] 9.3 Add the slot style block
     - Append one block to `app/globals.css`, introduced by `/* resurrect slot (resurrect spec R13.4) */`, with the rules for the classes that task 9.1 uses (spacing between the sections, the label style, the `pre` and `code` look, the Copy_Button, the Copy_Status text). Use only existing custom properties for color, spacing, border and font (read how the neighboring detail-panel rules do it); add no custom property, no color literal, no font, no media query, no animation or transition; keep the existing focus styles. Change no existing rule.
     - _Requirements: 13.2, 13.3, 13.4, 13.5_
-  - [~] 9.4 Verify the client budgets
+  - [x] 9.4 Verify the client budgets
     - Run `npm run build` and `npm run check:bundle`, and `npx playwright test tests/e2e/js-budget.spec.ts --project=desktop` if the budget spec runs against the build. Record the numbers (initial client JS before and after, from the output) in the final message of the task; do not write them to a file. If a budget is exceeded, find the cause (for example the JSON imported into an eager chunk) and fix it in the files of tasks 8.14 or 9.2 only after reporting; do not raise a budget.
     - _Requirements: 13.6_
 

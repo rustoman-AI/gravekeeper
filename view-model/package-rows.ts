@@ -5,7 +5,9 @@ import { compareCodePoints } from './internal/compare-code-points';
 import { epitaphOf, shortForm, strongestReason } from './reasons';
 import type {
   PackageRow,
+  ManifestOrigin,
   ParsedDependency,
+  ParsedHint,
   ParsedScanResult,
   PlotKind,
   UnassessedCause,
@@ -37,6 +39,8 @@ function keyOf(ecosystem: string, name: string, sourceKind: string): string {
   return JSON.stringify([ecosystem, name, sourceKind]);
 }
 
+const NO_HINTS: readonly ParsedHint[] = [];
+
 function distinct<T>(values: readonly T[]): T[] {
   return [...new Set(values)];
 }
@@ -50,6 +54,11 @@ export function buildPackageRows(result: ParsedScanResult): readonly PackageRow[
     const list = byKey.get(k);
     if (list === undefined) byKey.set(k, [d]);
     else list.push(d);
+  }
+  const manifestByPath = new Map<string, ManifestOrigin>();
+  for (const m of result.manifests) {
+    const tool = (m as { readonly pyprojectTool?: ManifestOrigin['pyprojectTool'] }).pyprojectTool;
+    manifestByPath.set(m.path, { path: m.path, format: m.format, pyprojectTool: tool ?? null });
   }
   const skipped = new Set(result.capped.skipped.map((s) => JSON.stringify([s.ecosystem, s.name])));
 
@@ -73,6 +82,13 @@ export function buildPackageRows(result: ParsedScanResult): readonly PackageRow[
     }
 
     const advisories = first?.advisories ?? [];
+    // Resurrect R5.7: the first entry in manifest order that carries hints; older results have none.
+    const hints = entries.find((e) => (e.hints?.length ?? 0) > 0)?.hints ?? NO_HINTS;
+    const manifestPaths = distinct(entries.map((e) => e.manifestPath)).sort(compareCodePoints);
+    const manifestOrigins = manifestPaths.flatMap((path) => {
+      const origin = manifestByPath.get(path);
+      return origin === undefined ? [] : [origin];
+    });
     const glow =
       kind === 'ghost' || kind === 'restless'
         ? glowOf(
@@ -99,7 +115,7 @@ export function buildPackageRows(result: ParsedScanResult): readonly PackageRow[
       ecosystem: g.ecosystem,
       sourceKind: g.sourceKind,
       scopes: g.scopes,
-      manifestPaths: distinct(entries.map((e) => e.manifestPath)).sort(compareCodePoints),
+      manifestPaths,
       versionSpecs: distinct(entries.map((e) => e.dependency.versionSpec)),
       kind,
       graveType,
@@ -123,6 +139,8 @@ export function buildPackageRows(result: ParsedScanResult): readonly PackageRow[
       lookupVersion: first?.lookupVersion ?? null,
       versionBasis: first?.versionBasis ?? null,
       advisories,
+      hints,
+      manifestOrigins,
       accessibleLabel: `${displayName}, ${g.ecosystem}, ${statusWord}, ${epitaphShort}`,
     };
   });

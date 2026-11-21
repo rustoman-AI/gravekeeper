@@ -61,6 +61,15 @@ export type {
   HeadlineModel,
   HeaderModel,
   DetailModel,
+  ParsedHint,
+  ResurrectSegment,
+  ResurrectLink,
+  ResurrectBlock,
+  ResurrectHint,
+  ResurrectAlternative,
+  ResurrectSuggestion,
+  ResurrectFallback,
+  ResurrectModel,
   NotesModel,
   PickerModel,
   ErrorInput,
@@ -89,6 +98,10 @@ export {
   type AdvisoryGroupModel,
 } from './advisory-groups';
 export { buildDetailModel } from './detail';
+export { buildResurrectModel, type CuratedLookup } from './resurrect';
+export { buildCommandBlocks, type CommandInput } from './resurrect-commands';
+export { isValidName, isCommandSafe, normalizeName } from './resurrect-names';
+export { CURATED_ENTRIES, loadCurated, lookupCurated, type CuratedEntry } from './resurrections';
 export { NOTE_SECTIONS, OTHER_NOTES_TITLE, buildNotesModel } from './notes';
 export { buildPickerModel } from './picker';
 export { buildErrorModel, retryRemainingMs } from './errors';
