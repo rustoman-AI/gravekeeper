@@ -1,0 +1,262 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Confirm CI is green on 5117bb5 (orchestrator-only)": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323674441
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323679632
+      }
+    ],
+    "2.1 Rework restless geometry in `view-model/restless-art.ts`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323674476
+      }
+    ],
+    "2.2 Add the `--color-wraith` token in `app/globals.css`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323674516
+      }
+    ],
+    "2.3 Draw the restless sprite in `components/scene-sprite-ghosts.tsx`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323674552
+      }
+    ],
+    "2.4 Rewrite `tests/ui/view-model/restless-art.property.test.ts` (keeps id AP-P3)": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323674584
+      }
+    ],
+    "2.5 Extend `tests/ui/tokens.test.ts` for the wraith token": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323674638
+      }
+    ],
+    "2.6 Update `tests/ui/sprites-ghosts.test.tsx` with restless example tests": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323674675
+      }
+    ],
+    "2.7 Run related e2e and visually check the restless ghost": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323674705
+      }
+    ],
+    "2.8 Commit and push item 1 (orchestrator-only)": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323674753
+      }
+    ],
+    "3.1 Create `view-model/label-fit.ts`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323674820
+      }
+    ],
+    "3.2 Replace the `.gk-plot-label` rule in `app/globals.css`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323674945
+      }
+    ],
+    "3.3 Render the full-name `<title>` in `components/scene-plot.tsx`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323674999
+      }
+    ],
+    "3.4 Write `tests/ui/view-model/label-fit.property.test.ts`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675035
+      }
+    ],
+    "3.5 Write `tests/ui/scene-plot-title.property.test.tsx`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675103
+      }
+    ],
+    "3.6 Update the element-count assertions in `tests/ui/scene-stage.test.tsx` and `tests/ui/scene-render.test.tsx`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675135
+      }
+    ],
+    "3.7 Write `tests/ui/label-css.test.ts`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675164
+      }
+    ],
+    "3.8 Write `tests/e2e/labels-polish.spec.ts`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675195
+      }
+    ],
+    "3.9 Run label e2e checks and visually check labels": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675227
+      }
+    ],
+    "3.10 Commit and push item 2 (orchestrator-only)": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675261
+      }
+    ],
+    "4.1 Fix the ledger numbers in `.kiro/specs/art-polish/design.md`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675293
+      }
+    ],
+    "4.2 Fix the Reference_Scan counts in `.kiro/specs/graveyard-ui/design.md`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675324
+      }
+    ],
+    "4.3 Remove the BOM and add the hygiene test": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675355
+      }
+    ],
+    "4.4 Investigate the flaky test": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675393
+      }
+    ],
+    "4.5 Fix or quarantine the flaky test": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675467
+      }
+    ],
+    "4.6 Commit and push item 3 (orchestrator-only)": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675498
+      }
+    ],
+    "5.1 Final checkpoint before deploy (orchestrator-only)": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675527
+      }
+    ],
+    "5.2 Confirm CI is green on every new commit (orchestrator-only)": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675558
+      }
+    ],
+    "5.3 Redeploy to https://gravekeeper-chi.vercel.app (orchestrator-only)": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675592
+      }
+    ],
+    "5.4 Run the Deploy_Verifier (orchestrator-only)": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675629
+      }
+    ],
+    "5.5 Append the session entry to `KIRO_LOG.md`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675661
+      }
+    ],
+    "5.6 Commit and push the log (orchestrator-only)": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675690
+      }
+    ],
+    "6.1 Create `tests/e2e/polish-leftovers-report.spec.ts`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675723
+      }
+    ],
+    "6.2 Generate and visually check the screenshots": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675755
+      }
+    ],
+    "6.3 Append screenshot paths to `KIRO_LOG.md`": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675787
+      }
+    ],
+    "6.4 Commit and push screenshots (orchestrator-only)": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675821
+      }
+    ],
+    "7.1 Report and STOP (orchestrator-only)": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323675860
+      }
+    ]
+  }
+}
