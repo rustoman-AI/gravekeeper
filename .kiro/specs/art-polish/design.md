@@ -150,7 +150,9 @@ eyeBottom   = ghostTop + (GHOST_BASE_BOX.eyeBottom - GHOST_BASE_BOX.top) * RESTL
 overlapRatio = max(0, ghostBottom - stoneTop) / stoneHeight
 ```
 
-With the starting numbers: ghost box -10 to 70, eyes bottom 11.25; stone tops (after the 0.5 scale) are rounded 58.5, cross 61, obelisk 52, slab 80 (the Ledger_Stone top is y 62 in its shape), so the overlap ratios are 0.29, 0.24, 0.39 and 0. All are at most 0.4 and all eyes are above every stone top. A test (AP-P3) recomputes from the rendered markup, so a drift between the constants and the drawing is caught.
+With the starting numbers: ghost box -10 to 70, eyes bottom 11.25; stone tops (after the 0.5 scale) are rounded 58.5, cross 61, obelisk 52, slab 84 (the Ledger_Stone top is y 70 in its shape), so the overlap ratios are 0.29, 0.24, 0.39 and 0. All are at most 0.4 and all eyes are above every stone top. A test (AP-P3) recomputes from the rendered markup, so a drift between the constants and the drawing is caught.
+
+Superseded by `.kiro/specs/polish-leftovers/design.md` (full-size stone, smaller ghost).
 
 `view-model/index.ts` exports `fogRowOffsetPct`, the fog constants and `restlessGeometry`.
 
@@ -176,7 +178,7 @@ With the starting numbers: ghost box -10 to 70, eyes bottom 11.25; stone tops (a
 
 The outline is a 76 x 34 unit box (aspect 2.2), while rounded is 48 x 77 (0.62), cross 44 x 72 (0.61 for the cross body) and obelisk 38 x 90 (0.42). The aspect ratio therefore differs from each other variant by more than 0.5 (R6.5). The flat twin is the outline path alone (`M6 96 V66 H74 V96 Z M2 96 V90 H78 V96 Z`) in `--color-stone`.
 
-`STONE_TOPS.slab` is 62 (top of the chamfer) and the restless slab top becomes `98 - (98 - 62) * 0.5 = 80`. The task writes `STONE_TOPS` from the final drawing and AP-P3 recomputes the tops from the rendered markup.
+`STONE_TOPS.slab` is 70 (top of the chamfer) and the restless slab top becomes `98 - (98 - 70) * 0.5 = 84`. The task writes `STONE_TOPS` from the final drawing and AP-P3 recomputes the tops from the rendered markup.
 
 ### CSS changes (summary of `app/globals.css`)
 

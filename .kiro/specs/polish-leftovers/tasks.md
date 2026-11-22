@@ -73,7 +73,7 @@ Rules for every task:
     - Record the commit hash and CI status (`gh run list --branch <branch> --limit 5`) for the final report
     - _Requirements: 5.1, 4.2_
 
-- [ ] 3. Item 2: Non-truncating grave labels
+- [x] 3. Item 2: Non-truncating grave labels
   - [x] 3.1 Create `view-model/label-fit.ts`
     - Export `LABEL_CHAR_WIDTH_PX` (7.2), `labelSegments`, `wrapLabel`, `mayTruncateLabel` as specified in the design (clamp capacity to at least 1, empty name returns `[]`)
     - Owner: `view-model/label-fit.ts` only
@@ -123,40 +123,40 @@ Rules for every task:
     - Owner: no source files; report defects to the orchestrator
     - _Requirements: 2.1, 2.8, 2.9, 2.11_
 
-  - [~] 3.10 Commit and push item 2 (orchestrator-only)
+  - [x] 3.10 Commit and push item 2 (orchestrator-only)
     - Run unit tests for label-fit, scene-plot-title, label-css, scene-stage, scene-render and the e2e specs from 3.9 (above-fold, CLS, reflow, axe, labels-polish)
     - On green: `git add` by name, commit "Non-truncating grave labels", `git push`
     - Record the hash and CI status
     - _Requirements: 5.1, 4.2_
 
 - [ ] 4. Item 3: Leftovers (design.md numbers, BOM, flake)
-  - [~] 4.1 Fix the ledger numbers in `.kiro/specs/art-polish/design.md`
+  - [x] 4.1 Fix the ledger numbers in `.kiro/specs/art-polish/design.md`
     - Line 153: slab 80 / top 62 becomes slab 84 / top 70; line 179: `STONE_TOPS.slab` 62 becomes 70 and `98 - (98 - 70) * 0.5 = 84`
     - Add the sentence "Superseded by `.kiro/specs/polish-leftovers/design.md` (full-size stone, smaller ghost)" under the restless section
     - Leave lines 21 and 173 alone; list line 173 as a known stale item in the report
     - Owner: that file only
     - _Requirements: 3.1, 3.2_
 
-  - [~] 4.2 Fix the Reference_Scan counts in `.kiro/specs/graveyard-ui/design.md`
+  - [x] 4.2 Fix the Reference_Scan counts in `.kiro/specs/graveyard-ui/design.md`
     - Read `headlineText` in `view-model` and its test, then rewrite the example headline near line 638 to match its exact output for 6 buried, 20 forgotten, 5 haunted
     - Run `Select-String -Path .kiro/specs/*/design.md -Pattern 'request/request|\d+ (buried|forgotten|haunted|alive)|grade [A-F]\b|score 60'` and confirm no remaining hit conflicts with 6 buried, 20 forgotten, 5 haunted, 9 alive, grade D, uuid score 60; fix any other conflicting file one owner at a time and list it
     - Owner: `graveyard-ui/design.md` (plus any other conflicting design.md found, reported)
     - _Requirements: 3.3_
 
-  - [~] 4.3 Remove the BOM and add the hygiene test
+  - [x] 4.3 Remove the BOM and add the hygiene test
     - Strip bytes EF BB BF from `tests/e2e/above-fold.spec.ts` without changing anything else
     - Create `tests/ui/repo-hygiene.test.ts` asserting no file in `tests/e2e/*.ts` starts with EF BB BF
     - Owner: those two files only
     - _Requirements: 3.4_
 
-  - [~] 4.4 Investigate the flaky test
+  - [x] 4.4 Investigate the flaky test
     - Run the full vitest suite 10 times with `--reporter=json --outputFile=test-results/flake/full-<n>.json` as a background process, then read results; if no failure, run 10 more with `--sequence.shuffle`
     - Group failures by file and test name; run the most frequent failing file 20 times in isolation; if it never fails alone, repeat with `--no-file-parallelism` and `--sequence.shuffle`
     - Report: failing file, failing test name, root cause (with fast-check seed if applicable) and failure rate. If it never reproduces, report the evidence and seeds
     - Owner: `test-results/flake/` output only; no source edits
     - _Requirements: 3.5, 3.6_
 
-  - [~] 4.5 Fix or quarantine the flaky test
+  - [x] 4.5 Fix or quarantine the flaky test
     - Fix the root cause in the failing test file (or the code under test if the cause is there) and run the file 20 consecutive times with all passing, then the full suite once
     - If a fix is not possible, change `it(` to `it.skip(` with a comment directly above: `// QUARANTINE (polish-leftovers): <root cause>. Failure rate <x>/<n>. Owner and follow-up: <text>.`
     - Report the test name, root cause and whether it was fixed or quarantined

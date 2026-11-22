@@ -1,4 +1,4 @@
-﻿import type { Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
 import { loadScan } from "./support/fixtures";
 import { mockScan, respondWithFixture } from "./support/mock-scan";
 import { expect, test } from "./support/test";

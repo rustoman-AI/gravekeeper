@@ -635,7 +635,7 @@ export interface HeadlineModel {
   /** summary.counts.HAUNTED: ghosts and restless ghosts. */
   readonly haunted: number;
   /** Built by `headlineText(n, m, buried, forgotten, haunted)` (R5.2), for example
-   *  "31 of 40 dependencies are in the graveyard: 26 buried, 5 haunted." or
+   *  "31 of 40 dependencies are in the graveyard: 6 buried, 20 forgotten, 5 haunted." or
    *  "0 of 6 dependencies are in the graveyard." */
   readonly text: string;
 }

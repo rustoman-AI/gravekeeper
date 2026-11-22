@@ -179,13 +179,16 @@ describe('resurrect hints over the recorded sets', () => {
     }
   });
 
+  // Flake fix: under CPU starvation in a full parallel run this took 37 s against the 30 s default
+  // (normally under 100 ms), so it gets a longer explicit timeout. The first value reuses the result the
+  // other tests already replayed (cached per set); the second is a fresh, independent replay.
   it('two replays of every set are equal', async () => {
     for (const name of SET_NAMES) {
-      const first = await replay(name);
+      const first = await resultOf(name);
       const second = await replay(name);
       expect(second).toEqual(first);
     }
-  });
+  }, 120_000);
 
   it('no hint text of any set contains a token prefix', async () => {
     for (const name of SET_NAMES) {

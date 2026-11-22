@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { act, cleanup, render, screen, waitFor, within } from "@testing-library/react";
+import { act, cleanup, configure, getConfig, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useMemo, useState } from "react";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { MemoryCacheStore } from "../../../adapters/cache/memory-cache-store";
 import { CachingHttpClient } from "../../../adapters/http/caching-http-client";
 import { createCratesIoSource } from "../../../adapters/cratesio/cratesio-source";
@@ -36,6 +36,11 @@ import { buildScanResult } from "../../support/ui/scan-result-builder";
 
 // Requirements 3.2, 5.2, 9.5, 10.1, 18.1, 19.3: landing, submit, scanning, results, list, detail panel.
 afterEach(cleanup);
+// Flake fix: in a full parallel run the CPU can be starved, so findBy*/waitFor with the default
+// 1000 ms asyncUtilTimeout missed a dialog that opens normally. Raise it for this file only and restore it.
+const DEFAULT_ASYNC_UTIL_TIMEOUT = getConfig().asyncUtilTimeout;
+beforeAll(() => configure({ asyncUtilTimeout: 5000 }));
+afterAll(() => configure({ asyncUtilTimeout: DEFAULT_ASYNC_UTIL_TIMEOUT }));
 
 const FIXTURES = join(__dirname, "..", "..", "fixtures");
 
@@ -239,7 +244,7 @@ describe("graveyard end-to-end component flow", () => {
       await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
       expect(document.activeElement).toBe(plot);
     }
-  });
+  }, 60_000);
 
   it("opens a package from the list view and returns focus to its button on close (10.1, 18.1)", async () => {
     const parsed = fixtureOf("request__request");

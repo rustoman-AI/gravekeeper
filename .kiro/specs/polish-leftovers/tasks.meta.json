@@ -307,6 +307,11 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675261
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795327483673
       }
     ],
     "4.1 Fix the ledger numbers in `.kiro/specs/art-polish/design.md`": [
@@ -314,6 +319,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675293
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795327484248
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795327539864
       }
     ],
     "4.2 Fix the Reference_Scan counts in `.kiro/specs/graveyard-ui/design.md`": [
@@ -321,6 +336,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675324
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795327540542
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795327586775
       }
     ],
     "4.3 Remove the BOM and add the hygiene test": [
@@ -328,6 +353,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675355
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795327587439
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795327635779
       }
     ],
     "4.4 Investigate the flaky test": [
@@ -335,6 +370,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675393
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795327635201
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795330921710
       }
     ],
     "4.5 Fix or quarantine the flaky test": [
@@ -342,6 +387,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675467
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795330922007
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795332808847
       }
     ],
     "4.6 Commit and push item 3 (orchestrator-only)": [
@@ -440,6 +495,13 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795324772777
+      }
+    ],
+    "3. Item 2: Non-truncating grave labels": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795327483709
       }
     ]
   }
