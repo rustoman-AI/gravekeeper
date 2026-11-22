@@ -11,6 +11,11 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323679632
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323687030
       }
     ],
     "2.1 Rework restless geometry in `view-model/restless-art.ts`": [
@@ -18,6 +23,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323674476
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323693705
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323827760
       }
     ],
     "2.2 Add the `--color-wraith` token in `app/globals.css`": [
@@ -25,6 +40,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323674516
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323828341
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323870684
       }
     ],
     "2.3 Draw the restless sprite in `components/scene-sprite-ghosts.tsx`": [
@@ -32,6 +57,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323674552
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323871357
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323929212
       }
     ],
     "2.4 Rewrite `tests/ui/view-model/restless-art.property.test.ts` (keeps id AP-P3)": [
@@ -39,6 +74,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323674584
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323928467
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324006193
       }
     ],
     "2.5 Extend `tests/ui/tokens.test.ts` for the wraith token": [
@@ -46,6 +91,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323674638
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324006746
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324038858
       }
     ],
     "2.6 Update `tests/ui/sprites-ghosts.test.tsx` with restless example tests": [
@@ -53,6 +108,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323674675
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324039506
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324129395
       }
     ],
     "2.7 Run related e2e and visually check the restless ghost": [
@@ -60,6 +125,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323674705
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324128969
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324276669
       }
     ],
     "2.8 Commit and push item 1 (orchestrator-only)": [
@@ -256,6 +331,13 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675860
+      }
+    ],
+    "1. Baseline": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795323687063
       }
     ]
   }

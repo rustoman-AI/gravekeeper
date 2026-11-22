@@ -4,10 +4,10 @@
  * `GhostDefs` goes inside the <defs> of the sprite sheet, `GhostSymbols` next
  * to the other <symbol> elements. Restless plots reference the stone shapes
  * `#shape-stone-<variant>` defined by the stone sprite file. Colours are
- * tokens only. No filter, no mask.
+ * tokens only. No filter, no mask. Restless plots draw a full-size stone and a`n * smaller red-violet (`--color-wraith`) wisp beside it, without the cyan glow.
  */
 
-import { restlessGhostTransform, restlessStoneTransform } from "@/view-model/restless-art";
+import { restlessGhostTransform } from "@/view-model/restless-art";
 import { SPRITE_VARIANTS, symbolIdOf } from "@/view-model/variants";
 
 const VIEW_BOX = "0 0 80 104";
@@ -22,10 +22,6 @@ const WISP_PATH =
 // Slightly uneven, drooping hollow eyes.
 const EYE_LEFT = "M31 22 C31 18 38 18 38 23 C38 28 34 31 32 29 C31 27 31 25 31 22 Z";
 const EYE_RIGHT = "M43 24 C43 20 49 20 49 25 C49 29 46 31 44 30 C43 28 43 26 43 24 Z";
-
-// Restless plots: a half-size stone with a near full-size wisp rising above it.
-const STONE_TRANSFORM = restlessStoneTransform();
-const GHOST_TRANSFORM = restlessGhostTransform();
 
 export function GhostDefs() {
   return (
@@ -51,8 +47,28 @@ export function GhostDefs() {
         <path data-part="eye" d={EYE_LEFT} fill="var(--color-night)" />
         <path data-part="eye" d={EYE_RIGHT} fill="var(--color-night)" />
       </g>
-      <g id="shape-ghost-glow">
-        <ellipse
+      <linearGradient id="ghost-body-gradient-restless" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="var(--color-wraith)" stopOpacity="0.75" />
+        <stop offset="0.55" stopColor="var(--color-wraith)" stopOpacity="0.35" />
+        <stop offset="1" stopColor="var(--color-wraith)" stopOpacity="0" />
+      </linearGradient>
+      <g id="shape-ghost-wisp-restless">
+        <path
+          d={WISP_PATH}
+          fill="url(#ghost-body-gradient-restless)"
+          stroke="var(--color-bone)"
+          strokeOpacity="0.3"
+          strokeWidth="1.2"
+        />
+        <path data-part="eye" d={EYE_LEFT} fill="var(--color-night)" />
+        <path data-part="eye" d={EYE_RIGHT} fill="var(--color-night)" />
+      </g>
+      <g id="shape-ghost-wisp-restless-flat">
+        <path d={WISP_PATH} fill="var(--color-wraith)" fillOpacity="0.7" />
+        <path data-part="eye" d={EYE_LEFT} fill="var(--color-night)" />
+        <path data-part="eye" d={EYE_RIGHT} fill="var(--color-night)" />
+      </g>
+      <g id="shape-ghost-glow">        <ellipse
           cx="40"
           cy="54"
           rx="36"
@@ -77,12 +93,11 @@ export function GhostSymbols() {
       {SPRITE_VARIANTS.restless.map((v) => (
         <symbol key={v} id={symbolIdOf("restless", v, false)} viewBox={VIEW_BOX} overflow="visible">
           <g style={DEPTH_STYLE}>
-            <g data-part="stone" transform={STONE_TRANSFORM}>
+            <g data-part="stone">
               <use href={`#shape-stone-${v}`} />
             </g>
-            <g data-part="wisp" transform={GHOST_TRANSFORM}>
-              <use href="#shape-ghost-glow" />
-              <use href="#shape-ghost-wisp" />
+            <g data-part="wisp" transform={restlessGhostTransform(v)}>
+              <use href="#shape-ghost-wisp-restless" />
             </g>
           </g>
         </symbol>
@@ -97,11 +112,11 @@ export function GhostSymbols() {
       {SPRITE_VARIANTS.restless.map((v) => (
         <symbol key={v} id={symbolIdOf("restless", v, true)} viewBox={VIEW_BOX} overflow="visible">
           <g style={DEPTH_STYLE}>
-            <g data-part="stone" transform={STONE_TRANSFORM}>
+            <g data-part="stone">
               <use href={`#shape-stone-${v}`} />
             </g>
-            <g data-part="wisp" transform={GHOST_TRANSFORM}>
-              <use href="#shape-ghost-wisp-flat" />
+            <g data-part="wisp" transform={restlessGhostTransform(v)}>
+              <use href="#shape-ghost-wisp-restless-flat" />
             </g>
           </g>
         </symbol>

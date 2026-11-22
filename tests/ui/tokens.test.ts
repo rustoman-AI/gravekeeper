@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { FOG_OPACITY_HIGH } from "../../view-model/constants";
+import { contrastRatio, luminance as relLuminance, parseHex } from "../support/contrast";
 
 // Thresholds are owned by tests (graveyard-ui requirements.md, constants table).
 const TEXT_CONTRAST_MIN = 4.5; // WCAG 2.2 SC 1.4.3, R16.2
@@ -146,4 +147,44 @@ describe("art-polish ground tokens (R3)", () => {
       });
     }
   }
+});
+
+// Feature: polish-leftovers, Property 2: Restless tint is distinct and visible
+// Validates: Requirements 1.6, 1.8
+const WRAITH_BACKGROUNDS = ["night", "night-raised", "ground", "ground-moss", "grass", "sky-low"];
+const WRAITH_HUE_DIFF_MIN_DEG = 90;
+const WRAITH_LUMINANCE_DIFF_MIN = 0.1;
+
+function hueDegrees(hex: string): number {
+  const [r, g, b] = parseHex(hex).map((v) => v / 255);
+  const max = Math.max(r, g, b);
+  const d = max - Math.min(r, g, b);
+  if (d === 0) return 0;
+  let h: number;
+  if (max === r) h = ((g - b) / d) % 6;
+  else if (max === g) h = (b - r) / d + 2;
+  else h = (r - g) / d + 4;
+  return (h * 60 + 360) % 360;
+}
+
+describe("polish-leftovers wraith token (Property 2)", () => {
+  it("exists with a 6-digit hex value and is not decorative only", () => {
+    expect(tokenHex("wraith")).toMatch(/^#[0-9a-fA-F]{6}$/);
+    expect(tokenLine("wraith")).not.toMatch(/DECORATIVE ONLY/);
+  });
+  for (const bg of WRAITH_BACKGROUNDS) {
+    it(`wraith on ${bg} is at least ${NONTEXT_CONTRAST_MIN}`, () => {
+      expect(contrastRatio(parseHex(tokenHex("wraith")), parseHex(tokenHex(bg)))).toBeGreaterThanOrEqual(
+        NONTEXT_CONTRAST_MIN,
+      );
+    });
+  }
+  it(`hue differs from spectral by at least ${WRAITH_HUE_DIFF_MIN_DEG} degrees`, () => {
+    const raw = Math.abs(hueDegrees(tokenHex("wraith")) - hueDegrees(tokenHex("spectral")));
+    expect(Math.min(raw, 360 - raw)).toBeGreaterThanOrEqual(WRAITH_HUE_DIFF_MIN_DEG);
+  });
+  it(`relative luminance differs from spectral by at least ${WRAITH_LUMINANCE_DIFF_MIN}`, () => {
+    const diff = Math.abs(relLuminance(parseHex(tokenHex("wraith"))) - relLuminance(parseHex(tokenHex("spectral"))));
+    expect(diff).toBeGreaterThanOrEqual(WRAITH_LUMINANCE_DIFF_MIN);
+  });
 });

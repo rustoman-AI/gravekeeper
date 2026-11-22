@@ -16,44 +16,44 @@ Rules for every task:
 
 ## Tasks
 
-- [ ] 1. Baseline
-  - [-] 1.1 Confirm CI is green on 5117bb5 (orchestrator-only)
+- [x] 1. Baseline
+  - [x] 1.1 Confirm CI is green on 5117bb5 (orchestrator-only)
     - Run `gh run list --commit 5117bb5 --json name,status,conclusion,headSha` and record each workflow conclusion
     - If a run is not `success`, stop and report to the user before starting item 2
     - _Requirements: 4.1_
 
 - [ ] 2. Item 1: Distinct restless ghost
-  - [~] 2.1 Rework restless geometry in `view-model/restless-art.ts`
+  - [x] 2.1 Rework restless geometry in `view-model/restless-art.ts`
     - Remove `RESTLESS_STONE_SCALE`, `RESTLESS_STONE_FOOT`, `restlessStoneTransform`
     - Add `RESTLESS_GHOST_SCALE` (0.595), `RESTLESS_GHOST_REFERENCE_SCALE` (0.85), `RESTLESS_GHOST_CENTRE_X` (62), `RESTLESS_RISE_OVERLAP`, `RESTLESS_MAX_OVERFLOW_PX`, `RESTLESS_MAX_OVERLAP`, `STONE_TOPS`, `Box`, `STONE_BOXES`
     - Add per-variant `restlessGhostTransform(variant)` and `restlessGeometry(variant)` as in the design
     - Owner: `view-model/restless-art.ts` only
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-  - [~] 2.2 Add the `--color-wraith` token in `app/globals.css`
+  - [x] 2.2 Add the `--color-wraith` token in `app/globals.css`
     - Add `--color-wraith: #d27ab5` with the explanatory comment next to the other colour tokens
     - Owner: `app/globals.css` only
     - _Requirements: 1.6_
 
-  - [~] 2.3 Draw the restless sprite in `components/scene-sprite-ghosts.tsx`
+  - [x] 2.3 Draw the restless sprite in `components/scene-sprite-ghosts.tsx`
     - Add `ghost-body-gradient-restless`, `shape-ghost-wisp-restless` and `shape-ghost-wisp-restless-flat` to `GhostDefs`
     - Restless symbols: stone group with no transform and `<use href="#shape-stone-<v>"/>`, then wisp group with `restlessGhostTransform(v)`, no glow `<use>`
     - Leave the haunted symbols unchanged
     - Owner: `components/scene-sprite-ghosts.tsx` only
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.10_
 
-  - [~] 2.4 Rewrite `tests/ui/view-model/restless-art.property.test.ts` (keeps id AP-P3)
+  - [x] 2.4 Rewrite `tests/ui/view-model/restless-art.property.test.ts` (keeps id AP-P3)
     - **Property 1: Restless arrangement**
     - Header text: "The restless ghost rises beside a full-size stone"
     - Recompute stone top and x extent from rendered paths, ghost scale and box from the rendered `transform`; cover all four variants, full and flat symbols; use `cfg()` from `tests/support/fc-config`; tag `Feature: polish-leftovers, Property 1`
     - **Validates: Requirements 1.1, 1.2, 1.3, 1.4, 1.5, 5.4**
 
-  - [~] 2.5 Extend `tests/ui/tokens.test.ts` for the wraith token
+  - [x] 2.5 Extend `tests/ui/tokens.test.ts` for the wraith token
     - **Property 2: Restless tint is distinct and visible**
     - Contrast at least 3 against `night`, `night-raised`, `ground`, `ground-moss`, `grass`, `sky-low`; hue difference to `spectral` at least 90 degrees; relative luminance difference at least 0.1
     - **Validates: Requirements 1.6, 1.8**
 
-  - [~] 2.6 Update `tests/ui/sprites-ghosts.test.tsx` with restless example tests
+  - [x] 2.6 Update `tests/ui/sprites-ghosts.test.tsx` with restless example tests
     - Stone group has no `transform`, wisp has the helper transform, no glow `<use>`
     - Restless markup contains `--color-wraith` and not `--color-spectral`; haunted markup is the reverse
     - Reduced motion: the restless plot's art has `animation-name: none` under `prefers-reduced-motion` (use the CSS text or the existing reduced-motion test pattern in this file)
@@ -61,7 +61,7 @@ Rules for every task:
     - Owner: `tests/ui/sprites-ghosts.test.tsx` only
     - _Requirements: 1.7, 1.8, 5.9_
 
-  - [~] 2.7 Run related e2e and visually check the restless ghost
+  - [x] 2.7 Run related e2e and visually check the restless ghost
     - Run restless-related unit tests, the axe e2e specs and `scene-perf` (perf project with `--no-deps`) against 100 ms / 80.4 ms
     - Capture the Reference_Scan result view with restless graves at 1440x760 and 390x700 into `test-results/polish-visual/restless-*.png`, open each image and confirm: stone full size, ghost smaller and to the upper right, red-violet tint clearly different from the cyan haunted ghost
     - Owner: no source files (temporary screenshots only); report any defect to the orchestrator instead of editing

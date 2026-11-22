@@ -30,6 +30,7 @@
   --color-plaque: #252c40; /* plaque, epitaph block, headstone cards (text sits on it) */
   --color-ground-moss: #0d1713; /* ground below the fence (label text sits on it) */
   --color-grass: #0f1a15; /* grass strips at the row base (label text sits on it) */
+  --color-wraith: #d27ab5; /* restless ghost tint (red-violet), non-text graphic: contrast 3 or more on night, ground, ground-moss, grass, sky-low */
 }
 
 /* Font variables are set by next/font in app/layout.tsx (IM Fell English SC, Atkinson Hyperlegible). */

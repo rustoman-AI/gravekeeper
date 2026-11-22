@@ -96,18 +96,19 @@ export {
   fogRowOffsetPct,
 } from './fog';
 export {
-  RESTLESS_STONE_SCALE,
-  RESTLESS_STONE_FOOT,
   GHOST_BASE_BOX,
   RESTLESS_GHOST_SCALE,
-  RESTLESS_GHOST_TOP,
+  RESTLESS_GHOST_REFERENCE_SCALE,
+  RESTLESS_GHOST_CENTRE_X,
+  RESTLESS_RISE_OVERLAP,
   RESTLESS_MAX_OVERFLOW_PX,
   RESTLESS_MAX_OVERLAP,
   STONE_TOPS,
-  restlessStoneTransform,
+  STONE_BOXES,
   restlessGhostTransform,
   restlessGeometry,
 } from './restless-art';
+export type { RestlessVariant, Box } from './restless-art';
 export { buildTableModel } from './table';
 export { stageAt, stageStates } from './stages';
 export { FACT_FIELDS, formatFact } from './format-fact';
