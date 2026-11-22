@@ -170,26 +170,26 @@ Rules for every task:
     - _Requirements: 5.1, 4.2_
 
 - [ ] 5. Item 4: Final verification, CI, redeploy, verify:deploy, KIRO_LOG.md
-  - [-] 5.1 Final checkpoint before deploy (orchestrator-only)
+  - [x] 5.1 Final checkpoint before deploy (orchestrator-only)
     - Run `npm run test:deep` in full, without setting `FC_NUM_RUNS` in the shell
     - Run the full vitest suite, full e2e, `npm run check:bundle` (at most 256,000 bytes gzip), and scene-perf (perf project with `--no-deps`) against 100 ms / 80.4 ms
     - Ensure all tests pass, ask the user if questions arise
     - _Requirements: 5.2, 5.3, 5.5, 1.10_
 
-  - [~] 5.2 Confirm CI is green on every new commit (orchestrator-only)
+  - [x] 5.2 Confirm CI is green on every new commit (orchestrator-only)
     - Run `gh run list --branch <branch> --limit 10 --json name,status,conclusion,headSha` until each new commit is `completed` with `success`
     - _Requirements: 4.2_
 
-  - [~] 5.3 Redeploy to https://gravekeeper-chi.vercel.app (orchestrator-only)
+  - [x] 5.3 Redeploy to https://gravekeeper-chi.vercel.app (orchestrator-only)
     - Check `.vercel/`, `vercel.json` and `.github/workflows/*.yml`: if a workflow or Git integration deploys on push, wait for that deployment; otherwise use the already configured Vercel CLI
     - Do not add a new deployment path and do not print tokens
     - _Requirements: 4.3, 5.7_
 
-  - [~] 5.4 Run the Deploy_Verifier (orchestrator-only)
+  - [x] 5.4 Run the Deploy_Verifier (orchestrator-only)
     - Run `npm run verify:deploy` and keep the result lines
     - _Requirements: 4.4_
 
-  - [~] 5.5 Append the session entry to `KIRO_LOG.md`
+  - [x] 5.5 Append the session entry to `KIRO_LOG.md`
     - Append a "polish-leftovers" section (file exists): the session items, commit hashes, flake test name and root cause, CI status, verify:deploy result
     - Search the file for `ghp_`, `github_pat_` and `Bearer ` and confirm no match
     - Owner: `KIRO_LOG.md` only
