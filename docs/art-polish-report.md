@@ -119,4 +119,17 @@ Task 15.5. All commits are pushed to `main`. `npm run verify:deploy` passed on t
 - **Byte order mark.** The diff of `tests/e2e/above-fold.spec.ts` shows a UTF-8 BOM added at the start of the file. It does not affect the tests.
 - **Scope of the perf run.** `scene-perf` runs only in the `perf` project. The results above came from that project with `--no-deps`.
 ## Commits and CI
-Filled in by task 15.7.
+| Commit | Subject | CI (`ci.yml`) |
+| --- | --- | --- |
+| `bdefcf4` | spec: art-polish (requirements, design, tasks) | success |
+| `d2c2a31` | art-polish: fog and restless constants, ground tokens, contrast property, report spec (group 1) | success |
+| `5fd2339` | art-polish: graves stand on the ground in front of the fence (group 3) | no own run; pushed with `bc1f5e0`, covered by its run (success) |
+| `ee239bf` | art-polish: feathered fog without hard edges, alternating row offsets (group 5) | no own run; pushed with `bc1f5e0`, covered by its run (success) |
+| `bc1f5e0` | art-polish: two-line headline at 1280 px and wider, compact mobile header (group 7) | success |
+| `c279691` | art-polish: ledger stone and a clear restless ghost (group 9) | success |
+| `4846ffc` | art-polish: hero headstones and path (group 11) | success |
+| `3306ddf` | art-polish: AP traceability (group 13) | success |
+| `b033298` | art-polish: deterministic picker screenshot (S8 full repaint before capture) | no own run; pushed with `f281606`, covered by its run (success) |
+| `f281606` | art-polish: regenerated screenshots and report images | success |
+| `4f2776c` | art-polish: report | success |
+| (this commit) | art-polish: report commits and CI status | pending |
