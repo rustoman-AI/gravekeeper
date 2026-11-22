@@ -175,13 +175,13 @@ Rules for every task:
   - [x] 15.3 Measure the render and the bundle budgets
     - Run `npx playwright test tests/e2e/scene-perf.spec.ts --project=desktop` three times and record the median of the request scene (40 plots) and of the synthetic 300-plot scene (4x CPU throttle) as the tests record them, and compare each with 100 ms and 80.4 ms. Run `npm run check:bundle` and `npx playwright test tests/e2e/js-budget.spec.ts --project=desktop` and record the client JavaScript gzip size against 256,000 bytes. If a budget is exceeded, stop and report the numbers.
     - _Requirements: 9.3, 9.4, 10.4, 10.5_
-  - [~] 15.4 Commit and push the screenshots (orchestrator-only)
+  - [x] 15.4 Commit and push the screenshots (orchestrator-only)
     - Stage by name the files listed by task 15.1 and `docs/screenshots/polish/*.png` and commit with the subject `art-polish: regenerated screenshots and report images`. Push. Record the hash.
     - _Requirements: 10.6, 11.1_
-  - [~] 15.5 Verify the deploy (orchestrator-only)
+  - [x] 15.5 Verify the deploy (orchestrator-only)
     - Check that all commits of this spec are pushed to `main`, run `npm run verify:deploy` until it passes (Vercel deploys on push), and keep the output. Open the production landing page and a results page in the Playwright browser at 1440x760 once (read-only, no token), and note whether the first row stands on the ground and the fog shows no edge; if production still shows the old art, wait for the deployment and retry.
     - _Requirements: 10.6_
-  - [~] 15.6 Write the report (orchestrator-only)
+  - [x] 15.6 Write the report (orchestrator-only)
     - Create `docs/art-polish-report.md` with the sections `# Art polish report`, `## What changed` (the decisions table of the requirements: how the band was removed, horizon values 240 and 150 unchanged, the stage lead 104 and 14 px, header changes, the `slab` id decision and the coffin finding of task 9.1, restless arrangement numbers, fog technique, new tokens with their contrast numbers), `## Above the fold` (the measured numbers of task 7.4 for 1440x760, 1280x720 and 390x700), `## Headline` (bounds 28 to 40 px from 1280 px, measured line counts), `## Screenshots` (the four images embedded and what was seen on each), `## Regenerated screenshots` (task 15.1: files, the two-run identity result), `## Accessibility` (axe per screen), `## Budgets` (task 15.3: medians against 100 ms and 80.4 ms, JavaScript size against 256,000), `## Test changes` (every changed assertion with old and new values, including `art-css.test.ts`), `## Properties` (AP-P1 to AP-P4 with results of `npm run test:deep -- <files>` run now, never setting `FC_NUM_RUNS`), `## Deploy` (task 15.5), `## Findings` (anything surprising, any limit) and `## Commits and CI` (filled by task 15.7).
     - _Requirements: 10.4, 10.5, 10.6, 10.7_
   - [~] 15.7 Commit the report and append the commits with CI status (orchestrator-only)

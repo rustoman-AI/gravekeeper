@@ -1,6 +1,6 @@
 # Property traceability
 
-Maps every design property of the `scan-pipeline`, `dependency-graveyard-core`, `scan-accuracy`, `graveyard-ui`, `graveyard-art`, `pyproject`, `resurrect`, `resurrect-upgrade` and `art-polish` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 3977 passed and 119 skipped, 356 test files passed and 7 skipped (363 files, 4096 tests), with no failure. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
+Maps every design property of the `scan-pipeline`, `dependency-graveyard-core`, `scan-accuracy`, `graveyard-ui`, `graveyard-art`, `pyproject`, `resurrect`, `resurrect-upgrade` and `art-polish` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 4031 passed and 119 skipped (4150 tests), with no failure. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
 
 ## scan-pipeline
 
