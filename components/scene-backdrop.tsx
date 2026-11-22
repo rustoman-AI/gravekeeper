@@ -21,7 +21,21 @@ interface VariantConfig {
   trees: readonly { t: number; x: number; s: number }[];
   /** Fence span as fractions of the width. */
   fence: readonly [number, number];
+  /** Hero only: headstone silhouettes behind the fence (x fraction, height in viewBox units). */
+  silhouettes?: readonly { kind: SilhouetteKind; x: number; hgt: number }[];
+  /** Hero only: a faint path leading through the gate. */
+  path?: boolean;
 }
+
+type SilhouetteKind = "rounded" | "cross-topped" | "obelisk" | "cross";
+
+/** Silhouette outlines, base centre at 0,0, 100 units high, scaled by height / 100. */
+const SILHOUETTE_PATHS: Record<SilhouetteKind, string> = {
+  rounded: "M-20 0 V-70 A20 20 0 0 1 20 -70 V0 Z",
+  "cross-topped": "M-18 0 V-62 H-6 V-78 H-16 V-90 H-6 V-100 H6 V-90 H16 V-78 H6 V-62 H18 V0 Z",
+  obelisk: "M-16 0 V-80 L0 -100 L16 -80 V0 Z",
+  cross: "M-4 0 V-62 H-26 V-74 H-4 V-100 H6 V-74 H26 V-62 H6 V0 Z",
+};
 
 // Design: viewBoxes of the three variants.
 const VARIANTS: Record<BackdropVariant, VariantConfig> = {
@@ -50,6 +64,15 @@ const VARIANTS: Record<BackdropVariant, VariantConfig> = {
       { t: 2, x: 0.97, s: 0.9 },
     ],
     fence: [0, 1],
+    silhouettes: [
+      { kind: "rounded", x: 0.17, hgt: 48 },
+      { kind: "cross-topped", x: 0.28, hgt: 58 },
+      { kind: "obelisk", x: 0.385, hgt: 66 },
+      { kind: "cross", x: 0.615, hgt: 82 },
+      { kind: "rounded", x: 0.72, hgt: 44 },
+      { kind: "rounded", x: 0.82, hgt: 40 },
+    ],
+    path: true,
   },
   scanning: {
     w: 400,
@@ -239,6 +262,17 @@ function SceneBackdropImpl({ variant }: { variant: BackdropVariant }) {
         );
       })}
 
+      {/* Hero silhouettes: flat headstones and a cross behind the fence. */}
+      {c.silhouettes?.map(({ kind, x, hgt }, i) => (
+        <path
+          key={i}
+          className={kind === "cross" ? "gk-silhouette gk-cross" : "gk-silhouette"}
+          d={SILHOUETTE_PATHS[kind]}
+          transform={`translate(${f(x * w)} 322) scale(${hgt / 100})`}
+          fill="var(--color-iron)"
+        />
+      ))}
+
       {/* Wrought-iron fence along the hill base. */}
       <g transform={`translate(${f(fenceX)} ${f(fenceY)}) scale(${u})`}>
         <rect x="0" y="0" width={f(fenceW / u)} height="40" fill="url(#fence-pattern)" />
@@ -246,6 +280,23 @@ function SceneBackdropImpl({ variant }: { variant: BackdropVariant }) {
 
       {/* Ground band: joins the stage ground below. */}
       <rect x="0" y={f(groundTop)} width={w} height={f(h - groundTop)} fill="var(--color-ground)" />
+      {/* Hero path: a pale track widening toward the viewer, fading out toward the horizon. */}
+      {c.path ? (
+        <>
+          <defs>
+            <linearGradient id="hero-path-gradient" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0" stopColor="var(--color-mist)" stopOpacity="0.6" />
+              <stop offset="0.5" stopColor="var(--color-mist)" stopOpacity="0.32" />
+              <stop offset="1" stopColor="var(--color-mist)" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <path
+            className="gk-lane"
+            d={`M${f(w / 2 - 190)} ${h} L${f(w / 2 + 190)} ${h} L${f(w / 2 + 14)} 236 L${f(w / 2 - 14)} 236 Z`}
+            fill="url(#hero-path-gradient)"
+          />
+        </>
+      ) : null}
     </svg>
   );
 }

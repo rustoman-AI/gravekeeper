@@ -130,18 +130,18 @@ Rules for every task:
     - Create `tests/ui/components/sprites-greyscale.test.tsx`: extract the outline path data (the `d` of the stone-filled path) of each tombstone shape and of each flat twin from the rendered sheet; assert that the four outlines are pairwise different, that the width-to-height ratio of the ledger stone's flat outline differs from each of rounded, cross and obelisk by at least 0.5 (bounding box computed from the numbers in `d`, supporting `M`, `L`, `H`, `V`, `C`, `Q`, `Z`), and that the markup of the four restless symbols and of the plain ghost and the plain tombstones are pairwise different.
     - _Requirements: 6.5_
 
-- [ ] 10. Checkpoint - Sprites
+- [x] 10. Checkpoint - Sprites
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 10.1 Commit and push the sprites group (orchestrator-only)
+  - [x] 10.1 Commit and push the sprites group (orchestrator-only)
     - Stage by name the files of group 9 (including `view-model/restless-art.ts` if task 9.2 changed it) and commit with the subject `art-polish: ledger stone and a clear restless ghost (group 9)`. Push. Record the hash.
     - _Requirements: 10.6_
 
-- [ ] 11. Landing hero
-  - [~] 11.1 Add the hero silhouettes and the path (Visual)
+- [x] 11. Landing hero
+  - [x] 11.1 Add the hero silhouettes and the path (Visual)
     - In `components/scene-backdrop.tsx` add to the `VariantConfig` an optional `silhouettes` list and a `path` flag, used by the `hero` variant only (the `stage` and `scanning` configs omit them): at least four headstone silhouettes of different shapes (rounded, cross-topped, obelisk) and one cross, drawn after the trees and before the fence, and a faint path (trapezoid narrowing upward from the gate base, `--color-iron` at 0.5 opacity) drawn after the ground band. Tokens only (`--color-iron`, `--color-hill`), `aria-hidden` through the existing root, no text, no title, no animation. Starting positions are in the design's Hero landscape table; adjust them to the screenshot. The gate, the copy plate, the Hero height and `components/hero.tsx` do not change.
     - Visual: take preview screenshots of the landing at 1440x760 and 390x700, open both and report: whether the headstones and the cross are visible behind the fence and not hidden by the gate or the copy plate, whether the path is visible through the gate and faint, whether the copy text is still readable, and whether the hero looks cluttered.
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.6_
-  - [~] 11.2 Test the hero landscape
+  - [x] 11.2 Test the hero landscape
     - Create `tests/ui/components/backdrop-hero.test.tsx`: the `hero` backdrop contains at least five silhouette shapes and one cross shape that come before the fence element in document order, the path comes after the ground rectangle, there is no `<text>`, `<title>`, `animate` or `<animateTransform>` and no colour literal, every fill and stroke is a `var(--color-*)`; the `stage` and `scanning` backdrops contain none of these shapes (compare element counts with a snapshot of the class names).
     - _Requirements: 8.1, 8.2, 8.3, 8.6_
 

@@ -407,6 +407,11 @@
         "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795303738436
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795306239687
       }
     ],
     "11.1 Add the hero silhouettes and the path (Visual)": [
@@ -414,6 +419,26 @@
         "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795303738465
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795306242632
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795306328412
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795306737058
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795307303409
       }
     ],
     "11.2 Test the hero landscape": [
@@ -421,6 +446,16 @@
         "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795303738494
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795306579851
+      },
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795307304311
       }
     ],
     "12.1 Commit and push the hero group (orchestrator-only)": [
@@ -585,6 +620,20 @@
         "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795306158083
+      }
+    ],
+    "10. Checkpoint - Sprites": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795306239721
+      }
+    ],
+    "11. Landing hero": [
+      {
+        "executionId": "a432db28-35a5-4b13-95eb-7894b5bc0273",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795307304351
       }
     ]
   }
