@@ -87,7 +87,6 @@ Plain chat sessions, without a spec, were used for setup and operations work whe
 
 Operations work that needed a checklist was still run as a quick spec: `property-traceability` and `session-14-ops` (live audit, UI steering file, production smoke test).
 
-TODO: KIRO_LOG.md has no entries for the graveyard-art, pyproject, resurrect, resurrect-upgrade and art-polish sessions (between Session 16 and Session 17), so any chat-only work in those sessions is not recorded here. Their reports are in `docs/`.
 
 ## MCP
 
