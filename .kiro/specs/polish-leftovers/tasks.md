@@ -169,7 +169,7 @@ Rules for every task:
     - Record the hashes and CI status
     - _Requirements: 5.1, 4.2_
 
-- [ ] 5. Item 4: Final verification, CI, redeploy, verify:deploy, KIRO_LOG.md
+- [x] 5. Item 4: Final verification, CI, redeploy, verify:deploy, KIRO_LOG.md
   - [x] 5.1 Final checkpoint before deploy (orchestrator-only)
     - Run `npm run test:deep` in full, without setting `FC_NUM_RUNS` in the shell
     - Run the full vitest suite, full e2e, `npm run check:bundle` (at most 256,000 bytes gzip), and scene-perf (perf project with `--no-deps`) against 100 ms / 80.4 ms
@@ -195,12 +195,12 @@ Rules for every task:
     - Owner: `KIRO_LOG.md` only
     - _Requirements: 4.5, 4.6, 5.7_
 
-  - [~] 5.6 Commit and push the log (orchestrator-only)
+  - [x] 5.6 Commit and push the log (orchestrator-only)
     - Commit "Log polish-leftovers session", `git push`, record the hash and CI status
     - _Requirements: 5.1, 4.2_
 
 - [ ] 6. Screenshots of the uuid grave and the landing hero
-  - [~] 6.1 Create `tests/e2e/polish-leftovers-report.spec.ts`
+  - [x] 6.1 Create `tests/e2e/polish-leftovers-report.spec.ts`
     - Gate on `POLISH_LEFTOVERS_REPORT=1` and the `desktop` project; otherwise write nothing
     - Fixed 1440x760, `deviceScaleFactor: 1`, `reducedMotion: "reduce"`, `/api/scan` mocked with the `request` fixture, `document.fonts.ready` awaited, mouse at (0, 0), `animations: "disabled"`, `caret: "hide"`
     - Output `docs/screenshots/polish/leftovers-landing-hero-1440x760.png` and `docs/screenshots/polish/leftovers-uuid-grave-1440x760.png`; uuid grave found with `button.gk-plot[aria-label^="uuid,"]`, centred, clip grown by 32 px
@@ -208,14 +208,14 @@ Rules for every task:
     - Owner: that spec file only
     - _Requirements: 4.7, 5.8_
 
-  - [~] 6.2 Generate and visually check the screenshots
+  - [x] 6.2 Generate and visually check the screenshots
     - Run the spec with `POLISH_LEFTOVERS_REPORT=1` twice and confirm the PNGs are byte-identical across runs
     - Open both PNGs and confirm content; also capture the same two views at 390x700 into `test-results/polish-visual/` and look at them
     - Confirm `git diff --stat -- docs/screenshots` shows no change under `m1`, `m2`, `m3` or the existing polish PNGs
     - Owner: `docs/screenshots/polish/` new files only
     - _Requirements: 4.7, 4.8, 5.8_
 
-  - [~] 6.3 Append screenshot paths to `KIRO_LOG.md`
+  - [x] 6.3 Append screenshot paths to `KIRO_LOG.md`
     - Add the two image paths and the report spec name to the "polish-leftovers" section
     - Owner: `KIRO_LOG.md` only
     - _Requirements: 4.6, 4.7_
