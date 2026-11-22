@@ -93,7 +93,17 @@ TODO: KIRO_LOG.md has no entries for the graveyard-art, pyproject, resurrect, re
 
 Before Session 18 no MCP server was used. The Session 8 log notes that no fetch MCP server was configured, so verification used PowerShell and the `gh` CLI instead. Production checks before Session 18 used Playwright through Node scripts and `curl`, not MCP.
 
-TODO: Session 18 MCP smoke check (filled in after it runs).
+In Session 18 a workspace config was added at [.kiro/settings/mcp.json](../.kiro/settings/mcp.json) for the official Playwright MCP server, pinned to `@playwright/mcp@0.0.86` (headless, isolated profile, Chromium, 1440x900).
+
+What happened:
+
+- The server's tools did not show up in the running Kiro session after the config was added, and still did not after one retry. Kiro reads the MCP tool list when a session starts, so a new server is only available in a later session.
+- The server itself started. It was driven over stdio with the MCP TypeScript SDK client (`@modelcontextprotocol/sdk` 1.32.2, installed outside the repo), using the exact command and arguments from `mcp.json`.
+- The first run failed on `browser_click` because the client passed `ref`; in version 0.0.86 the argument is `target`. The second run passed.
+- Calls in the passing run: `browser_navigate` to the landing page, `browser_snapshot`, `browser_navigate` to the request/request scan, `browser_wait_for` (5 s), `browser_snapshot`, `browser_click` on the uuid plot, `browser_snapshot`, `browser_press_key` Escape, `browser_snapshot`, `browser_close`.
+- Results on production: the landing page has the "Gravekeeper" heading and the repository URL field. The grade card shows D, graded on uuid (score 60). The uuid plot's accessible name is "uuid, npm, haunted, buried, 1 open vulnerability (HIGH)", the restless kind. Clicking it opened the "uuid" dialog, and Escape closed it with focus back on the plot.
+
+Not used: no MCP server took part in writing code, specs or tests. All earlier verification used Node scripts, `curl` and the `gh` CLI.
 
 ## Numbers
 
