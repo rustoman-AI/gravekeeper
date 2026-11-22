@@ -142,6 +142,11 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323674753
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324772723
       }
     ],
     "3.1 Create `view-model/label-fit.ts`": [
@@ -149,6 +154,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323674820
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324773242
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324830762
       }
     ],
     "3.2 Replace the `.gk-plot-label` rule in `app/globals.css`": [
@@ -156,6 +171,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323674945
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324830894
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324912100
       }
     ],
     "3.3 Render the full-name `<title>` in `components/scene-plot.tsx`": [
@@ -163,6 +188,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323674999
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324912961
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324974194
       }
     ],
     "3.4 Write `tests/ui/view-model/label-fit.property.test.ts`": [
@@ -170,6 +205,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675035
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324974362
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795325317310
       }
     ],
     "3.5 Write `tests/ui/scene-plot-title.property.test.tsx`": [
@@ -177,6 +222,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675103
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795325317905
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795325972440
       }
     ],
     "3.6 Update the element-count assertions in `tests/ui/scene-stage.test.tsx` and `tests/ui/scene-render.test.tsx`": [
@@ -184,6 +239,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675135
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795325973383
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795326625737
       }
     ],
     "3.7 Write `tests/ui/label-css.test.ts`": [
@@ -191,6 +256,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675164
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795326626057
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795326669848
       }
     ],
     "3.8 Write `tests/e2e/labels-polish.spec.ts`": [
@@ -198,6 +273,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675195
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795326670438
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795326738789
       }
     ],
     "3.9 Run label e2e checks and visually check labels": [
@@ -205,6 +290,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675227
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795326738920
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795326977182
       }
     ],
     "3.10 Commit and push item 2 (orchestrator-only)": [
@@ -338,6 +433,13 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323687063
+      }
+    ],
+    "2. Item 1: Distinct restless ghost": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795324772777
       }
     ]
   }

@@ -66,8 +66,8 @@ describe("Scene render", () => {
     const plots = root.querySelectorAll("button.gk-plot");
     expect(plots.length).toBe(300);
     for (const plot of Array.from(plots)) {
-      // button, svg, use, span
-      expect(1 + plot.querySelectorAll("*").length).toBe(4);
+      // button, svg, use, span; the optional svg > title is not counted
+      expect(1 + plot.querySelectorAll("*:not(svg > title)").length).toBe(4);
       expect(plot.querySelectorAll(":scope > svg.gk-plot-art > use").length).toBe(1);
       expect(plot.querySelectorAll(":scope > span.gk-plot-label").length).toBe(1);
     }

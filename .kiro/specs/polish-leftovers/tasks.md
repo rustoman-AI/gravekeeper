@@ -22,7 +22,7 @@ Rules for every task:
     - If a run is not `success`, stop and report to the user before starting item 2
     - _Requirements: 4.1_
 
-- [ ] 2. Item 1: Distinct restless ghost
+- [x] 2. Item 1: Distinct restless ghost
   - [x] 2.1 Rework restless geometry in `view-model/restless-art.ts`
     - Remove `RESTLESS_STONE_SCALE`, `RESTLESS_STONE_FOOT`, `restlessStoneTransform`
     - Add `RESTLESS_GHOST_SCALE` (0.595), `RESTLESS_GHOST_REFERENCE_SCALE` (0.85), `RESTLESS_GHOST_CENTRE_X` (62), `RESTLESS_RISE_OVERLAP`, `RESTLESS_MAX_OVERFLOW_PX`, `RESTLESS_MAX_OVERLAP`, `STONE_TOPS`, `Box`, `STONE_BOXES`
@@ -67,57 +67,57 @@ Rules for every task:
     - Owner: no source files (temporary screenshots only); report any defect to the orchestrator instead of editing
     - _Requirements: 1.6, 1.7, 1.9, 1.10_
 
-  - [~] 2.8 Commit and push item 1 (orchestrator-only)
+  - [x] 2.8 Commit and push item 1 (orchestrator-only)
     - Run `npx vitest --run` on the restless-art, tokens, sprites-ghosts, sprites-greyscale tests, the relevant e2e specs including axe, and scene-perf
     - On green: `git add` the item's files by name, commit "Distinct restless ghost", `git push`
     - Record the commit hash and CI status (`gh run list --branch <branch> --limit 5`) for the final report
     - _Requirements: 5.1, 4.2_
 
 - [ ] 3. Item 2: Non-truncating grave labels
-  - [~] 3.1 Create `view-model/label-fit.ts`
+  - [x] 3.1 Create `view-model/label-fit.ts`
     - Export `LABEL_CHAR_WIDTH_PX` (7.2), `labelSegments`, `wrapLabel`, `mayTruncateLabel` as specified in the design (clamp capacity to at least 1, empty name returns `[]`)
     - Owner: `view-model/label-fit.ts` only
     - _Requirements: 2.2, 2.3, 2.4_
 
-  - [~] 3.2 Replace the `.gk-plot-label` rule in `app/globals.css`
+  - [x] 3.2 Replace the `.gk-plot-label` rule in `app/globals.css`
     - Remove `-webkit-line-clamp` and `display: -webkit-box`; add `display: block`, `height: var(--label-band-h, 28px)`, `overflow: hidden`, `text-overflow: clip`, `overflow-wrap: anywhere`, `white-space: normal`
     - Keep 12 px font, 14 px line height, colour, width and position unchanged
     - Owner: `app/globals.css` only
     - _Requirements: 2.1, 2.2, 2.8, 2.9, 2.10, 2.11_
 
-  - [~] 3.3 Render the full-name `<title>` in `components/scene-plot.tsx`
+  - [x] 3.3 Render the full-name `<title>` in `components/scene-plot.tsx`
     - Render `<title>{plot.label}</title>` as first child of the plot `<svg>` when `mayTruncateLabel(plot.label, plot.width)` is true
     - Keep the SVG `aria-hidden` and the button `aria-label={plot.accessibleLabel}` unchanged
     - Owner: `components/scene-plot.tsx` only
     - _Requirements: 2.5, 2.6, 2.7_
 
-  - [~] 3.4 Write `tests/ui/view-model/label-fit.property.test.ts`
+  - [x] 3.4 Write `tests/ui/view-model/label-fit.property.test.ts`
     - **Property 3: Label wrapping preserves the name and breaks only at hyphens**
     - **Property 5: Labels that fit the model are never clipped**
     - Add example tests: `browserify-istanbul` at 80 px gives `["browserify-", "istanbul"]`; `karma-phantomjs-launcher` gives 3 lines and `mayTruncateLabel` true; empty name; width below one character
     - **Validates: Requirements 2.1, 2.2, 2.3, 2.4**
 
-  - [~] 3.5 Write `tests/ui/scene-plot-title.property.test.tsx`
+  - [x] 3.5 Write `tests/ui/scene-plot-title.property.test.tsx`
     - **Property 4: The full name is in the graphic's title exactly when the label may be cut**
     - Example: `karma-phantomjs-launcher` renders `svg > title` with the full name and an `aria-label` starting with it
     - **Validates: Requirements 2.5, 2.6, 2.7**
 
-  - [~] 3.6 Update the element-count assertions in `tests/ui/scene-stage.test.tsx` and `tests/ui/scene-render.test.tsx`
+  - [x] 3.6 Update the element-count assertions in `tests/ui/scene-stage.test.tsx` and `tests/ui/scene-render.test.tsx`
     - Count plot elements excluding an optional `svg > title` so the existing `1 + plot.querySelectorAll("*").length === 4` checks stay valid
     - Owner: those two test files only
     - _Requirements: 2.6_
 
-  - [~] 3.7 Write `tests/ui/label-css.test.ts`
+  - [x] 3.7 Write `tests/ui/label-css.test.ts`
     - Read `app/globals.css`: `.gk-plot-label` has no `line-clamp`, no `-webkit-box`, has `text-overflow: clip`, font size at least 11 px
     - _Requirements: 2.1, 2.10_
 
-  - [~] 3.8 Write `tests/e2e/labels-polish.spec.ts`
+  - [x] 3.8 Write `tests/e2e/labels-polish.spec.ts`
     - `browserify-istanbul` shows two line rectangles broken after the hyphen (`Range.getClientRects`)
     - Computed `text-overflow` is `clip`, computed font size at least 11 px
     - For every plot where `label.scrollHeight > label.clientHeight`, the plot SVG has a `<title>` equal to the full name (checks `LABEL_CHAR_WIDTH_PX`; raise the constant in `view-model/label-fit.ts` if this fails, reported to the orchestrator)
     - _Requirements: 2.2, 2.3, 2.4, 2.6, 2.10_
 
-  - [~] 3.9 Run label e2e checks and visually check labels
+  - [x] 3.9 Run label e2e checks and visually check labels
     - Run `above-fold.spec.ts` (budget unchanged), the CLS and 320 px reflow specs, the axe specs and the new labels spec
     - Capture the Reference_Scan result at 1440x760 and 390x700 into `test-results/polish-visual/labels-*.png`, open each image and confirm: no ellipsis, hyphen wrapping, second line clipped cleanly, text readable
     - Owner: no source files; report defects to the orchestrator

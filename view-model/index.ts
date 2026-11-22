@@ -109,6 +109,7 @@ export {
   restlessGeometry,
 } from './restless-art';
 export type { RestlessVariant, Box } from './restless-art';
+export { LABEL_CHAR_WIDTH_PX, labelSegments, wrapLabel, mayTruncateLabel } from './label-fit';
 export { buildTableModel } from './table';
 export { stageAt, stageStates } from './stages';
 export { FACT_FIELDS, formatFact } from './format-fact';

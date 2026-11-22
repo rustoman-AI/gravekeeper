@@ -1,5 +1,6 @@
 import { memo } from "react";
 import type { CSSProperties } from "react";
+import { mayTruncateLabel } from "@/view-model";
 import type { PlotModel } from "@/view-model";
 
 export interface ScenePlotProps {
@@ -23,6 +24,7 @@ function ScenePlotImpl({ plot, tabbable, simplified }: ScenePlotProps) {
   if (plot.depthBrightness !== 1) style["--depth-bright"] = plot.depthBrightness;
   // graveyard-art Requirement 3.7: tilt is written only when not 0.
   if (plot.tilt !== 0) style["--tilt"] = `${plot.tilt}deg`;
+  const truncatable = mayTruncateLabel(plot.label, plot.width);
   return (
     <button
       type="button"
@@ -34,6 +36,7 @@ function ScenePlotImpl({ plot, tabbable, simplified }: ScenePlotProps) {
       style={style as CSSProperties}
     >
       <svg className="gk-plot-art" aria-hidden="true" focusable="false">
+        {truncatable ? <title>{plot.label}</title> : null}
         <use href={"#" + plot.symbolId + (simplified ? "-flat" : "")} />
       </svg>
       <span className="gk-plot-label">{plot.label}</span>

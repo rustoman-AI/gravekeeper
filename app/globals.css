@@ -331,18 +331,17 @@ main[tabindex="-1"]:focus-visible {
 }
 .gk-plot-label {
   position: absolute;
-  /* Plot box width (var(--w)), at most two lines: labels never reach a neighbour. Full name stays in aria-label and tooltip. */
+  /* Plot box width (var(--w)), two lines tall: a third line is clipped, never an ellipsis. Breaks fall after hyphens; a single segment wider than the box is broken by overflow-wrap. Full name stays in aria-label and the SVG title. */
   left: 0;
   top: 100%;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: var(--label-lines, 2);
-  line-clamp: var(--label-lines, 2);
+  display: block;
   width: var(--w, 80px);
   height: var(--label-band-h, 28px);
   margin-top: 0;
   overflow: hidden;
+  text-overflow: clip;
   overflow-wrap: anywhere;
+  word-break: normal;
   white-space: normal;
   color: var(--color-bone);
   font-size: var(--label-font, 12px);

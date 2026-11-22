@@ -78,13 +78,29 @@ describe("Plot with depth", () => {
     const plots = Array.from(container.querySelectorAll<HTMLButtonElement>("button.gk-plot"));
     expect(plots).toHaveLength(3);
     for (const plot of plots) {
-      expect(1 + plot.querySelectorAll("*").length).toBe(4);
+      // button, svg, use, span; the optional svg > title is not counted
+      expect(1 + plot.querySelectorAll("*:not(svg > title)").length).toBe(4);
       expect(plot.querySelectorAll(":scope > svg.gk-plot-art > use")).toHaveLength(1);
       const label = plot.querySelector<HTMLElement>(":scope > span.gk-plot-label");
       expect(label).not.toBeNull();
       expect(label?.style.opacity).toBe("");
       expect(label?.getAttribute("style") ?? "").not.toMatch(/opacity|--depth/);
     }
+  });
+
+  it("adds exactly one svg > title as the first svg child for a label that may truncate", () => {
+    const longName = "karma-phantomjs-launcher-extra-long-hyphenated-package-name-for-truncation";
+    const rows = buildPackageRows(asParsed(buildScanResult([{ name: longName, kind: "alive" }])));
+    const scene = buildSceneModel(rows, 1);
+    const { container } = render(<Scene scene={scene} onOpen={() => {}} skipTargetId="toggle" />);
+    const plot = container.querySelector<HTMLButtonElement>("button.gk-plot");
+    expect(plot).not.toBeNull();
+    const titles = plot!.querySelectorAll("svg > title");
+    expect(titles).toHaveLength(1);
+    expect(plot!.querySelector("svg")?.firstElementChild).toBe(titles[0]);
+    expect(titles[0].textContent).toBe(scene.plots[0].label);
+    expect(1 + plot!.querySelectorAll("*:not(svg > title)").length).toBe(4);
+    expect(plot!.querySelectorAll("*")).toHaveLength(4);
   });
 
   it("writes depth values on the plot only when they differ from 1", () => {
