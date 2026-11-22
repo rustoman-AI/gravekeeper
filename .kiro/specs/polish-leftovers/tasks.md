@@ -199,7 +199,7 @@ Rules for every task:
     - Commit "Log polish-leftovers session", `git push`, record the hash and CI status
     - _Requirements: 5.1, 4.2_
 
-- [ ] 6. Screenshots of the uuid grave and the landing hero
+- [x] 6. Screenshots of the uuid grave and the landing hero
   - [x] 6.1 Create `tests/e2e/polish-leftovers-report.spec.ts`
     - Gate on `POLISH_LEFTOVERS_REPORT=1` and the `desktop` project; otherwise write nothing
     - Fixed 1440x760, `deviceScaleFactor: 1`, `reducedMotion: "reduce"`, `/api/scan` mocked with the `request` fixture, `document.fonts.ready` awaited, mouse at (0, 0), `animations: "disabled"`, `caret: "hide"`
@@ -220,13 +220,13 @@ Rules for every task:
     - Owner: `KIRO_LOG.md` only
     - _Requirements: 4.6, 4.7_
 
-  - [~] 6.4 Commit and push screenshots (orchestrator-only)
+  - [x] 6.4 Commit and push screenshots (orchestrator-only)
     - Run `tests/ui/repo-hygiene.test.ts` and confirm the spec does not write without the env flag (a normal `playwright test --list` run is enough)
     - Commit "Polish screenshots and log", `git push`, record the hash, and confirm CI is green with `gh run list`
     - _Requirements: 5.1, 4.2, 4.8_
 
-- [ ] 7. Final report and STOP
-  - [~] 7.1 Report and STOP (orchestrator-only)
+- [x] 7. Final report and STOP
+  - [x] 7.1 Report and STOP (orchestrator-only)
     - Report to the user: all commit hashes, the flake test name and root cause (fixed or quarantined with the Quarantine_Note), CI status for each commit, the verify:deploy result, and the screenshot paths (`docs/screenshots/polish/leftovers-landing-hero-1440x760.png`, `docs/screenshots/polish/leftovers-uuid-grave-1440x760.png`)
     - Mention the known stale line 173 in art-polish design.md
     - STOP. Do not start further work
