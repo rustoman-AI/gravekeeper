@@ -159,20 +159,20 @@ Rules for every task:
     - If `docs/property-traceability.md` lists the properties of the other specs, add `AP-P1` to `AP-P4` in the same format (title, file, requirements) and update its counts; otherwise leave the file unchanged and say so. This task is the only owner of that file.
     - _Requirements: 9.1_
 
-- [ ] 14. Final checkpoint - All checks and end-to-end
+- [x] 14. Final checkpoint - All checks and end-to-end
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, then `npm run test:e2e` (all projects, mocked) and `npm run check:bundle`, and ensure all pass: in particular `above-fold`, `headline-lines`, `art`, `layout-shift`, `reflow`, `reduced-motion`, `scene-perf` and `js-budget`. Fix a failure in the file that causes it, in a separate commit. Ask the user if questions arise.
-  - [~] 14.1 Commit and push the traceability group (orchestrator-only)
+  - [x] 14.1 Commit and push the traceability group (orchestrator-only)
     - Stage by name the files of group 13 and any fix files and commit with the subject `art-polish: traceability (group 13)`. Push. Record the hash.
     - _Requirements: 10.6_
 
 - [ ] 15. Delivery: screenshots, budgets, deploy, report
-  - [~] 15.1 Regenerate the committed screenshots (Visual)
+  - [x] 15.1 Regenerate the committed screenshots (Visual)
     - Run `$env:SCREENSHOTS = '1'; npx playwright test tests/e2e/screenshots.spec.ts --project=desktop --project=mobile`, compute a SHA-256 of every file under `docs/screenshots/*.png` (not the `m1`, `m2`, `m3` and `resurrect` folders), run the same command a second time and compare; the two runs must give identical hashes (if not, report the differing files and the cause, and do not continue). Run the resurrect report spec as in `docs/resurrect-upgrade-report.md` to rewrite `docs/screenshots/resurrect/*.png` (twice, same comparison). Confirm with `git status --short docs/screenshots` that `m1`, `m2` and `m3` are untouched, and that the results scenes, landing, detail panels with a scene, empty states (including the results-empty images deferred earlier) and the resurrect images changed. Open at least: one results scene (desktop and mobile), the landing (desktop), the empty graveyard, one detail panel with a restless plot, and one resurrect image, and report what each shows. List the changed files by name for the commit in task 15.4.
     - _Requirements: 11.1, 11.2, 11.3, 11.4_
-  - [~] 15.2 Take the report screenshots (Visual)
+  - [x] 15.2 Take the report screenshots (Visual)
     - Run `$env:POLISH_REPORT = '1'; npx playwright test tests/e2e/polish-report.spec.ts --project=desktop`. Check that the four files exist in `docs/screenshots/polish/` and that axe reported no violation on any of the four screens (`test-results/polish-measurements.json`). Open all four images and report what you see: the first row on the ground in front of the fence, the fog (no hard edge, no stripes), the headline lines and the Plaque, the ledger stone and the restless ghost where they appear, and on the landing the headstones, the cross and the path. Keep the measurements file for the report.
     - _Requirements: 10.1, 10.2, 10.7_
-  - [~] 15.3 Measure the render and the bundle budgets
+  - [x] 15.3 Measure the render and the bundle budgets
     - Run `npx playwright test tests/e2e/scene-perf.spec.ts --project=desktop` three times and record the median of the request scene (40 plots) and of the synthetic 300-plot scene (4x CPU throttle) as the tests record them, and compare each with 100 ms and 80.4 ms. Run `npm run check:bundle` and `npx playwright test tests/e2e/js-budget.spec.ts --project=desktop` and record the client JavaScript gzip size against 256,000 bytes. If a budget is exceeded, stop and report the numbers.
     - _Requirements: 9.3, 9.4, 10.4, 10.5_
   - [~] 15.4 Commit and push the screenshots (orchestrator-only)
