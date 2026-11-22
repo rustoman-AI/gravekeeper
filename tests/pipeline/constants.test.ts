@@ -59,6 +59,7 @@ const TABLE_NAMES: readonly string[] = [
   'REQUEST_TOTAL_TIMEOUT_MS',
   'SCAN_DEADLINE_MS',
   'SCAN_RESPONSE_MARGIN_MS',
+  'SCAN_WALL_BUDGET_MS',
   'CONCURRENCY_GITHUB',
   'CONCURRENCY_DEPSDEV',
   'CONCURRENCY_OSV',
@@ -169,6 +170,21 @@ describe('constant consistency rules', () => {
     );
   });
 
+  it('SCAN_WALL_BUDGET_MS is a positive integer', () => {
+    expect(isPositiveInteger(num('SCAN_WALL_BUDGET_MS'))).toBe(true);
+  });
+
+  it('SCAN_RESPONSE_MARGIN_MS < SCAN_WALL_BUDGET_MS <= SCAN_DEADLINE_MS + SCAN_RESPONSE_MARGIN_MS', () => {
+    expect(num('SCAN_RESPONSE_MARGIN_MS')).toBeLessThan(num('SCAN_WALL_BUDGET_MS'));
+    expect(num('SCAN_WALL_BUDGET_MS')).toBeLessThanOrEqual(
+      num('SCAN_DEADLINE_MS') + num('SCAN_RESPONSE_MARGIN_MS'),
+    );
+  });
+
+  it('SCAN_WALL_BUDGET_MS leaves at least 3 s under ROUTE_MAX_DURATION_SECONDS for cold start and serialize', () => {
+    expect(num('SCAN_WALL_BUDGET_MS') + 3000).toBeLessThanOrEqual(num('ROUTE_MAX_DURATION_SECONDS') * 1000);
+  });
+
   it('L2_OPERATION_TIMEOUT_MS < REQUEST_TIMEOUT_MS', () => {
     expect(num('L2_OPERATION_TIMEOUT_MS')).toBeLessThan(num('REQUEST_TIMEOUT_MS'));
   });
@@ -255,6 +271,7 @@ describe('constant consistency rules', () => {
       'GITHUB_BUDGET_THRESHOLD',
       'CONCURRENCY_GITHUB',
       'SCAN_RESPONSE_MARGIN_MS',
+      'SCAN_WALL_BUDGET_MS',
       'ROUTE_MAX_DURATION_SECONDS',
       'L2_OPERATION_TIMEOUT_MS',
       'L2_MAX_SCAN_BYTES',

@@ -172,6 +172,7 @@ All constants are exported from `/pipeline` (in `/pipeline/constants.ts`) and ar
 | `REQUEST_TOTAL_TIMEOUT_MS` | 20000 | Maximum total time of one Work_Unit including retries and waits. |
 | `SCAN_DEADLINE_MS` | 25000 | The single scan deadline, measured from Scan_Start. When it passes, the Scan_Deadline_Signal aborts and every request in flight is cancelled (Requirement 16). |
 | `SCAN_RESPONSE_MARGIN_MS` | 1500 | Time after `SCAN_DEADLINE_MS` within which the Scan_Route must have responded, measured from Scan_Start (Requirement 16, criterion 12). |
+| `SCAN_WALL_BUDGET_MS` | 24000 | Wall-clock budget from the moment the Scan_Route function is invoked (Request_Received, captured before dependency building and the body read), within which the Scan_Route must have responded. The scan deadline and the response margin are derived from it and shrink by the time already spent since Request_Received, so cold-start, dependency-building and body-read time count against the budget rather than against Vercel's `maxDuration` only. Added in session 21 to fix production scan timeouts (see docs/session-21-timeout-rca.md). |
 | `CONCURRENCY_GITHUB` | 1 | Maximum simultaneous requests to the github source. |
 | `CONCURRENCY_DEPSDEV` | 8 | Maximum simultaneous requests to the depsdev source. |
 | `CONCURRENCY_OSV` | 4 | Maximum simultaneous requests to the osv source. |
@@ -219,6 +220,7 @@ Constant consistency rules (verified by unit tests, Requirement 23):
 - Every `*_BATCH_SIZE` and `*_MAX_*` value is a positive integer.
 - `SCAN_RESPONSE_MARGIN_MS` is a positive integer and is less than `SCAN_DEADLINE_MS`.
 - `SCAN_DEADLINE_MS` + `SCAN_RESPONSE_MARGIN_MS` < `ROUTE_MAX_DURATION_SECONDS` * 1000 (25000 + 1500 < 30000).
+- `SCAN_WALL_BUDGET_MS` is a positive integer, `SCAN_RESPONSE_MARGIN_MS` < `SCAN_WALL_BUDGET_MS` <= `SCAN_DEADLINE_MS` + `SCAN_RESPONSE_MARGIN_MS`, and `SCAN_WALL_BUDGET_MS` + 3000 <= `ROUTE_MAX_DURATION_SECONDS` * 1000 (so at least 3 s of the function's duration is left for cold start and the final JSON serialize). (24000; 1500 < 24000 <= 26500; 24000 + 3000 <= 30000.)
 - `L2_OPERATION_TIMEOUT_MS` < `REQUEST_TIMEOUT_MS`, `L2_MAX_SCAN_BYTES` <= 2000000 (the Runtime Cache item limit), and `L2_MAX_BODY_BYTES` <= `L2_MAX_SCAN_BYTES`.
 - `REDIRECT_MAX_HOPS` is an integer of at least 0.
 - `PARTIAL_SCAN_TTL_SECONDS` < `SCAN_CACHE_TTL_SECONDS`, and `CRATES_OWNERS_TTL_SECONDS` >= `UPSTREAM_CACHE_TTL_SECONDS`.

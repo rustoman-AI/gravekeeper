@@ -5,7 +5,7 @@
  * Every response goes through `respond`. The function never rejects: an exception anywhere becomes
  * `internal-error` with the fixed message (R21.8).
  */
-import { REQUEST_BODY_MAX_BYTES, SCAN_DEADLINE_MS, SCAN_MAX_DEPENDENCIES, SCAN_MAX_MANIFESTS, OSV_MAX_ADVISORY_DETAILS, SCAN_RESPONSE_MARGIN_MS } from '../constants';
+import { REQUEST_BODY_MAX_BYTES, SCAN_MAX_DEPENDENCIES, SCAN_MAX_MANIFESTS, OSV_MAX_ADVISORY_DETAILS, SCAN_RESPONSE_MARGIN_MS, SCAN_WALL_BUDGET_MS } from '../constants';
 import { readGithubConfig } from '../config/github-config';
 import type { GithubEnv } from '../config/github-config';
 import type { IsoInstant } from '../mapping';
@@ -32,7 +32,18 @@ export interface RawScanRequest {
 export interface ApiDeps extends Omit<ScanDeps, 'config' | 'limits' | 'progress'> {
   /** The GitHub variables of R2.1. The route passes the runtime environment. */
   readonly readEnv: () => GithubEnv;
+  /**
+   * Wall-clock reading (`deps.clock()` units) taken at the top of the route handler, before
+   * `buildDeps` and the body read, i.e. as close as possible to function invocation. The deadline
+   * and the margin are measured from here so that cold-start, `buildDeps` and body-read time count
+   * against the wall budget. Absent in tests and callers that do not thread it; then the in-handler
+   * `startedAtMs` is used, which reproduces the pre-Session-21 behaviour.
+   */
+  readonly receivedAtMs?: number;
 }
+
+/** Floor for the shrunk scan deadline and margin, so a slow invocation still gets a real attempt. */
+const MIN_SCAN_DEADLINE_MS = 2000;
 
 /** `asOf` for responses built before the clock is read. Only `upstream-unavailable` looks at it. */
 const NO_AS_OF: IsoInstant = '1970-01-01T00:00:00.000Z';
@@ -128,6 +139,19 @@ async function handle(request: RawScanRequest, deps: ApiDeps): Promise<ApiRespon
   const startedAtMs = deps.clock();
   const asOf: IsoInstant = new Date(startedAtMs).toISOString();
 
+  // Session 21: the wall budget is measured from function invocation (receivedAtMs), not from this
+  // clock reading. Time already spent (cold start, buildDeps, body read) shrinks the remaining
+  // budget so the handler's margin response is sent before Vercel's maxDuration. The scan's abort
+  // and the margin timer both derive from the remaining budget; both have a floor so a slow
+  // invocation still gets a real attempt rather than an instant deadline-exceeded.
+  const receivedAtMs = deps.receivedAtMs ?? startedAtMs;
+  const spentMs = Math.max(0, startedAtMs - receivedAtMs);
+  const remainingBudgetMs = Math.max(MIN_SCAN_DEADLINE_MS, SCAN_WALL_BUDGET_MS - spentMs);
+  // The scan aborts one margin before the response is due; the response (margin timer) is due at the
+  // remaining budget. deps.deadlineMs (fixture recordings) still wins when set.
+  const scanDeadlineMs = deps.deadlineMs ?? Math.max(MIN_SCAN_DEADLINE_MS, remainingBudgetMs - SCAN_RESPONSE_MARGIN_MS);
+  const marginFromStartMs = deps.deadlineMs !== undefined ? deps.deadlineMs + SCAN_RESPONSE_MARGIN_MS : remainingBudgetMs;
+
   // R21.14 (e), R21.15
   const input: ScanInput = {
     repo: { ...url.value, branch: bodyBranch ?? url.value.branch },
@@ -142,6 +166,7 @@ async function handle(request: RawScanRequest, deps: ApiDeps): Promise<ApiRespon
   const scan = runScan(input, {
     ...scanDeps,
     config,
+    deadlineMs: scanDeadlineMs,
     limits: {
       maxManifests: SCAN_MAX_MANIFESTS,
       maxDependencies: SCAN_MAX_DEPENDENCIES,
@@ -160,7 +185,7 @@ async function handle(request: RawScanRequest, deps: ApiDeps): Promise<ApiRespon
   const margin = new Promise<{ readonly kind: 'margin' }>((resolve) => {
     marginHandle = deps.timer.setTimeout(
       () => resolve({ kind: 'margin' }),
-      SCAN_DEADLINE_MS + SCAN_RESPONSE_MARGIN_MS,
+      marginFromStartMs,
     );
   });
   const winner = await Promise.race([scanSettled, margin]);

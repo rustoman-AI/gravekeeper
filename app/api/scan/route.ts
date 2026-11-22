@@ -63,10 +63,13 @@ function internalErrorResponse(isHead: boolean): Response {
 }
 
 async function handle(request: Request): Promise<Response> {
+  // Captured before buildDeps and the body read so the scan's wall budget (Session 21) counts the
+  // time spent building dependencies and reading the body, not only the in-handler clock reading.
+  const receivedAtMs = Date.now();
   const isHead = request.method === 'HEAD';
   let result: ApiResponse;
   try {
-    result = await handleScanRequest(toRawRequest(request), buildDeps());
+    result = await handleScanRequest(toRawRequest(request), { ...buildDeps(), receivedAtMs });
   } catch {
     return internalErrorResponse(isHead);
   }

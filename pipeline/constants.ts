@@ -57,6 +57,16 @@ export const REQUEST_TIMEOUT_MS = 8000;
 export const REQUEST_TOTAL_TIMEOUT_MS = 20000;
 export const SCAN_DEADLINE_MS = 25000;
 export const SCAN_RESPONSE_MARGIN_MS = 1500;
+/**
+ * The handler must send a response within this many milliseconds of the moment the function was
+ * invoked (`receivedAtMs`), not of the in-handler clock reading. Vercel's `maxDuration` is 30 s and
+ * is counted from invocation; cold-start module init, `buildDeps()`, the body read and the final
+ * JSON serialize all live outside the scan's own deadline. This wall budget caps the response well
+ * under 30 s so the handler's margin answer is always sent before Vercel's 504. The scan's abort and
+ * the margin timer are both derived from it and shrink by the time already spent since invocation
+ * (Session 21 root cause: docs/session-21-timeout-rca.md).
+ */
+export const SCAN_WALL_BUDGET_MS = 24000;
 export const CONCURRENCY_GITHUB = 1;
 export const CONCURRENCY_DEPSDEV = 8;
 export const CONCURRENCY_OSV = 4;

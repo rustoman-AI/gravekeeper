@@ -10,8 +10,8 @@ import type { ApiDeps, RawScanRequest } from '../../../pipeline/api/handle-scan-
 import type { ApiResponse } from '../../../pipeline/api/scan-error';
 import {
   BRANCH_MAX_LENGTH,
-  SCAN_DEADLINE_MS,
   SCAN_RESPONSE_MARGIN_MS,
+  SCAN_WALL_BUDGET_MS,
 } from '../../../pipeline/constants';
 import type { SourceName, SourceResult } from '../../../pipeline/ports';
 import type { ScanDeps, ScanResult } from '../../../pipeline/scan/types';
@@ -22,7 +22,10 @@ import type { Step } from '../../support/scripted-fetch';
 
 const START_MS = Date.parse('2024-06-01T00:00:00.000Z');
 const SHA = 'a'.repeat(40);
-const BOUND_MS = START_MS + SCAN_DEADLINE_MS + SCAN_RESPONSE_MARGIN_MS;
+// Session 21: with no time spent before the handler reads the clock (receivedAtMs defaults to
+// startedAtMs here), the response is due by the wall budget and the scan aborts one margin earlier.
+const BOUND_MS = START_MS + SCAN_WALL_BUDGET_MS;
+const SCAN_ABORT_MS = START_MS + SCAN_WALL_BUDGET_MS - SCAN_RESPONSE_MARGIN_MS;
 const PACKAGE_JSON = JSON.stringify({ dependencies: { 'left-pad': '1.0.0' } });
 
 const ok = (body: unknown): SourceResult =>
@@ -309,7 +312,7 @@ describe('handleScanRequest: response margin (R16.12, R16.13)', () => {
     expect(response.status).toBe(504);
     expect(errorOf(response).code).toBe('deadline-exceeded');
     expect(runtime.clock()).toBeLessThanOrEqual(BOUND_MS);
-    expect(runtime.clock()).toBeGreaterThanOrEqual(START_MS + SCAN_DEADLINE_MS);
+    expect(runtime.clock()).toBeGreaterThanOrEqual(SCAN_ABORT_MS);
   });
 
   it('answers a partial result no later than the margin when a later stage never settles, and stores nothing late', async () => {
@@ -334,7 +337,7 @@ describe('handleScanRequest: response margin (R16.12, R16.13)', () => {
 });
 
 describe('R23.12 case 11: upstream that never responds, through the real HTTP client', () => {
-  it('aborts at Scan_Start + SCAN_DEADLINE_MS and answers a partial result within the margin', async () => {
+  it('aborts at the wall-budget deadline and answers a partial result within the margin', async () => {
     const runtime = createFakeRuntime(START_MS);
     const json = (body: unknown, latencyMs = 5000): Step => ({
       latencyMs,
@@ -392,14 +395,15 @@ describe('R23.12 case 11: upstream that never responds, through the real HTTP cl
     );
 
     expect(runtime.clock()).toBeLessThanOrEqual(BOUND_MS);
-    expect(runtime.clock()).toBeGreaterThanOrEqual(START_MS + SCAN_DEADLINE_MS);
+    expect(runtime.clock()).toBeGreaterThanOrEqual(SCAN_ABORT_MS);
     expect(response.status).toBe(200);
     const body = response.body as { ok: true } & Omit<ScanResult, 'ok'>;
     expect(body.sources.depsdev).toBe('partial');
     expect(body.notes.filter((n) => n.code === 'scan-deadline-reached')).toHaveLength(1);
     const aborted = scripted.calls.filter((c) => c.abortedAtMs !== null);
-    // Earlier aborts are per-request timeouts (REQUEST_TIMEOUT_MS); the request in flight at 25 s is cut by the deadline.
-    expect(aborted.map((c) => c.abortedAtMs)).toContain(START_MS + SCAN_DEADLINE_MS);
+    // Earlier aborts are per-request timeouts (REQUEST_TIMEOUT_MS); the request in flight at the
+    // scan deadline (wall budget minus one margin) is cut by the deadline.
+    expect(aborted.map((c) => c.abortedAtMs)).toContain(SCAN_ABORT_MS);
     expect(world.calls.cacheSets).toBe(0);
   });
 
