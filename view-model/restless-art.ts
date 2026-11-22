@@ -29,7 +29,7 @@ export const STONE_TOPS: Readonly<Record<"rounded" | "cross" | "obelisk" | "slab
   rounded: 19,
   cross: 24,
   obelisk: 6,
-  slab: 62,
+  slab: 70,
 };
 
 function num(n: number): string {

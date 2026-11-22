@@ -4,7 +4,7 @@
  * the restless sprite can reuse the stones by reference (`#shape-stone-<v>`).
  * Every symbol uses the 0 0 80 104 viewBox and a root <g> whose opacity follows
  * `--depth-bright`. Colours are design tokens only. No filter, no mask, no text.
- * Each outline differs in greyscale: arched, cross-shaped, tall spire, low wide ledger.
+ * Each outline differs in greyscale: arched, cross-shaped, tall spire, flat ledger stone (top face with an engraved cross, thin front edge).
  * The built-in lean of the old overgrown symbol is gone: Tilt supplies it (Requirement 3.6).
  */
 
@@ -35,6 +35,9 @@ function Leaf({ x, y, r = 0, s = 1 }: { x: number; y: number; r?: number; s?: nu
     />
   );
 }
+
+/** Ledger_Stone outline: top face (far edge y 70, near edge y 86) plus a thin front edge down to y 94. */
+const LEDGER_OUTLINE = "M6 94 V86 L18 70 H62 L74 86 V94 Z";
 
 /** Shared ivy-stone body (chipped shoulders), the base of the three overgrown graves. */
 const IVY_STONE = "M18 96 V46 L24 30 L36 24 L52 25 L60 34 L62 46 V96 Z";
@@ -103,19 +106,13 @@ export function SceneSpriteStones() {
           <path d="M44 14 L41 20" stroke={CARVE} strokeWidth="1" />
         </g>
 
-        {/* Slab: low, wide ledger stone, half sunk in the ground. */}
+        {/* Slab: Ledger_Stone, a flat slab lying on the ground seen at a slight angle:
+            a top face with an engraved cross and a thin front edge. */}
         <g id="shape-stone-slab">
           <GroundShadow rx={36} />
-          <path
-            d="M5 96 V74 Q5 68 11 68 H44 L48 71 H69 Q75 71 75 77 V96 Z"
-            fill={STONE}
-            stroke={EDGE}
-            strokeWidth="2"
-            strokeLinejoin="round"
-          />
-          <path d="M14 78 H58 M14 85 H48" stroke={CARVE} strokeWidth="1.5" strokeLinecap="round" fill="none" />
-          <path d="M62 80 L58 86 L63 91" stroke={CARVE} strokeWidth="1.2" fill="none" />
-          <path d="M3 96 Q10 91 15 96 M60 96 Q67 90 77 96" stroke={SHADOW} strokeWidth="3" strokeLinecap="round" fill="none" />
+          <path d={LEDGER_OUTLINE} fill={STONE} stroke={EDGE} strokeWidth="2" strokeLinejoin="round" />
+          <path d="M6 86 H74" stroke={EDGE} strokeWidth="1.5" strokeLinecap="round" fill="none" />
+          <path d="M40 73 V84 M34 78 H46" stroke={CARVE} strokeWidth="2.2" strokeLinecap="round" fill="none" />
         </g>
 
         {/* Ivy light: a thin vine up one side, a few leaves, moss at the foot. */}
@@ -219,7 +216,7 @@ export function SceneSpriteStones() {
       </symbol>
       <symbol id="plot-tombstone-slab-flat" viewBox={VIEW_BOX}>
         <g style={DEPTH_STYLE}>
-          <path d="M5 96 V74 Q5 68 11 68 H44 L48 71 H69 Q75 71 75 77 V96 Z" fill={STONE} />
+          <path d={LEDGER_OUTLINE} fill={STONE} />
         </g>
       </symbol>
       <symbol id="plot-overgrown-ivy-light-flat" viewBox={VIEW_BOX}>

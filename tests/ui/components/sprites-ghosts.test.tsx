@@ -2,6 +2,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { GhostDefs, GhostSymbols } from "@/components/scene-sprite-ghosts";
+import { restlessGhostTransform, restlessStoneTransform } from "@/view-model/restless-art";
 import { SPRITE_VARIANTS, symbolIdOf } from "@/view-model/variants";
 
 afterEach(cleanup);
@@ -29,17 +30,23 @@ describe("ghost sprites", () => {
     expect(c.querySelector("#shape-ghost-glow ellipse")!.getAttribute("style")).toContain("--glow");
   });
 
-  it("restless symbols reference the stone of their variant and the tail overlaps it", () => {
+  it("restless symbols draw the stone first, then the wisp, with the helper transforms", () => {
     const c = renderSheet();
     for (const v of SPRITE_VARIANTS.restless) {
       for (const flat of [false, true]) {
         const sym = c.querySelector(`#${symbolIdOf("restless", v, flat)}`)!;
-        expect(sym.querySelector(`use[href="#shape-stone-${v}"]`)).not.toBeNull();
-        expect(sym.querySelector("g g use")).not.toBeNull();
+        expect(sym.getAttribute("overflow")).toBe("visible");
+        const groups = Array.from(sym.querySelectorAll(":scope > g > g"));
+        expect(groups).toHaveLength(2);
+        const [stone, wisp] = groups;
+        expect(stone!.querySelector(`use[href="#shape-stone-${v}"]`)).not.toBeNull();
+        expect(stone!.getAttribute("transform")).toBe(restlessStoneTransform());
+        expect(wisp!.getAttribute("transform")).toBe(restlessGhostTransform());
+        expect(wisp!.querySelector(`use[href="#shape-ghost-wisp${flat ? "-flat" : ""}"]`)).not.toBeNull();
+        expect(stone!.compareDocumentPosition(wisp!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
       }
     }
   });
-
   it("every symbol has the depth root and flat twins have no gradient or glow", () => {
     const c = renderSheet();
     const ids = [

@@ -109,24 +109,24 @@ Rules for every task:
     - Stage by name the files of group 7 and commit with the subject `art-polish: two-line headline at 1280 px and wider (group 7)`. Push. Record the hash and the measured numbers of task 7.4.
     - _Requirements: 10.6, 10.7_
 
-- [ ] 9. Sprites
-  - [~] 9.1 Redraw the slab as a ledger stone (Visual)
+- [x] 9. Sprites
+  - [x] 9.1 Redraw the slab as a ledger stone (Visual)
     - In `components/scene-sprite-stones.tsx` redraw `#shape-stone-slab` as the design's Ledger_Stone (flat chamfered top, stepped base, engraved cross in `--color-night`, tokens only, no filter, mask or text) and update the flat twin `plot-tombstone-slab-flat` to the outline. Keep every symbol id and the root `<g>` with `--depth-bright`. Update the file header comment (the `slab` description). In `tests/ui/components/sprites-stones.test.tsx` update the assertions that depended on the old slab markup and add: the slab shape contains a `--color-night` stroked path forming a cross (one vertical and one horizontal segment), all ids still exist, and all symbols still differ in markup.
     - Visual: render the sprite sheet entries of the four tombstone variants at 80x104 (a temporary Playwright page evaluation that screenshots the `<symbol>`s through a `<use>`, nothing committed), open the image, and report: whether any variant still looks like a coffin, whether the ledger stone reads as a flat grave marker with a cross, and whether the four outlines are distinguishable in greyscale.
     - _Requirements: 6.1, 6.2, 6.3, 6.6_
-  - [~] 9.2 Rearrange the restless plot (Visual)
+  - [x] 9.2 Rearrange the restless plot (Visual)
     - In `components/scene-sprite-ghosts.tsx` build the restless symbols from `restlessStoneTransform()` and `restlessGhostTransform()` (full and flat twins), draw the stone first and the wisp after it, and set `overflow="visible"` on the restless `<symbol>` elements; remove `RESTLESS_PLACEMENT`. If the final slab top differs from 62, update `STONE_TOPS` in `view-model/restless-art.ts` (this task is the only owner of that file after task 1.1) and the expected numbers in `tests/ui/view-model/art-polish-constants.test.ts` (this task is the only owner of that file after task 1.1), and report the new values. Update `tests/ui/components/sprites-ghosts.test.tsx`: the restless symbols reference the stone of their variant, the wisp group follows the stone, the transforms equal the helpers' output, and the flat twins use the same placement.
     - Visual: render the four restless variants and one plain ghost side by side at plot size, and in the request scene at 1440x760; open the images and report: whether the ghost is about the size of the plain ghost, whether it clearly rises above its stone, whether any part is hidden behind the stone, whether it is clipped at the top of the symbol (risk R-1: if clipped, apply the fallback of the design's Error Handling table and report it), and whether a restless plot is distinguishable from a plain tombstone and from a plain ghost.
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
-  - [~] 9.3 Write the property test for the variant set
+  - [x] 9.3 Write the property test for the variant set
     - `tests/ui/view-model/ledger-variant.property.test.ts`: kinds from the plot kind list, random strings (including Unicode) for the key; `variantOf` is repeatable and a member of `SPRITE_VARIANTS[kind]`; the tombstone and restless lists equal `['rounded', 'cross', 'obelisk', 'slab']`; render the sprite sheet once with `renderToStaticMarkup` and check that the full and the `-flat` symbol id of every chosen variant exists.
     - **Property 1: AP-P1 Variant choice stays deterministic and total over the variant set**
     - **Validates: Requirements 6.2, 6.3, 6.4**
-  - [~] 9.4 Write the property test for the restless geometry
+  - [x] 9.4 Write the property test for the restless geometry
     - `tests/ui/view-model/restless-art.property.test.ts`: `fc.constantFrom(...SPRITE_VARIANTS.restless)`; assert from `restlessGeometry` (eyes bottom above stone top, wisp scale at least 0.85, wisp top at least `-RESTLESS_MAX_OVERFLOW_PX`, overlap ratio at most `RESTLESS_MAX_OVERLAP`) and from the rendered `GhostSymbols` markup (the transforms in the full and flat restless symbols equal the helpers' output, the stone `<use>` comes before the wisp group).
     - **Property 3: AP-P3 The restless ghost rises above its stone**
     - **Validates: Requirements 7.1, 7.2, 7.3, 7.5**
-  - [~] 9.5 Write the greyscale distinctness test
+  - [x] 9.5 Write the greyscale distinctness test
     - Create `tests/ui/components/sprites-greyscale.test.tsx`: extract the outline path data (the `d` of the stone-filled path) of each tombstone shape and of each flat twin from the rendered sheet; assert that the four outlines are pairwise different, that the width-to-height ratio of the ledger stone's flat outline differs from each of rounded, cross and obelisk by at least 0.5 (bounding box computed from the numbers in `d`, supporting `M`, `L`, `H`, `V`, `C`, `Q`, `Z`), and that the markup of the four restless symbols and of the plain ghost and the plain tombstones are pairwise different.
     - _Requirements: 6.5_
 

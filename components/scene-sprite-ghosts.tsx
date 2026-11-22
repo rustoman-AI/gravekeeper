@@ -7,6 +7,7 @@
  * tokens only. No filter, no mask.
  */
 
+import { restlessGhostTransform, restlessStoneTransform } from "@/view-model/restless-art";
 import { SPRITE_VARIANTS, symbolIdOf } from "@/view-model/variants";
 
 const VIEW_BOX = "0 0 80 104";
@@ -22,8 +23,9 @@ const WISP_PATH =
 const EYE_LEFT = "M31 22 C31 18 38 18 38 23 C38 28 34 31 32 29 C31 27 31 25 31 22 Z";
 const EYE_RIGHT = "M43 24 C43 20 49 20 49 25 C49 29 46 31 44 30 C43 28 43 26 43 24 Z";
 
-// Tail overlaps the top of the stone; the wisp is smaller and sits above it.
-const RESTLESS_PLACEMENT = "translate(24 -2) scale(0.62)";
+// Restless plots: a half-size stone with a near full-size wisp rising above it.
+const STONE_TRANSFORM = restlessStoneTransform();
+const GHOST_TRANSFORM = restlessGhostTransform();
 
 export function GhostDefs() {
   return (
@@ -73,10 +75,12 @@ export function GhostSymbols() {
         </g>
       </symbol>
       {SPRITE_VARIANTS.restless.map((v) => (
-        <symbol key={v} id={symbolIdOf("restless", v, false)} viewBox={VIEW_BOX}>
+        <symbol key={v} id={symbolIdOf("restless", v, false)} viewBox={VIEW_BOX} overflow="visible">
           <g style={DEPTH_STYLE}>
-            <use href={`#shape-stone-${v}`} />
-            <g transform={RESTLESS_PLACEMENT}>
+            <g data-part="stone" transform={STONE_TRANSFORM}>
+              <use href={`#shape-stone-${v}`} />
+            </g>
+            <g data-part="wisp" transform={GHOST_TRANSFORM}>
               <use href="#shape-ghost-glow" />
               <use href="#shape-ghost-wisp" />
             </g>
@@ -91,10 +95,12 @@ export function GhostSymbols() {
         </g>
       </symbol>
       {SPRITE_VARIANTS.restless.map((v) => (
-        <symbol key={v} id={symbolIdOf("restless", v, true)} viewBox={VIEW_BOX}>
+        <symbol key={v} id={symbolIdOf("restless", v, true)} viewBox={VIEW_BOX} overflow="visible">
           <g style={DEPTH_STYLE}>
-            <use href={`#shape-stone-${v}`} />
-            <g transform={RESTLESS_PLACEMENT}>
+            <g data-part="stone" transform={STONE_TRANSFORM}>
+              <use href={`#shape-stone-${v}`} />
+            </g>
+            <g data-part="wisp" transform={GHOST_TRANSFORM}>
               <use href="#shape-ghost-wisp-flat" />
             </g>
           </g>

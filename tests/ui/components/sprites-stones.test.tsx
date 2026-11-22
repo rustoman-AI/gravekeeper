@@ -81,4 +81,17 @@ describe("SceneSpriteStones", () => {
     expect(leaves("light")).toBeLessThan(leaves("medium"));
     expect(leaves("medium")).toBeLessThan(leaves("heavy"));
   });
+
+  it("draws the slab as a ledger stone with an engraved night cross", () => {
+    const c = renderSheet();
+    const carved = [...c.querySelectorAll("#shape-stone-slab path")].filter(
+      (p) => p.getAttribute("stroke") === "var(--color-night)",
+    );
+    expect(carved).toHaveLength(1);
+    const d = carved[0].getAttribute("d")!;
+    expect(d).toMatch(/V\d+/);
+    expect(d).toMatch(/H\d+/);
+    expect(d.match(/M/g)).toHaveLength(2);
+    expect(c.querySelector("#shape-stone-slab path[d*='Q']")).toBeNull();
+  });
 });

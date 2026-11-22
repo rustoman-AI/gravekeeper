@@ -44,7 +44,7 @@ describe("restless art constants", () => {
     expect(RESTLESS_MAX_OVERFLOW_PX).toBe(14);
     expect(RESTLESS_MAX_OVERLAP).toBe(0.4);
     expect(GHOST_BASE_BOX).toEqual({ top: 6, bottom: 100, eyeBottom: 31, centreX: 43 });
-    expect(STONE_TOPS).toEqual({ rounded: 19, cross: 24, obelisk: 6, slab: 62 });
+    expect(STONE_TOPS).toEqual({ rounded: 19, cross: 24, obelisk: 6, slab: 70 });
   });
 
   it("builds the transforms", () => {
@@ -53,7 +53,7 @@ describe("restless art constants", () => {
   });
 
   it("computes the geometry of each variant", () => {
-    const expectedTops = { rounded: 58.5, cross: 61, obelisk: 52, slab: 80 } as const;
+    const expectedTops = { rounded: 58.5, cross: 61, obelisk: 52, slab: 84 } as const;
     for (const v of ["rounded", "cross", "obelisk", "slab"] as const) {
       const g = restlessGeometry(v);
       expect(g.stoneTop).toBeCloseTo(expectedTops[v], 6);
