@@ -192,7 +192,28 @@ test("S8 manifest picker", async ({ page }) => {
   await mockScan(page, okHandler(body));
   await page.goto(resultPath(body));
   await expect(page.getByRole("button", { name: "Scan selected manifests" })).toBeVisible();
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(400);
+  // The picker is a lazy chunk (ssr: false) that mounts after the notice box has painted. Whether
+  // that happens in one or two frames changed the anti-aliasing of the box's rounded corner by one
+  // level, so hide the whole page for two frames and show it again: the final frame is then a
+  // full repaint, independent of the paint history.
+  await page.evaluate(async () => {
+    const frames = () =>
+      new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            resolve();
+          });
+        });
+      });
+    await document.fonts.ready;
+    const root = document.documentElement;
+    const before = root.style.visibility;
+    root.style.visibility = "hidden";
+    await frames();
+    root.style.visibility = before;
+    await frames();
+  });
   await shoot(page, "picker-results");
 });
 
