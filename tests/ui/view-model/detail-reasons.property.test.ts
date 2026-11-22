@@ -52,5 +52,8 @@ describe('GA-P14 Reasons keep the core message and rule id verbatim', () => {
       }),
       cfg(),
     );
-  });
+    // Each run builds a full ScanResult and calls buildDetailModel once per row, so
+    // FC_NUM_RUNS=1000 takes ~19 s alone and exceeds the 30 s default under CPU contention
+    // in a full parallel deep run.
+  }, 120_000);
 });

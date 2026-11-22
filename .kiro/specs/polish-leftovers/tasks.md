@@ -129,7 +129,7 @@ Rules for every task:
     - Record the hash and CI status
     - _Requirements: 5.1, 4.2_
 
-- [ ] 4. Item 3: Leftovers (design.md numbers, BOM, flake)
+- [x] 4. Item 3: Leftovers (design.md numbers, BOM, flake)
   - [x] 4.1 Fix the ledger numbers in `.kiro/specs/art-polish/design.md`
     - Line 153: slab 80 / top 62 becomes slab 84 / top 70; line 179: `STONE_TOPS.slab` 62 becomes 70 and `98 - (98 - 70) * 0.5 = 84`
     - Add the sentence "Superseded by `.kiro/specs/polish-leftovers/design.md` (full-size stone, smaller ghost)" under the restless section
@@ -163,14 +163,14 @@ Rules for every task:
     - Owner: the failing test file only (identified in 4.4)
     - _Requirements: 3.7, 3.8_
 
-  - [~] 4.6 Commit and push item 3 (orchestrator-only)
+  - [x] 4.6 Commit and push item 3 (orchestrator-only)
     - Run the repo-hygiene test, the flaky file 20 times, and `above-fold.spec.ts`
     - Make separate commits for: design.md fixes, BOM removal, flake fix or quarantine; `git push`
     - Record the hashes and CI status
     - _Requirements: 5.1, 4.2_
 
 - [ ] 5. Item 4: Final verification, CI, redeploy, verify:deploy, KIRO_LOG.md
-  - [~] 5.1 Final checkpoint before deploy (orchestrator-only)
+  - [-] 5.1 Final checkpoint before deploy (orchestrator-only)
     - Run `npm run test:deep` in full, without setting `FC_NUM_RUNS` in the shell
     - Run the full vitest suite, full e2e, `npm run check:bundle` (at most 256,000 bytes gzip), and scene-perf (perf project with `--no-deps`) against 100 ms / 80.4 ms
     - Ensure all tests pass, ask the user if questions arise

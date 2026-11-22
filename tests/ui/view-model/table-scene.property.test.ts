@@ -66,5 +66,6 @@ describe('P31 Table and scene agree', () => {
       }),
       cfg(),
     );
-  });
+    // FC_NUM_RUNS=1000 takes 20-30 s in a full parallel deep run (CPU contention), near the 30 s default.
+  }, 120_000);
 });

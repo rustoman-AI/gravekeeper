@@ -397,6 +397,16 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795332808847
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795333526782
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795333918620
       }
     ],
     "4.6 Commit and push item 3 (orchestrator-only)": [
@@ -404,6 +414,11 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675498
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795333219197
       }
     ],
     "5.1 Final checkpoint before deploy (orchestrator-only)": [
@@ -411,6 +426,11 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795323675527
+      },
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795333219757
       }
     ],
     "5.2 Confirm CI is green on every new commit (orchestrator-only)": [
@@ -502,6 +522,13 @@
         "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
         "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
         "timestamp": 1795327483709
+      }
+    ],
+    "4. Item 3: Leftovers (design.md numbers, BOM, flake)": [
+      {
+        "executionId": "18eabfb9-fe72-449f-b94a-f0c1f7e6f026",
+        "chatSessionId": "sess_be449228-4663-4eff-ab53-d58ec3b92604",
+        "timestamp": 1795333219251
       }
     ]
   }
