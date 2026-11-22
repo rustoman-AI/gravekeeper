@@ -1,6 +1,6 @@
 # Property traceability
 
-Maps every design property of the `scan-pipeline`, `dependency-graveyard-core`, `scan-accuracy`, `graveyard-ui`, `graveyard-art`, `pyproject`, `resurrect` and `resurrect-upgrade` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 3977 passed and 119 skipped, 356 test files passed and 7 skipped (363 files, 4096 tests), with no failure. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
+Maps every design property of the `scan-pipeline`, `dependency-graveyard-core`, `scan-accuracy`, `graveyard-ui`, `graveyard-art`, `pyproject`, `resurrect`, `resurrect-upgrade` and `art-polish` specs to its test. Rows were checked against the `// Feature: <spec>, Property <n>` tag comments, the `// Validates:` lines and the test titles in `tests/`. Status comes from a full `npx vitest --run` (FC_NUM_RUNS unset): 3977 passed and 119 skipped, 356 test files passed and 7 skipped (363 files, 4096 tests), with no failure. `npx vitest --run tests/pipeline tests/adapters tests/architecture` with `FC_NUM_RUNS=1000` also passed (1512 tests) before the scan-accuracy spec and was not rerun for this update.
 
 ## scan-pipeline
 
@@ -269,6 +269,18 @@ Tags read `// Feature: resurrect-upgrade, Property RU-P<n>`. Test titles start w
 | RU-P8 | 7.1, 7.2, 7.3, 7.6, 7.7 | `tests/ui/view-model/resurrections-evidence.property.test.ts` | RU-P8 keeps exactly the valid six-key entries, and the model links only the source, never a different evidence | passing |
 
 RU-P1 to RU-P6 and RU-P8 run on pure values without a DOM.
+
+## art-polish (AP-P1 to AP-P4)
+
+Tags read `// Feature: art-polish, Property AP-P<n>`. Test titles start with `AP-P<n>`. Titles below are the design property titles. Status is from `npx vitest --run tests/ui` (155 files, 1208 tests passed); `tests/ui/ap-traceability.test.ts` enforces the tags.
+
+| Property | Requirement(s) | Test file | Test title | Status |
+| --- | --- | --- | --- | --- |
+| AP-P1 | 6.2, 6.3, 6.4 | `tests/ui/view-model/ledger-variant.property.test.ts` | Variant choice stays deterministic and total over the variant set | passing |
+| AP-P2 | 4.4, 4.9 | `tests/ui/fog-offsets.property.test.ts` | Fog row offsets alternate deterministically | passing |
+| AP-P3 | 7.1, 7.2, 7.3, 7.5 | `tests/ui/view-model/restless-art.property.test.ts` | The restless ghost rises above its stone | passing |
+| AP-P4 | 3.2, 3.3, 3.4 | `tests/ui/ground-contrast.property.test.ts` | Plot labels stay readable on the whole ground | passing |
+
 ## Properties without a test
 
 ### scan-pipeline (0 of 76)
@@ -298,6 +310,10 @@ None. All 12 properties (RS-P1 to RS-P12) have at least one passing test.
 ### resurrect-upgrade (0 of 8)
 
 None. All 8 properties (RU-P1 to RU-P8) have at least one passing test.
+
+### art-polish (0 of 4)
+
+None. All 4 properties (AP-P1 to AP-P4) have at least one passing test.
 
 ## Tag and number mismatches
 

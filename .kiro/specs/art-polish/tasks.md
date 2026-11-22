@@ -145,17 +145,17 @@ Rules for every task:
     - Create `tests/ui/components/backdrop-hero.test.tsx`: the `hero` backdrop contains at least five silhouette shapes and one cross shape that come before the fence element in document order, the path comes after the ground rectangle, there is no `<text>`, `<title>`, `animate` or `<animateTransform>` and no colour literal, every fill and stroke is a `var(--color-*)`; the `stage` and `scanning` backdrops contain none of these shapes (compare element counts with a snapshot of the class names).
     - _Requirements: 8.1, 8.2, 8.3, 8.6_
 
-- [ ] 12. Checkpoint - Hero
+- [x] 12. Checkpoint - Hero
   - Run `npm run typecheck`, `npm run lint`, `npm run check:core`, `npm run check:architecture` and `npx vitest --run`, and ensure all pass. Ask the user if questions arise.
-  - [~] 12.1 Commit and push the hero group (orchestrator-only)
+  - [x] 12.1 Commit and push the hero group (orchestrator-only)
     - Stage by name the files of group 11 and commit with the subject `art-polish: hero headstones and path (group 11)`. Push. Record the hash.
     - _Requirements: 10.6_
 
-- [ ] 13. Traceability
-  - [~] 13.1 Add the AP traceability test
+- [x] 13. Traceability
+  - [x] 13.1 Add the AP traceability test
     - Create `tests/ui/ap-traceability.test.ts`, modelled on `tests/ui/ru-traceability.test.ts` and `art-traceability.test.ts`: each of `AP-P1` to `AP-P4` appears in exactly one `// Feature: art-polish, Property AP-P<n>:` tag, every tagged file has a `// Validates:` line, and every `it` or `test` title in a tagged file starts with the property number of its tag. Check that `tests/ui/traceability.test.ts`, `art-traceability.test.ts` and `ru-traceability.test.ts` stay green (they must not match the new tags).
     - _Requirements: 9.1_
-  - [~] 13.2 Update the property traceability document
+  - [x] 13.2 Update the property traceability document
     - If `docs/property-traceability.md` lists the properties of the other specs, add `AP-P1` to `AP-P4` in the same format (title, file, requirements) and update its counts; otherwise leave the file unchanged and say so. This task is the only owner of that file.
     - _Requirements: 9.1_
 
