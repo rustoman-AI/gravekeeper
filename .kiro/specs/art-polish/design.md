@@ -170,15 +170,15 @@ Superseded by `.kiro/specs/polish-leftovers/design.md` (full-size stone, smaller
 
 #### Ledger_Stone drawing
 
-`#shape-stone-slab` is redrawn on the same 80x104 space, anchored on the ground at y 96, about 70 units wide and 30 high:
+`#shape-stone-slab` is redrawn on the same 80x104 space, as a slab lying on the ground seen at a slight angle. The outline spans x 6 to 74 and y 70 to 94, and a ground shadow (rx 36) sits beneath it:
 
-- a flat-topped body `M6 96 V66 H74 V96 Z` with a slightly chamfered top edge (`M6 66 L10 62 H70 L74 66`) and a stepped base (`M2 96 V90 H78 V96 Z`), stroked with `--color-bone-muted` and filled with `--color-stone`, as the other stones;
-- an engraved cross in `--color-night`: vertical bar `M40 69 V88`, horizontal bar `M33 75 H47`, stroke 2.4, round caps;
-- one hairline crack and a moss patch at one corner are optional (tokens `--color-moss`, `--color-moss-deep`).
+- the outline `LEDGER_OUTLINE = "M6 94 V86 L18 70 H62 L74 86 V94 Z"`: the top face runs from the far edge at y 70 (x 18 to 62) to the near edge at y 86 (x 6 to 74), and a thin front edge drops to y 94. It is filled with `--color-stone` and stroked with `--color-bone-muted`, stroke width 2, round joins;
+- a near-edge line `M6 86 H74`, stroked with `--color-bone-muted`, width 1.5, round caps;
+- an engraved cross `M40 73 V84 M34 78 H46` in `--color-night`, stroke width 2.2, round caps.
 
-The outline is a 76 x 34 unit box (aspect 2.2), while rounded is 48 x 77 (0.62), cross 44 x 72 (0.61 for the cross body) and obelisk 38 x 90 (0.42). The aspect ratio therefore differs from each other variant by more than 0.5 (R6.5). The flat twin is the outline path alone (`M6 96 V66 H74 V96 Z M2 96 V90 H78 V96 Z`) in `--color-stone`.
+The outline is a 68 x 24 unit box (aspect about 2.83), while rounded is 48 x 77 (0.62), cross 44 x 72 (0.61) and obelisk 52 x 90 including its plinth (0.58). The aspect ratio therefore differs from each other variant by more than 0.5 (R6.5). The flat twin `plot-tombstone-slab-flat` is `LEDGER_OUTLINE` alone in `--color-stone`.
 
-`STONE_TOPS.slab` is 70 (top of the chamfer) and the restless slab top becomes `98 - (98 - 70) * 0.5 = 84`. The task writes `STONE_TOPS` from the final drawing and AP-P3 recomputes the tops from the rendered markup.
+`STONE_TOPS.slab` is 70 (far edge of the top face) and the restless slab top becomes `98 - (98 - 70) * 0.5 = 84`. The task writes `STONE_TOPS` from the final drawing and AP-P3 recomputes the tops from the rendered markup.
 
 ### CSS changes (summary of `app/globals.css`)
 

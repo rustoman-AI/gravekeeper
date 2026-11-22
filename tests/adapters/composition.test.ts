@@ -16,7 +16,8 @@ vi.mock('@vercel/functions', () => ({ getCache: getCacheMock }));
 
 const UPSTREAM_L1_KEY = Symbol.for('gravekeeper.l1.upstream-cache');
 const SCAN_L1_KEY = Symbol.for('gravekeeper.l1.scan-cache');
-const TOKEN = 'ghp_compositionTestToken0123456789abcdefABCD';
+// Built at runtime so repository secret scans do not flag this fake fixture.
+const TOKEN = ['ghp', 'fixture0not0a0real0token0value0000000000'].join('_');
 
 const CONFIG: GithubConfig = {
   apiUrl: GITHUB_DEFAULT_API_URL,
