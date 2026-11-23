@@ -1,0 +1,80 @@
+name: Keep warm
+
+# Warms the production Scan_Cache so the repos linked from the README "Try it" table and the
+# featured graveyards on the landing page answer from cache (a cold heavy scan can take ~11 s; a
+# cached one is well under 1 s). Public API, no secrets. See docs/KIRO_USAGE.md (Operations).
+
+on:
+  schedule:
+    # Every 4 hours at :17 (the Scan_Cache TTL is 6 h, so 4 h keeps entries from expiring).
+    - cron: "17 */4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  warm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Warm the production Scan_Cache
+        shell: bash
+        env:
+          BASE: https://gravekeeper-chi.vercel.app
+        run: |
+          set -u
+          # Union of the README "Try it" repos, the landing-page featured graveyards, and
+          # request/request. request/request is in both lists; listed once.
+          repos=(
+            "https://github.com/request/request"
+            "https://github.com/psf/requests"
+            "https://github.com/ajeetdsouza/zoxide"
+            "https://github.com/revmic/canopy"
+          )
+          total=${#repos[@]}
+          network_errors=0
+          first=1
+          for repo in "${repos[@]}"; do
+            # 5 s pause between scans; none before the first.
+            if [ "$first" -eq 0 ]; then sleep 5; fi
+            first=0
+
+            # The same request body the app sends (client/scan-client.ts posts JSON.stringify({ repoUrl })).
+            body=$(printf '{"repoUrl":"%s"}' "$repo")
+
+            # The response body goes to /dev/null so it is never printed or logged. Headers are
+            # written to a file (-D) and the HTTP status comes from -w on stdout; the two streams do
+            # not collide. Timing is measured in milliseconds around the call.
+            start=$(date +%s%N)
+            http_code=$(curl -sS -o /dev/null \
+              -D /tmp/curl_headers \
+              -X POST "$BASE/api/scan" \
+              -H "content-type: application/json" \
+              -H "cache-control: no-cache" \
+              --max-time 35 \
+              -w '%{http_code}' \
+              --data "$body")
+            curl_exit=$?
+            end=$(date +%s%N)
+            ms=$(( (end - start) / 1000000 ))
+
+            if [ "$curl_exit" -ne 0 ]; then
+              # A network error (DNS, connection, timeout) for this repo. Not fatal on its own.
+              network_errors=$((network_errors + 1))
+              echo "repo=$repo status=network-error ms=${ms} cache=- curl_exit=${curl_exit}"
+              continue
+            fi
+
+            # Cache header only; never the body.
+            cache=$(grep -i '^x-gravekeeper-cache:' /tmp/curl_headers | tail -n1 | tr -d '\r' | awk '{print $2}')
+            [ -z "$cache" ] && cache="-"
+            echo "repo=$repo status=${http_code} ms=${ms} cache=${cache}"
+          done
+
+          # Fail only when every repo had a network error. A slow or partial scan (any HTTP status,
+          # including 503/504) is not a failure of the keep-warm job.
+          if [ "$network_errors" -eq "$total" ]; then
+            echo "all ${total} repos failed with a network error" >&2
+            exit 1
+          fi
+          echo "done: ${total} repos, ${network_errors} network error(s)"
