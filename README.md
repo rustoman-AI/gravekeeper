@@ -4,6 +4,8 @@ Paste a public GitHub repository and see which of its dependencies are dead, hau
 
 Live: https://gravekeeper-chi.vercel.app
 
+Demo video (2:25): https://youtu.be/AdOa_fjXAq4
+
 Open a scan directly: [request/request](https://gravekeeper-chi.vercel.app/?repo=https%3A%2F%2Fgithub.com%2Frequest%2Frequest)
 
 ![Landing page: the cemetery gate, headstones behind the fence and the path through the gate](docs/screenshots/polish/leftovers-landing-hero-1440x760.png)

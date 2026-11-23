@@ -1,5 +1,7 @@
 # How Gravekeeper was built with Kiro
 
+Demo video (2:25): https://youtu.be/AdOa_fjXAq4
+
 A factual draft built from `KIRO_LOG.md`, the specs in `.kiro/specs` and the git history. Gaps are marked TODO.
 
 ## Spec-driven development
