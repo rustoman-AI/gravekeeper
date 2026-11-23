@@ -22,6 +22,8 @@ Each link was opened on production before it was listed here.
 
 Results depend on live registry data and can change over time.
 
+A scheduled GitHub Actions job ([`keep-warm.yml`](.github/workflows/keep-warm.yml)) rescans these repositories every four hours so that the links above answer from cache in well under a second; a first, uncached scan of a heavy project can take several seconds.
+
 ## What the states mean
 
 A package is abandoned when it is archived, deprecated, or has had no release for 730 days and no commit for 730 days. It is vulnerable when it has at least one open advisory. Vulnerable wins over abandoned.

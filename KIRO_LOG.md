@@ -336,3 +336,24 @@ Raw notes for the write-up. After each session: what I asked, what Kiro did well
 - 5 fresh uncached (cache miss) scans, mixed ecosystems, all 200, no deadline note, no 504: motdotla/dotenv 2158 ms (grade B), lodash/lodash 3254 ms (C), pallets/jinja 2394 ms (B), requests/requests-oauthlib 1550 ms (C), python-poetry/poetry 1689 ms (A). Earlier uncached misses the same run: winstonjs/winston 5019 ms (B), jestjs/jest 6586 ms (B, 8 unassessed). request/request now returns cached in ~0.5 s. No scan approached the deadline; all well under 27 s.
 - Caveat: because the Scan_Cache TTL is 6 h, repeated runs warm these repos, so a later run of the live test may find them all cached; the test then skips with a message rather than failing, and the cold path stays covered by the fake-clock property test.
 - Credits: Kiro credit usage can't be seen from inside the session, so none is recorded here.
+## Session 22
+- Cold heavy scans and keep-warm. Code freeze stayed except the two added files (a workflow and an ops script) and the three doc edits.
+### Step 1: cold heavy scans (measured on production, one cold scan each)
+- Script `scripts/demo/measure-cold.mts` records total ms, HTTP status, the scan-deadline-reached note, unassessed count, direct runtime deps and the source statuses. Candidates were old heavy-dependency npm projects; each returned `X-Gravekeeper-Cache: miss` (never scanned before).
+
+| repo | direct runtime deps (total) | ms | HTTP | deadline note | unassessed | slowest source |
+| --- | --- | --- | --- | --- | --- | --- |
+| parse-community/parse-server | 41 (86) | 7768 | 200 | no | 2 | none (all sources ok) |
+| balderdashy/sails | 43 (62) | 7355 | 200 | no | 0 | none (all sources ok) |
+| keystonejs/keystone-classic | 96 (124) | 10947 | 200 | no | 0 | none (all sources ok) |
+
+- All three were under 20 s, none hit the scan deadline, and every source reported ok in the caretaker's notes, so no per-source slow-path breakdown was required by the brief. keystone-classic (96 runtime deps, 124 total) was the heaviest and slowest at ~10.9 s; the dominant cost is the GitHub stage (CONCURRENCY_GITHUB=1 serialises the discovery and repo-facts requests), but it stayed well inside the 24 s wall budget from Session 21. Candidates rejected for too few runtime deps or no readable root manifest: strongloop/loopback (24 runtime), haraka/Haraka (17), Automattic/wp-calypso and rollup/rollup (upstream-unavailable, no readable root manifest). No pipeline code changed this session.
+### Step 2: keep-warm workflow
+- Added `.github/workflows/keep-warm.yml`: schedule `17 */4 * * *` (every 4 h; Scan_Cache TTL is 6 h) plus `workflow_dispatch`. It POSTs the app's body `{"repoUrl": ...}` (read from `client/scan-client.ts`) to `/api/scan` for the union of the README "Try it" repos, the landing featured graveyards and request/request: request/request, psf/requests, ajeetdsouza/zoxide, revmic/canopy (request/request appears in both lists, listed once). One at a time, 5 s pause between. Logs only repo, HTTP status, ms and the cache header; the body goes to /dev/null and is never printed. No secrets (public API). Fails only when every repo returns a network error; any HTTP status (including a slow or partial 503) is not a failure.
+- Verified the run block locally in bash with a stubbed curl across four scenarios: all hits -> exit 0; all network errors -> exit 1; one network error + rest ok -> exit 0; all 503 -> exit 0. Fixed one bug found this way: `-D -` (headers to stdout) collided with `-w '%{http_code}'` and the stdout redirect, so the status came back empty; changed to `-D /tmp/curl_headers` with the body to /dev/null and the status from -w. Also switched timing to `date +%s%N` divided to ms.
+### Step 3: dispatch + local measurement
+- `gh workflow run keep-warm.yml` (run 45089090720): conclusion success. Output: request/request 200 1211 ms cache=hit; psf/requests 200 2741 ms cache=miss; ajeetdsouza/zoxide 200 3197 ms cache=miss; revmic/canopy 200 2386 ms cache=miss; `done: 4 repos, 0 network error(s)`. (The three misses had expired past their 6 h TTL since earlier sessions; the job rewarmed them.)
+- Then scanned the README repos from this machine: request/request cache=hit 921 ms; psf/requests cache=hit 755 ms; ajeetdsouza/zoxide cache=hit 413 ms. All hits, all under 1 s, as expected.
+### Step 4: docs, commit, CI
+- README: one line under "Try it" pointing to the keep-warm workflow. docs/KIRO_USAGE.md: an Operations section describing the job. Commits: 9b6ac06 (workflow + measure script), then this commit (docs + log). Secret scan (ghp_, gho_, github_pat_) of each staged diff: 0 matches. KIRO_LOG keeps its UTF-8 BOM; README and KIRO_USAGE have no BOM; all LF.
+- Credits: Kiro credit usage can't be seen from inside the session, so none is recorded here.

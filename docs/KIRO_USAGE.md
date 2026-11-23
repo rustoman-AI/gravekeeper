@@ -104,6 +104,10 @@ What happened:
 
 Not used: no MCP server took part in writing code, specs or tests. All earlier verification used Node scripts, `curl` and the `gh` CLI.
 
+## Operations
+
+- **Keep-warm (Session 22).** [`.github/workflows/keep-warm.yml`](../.github/workflows/keep-warm.yml) runs every four hours (cron `17 */4 * * *`) and on manual dispatch. It POSTs the app's request body, `{"repoUrl": ...}`, to `https://gravekeeper-chi.vercel.app/api/scan` for each repository in the README "Try it" table, each featured graveyard on the landing page and `request/request` (four distinct repos), one at a time with a 5 s pause. The Scan_Cache TTL is six hours, so a four-hour schedule keeps the entries live. The job logs only the repo, HTTP status, milliseconds and the `X-Gravekeeper-Cache` header, never the response body, needs no secrets (the API is public), and fails only when every repo returns a network error; a slow or partial scan (any HTTP status) does not fail it. It warms the cache so the public example links answer in well under a second, instead of the several seconds a cold heavy scan can take (Session 22 measured up to ~11 s for a 96-runtime-dependency project; the Session 21 wall-budget fix keeps every scan under the function limit regardless).
+
 ## Numbers
 
 | Measure | Value | Source |
